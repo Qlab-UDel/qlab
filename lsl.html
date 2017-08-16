@@ -291,7 +291,7 @@ var img_block_2 = [];
 	var end = {
 	    type: 'single-audio',
 	    stimulus: 'sound/lsl_instr13.wav',
-	    prompt: "Great, you're all done! Thank you :) Press any key to exit.",
+	    prompt: "Great, you're done with this task. Press space to continute to the next task. You should have 4 tasks in total. If this is the 4th time you see this message, then you are all done!",
 	    cont_key: ['space'],
 	}
 
@@ -358,7 +358,10 @@ var datajson = jsPsych.data.dataAsCSV();
        },
        success: function(output) { console.log(output); }
      });
-    
+    setTimeout(function() {
+    window.location.replace("../expf/deep/vsl.html");
+    }, 3000);
+       }
    
        }
 
