@@ -381,7 +381,7 @@ var forced_choice_block = {
 
 var end = {
     type: 'text',
-    text: "Great, you're done with this task. Press space to continute to the next task. You should have 4 tasks in total. If this is the 4th time you see this message, then you are all done!",
+    text: "Great, you're done with this task. Press wait while we redirect you to the next page.",
     cont_key: ['space'],
 }
 
@@ -398,7 +398,7 @@ timeline.push(vsl_instr4);
 timeline.push(vsl_instr5);
 timeline.push(vsl_instr6);
 timeline.push(target_alien_reminder);
-timeline.push(struct_block);
+//timeline.push(struct_block);
 timeline.push(end_struck_block);
 timeline.push(vsl_instr9);
 timeline.push(vsl_instr10);
@@ -406,7 +406,7 @@ timeline.push(vsl_instr11);
 timeline.push(vsl_instr12);
 timeline.push(vsl_instr13);
 timeline.push(forced_choiced_exp_cont);
-timeline.push(forced_choice_block);
+//timeline.push(forced_choice_block);
 timeline.push(end);
 
 var datajson = jsPsych.data.dataAsCSV();
@@ -446,11 +446,62 @@ jsPsych.init({
        },
        success: function(output) { console.log(output); }
      });
-    setTimeout(function() {
-    window.location.replace("tsl.html");
-    }, 3000);
-       }
-});
+setTimeout(function() {
+     arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+     console.log(arraylist);
+     if (arraylist.length == 0) {return window.location.replace('../../LSL_Exp/end_page.html');}
+        var pick_exp = function(expType) {
+                    return expType[Math.floor(Math.random()*expType.length)];
+                 };
+       var exp = pick_exp(arraylist);
+      
+      if (exp === 'v'){      
+ 	arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("v");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+     return window.location.replace('vsl.html');
 
+	}
+		
+        if (exp === 't'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("t");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('tsl.html');
+
+	 }
+       
+        if (exp === 'l'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("l");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('../../LSL_Exp/lsl.html');
+
+       }
+        if (exp === 's'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("s");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}	
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('../../SSL_Exp/ssl.html');
+}
+  
+         }, 3000);
+       }
+   
+      
+
+});
 </script>
 </html>

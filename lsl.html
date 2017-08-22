@@ -291,7 +291,7 @@ var img_block_2 = [];
 	var end = {
 	    type: 'single-audio',
 	    stimulus: 'sound/lsl_instr13.wav',
-	    prompt: "Great, you're done with this task. Press space to continute to the next task. You should have 4 tasks in total. If this is the 4th time you see this message, then you are all done!",
+	    prompt: "Great, you're done with this task. Please wait while we load the next task for you.",
 	    cont_key: ['space'],
 	}
 
@@ -326,7 +326,7 @@ var datajson = jsPsych.data.dataAsCSV();
   timeline.push(instr5a);
   timeline.push(targ);
   timeline.push(instr5b);
-  timeline.push(block);
+ timeline.push(block);
   timeline.push(instr6);
   timeline.push(instr7);
   timeline.push(instr8);
@@ -334,7 +334,7 @@ var datajson = jsPsych.data.dataAsCSV();
   timeline.push(instr10);
   timeline.push(instr11a);
   timeline.push(instr11b);
-  timeline.push(forced_choice_block);
+ timeline.push(forced_choice_block);
   timeline.push(end);
   
 	
@@ -359,11 +359,60 @@ var datajson = jsPsych.data.dataAsCSV();
        success: function(output) { console.log(output); }
      });
     setTimeout(function() {
-    window.location.replace("../expf/deep/vsl.html");
-    }, 3000);
+     arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+     console.log(arraylist);
+     if (arraylist.length == 1) {return window.location.replace('end_page.html');}
+        var pick_exp = function(expType) {
+                    return expType[Math.floor(Math.random()*expType.length)];
+                 };
+       var exp = pick_exp(arraylist);
+      
+      if (exp === 'v'){      
+ 	arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("v");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+     return window.location.replace('../expf/deep/vsl.html');
+
+	}
+		
+        if (exp === 't'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("t");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('../expf/deep/tsl.html');
+
+	 }
+       
+        if (exp === 'l'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("l");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('lsl.html');
+
+       }
+        if (exp === 's'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("s");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}	
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('../SSL_Exp/ssl.html');
+}
+  
+         }, 3000);
        }
    
-       }
+      
 
 });
 </script>

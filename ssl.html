@@ -261,7 +261,7 @@
 	
 	var end = {
 	    type: 'text',
-	    text: "Great, you're all done! Thank you :) Press space to exit.",
+	    text: "Great, you're done with this task. Please wait while we redirect you to the next page!",
 	    cont_key: ['space'],
 	}
 
@@ -278,11 +278,11 @@
   timeline.push(instr6);
   timeline.push(instr6_targ);
   timeline.push(instr7);
-  timeline.push(block);
+ // timeline.push(block);
   timeline.push(instr8);
   timeline.push(instr9);
   timeline.push(instr10);
-  timeline.push(forced_choice_block);
+ // timeline.push(forced_choice_block);
   timeline.push(end);
   
 	var datajson = jsPsych.data.dataAsCSV();
@@ -323,13 +323,64 @@
      });
      
      setTimeout(function() {
-    window.location.replace("../LSL_Exp/lsl.html");
-    }, 3000);
+     arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+     console.log(arraylist);
+     if (arraylist.length == 0) {return window.location.replace('../../LSL_Exp/end_page.html');}
+        var pick_exp = function(expType) {
+                    return expType[Math.floor(Math.random()*expType.length)];
+                 };
+       var exp = pick_exp(arraylist);
+      
+      if (exp === 'v'){      
+ 	arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("v");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+     return window.location.replace('../expf/deep/vsl.html');
+
+	}
+		
+        if (exp === 't'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("t");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('../expf/deep/tsl.html');
+
+	 }
+       
+        if (exp === 'l'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("l");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('../LSL_Exp/lsl.html');
+
        }
-    
+        if (exp === 's'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("s");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}	
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('ssl.html');
+}
+  
+         }, 3000);
+       }
    
-       }
+      
 
 });
 </script>
 </html>
+    
+   
+ 
