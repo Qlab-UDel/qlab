@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "res"
+AuthUserFile "/home2/cogscig1/.htpasswds/public_html/LSL_Exp/passwd"
+require valid-user

@@ -9,11 +9,12 @@
     <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
 	<script src="jspsych-5.0.3/plugins/jspsych-survey-text.js"></script>
 	<script src="jspsych-5.0.3/plugins/jspsych-animation.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-call-function.js"></script>
 
     <script src="jspsych-5.0.3/plugins/jspsych-single-audio.js"></script>
     <script src="jspsych-5.0.3/plugins/jspsych-single-stim.js"></script>
     <link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
-
+	
   </head>
   <body>
 
@@ -43,6 +44,13 @@
 		var target = pick_targ(rand_targ);
 	} else if (cond_assign === 'lang2') {
 		var target = pick_targ(rand_targ2);}
+	
+var lookup = {
+    type: 'call-function',
+    func: function () {var par = jsPsych.data.getTrialsOfType('survey-text')[0].responses.match(/[a-zA-Z0-9]/g).join('').split(/Q0/)[1];
+    return par;}
+};	
+	
 	
 	/* define instructions block */
 	  var instr1 = {
@@ -291,7 +299,7 @@ var img_block_2 = [];
 	var end = {
 	    type: 'single-audio',
 	    stimulus: 'sound/lsl_instr13.wav',
-	    prompt: "Great, you're done with this task. Please wait while we load the next task for you.",
+	    prompt: "Great, you're done with this task. Please press space and wait while we load the next task for you.",
 	    cont_key: ['space'],
 	}
 
@@ -318,22 +326,24 @@ var datajson = jsPsych.data.dataAsCSV();
   /* create experiment timeline array */
   var timeline = [];
   timeline.push(par_id);
-  timeline.push(instr1);
-  timeline.push(instr2);
-  timeline.push(instr3);
-  timeline.push(instr4);
-  timeline.push(targ);
-  timeline.push(instr5a);
-  timeline.push(targ);
-  timeline.push(instr5b);
- timeline.push(block);
-  timeline.push(instr6);
-  timeline.push(instr7);
-  timeline.push(instr8);
-  timeline.push(instr9);
+  timeline.push(lookup);
+  timeline.push(send_time);
+ // timeline.push(instr1);
+ // timeline.push(instr2);
+ // timeline.push(instr3);
+ // timeline.push(instr4);
+  //timeline.push(targ);
+  //timeline.push(instr5a);
+  //timeline.push(targ);
+  //timeline.push(instr5b);
+ //timeline.push(block);
+ // timeline.push(instr6);
+  // timeline.push(instr7);
+  //timeline.push(instr8);
+ // timeline.push(instr9);
   timeline.push(instr10);
-  timeline.push(instr11a);
-  timeline.push(instr11b);
+ // timeline.push(instr11a);
+ // timeline.push(instr11b);
  timeline.push(forced_choice_block);
   timeline.push(end);
   
@@ -346,7 +356,7 @@ var datajson = jsPsych.data.dataAsCSV();
     timeline: timeline,
       fullscreen: true,
    on_finish: function save_data(datajson){
-    saveData("{}_lsl.csv".format(jsPsych.data.getTrialsOfType('survey-text')[0].responses.match(/[a-zA-Z0-9]/g).join('').split(/Q0/)[1]), jsPsych.data.dataAsCSV()); 
+    saveData("{}_lsl_day2.csv".format(jsPsych.data.getTrialsOfType('survey-text')[0].responses.match(/[a-zA-Z0-9]/g).join('').split(/Q0/)[1]), jsPsych.data.dataAsCSV()); 
     var data_table = "lsl_table";
     $.ajax({
         type:'post',
@@ -361,7 +371,7 @@ var datajson = jsPsych.data.dataAsCSV();
     setTimeout(function() {
      arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
      console.log(arraylist);
-     if (arraylist.length == 1) {return window.location.replace('end_page.html');}
+     if (arraylist.length == 1) {return window.location.replace('end_page2.html');}
         var pick_exp = function(expType) {
                     return expType[Math.floor(Math.random()*expType.length)];
                  };
@@ -374,7 +384,7 @@ var datajson = jsPsych.data.dataAsCSV();
 	arraylist.splice(i, 1);
 	}
 	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
-     return window.location.replace('../expf/deep/vsl.html');
+     return window.location.replace('../expf/deep/vslday2.html');
 
 	}
 		
@@ -385,7 +395,7 @@ var datajson = jsPsych.data.dataAsCSV();
 	arraylist.splice(i, 1);
 	}
 	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
-	        return window.location.replace('../expf/deep/tsl.html');
+	        return window.location.replace('../expf/deep/tslday2.html');
 
 	 }
        
@@ -396,7 +406,7 @@ var datajson = jsPsych.data.dataAsCSV();
 	arraylist.splice(i, 1);
 	}
 	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
-	        return window.location.replace('lsl.html');
+	        return window.location.replace('lslday2test.html');
 
        }
         if (exp === 's'){
@@ -406,7 +416,7 @@ var datajson = jsPsych.data.dataAsCSV();
 	arraylist.splice(i, 1);
 	}	
 	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
-	        return window.location.replace('../SSL_Exp/ssl.html');
+	        return window.location.replace('../SSL_Exp/sslday2.html');
 }
   
          }, 3000);

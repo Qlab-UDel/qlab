@@ -1,4 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+  	<meta charset='utf-8'>
 
+    <title>My experiment</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="jspsych-5.0.3/jspsych.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
+	<script src="jspsych-5.0.3/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-single-audio.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-call-function.js"></script>
+
+<script src="jspsych-5.0.3/plugins/jspsych-single-stim.js"></script>
+    <link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+	
+  </head>
+  <body>
+  </body>
+  <script>
 
   var par_id = {
     type: 'survey-text',
@@ -24,6 +43,12 @@
 		var target = pick_targ(rand_targ);
 	} else if (cond_assign === 'lang2') {
 		var target = pick_targ(rand_targ2);}
+	
+var lookup = {
+    type: 'call-function',
+    func: function () {var par = jsPsych.data.getTrialsOfType('survey-text')[0].responses.match(/[a-zA-Z0-9]/g).join('').split(/Q0/)[1];
+    return par;}
+};	
 	
 	/* define instructions block */
 	  var instr1 = {
@@ -244,7 +269,7 @@
 	
 	var end = {
 	    type: 'text',
-	    text: "Great, you're all done! Thank you :) Press space to exit.",
+	    text: "Great, you're done with this task. Please wait while we redirect you to the next page!",
 	    cont_key: ['space'],
 	}
 
@@ -252,20 +277,22 @@
   /* create experiment timeline array */
   var timeline = [];
   timeline.push(par_id);
-  timeline.push(instr1);
-  timeline.push(instr2);
-  timeline.push(instr3);
-  timeline.push(instr4);
-  timeline.push(instr5);
-  timeline.push(instr6_targ);
-  timeline.push(instr6);
-  timeline.push(instr6_targ);
-  timeline.push(instr7);
-  timeline.push(block);
-  timeline.push(instr8);
-  timeline.push(instr9);
+  timeline.push(lookup);
+  timeline.push(send_time);
+  //timeline.push(instr1);
+  //timeline.push(instr2);
+  //timeline.push(instr3);
+  //timeline.push(instr4);
+  //timeline.push(instr5);
+  //timeline.push(instr6_targ);
+  //timeline.push(instr6);
+  //timeline.push(instr6_targ);
+  //timeline.push(instr7);
+ //timeline.push(block);
+ // timeline.push(instr8);
+ // timeline.push(instr9);
   timeline.push(instr10);
-  timeline.push(forced_choice_block);
+timeline.push(forced_choice_block);
   timeline.push(end);
   
 	var datajson = jsPsych.data.dataAsCSV();
@@ -292,7 +319,7 @@
   jsPsych.init({
     timeline: timeline,
     on_finish: function save_data(datajson){
-    saveData("{}_ssl.csv".format(jsPsych.data.getTrialsOfType('survey-text')[0].responses.match(/[a-zA-Z0-9]/g).join('').split(/Q0/)[1]), jsPsych.data.dataAsCSV()); 
+    saveData("{}_ssl_day2.csv".format(jsPsych.data.getTrialsOfType('survey-text')[0].responses.match(/[a-zA-Z0-9]/g).join('').split(/Q0/)[1]), jsPsych.data.dataAsCSV()); 
     var data_table = "ssl_table";
     $.ajax({
         type:'post',
@@ -304,8 +331,66 @@
        },
        success: function(output) { console.log(output); }
      });
-    
-   
+     
+     setTimeout(function() {
+     arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+     console.log(arraylist);
+     if (arraylist.length == 0) {return window.location.replace('../../LSL_Exp/end_page2.html');}
+        var pick_exp = function(expType) {
+                    return expType[Math.floor(Math.random()*expType.length)];
+                 };
+       var exp = pick_exp(arraylist);
+      
+      if (exp === 'v'){      
+ 	arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("v");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+     return window.location.replace('../expf/deep/vslday2.html');
+
+	}
+		
+        if (exp === 't'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("t");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('../expf/deep/tslday2.html');
+
+	 }
+       
+        if (exp === 'l'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("l");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('../LSL_Exp/lslday2test.html');
+
        }
+        if (exp === 's'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("s");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}	
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('sslday2.html');
+}
+  
+         }, 3000);
+       }
+   
+      
 
 });
+</script>
+</html>
+    
+   
+ 
