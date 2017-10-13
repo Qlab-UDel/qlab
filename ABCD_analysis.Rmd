@@ -10,19 +10,19 @@ output:
 #Loading library
 library(ggplot2)
 library(knitr)
-library(kableExtra)
 library(readr)
 ```
 
 ```{r,echo=FALSE}
 #importing files
 
+
 tsl <- list()
 vsl <- list()
 vsl_par_id <- NULL
 tsl_par_id <- NULL
 path <- "C:/Users/Qlab/Downloads/sl-analysis/tsl/data/"
-files <- list.files(path=path, pattern="*.csv")
+files <- list.files(path=path, pattern="*.csv") 
 for(file in files)
 {
    
@@ -129,7 +129,11 @@ for(id in list_vsl_id){
 }
 
 subj_table <- data.frame(list_vsl_id,mean_rt, rt_slope,hit_rate, miss_rate,correct_rejection,false_alarm)
-colnames(subj_table) <- c("VSL_ID","mean_rt", "rt_slope","hit_rate", "miss_rate","correct_rejection","false_alarm")
+dprime<-NULL
+for (i in seq(from=1,to=length(subj_table$list_vsl_id),by=1)){dprime<-append(dprime,qnorm(subj_table[i,]$hit_rate-0.00000001)-qnorm(subj_table[i,]$false_alarm))}
+subj_table$dprime <- dprime
+
+colnames(subj_table) <- c("VSL_ID","mean_rt", "rt_slope","hit", "miss","corr_rejection","false_alarm","dprime")
 print(kable(subj_table,format = "pandoc"))
 return(mean_table)
 }
@@ -200,7 +204,12 @@ for(id in list_tsl_id){
 
 
 subj_table <- data.frame(list_tsl_id,mean_rt, rt_slope,hit_rate, miss_rate,correct_rejection,false_alarm)
-colnames(subj_table) <- c("TSL ID","mean_rt", "rt_slope","hit_rate", "miss_rate","correct_rejection","false_alarm")
+dprime<-NULL
+for (i in seq(from=1,to=length(subj_table$list_tsl_id),by=1)){dprime<-append(dprime,qnorm(subj_table[i,]$hit_rate-0.00000001)-qnorm(subj_table[i,]$false_alarm))}
+subj_table$dprime <- dprime
+
+colnames(subj_table) <- c("TSL_ID","mean_rt", "rt_slope","hit", "miss","corr_rejection","false_alarm","dprime")
+
 print(kable(subj_table))
 return(mean_table)
 }
@@ -260,13 +269,13 @@ rownames(compare_table) <- c("RT_TSL","RT_VSL","Hit_rate_tsl","Hit_rate_vsl","Nu
 print(kable(compare_table))
 par(mfrow=c(1,2))
 
-qplot(reindex,rt_col,data=fam_trial_vsl,facets=(. ~ fam_trial_vsl$group_cond),color= group_cond, main="VSL RT by group", ylab="Response time", xlab="Trial index") + geom_smooth(method='lm') 
-qplot(reindex,rt_col,data=fam_trial_tsl,facets=(. ~ fam_trial_tsl$group_cond),color= group_cond,main="TSL RT by group",ylab="Response time", xlab="Trial index") + geom_smooth(method='lm') 
+qplot(reindex,rt_col,data=fam_trial_vsl,facets=(. ~ fam_trial_vsl$group_cond),color= group_cond, main="VSL RT by group", ylab="Response time", xlab="Trial index") + geom_smooth(method='lm') + scale_color_discrete(name="Group",labels=c("Dylexia","Typical"))
+qplot(reindex,rt_col,data=fam_trial_tsl,facets=(. ~ fam_trial_tsl$group_cond),color= group_cond,main="TSL RT by group",ylab="Response time", xlab="Trial index") + geom_smooth(method='lm') + scale_color_discrete(name="Group",labels=c("Dylexia","Typical"))
 
 ```
 
 #Compute accuracy
-```{r,echo=FALSE}
+```{r,echo=FALSE,warning=FALSE}
 vsl_acc <- vsl[which(vsl$trial_index<614 & vsl$trial_index>309),]
 tsl_acc <- tsl[which(tsl$trial_index<831 & tsl$trial_index>608),]
 vsl_cond <- NULL
@@ -338,26 +347,32 @@ tsl_accuracy$corr <- corrt
 subj_corrt <- NULL
 for (id in list_tsl_id) {subj_corrt <- append(subj_corrt,round(sum(tsl_accuracy$corr[tsl_accuracy$subj==id])/32,digits=3))}
 tsl_acc_table <- data.frame(list_tsl_id,subj_corrt,tsl_cond)
-
 DD_acc_vsl <- NULL
 DD_acc_tsl <- NULL
 TYP_acc_vsl <- NULL
 TYP_acc_tsl <- NULL
 
 for(id in DD){
-  DD_acc_vsl<- mean(append(DD_acc_vsl,vsl_acc_table$subj_corr[vsl_acc_table$list_vsl_id==id]),na.rm=TRUE)
-  DD_acc_tsl<- mean(append(DD_acc_tsl,tsl_acc_table$subj_corr[tsl_acc_table$list_tsl_id==id]),na.rm=TRUE)
+  DD_acc_vsl<- append(DD_acc_vsl,vsl_acc_table$subj_corr[vsl_acc_table$list_vsl_id==id])
+  DD_acc_tsl<- append(DD_acc_tsl,tsl_acc_table$subj_corr[tsl_acc_table$list_tsl_id==id])
 }
 
 for(id in TYP){
-  TYP_acc_vsl<- mean(append(TYP_acc_vsl,vsl_acc_table$subj_corr[vsl_acc_table$list_vsl_id==id]),na.rm=TRUE)
-  TYP_acc_tsl<- mean(append(TYP_acc_tsl,tsl_acc_table$subj_corr[tsl_acc_table$list_tsl_id==id]),na.rm=TRUE)
+  TYP_acc_vsl<- append(TYP_acc_vsl,vsl_acc_table$subj_corr[vsl_acc_table$list_vsl_id==id])
+  TYP_acc_tsl<- append(TYP_acc_tsl,tsl_acc_table$subj_corr[tsl_acc_table$list_tsl_id==id])
 }
-DD_acc_col <- rbind(DD_acc_tsl,DD_acc_vsl)
-TYP_acc_col <- rbind(TYP_acc_tsl,TYP_acc_vsl)
+mean_DD_vsl <- mean(DD_acc_vsl,na.rm=TRUE)
+mean_DD_tsl <- mean(DD_acc_tsl,na.rm=TRUE)
+mean_TYP_vsl <- mean(TYP_acc_vsl,na.rm=TRUE)
+mean_TYP_tsl <- mean(TYP_acc_tsl,na.rm=TRUE)
+DD_acc_col <- rbind(mean_DD_tsl,mean_DD_vsl)
+TYP_acc_col <- rbind(mean_TYP_tsl,mean_TYP_vsl)
 compare_acc_table <- cbind(DD_acc_col,TYP_acc_col)
 colnames(compare_acc_table) <- c("Dylexia", "Typical")
 rownames(compare_acc_table) <- c("TSL accuracy","VSL accuracy")
+colnames(tsl_acc_table) <- c("Participant ID", "Percentage correct","Condition")
+colnames(vsl_acc_table) <- c("Participant ID", "Percentage correct","Condition")
+
 ```
 #VSL Accuracy across subjects
 ```{r,echo=FALSE}
@@ -372,4 +387,54 @@ print(kable(tsl_acc_table))
 ```{r,echo=FALSE}
 print(kable(compare_acc_table))
 
+```
+
+#A t-test to compare between Dylexia and Typical group
+##In tsl
+```{r,echo=FALSE}
+t.test(DD_acc_tsl,TYP_acc_tsl)
+```
+
+##In vsl
+```{r,echo=FALSE}
+t.test(DD_acc_vsl,TYP_acc_vsl)
+```
+
+# A line plot to compare mean accuracy of each group accross 32 trials
+```{r,echo=FALSE}
+ index <- rep(1:32,29)
+indx <- c(1:32)
+vsl_accuracy$index <- index
+tsl_accuracy$index <- index
+DD_vsl_point <- NULL
+TYP_vsl_point <- NULL
+DD_tsl_point <- NULL
+TYP_tsl_point <- NULL
+for (i in indx){DD_vsl_point <- append(DD_vsl_point,mean(vsl_accuracy$corr[vsl_accuracy$index==i & vsl_accuracy$cond=="DD"]))
+DD_tsl_point <- append(DD_tsl_point,mean(tsl_accuracy$corr[tsl_accuracy$index==i & tsl_accuracy$cond=="DD"]))
+TYP_tsl_point <- append(TYP_tsl_point,mean(tsl_accuracy$corr[tsl_accuracy$index==i & tsl_accuracy$cond=="TYP"]))
+TYP_vsl_point <- append(TYP_vsl_point,mean(vsl_accuracy$corr[vsl_accuracy$index==i & vsl_accuracy$cond=="TYP"]))}
+DDi <- rep("DD",32)
+Ti <- rep("TYP",32)
+dv <- cbind(DD_vsl_point,indx,DDi)
+tv <- cbind(TYP_vsl_point,indx,Ti)
+dt <- cbind(DD_tsl_point,indx,DDi)
+tt <- cbind(TYP_tsl_point,indx,Ti)
+vtable <- data.frame(rbind(dv,tv))
+ttable <- data.frame(rbind(dt,tt))
+
+ggplot(data=vtable,aes(x=as.numeric(indx),y=as.numeric(paste(DD_vsl_point)), color=DDi,group=DDi),ylim=c(0,1)) + geom_point() + geom_line() + ggtitle("Accuracy accross trials in VSL") + xlab("Trial index")+ylab("Accuracy (%)") + scale_color_discrete(name="Group",labels=c("Dylexia","Typical"))
+ttable <- data.frame(rbind(dt,tt))
+ggplot(data=ttable,aes(x=as.numeric(indx),y=as.numeric(paste(DD_tsl_point)), color=DDi,group=DDi),ylim=c(0,1)) + geom_point() + geom_line() + ggtitle("Accuracy accross trials in TSL") + xlab("Trial index")+ylab("Accuracy (%)") + scale_color_discrete(name="Group",labels=c("Dylexia","Typical"))
+```
+
+#A box plot to compare the average accuracy between each group
+```{r,fig.width=10, fig.height=10, echo=FALSE}
+par(mfrow=c(2,2))
+boxplot(DD_vsl_point, main="Dylexia-VSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
+boxplot(TYP_vsl_point, main="Typical-VSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
+
+boxplot(DD_tsl_point, main="Dylexia-TSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
+
+boxplot(TYP_vsl_point, main="Typical-TSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
 ```
