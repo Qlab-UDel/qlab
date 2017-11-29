@@ -1,0 +1,272 @@
+---
+title: "tsl_analysis"
+author: "An Nguyen"
+date: "November 9, 2017"
+output: html_document
+header-includes:
+  - \usepackage{color}
+---
+\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
+\definecolor{violet}{rgb}{0.19, 0.55, 0.91}
+```{r,echo=FALSE,warning=FALSE}
+#Loading library
+library(ggplot2)
+library(knitr)
+library(readr)
+```
+
+
+```{r,echo=FALSE}
+#importing files
+total_tsl_trial <- 48
+language_1 = list(1,2,2,2,1,1,2,1,1,2,1,2,1,1,2,2,1,1,2,1,2,2,1,2,2,2,1,2,1,2,1,1)
+language_2 = list(1,1,2,1,1,1,2,2,2,2,1,1,1,2,2,1,2,2,1,1,2,1,2,1,2,1,2,1,1,2,2,2)
+
+tsl <- read.csv("C:/Users/Qlab/Downloads/mturk_data/tsl.csv")
+wj3 <- read.csv("C:/Users/Qlab/Downloads/mturk_data/wj3_score.csv")
+scf <-  read.csv("C:/Users/Qlab/Downloads/mturk_data/scf.csv")
+#Clean data
+
+
+tsl$stimulus<- gsub(".wav","",tsl$stimulus)
+tsl$stimulus<- gsub("../../tones/","",tsl$stimulus)
+
+```
+
+
+```{r,echo=FALSE}
+#analysis on RT
+
+fam_block <- tsl[which(tsl$trial_index<=600 & tsl$trial_index>=24),]
+fam_block <- fam_block[!(fam_block$stimulus=="../../tone_instr/instr_8"),]
+fam_block <- fam_block[!(fam_block$stimulus=="../../tone_instr/fixation_instr"),]
+fam_block$targ <- paste(fam_block$targ)
+fam_block$stimulus <- paste(fam_block$stimulus)
+fam_block$rt <- as.numeric(paste(fam_block$rt))
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+row_number <- which(fam_block$targ==fam_block$stimulus)
+for (i in row_number){
+    if (fam_block[i,]$rt > 0){rt_col <- append(rt_col,fam_block[i,][,"rt"]-100)} 
+    if (fam_block[i,]$rt < 0){rt_col <- append(rt_col,fam_block[i,][,"rt"])}
+    trial <- append(trial,paste(fam_block[i,][,"trial_index"]))
+    id <- append(id,paste(fam_block[i,]$par_id))
+    if (fam_block[i+1,][,"rt"]!=-1000 & fam_block[i+1,][,"rt"]<0){
+        rt_col[(match(i,row_number))] <- 380-fam_block[i+1,][,"rt"]}
+ 
+      if (fam_block[i+1,][,"rt"]!=-1000 & fam_block[i+1,][,"rt"]>0){
+    rt_col[(match(i,row_number))] <- 580+fam_block[i+1,][,"rt"]}
+    
+    if (fam_block[i-1,][,"rt"]>0){
+        rt_col[(match(i,row_number))] <- 480-fam_block[i-1,][,"rt"]
+        
+    }}
+
+fam_trial <- data.frame(trial,rt_col,id)
+reindex <- rep(1:total_tsl_trial,length(fam_trial$trial)/48)
+fam_trial$reindex <- reindex
+hit_rate <- NULL
+miss_rate <- NULL
+correct_rejection <- NULL
+false_alarm <- NULL
+mean_rt <- NULL
+rt_slope <- NULL
+timeline <- c(rep("first half",total_tsl_trial/2),rep("second half",total_tsl_trial/2))
+timeline <- rep(timeline,length(fam_trial$trial)/48)
+fam_trial$timeline <- timeline
+mean_table <- fam_trial[which(fam_trial$rt_col!=-1000 & fam_trial$rt_col<960 & fam_trial$rt_col>-480), ] #only accept answers in range of -1000 < x < 1000
+list_tsl_id <- unique(mean_table$id)
+for(id in list_tsl_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+  if(id=="A3QS96739O5M6F" | id=="A36TE52PSYAAD6" | id=="mtslcc0991" | id =="mtslnn0585" | id=="mtslsc0184"){rt_slope <- append(rt_slope,0)
+  } else {
+    rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))}
+  hit_rate<-append(hit_rate,round(sum(!is.na(mean_table$rt_col[mean_table$id==id]))/total_tsl_trial,digits =2))
+  miss_rate<-append(miss_rate,round(sum(fam_trial$rt_col[fam_trial$id==id]==-1000)/total_tsl_trial,digits=2))
+  correct_rejection <- append(correct_rejection, round(sum(fam_block$rt[fam_block$par_id==id]==-1000 & fam_block$targ[fam_block$par_id==id]!=fam_block$stimulus[fam_block$par_id==id])/528,digits=2)) #528 is the total number of stimuli in the familiarization block
+  false_alarm <- append(false_alarm, round(sum(fam_block$rt[fam_block$par_id==id]!=-1000 & fam_block$targ[fam_block$par_id==id]!=fam_block$stimulus[fam_block$par_id==id])/528,digits=2))
+}
+
+subj_table <- data.frame(list_tsl_id,mean_rt, rt_slope,hit_rate, miss_rate,correct_rejection,false_alarm)
+dprime<-NULL
+for (i in seq(from=1,to=length(subj_table$list_tsl_id),by=1)){dprime<-append(dprime,qnorm(subj_table[i,]$hit_rate-0.00000001)-qnorm(subj_table[i,]$false_alarm+0.000000001))} #minus 0.000000001 to avoid perfect hit rate
+subj_table$dprime <- round(dprime,3)
+
+wj3$ID<-gsub("_wj3.csv","",wj3$ID)
+for(id in wj3$ID){ subj_table$wj3_score[which(subj_table$list_tsl_id==id)]<-wj3$total[wj3$ID==id]}
+
+for(id in scf$ID){ subj_table$gender[which(subj_table$list_tsl_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in scf$ID){ subj_table$handedness[which(subj_table$list_tsl_id==id)]<-paste(scf$Hand[scf$ID==id])}
+for(id in scf$ID){ subj_table$Language[which(subj_table$list_tsl_id==id)]<-paste(scf$Language[scf$ID==id])}
+subj_table$Language <- as.numeric(subj_table$Language)
+
+subset1 <- subj_table[subj_table$gender!="Other",]
+subset2<- subj_table[subj_table$Language>=20,]
+
+
+```
+
+```{r,echo=FALSE}
+#test block
+ test_block <- tsl[which(tsl$trial_index<=829 & tsl$trial_index>=605),]
+test_block <- test_block[!(test_block$stimulus==""),]
+test_block <- test_block[!(test_block$stimulus=="silent" & test_block$key_press==-1),]
+
+ans <- NULL
+keyv <- NULL
+subj <- NULL
+cond<- NULL
+
+ row_number <- which(test_block$key_press != -1 & test_block$stimulus=="silent")
+  for (i in row_number){
+    ans<-append(ans,test_block[i,]$key_press)
+    subj <- append(subj,paste(test_block[i,]$par_id))
+    cond <- append(cond,paste(test_block[i,]$cond))
+  }
+  
+tsl_accuracy <- data.frame(ans,subj,cond)
+tsl_accuracy <- tsl_accuracy[!(tsl_accuracy$ans==32),]
+tsl_cond <- NULL
+for (i in seq(from=1,to=length(tsl_accuracy$cond),by=32)){tsl_cond<-append(tsl_cond,as.character(tsl_accuracy[i,]$cond))}
+
+key<- NULL
+
+
+for(cond in tsl_cond){
+    if (cond=="lang1"){key<-append(key,language_1)}
+    else if (cond=="lang2"){key<-append(key,language_2)}}
+
+
+
+acc_id <- unique(tsl_accuracy$subj)
+
+tsl_accuracy$key <- key
+
+tsl_accuracy$ans <- gsub(37,1,tsl_accuracy$ans)
+tsl_accuracy$ans <- gsub(39,2,tsl_accuracy$ans)
+
+corr <- NULL
+for (i in seq(from=1,to=length(tsl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(tsl_accuracy[i,]$ans==tsl_accuracy[i,]$key))}
+tsl_accuracy$corr <- corr
+subj_corr <- NULL
+for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(tsl_accuracy$corr[tsl_accuracy$subj==id])/32,digits=3))}
+tsl_acc_table <- data.frame(acc_id,subj_corr,tsl_cond)
+
+
+
+for(id in scf$ID){ tsl_acc_table$gender[which(tsl_acc_table$acc_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in wj3$ID){ tsl_acc_table$wj3_score[which(tsl_acc_table$acc_id==id)]<-wj3$total[wj3$ID==id]}
+
+ for(id in scf$ID){ tsl_acc_table$Language[which(tsl_acc_table$acc_id==id)]<-paste(scf$Language[scf$ID==id])}
+tsl_acc_table$Language <- as.numeric(tsl_acc_table$Language)
+```
+
+
+### Cronbach's alpha score for the consistency of the tsl Accuracy task is 0.62. The consistency of the questions in this task is poor.
+```{r,echo=FALSE,warning=FALSE}
+d <- matrix(nrow=(length(tsl_accuracy$ans)/32),ncol=32)
+for(i in seq(from=1,to=(length(tsl_accuracy$ans)/32),by=1)){d[i,] <- rbind(tsl_accuracy$corr[((i-1)*32+1):(i*32)])}
+psych::alpha(d,check.keys = TRUE)$total$std.alpha
+```
+
+
+#Testing SL ability through the task:
+###Looking at RT 
+
+```{r,echo=FALSE,warning=FALSE}
+
+ggplot(mean_table,aes(y=rt_col,x=reindex))+geom_point(color='deepskyblue3') + geom_smooth(method='lm') + labs(x="Trial Index", y="Response time (ms)",title="Resposne time by trial index in tsl")
+
+```
+
+
+###Whether trial index is related to response time
+```{r,echo=FALSE}
+m1 = aov(rt_col~reindex+Error(id/reindex),data=mean_table)
+summary(m1)
+```
+
+###Looking at Accuracy: the mean accuracy of this task is above chance (50%)
+```{r,echo=FALSE}
+t.test(tsl_acc_table$subj_corr,mu=0.5,alternative="greater")
+```
+
+#Relationship between SL and other factors
+
+##RT and other factors
+```{r,echo=FALSE,warning=FALSE}
+#RT by WJ4 score
+ggplot(subj_table[subj_table$wj3_score>25,],aes(y=mean_rt,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by WJ4 score in tsl") + ylim(c(100,700))
+
+#RT Slope by WJ4
+ggplot(subj_table[subj_table$wj3_score>25,],aes(y=rt_slope,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time slope",title="Resposne time slope by WJ4 score in tsl")  + ylim(c(-15,15))
+
+#RT slope  vs WJ4 score by gender
+qplot(wj3_score,rt_slope,data=subset1[subset1$wj3_score>25,],facets=(. ~ gender),color= gender, main="tsl RT slope vs WJ4 scpre by gender", ylab="RT Slope", xlab="WJ4 score", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Gender")
+
+
+#Mean rt vs WJ4 score by Handedness
+qplot(wj3_score,mean_rt,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="tsl RT vs WJ4 score by Handedness", ylab="Response time", xlab="WJ4 score", ylim=c(100,600)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+#RT Slope vs WJ4 score by Handedness
+qplot(wj3_score,rt_slope,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="tsl RT slope vs WJ4 score by Handedness", ylab="Response time slope", xlab="WJ4 score", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+
+
+
+#RT by Language
+ggplot(subset2,aes(y=mean_rt,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by Language score in tsl") + ylim(c(100,700))
+#RT Slope by Language
+ggplot(subset2,aes(y=rt_slope,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time slope by Language score in tsl") + ylim(c(-15,15))
+
+
+
+```
+
+
+## A simple correlation test between WJ4 score and RT Slope
+```{r,echo=FALSE}
+
+#correlation test between rt slope and wj4 score
+cor.test(subj_table[subj_table$wj3_score>25,]$rt_slope,subj_table[subj_table$wj3_score>25,]$wj3_score)
+```
+
+
+##Accuracy and other factors
+```{r,echo=FALSE}
+
+ggplot(tsl_acc_table[tsl_acc_table$wj3_score>25,],aes(y=subj_corr,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Accuracy",title="Accuracy by WJ4 score in tsl") 
+ggplot(tsl_acc_table[tsl_acc_table$Language>=20,],aes(y=subj_corr,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="Language", y="Accuracy",title="Accuracy by Language in tsl") 
+
+
+for(id in scf$ID){ tsl_acc_table$gender[which(tsl_acc_table$acc_id==id)]<-paste(scf$Gender[scf$ID==id])}
+t.test(tsl_acc_table$subj_corr[tsl_acc_table$gender=="Female"],tsl_acc_table$subj_corr[tsl_acc_table$gender=="Male"])
+
+
+```
+
+
+#Appendix
+##Table 1
+```{r,echo=FALSE}
+table_output <- subj_table[,c("list_tsl_id","mean_rt","rt_slope","dprime")]
+a <- seq(1,129,1)
+new_id <- sprintf("mtsl_%03d", a)
+table_output$list_tsl_id<-new_id
+colnames(table_output) <- c("ID","Mean RT","RT Slope","D'")
+kable(table_output)
+```
+
+##Table 2
+
+
+```{r,echo=FALSE}
+table_output2 <- tsl_acc_table[,c("acc_id","subj_corr","tsl_cond")]
+a <- seq(1,133,1)
+new_id <- sprintf("mtsl_%03d", a)
+table_output2$acc_id<-new_id
+colnames(table_output2) <- c("ID","accuracy(%)","condition")
+kable(table_output2)
+```
+

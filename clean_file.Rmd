@@ -1,0 +1,88 @@
+---
+title: "Cleaning data"
+output: html_document
+---
+
+```{r}
+
+path <- "C:/Users/Qlab/Downloads/sayako/lsl/"
+files <- list.files(path=path, pattern="*.csv") 
+
+cleandata <- function(file) {
+  
+lsl <- read.csv(file)
+if(lsl[11,2]!=""){rep <- unlist(strsplit(paste(lsl[11,2]), split=',', fixed=TRUE))
+} else {
+  rep <- unlist(strsplit(paste(lsl[9,2]), split=',', fixed=TRUE))
+  }
+
+if(lsl[11,12]!=""){
+ani_stim <- unlist(strsplit(paste(lsl[11,12]), split=',', fixed=TRUE))
+} else{
+  ani_stim <- unlist(strsplit(paste(lsl[9,12]), split=',', fixed=TRUE))
+  }
+
+key= NULL
+rt  <- NULL
+stim_press <- NULL
+stim_disp <- NULL
+time <- NULL
+for (j in seq(from=2, to=length(rep), by=3)) {
+    rt<- append(rt,as.numeric(unlist(strsplit(paste(rep[j]), split=':'))[2]))
+}
+    
+
+for (k in seq(from=3, to=length(rep), by=3)) {
+    stim_press<- append(stim_press, gsub('.{2}$','',unlist(strsplit(paste(rep[k]), split=':\"', fixed=TRUE))[2]))
+    
+}
+
+for (i in seq(from=1, to=length(ani_stim), by=2)) {
+    stim_disp<- rbind(stim_disp, gsub('.{1}$','',unlist(strsplit(paste(ani_stim[i]), split=':\"', fixed=TRUE))[2]))}
+    
+for (n in seq(from=2, to=length(ani_stim), by=2)) {
+    time<- rbind(time, gsub('.{1}$','',unlist(strsplit(paste(ani_stim[n]), split=':', fixed=TRUE))[2]))}
+
+table1 <- data.frame(rt,stim_press)
+table2<-data.frame(stim_disp,time)
+
+table2 <- table2[1:576,]
+table2$col2 <- "NA"
+table2$col1 <- "NA"
+table1$stim_press <- paste(table1$stim_press)
+table2$stim_disp <- paste(table2$stim_disp)
+table2$time <- as.numeric(paste(table2$time))
+for (i in seq(from=1,to =length(table1$stim_press),by=1)) {
+    temp1 <- table1[i,]
+    index <- 0
+  min <- .Machine$integer.max
+    
+    for  (j in seq(from=1,to =length(table2$stim_disp),by=1)) {
+        temp2 <- table2[j,]
+        if (temp2[3]=="NA") {
+            if (temp1[2]==temp2[1]){
+                if (abs(temp1[1]-temp2[2]) < min){
+                    min <- abs(temp2[2]-temp1[1])
+                    index <- j}
+            }
+        }
+    }
+    table2$col1[index] <- temp1[1]
+    table2$col2[index] <- temp1[2]}
+table2$target <- lsl$targ[1]
+table2$cond <- lsl$cond[1]
+table2$par_id <- rep(gsub('.{2}$','',unlist(strsplit(paste(lsl$response[1]), split=':"', fixed=TRUE))[2]),length(lsl$responses[1]))
+table2<-as.matrix(table2)
+write.csv(table2,file=as.character(file))
+}
+
+for (file in files)
+{
+  cleandata(paste0(path,file))
+}
+
+  
+  
+```
+
+
