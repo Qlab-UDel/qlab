@@ -1,0 +1,38 @@
+---
+title: "extract_data"
+author: "An Nguyen"
+date: "November 9, 2017"
+output: html_document
+---
+
+```{r}
+path <- "C:/Users/Qlab/Downloads/mt/scf/copy/"
+files <- list.files(path=path, pattern="*_mturk_screeningform.csv")
+
+
+
+ID<-NULL
+  Hand<-NULL
+  Gender<-NULL
+  Language<-NULL
+  score<-NULL
+  age <- NULL
+  extract_data<-function(x) {
+  file <- read.csv(x)
+  age <- append(age, 117-as.numeric(substring(file[4,7], nchar(paste(file[4,7]))-3, nchar(paste(file[4,7]))-2)))
+  ID <- append(ID,gsub('.{2}$','',unlist(strsplit(paste(file[2,7]), split=':"', fixed=TRUE))[2]))
+  Hand <- append(Hand,gsub('.{1}$','',unlist(strsplit(paste(unlist(strsplit(paste(file[5,7]), split=',', fixed=TRUE))[1]), split=':"', fixed=TRUE))[2]))
+  Gender <- append(Gender,gsub('.{2}$','',unlist(strsplit(paste(unlist(strsplit(paste(file[5,7]), split=',', fixed=TRUE))[2]), split=':"', fixed=TRUE))[2]))
+  ans <- unlist(strsplit(paste(file[6,7]), split=',', fixed=TRUE))
+  for(i in seq(from=1,to=26,by=1)){score<-append(score,gsub('.{1}$','',unlist(strsplit(paste(unlist(strsplit(paste(ans[i]), split=',', fixed=TRUE))[1]), split=':"', fixed=TRUE))[2]))}
+  score<-as.numeric(score)
+  Language <- sum(score[score<=5],na.rm=TRUE)
+  data <- data.frame(ID,Hand,Gender,Language,age)
+  write.csv(data,file=as.character(x))
+  }
+  
+  for (i in files) {
+    extract_data(paste0(path,i))
+  }
+  
+```

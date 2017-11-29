@@ -1,0 +1,294 @@
+---
+title: "ssl_analysis"
+author: "An Nguyen"
+date: "November 9, 2017"
+output: html_document
+header-includes:
+  - \usepackage{color}
+---
+
+
+
+
+\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
+\definecolor{violet}{rgb}{0.19, 0.55, 0.91}
+```{r,echo=FALSE,warning=FALSE}
+#Loading library
+library(ggplot2)
+library(ppcor)
+library(knitr)
+library(readr)
+```
+
+
+```{r,echo=FALSE}
+#importing files
+total_ssl_trial <- 48
+language_1 = list(1,2,2,2,1,1,2,1,1,2,1,2,1,1,2,2,1,1,2,1,2,2,1,2,2,2,1,2,1,2,1,1)
+language_2 = list(1,1,2,1,1,1,2,2,2,2,1,1,1,2,2,1,2,2,1,1,2,1,2,1,2,1,2,1,1,2,2,2)
+
+ssl <- read.csv("C:/Users/Qlab/Downloads/mturk_data/ssl.csv")
+wj3 <- read.csv("C:/Users/Qlab/Downloads/mturk_data/wj3_score.csv")
+scf <-  read.csv("C:/Users/Qlab/Downloads/mturk_data/scf.csv")
+#Clean data
+
+
+ssl$stimulus<- gsub(".wav","",ssl$stimulus)
+ssl$stimulus<- gsub("sound/","",ssl$stimulus)
+
+#exclusion
+ssl <- ssl[which(ssl$par_id!="A1KAIOBTXQ77A6" & ssl$par_id != "mtslAG1213" & ssl$par_id!="A3UVW94KB9UBAJ" & ssl$par_id!="mtslaa0292"),]
+```
+
+
+```{r,echo=FALSE}
+#analysis on RT
+
+fam_block <- ssl[which(ssl$trial_index<=586 & ssl$trial_index>=11),]
+fam_block <- fam_block[!(fam_block$stimulus=="ssl_instr7"),]
+fam_block <- fam_block[!(fam_block$stimulus=="ssl_instr8"),]
+fam_block$targ <- paste(fam_block$targ)
+fam_block$stimulus <- paste(fam_block$stimulus)
+fam_block$rt <- as.numeric(paste(fam_block$rt))
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+row_number <- which(fam_block$targ==fam_block$stimulus)
+for (i in row_number){
+    if (fam_block[i,]$rt > 0){rt_col <- append(rt_col,fam_block[i,][,"rt"]-100)} 
+    if (fam_block[i,]$rt < 0){rt_col <- append(rt_col,fam_block[i,][,"rt"])}
+    trial <- append(trial,paste(fam_block[i,][,"trial_index"]))
+    id <- append(id,paste(fam_block[i,]$par_id))
+    if (fam_block[i+1,][,"rt"]!=-1000 & fam_block[i+1,][,"rt"]<0){
+        rt_col[(match(i,row_number))] <- 380-fam_block[i+1,][,"rt"]}
+    
+    if (fam_block[i+1,][,"rt"]!=-1000 & fam_block[i+1,][,"rt"]>0){
+    rt_col[(match(i,row_number))] <- 580+fam_block[i+1,][,"rt"]}
+    
+    if (fam_block[i-1,][,"rt"]>0){
+        rt_col[(match(i,row_number))] <- 480-fam_block[i-1,][,"rt"]
+        
+    }}
+fam_trial <- data.frame(trial,rt_col,id)
+
+a<-NULL
+for (i in (unique(fam_trial$id))){a<- append(a,sum(fam_trial$id==i))}
+reindex <- NULL
+for (i in a) {reindex <- append(reindex,rep(1:i,1))}     
+fam_trial$reindex <- reindex
+hit_rate <- NULL
+miss_rate <- NULL
+correct_rejection <- NULL
+false_alarm <- NULL
+mean_rt <- NULL
+rt_slope <- NULL
+
+mean_table <- fam_trial[which(fam_trial$rt_col!=-1000 & fam_trial$rt_col<960 & fam_trial$rt_col>-480), ] #only accept answers in range of -1000 < x < 1000
+list_ssl_id <- unique(mean_table$id)
+for(id in list_ssl_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+ rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+  hit_rate<-append(hit_rate,round(sum(!is.na(mean_table$rt_col[mean_table$id==id]))/sum(fam_trial$id==id),digits =2))
+  miss_rate<-append(miss_rate,round(sum(fam_trial$rt_col[fam_trial$id==id]==-1000)/sum(fam_trial$id==id),digits=2))
+  correct_rejection <- append(correct_rejection, round(sum(fam_block$rt[fam_block$par_id==id]==-1000 & fam_block$targ[fam_block$par_id==id]!=fam_block$stimulus[fam_block$par_id==id])/528,digits=2)) #528 is the total number of stimuli in the familiarization block
+  false_alarm <- append(false_alarm, round(sum(fam_block$rt[fam_block$par_id==id]!=-1000 & fam_block$targ[fam_block$par_id==id]!=fam_block$stimulus[fam_block$par_id==id])/528,digits=2))
+}
+
+subj_table <- data.frame(list_ssl_id,mean_rt, rt_slope,hit_rate, miss_rate,correct_rejection,false_alarm)
+dprime<-NULL
+for (i in seq(from=1,to=length(subj_table$list_ssl_id),by=1)){dprime<-append(dprime,qnorm(subj_table[i,]$hit_rate-0.00000001)-qnorm(subj_table[i,]$false_alarm+0.000000001))} #minus 0.000000001 to avoid perfect hit rate
+subj_table$dprime <- round(dprime,3)
+```
+
+```{r, echo=FALSE}
+#test block
+test_block <- ssl[which(ssl$trial_index<=814 & ssl$trial_index>=590),]
+test_block <- test_block[!(test_block$stimulus==""),]
+test_block <- test_block[!(test_block$stimulus=="silence" & test_block$key_press==-1),]
+
+ans <- NULL
+keyv <- NULL
+subj <- NULL
+cond<- NULL
+
+ row_number <- which(test_block$key_press != -1 & test_block$stimulus=="silence")
+  for (i in row_number){
+    ans<-append(ans,test_block[i,]$key_press)
+    subj <- append(subj,paste(test_block[i,]$par_id))
+    cond <- append(cond,paste(test_block[i,]$cond))
+  }
+  
+ssl_accuracy <- data.frame(ans,subj,cond)
+ssl_cond <- NULL
+for (i in seq(from=1,to=length(ssl_accuracy$cond),by=32)){ssl_cond<-append(ssl_cond,as.character(ssl_accuracy[i,]$cond))}
+
+key<- NULL
+
+
+for(cond in ssl_cond){
+    if (cond=="lang1"){key<-append(key,language_1)}
+    else if (cond=="lang2"){key<-append(key,language_2)}}
+
+
+
+acc_id <- unique(ssl_accuracy$subj)
+
+ssl_accuracy$key <- key
+
+ssl_accuracy$ans <- gsub(37,1,ssl_accuracy$ans)
+ssl_accuracy$ans <- gsub(39,2,ssl_accuracy$ans)
+
+corr <- NULL
+for (i in seq(from=1,to=length(ssl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(ssl_accuracy[i,]$ans==ssl_accuracy[i,]$key))}
+ssl_accuracy$corr <- corr
+subj_corr <- NULL
+for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(ssl_accuracy$corr[ssl_accuracy$subj==id])/32,digits=3))}
+ssl_acc_table <- data.frame(acc_id,subj_corr,ssl_cond)
+
+wj3$ID<-gsub("_wj3.csv","",wj3$ID)
+for(id in wj3$ID){ subj_table$wj3_score[which(subj_table$list_ssl_id==id)]<-wj3$total[wj3$ID==id]}
+
+for(id in scf$ID){ subj_table$gender[which(subj_table$list_ssl_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in scf$ID){ subj_table$handedness[which(subj_table$list_ssl_id==id)]<-paste(scf$Hand[scf$ID==id])}
+for(id in scf$ID){ subj_table$age[which(subj_table$list_ssl_id==id)]<-paste(scf$age[scf$ID==id])}
+subj_table$age <- as.numeric(subj_table$age)
+
+subset1 <- subj_table[subj_table$gender!="Other",]
+
+ for(id in scf$ID){ subj_table$Language[which(subj_table$list_ssl_id==id)]<-paste(scf$Language[scf$ID==id])}
+subj_table$Language <- as.numeric(subj_table$Language)
+
+subset2<- subj_table[subj_table$Language>=20,]
+
+
+for(id in scf$ID){ ssl_acc_table$gender[which(ssl_acc_table$acc_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in wj3$ID){ ssl_acc_table$wj3_score[which(ssl_acc_table$acc_id==id)]<-wj3$total[wj3$ID==id]}
+
+ for(id in scf$ID){ ssl_acc_table$Language[which(ssl_acc_table$acc_id==id)]<-paste(scf$Language[scf$ID==id])}
+ssl_acc_table$Language <- as.numeric(ssl_acc_table$Language)
+```
+
+### Cronbach's alpha score for the consistency of the SSL Accuracy task is 0.6. This is a lower score which may imply that the questions of this task are not good enough. 
+```{r,echo=FALSE,warning=FALSE}
+
+d <- matrix(nrow=(length(ssl_accuracy$ans)/32),ncol=32)
+for(i in seq(from=1,to=(length(ssl_accuracy$ans)/32),by=1)){d[i,] <- rbind(ssl_accuracy$corr[((i-1)*32+1):(i*32)])}
+psych::alpha(d,check.keys = TRUE)$total$std.alpha
+```
+
+##Check some variables for normality
+```{r,echo=FALSE}
+par(mfrow=c(2,2))
+qqnorm(subj_table$wj3_score,main="WJ4 Score");qqline(subj_table$wj3_score, col = 2)
+qqnorm(subj_table$rt_slope, main="RT Slope");qqline(subj_table$rt_slope, col = 2)
+qqnorm(subj_table$age,main="Age");qqline(subj_table$age, col = 2)
+qqnorm(ssl_acc_table$subj_corr,main="Accuracy");qqline(ssl_acc_table$subj_corr, col = 2)
+```
+
+
+#Testing SL ability through the task:
+###Looking at RT 
+
+```{r,echo=FALSE,warning=FALSE}
+
+#mean time by trial
+ggplot(mean_table,aes(y=rt_col,x=reindex))+geom_point(color='deepskyblue3') + geom_smooth(method='lm') + labs(x="Trial Index", y="Response time (ms)",title="Resposne time by trial index in ssl")
+```
+
+###Whether trial index is related to response time
+```{r,echo=FALSE}
+m1 = aov(rt_col~reindex+Error(id/reindex),data=mean_table)
+summary(m1)
+```
+
+###Looking at Accuracy: the mean accuracy of this task is above chance (50%)
+```{r,echo=FALSE}
+t.test(ssl_acc_table$subj_corr,mu=0.5,alternative="greater")
+```
+
+
+#Relationship between SL and other factors
+
+##RT slope and other factors
+```{r,echo=FALSE,warning=FALSE}
+
+#RT by WJ4 score
+#ggplot(subj_table[subj_table$wj3_score>25,],aes(y=mean_rt,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by WJ4 score in ssl") + ylim(c(100,700))
+
+#RT Slope by WJ4
+ggplot(subj_table[subj_table$wj3_score>25,],aes(y=rt_slope,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time slope",title="Resposne time slope by WJ4 score in SSL")  + ylim(c(-15,15))
+
+#Mean rt vs WJ4 score by gender
+#qplot(wj3_score,mean_rt,data=subset1[subset1$wj3_score>25,],facets=(. ~ gender),color= gender, main="ssl RT vs WJ4 score by gender", ylab="Response time", xlab="WJ4 score", ylim=c(100,600)) + geom_smooth(method='lm') + scale_color_discrete(name="Gender") 
+
+#RT slope  vs WJ4 score by gender
+qplot(wj3_score,rt_slope,data=subset1[subset1$wj3_score>25,],facets=(. ~ gender),color= gender, main="ssl RT slope vs WJ4 scpre by gender", ylab="RT Slope", xlab="WJ4 score", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Gender")
+
+
+#Mean rt vs WJ4 score by Handedness
+#qplot(wj3_score,mean_rt,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="ssl RT by Handedness", ylab="Response time", xlab="Trial index", ylim=c(100,600)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+
+#RT Slope vs WJ4 score by Handedness
+qplot(wj3_score,rt_slope,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="ssl RT slope by Handedness", ylab="Response time", xlab="Trial index", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+
+
+
+#RT by Language
+#ggplot(subset2,aes(y=mean_rt,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by Language score in ssl") + ylim(c(100,700))
+
+#RT Slope by Language
+ggplot(subset2,aes(y=rt_slope,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="RT slope by Language score in ssl") + ylim(c(-15,15))
+```
+
+
+## A partial correlation test between WJ4 score and RT Slope, controlling for age
+```{r,echo=FALSE}
+
+#correlation test between rt slope and wj4 score
+pcor.test(subj_table$wj3_score, subj_table$rt_slope, subj_table$age, method="spearman")
+```
+
+
+##Accuracy and other factors
+```{r,echo=FALSE}
+
+ggplot(ssl_acc_table[ssl_acc_table$wj3_score>25,],aes(y=subj_corr,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Accuracy",title="Accuracy by WJ4 score in ssl") 
+ggplot(ssl_acc_table[ssl_acc_table$Language>=20,],aes(y=subj_corr,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="Language", y="Accuracy",title="Accuracy by Language in ssl") 
+
+
+```
+
+
+
+## A partial correlation test between WJ4 score and Accuracy, controlling for age
+```{r,echo=FALSE}
+
+#correlation test between rt slope and wj4 score
+pcor.test(subj_table$wj3_score, ssl_acc_table$subj_corr, subj_table$age, method="spearman")
+```
+
+
+#Appendix
+##Table 1
+```{r,echo=FALSE}
+table_output <- subj_table[,c("list_ssl_id","mean_rt","rt_slope","dprime")]
+a <- seq(1,134,1)
+new_id <- sprintf("mtsl_%03d", a)
+table_output$list_ssl_id<-new_id
+colnames(table_output) <- c("ID","Mean RT","RT Slope","D'")
+kable(table_output)
+```
+
+##Table 2
+
+
+```{r,echo=FALSE}
+table_output2 <- ssl_acc_table[,c("acc_id","subj_corr","ssl_cond")]
+a <- seq(1,134,1)
+new_id <- sprintf("mtsl_%03d", a)
+table_output2$acc_id<-new_id
+colnames(table_output2) <- c("ID","accuracy(%)","condition")
+kable(table_output2)
+```
