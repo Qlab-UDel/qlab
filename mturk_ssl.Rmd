@@ -7,9 +7,6 @@ header-includes:
   - \usepackage{color}
 ---
 
-
-
-
 \definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
 \definecolor{violet}{rgb}{0.19, 0.55, 0.91}
 ```{r,echo=FALSE,warning=FALSE}
@@ -17,6 +14,7 @@ header-includes:
 library(ggplot2)
 library(ppcor)
 library(knitr)
+library(nortest)
 library(readr)
 ```
 
@@ -36,7 +34,7 @@ scf <-  read.csv("C:/Users/Qlab/Downloads/mturk_data/scf.csv")
 ssl$stimulus<- gsub(".wav","",ssl$stimulus)
 ssl$stimulus<- gsub("sound/","",ssl$stimulus)
 
-#exclusion
+#exclusion for people who only have 0-1 correct hit
 ssl <- ssl[which(ssl$par_id!="A1KAIOBTXQ77A6" & ssl$par_id != "mtslAG1213" & ssl$par_id!="A3UVW94KB9UBAJ" & ssl$par_id!="mtslaa0292"),]
 ```
 
@@ -167,6 +165,10 @@ for(id in scf$ID){ ssl_acc_table$gender[which(ssl_acc_table$acc_id==id)]<-paste(
 for(id in wj3$ID){ ssl_acc_table$wj3_score[which(ssl_acc_table$acc_id==id)]<-wj3$total[wj3$ID==id]}
 
  for(id in scf$ID){ ssl_acc_table$Language[which(ssl_acc_table$acc_id==id)]<-paste(scf$Language[scf$ID==id])}
+for(id in scf$ID){ ssl_acc_table$age[which(ssl_acc_table$acc_id==id)]<-paste(scf$age[scf$ID==id])}
+ssl_acc_table$age <- as.numeric(ssl_acc_table$age)
+for(id in scf$ID){ ssl_acc_table$handedness[which(ssl_acc_table$acc_id==id)]<-paste(scf$Hand[scf$ID==id])}
+
 ssl_acc_table$Language <- as.numeric(ssl_acc_table$Language)
 ```
 
@@ -185,6 +187,10 @@ qqnorm(subj_table$wj3_score,main="WJ4 Score");qqline(subj_table$wj3_score, col =
 qqnorm(subj_table$rt_slope, main="RT Slope");qqline(subj_table$rt_slope, col = 2)
 qqnorm(subj_table$age,main="Age");qqline(subj_table$age, col = 2)
 qqnorm(ssl_acc_table$subj_corr,main="Accuracy");qqline(ssl_acc_table$subj_corr, col = 2)
+ad.test(subj_table$wj3_score)
+ad.test(subj_table$rt_slope)
+ad.test(subj_table$age)
+ad.test(ssl_acc_table$subj_corr)
 ```
 
 
@@ -210,6 +216,13 @@ t.test(ssl_acc_table$subj_corr,mu=0.5,alternative="greater")
 
 
 #Relationship between SL and other factors
+
+```{r,echo=FALSE}
+summary(lm(rt_slope~ wj3_score * age + as.factor(handedness) + as.factor(gender),data=subj_table))
+
+summary(lm(subj_corr ~ wj3_score * age + as.factor(handedness) + as.factor(gender) ,data=ssl_acc_table))
+```
+
 
 ##RT slope and other factors
 ```{r,echo=FALSE,warning=FALSE}
@@ -239,7 +252,7 @@ qplot(wj3_score,rt_slope,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ h
 #ggplot(subset2,aes(y=mean_rt,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by Language score in ssl") + ylim(c(100,700))
 
 #RT Slope by Language
-ggplot(subset2,aes(y=rt_slope,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="RT slope by Language score in ssl") + ylim(c(-15,15))
+ggplot(subset2[subset2$Language<=50,],aes(y=rt_slope,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="Language Experience Score", y="Response time (ms)",title="RT slope by Language score in ssl") + ylim(c(-15,15))
 ```
 
 
