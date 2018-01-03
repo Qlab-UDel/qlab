@@ -53,19 +53,16 @@ trial <- NULL
 target <- NULL
 row_number <- which(fam_block$targ==fam_block$stimulus)
 for (i in row_number){
-    if (fam_block[i,]$rt > 0){rt_col <- append(rt_col,fam_block[i,][,"rt"]-100)} 
-    if (fam_block[i,]$rt < 0){rt_col <- append(rt_col,fam_block[i,][,"rt"])}
+    rt_col <- append(rt_col,fam_block[i,][,"rt"]) 
     trial <- append(trial,paste(fam_block[i,][,"trial_index"]))
     id <- append(id,paste(fam_block[i,]$par_id))
-    if (fam_block[i+1,][,"rt"]!=-1000 & fam_block[i+1,][,"rt"]<0){
-        rt_col[(match(i,row_number))] <- 380-fam_block[i+1,][,"rt"]}
- 
-      if (fam_block[i+1,][,"rt"]!=-1000 & fam_block[i+1,][,"rt"]>0){
-    rt_col[(match(i,row_number))] <- 580+fam_block[i+1,][,"rt"]}
+    if (fam_block[i+1,][,"rt"]!=-1000){
+        rt_col[(match(i,row_number))] <- 480+fam_block[i+1,][,"rt"]}
     
-    if (fam_block[i-1,][,"rt"]>0){
-        rt_col[(match(i,row_number))] <- 480-fam_block[i-1,][,"rt"]
-        
+    if (fam_block[i-1,][,"rt"]!=-1000 & fam_block[i-1,][,"rt"]>0 ){
+        rt_col[(match(i,row_number))] <- -(480-fam_block[i-1,][,"rt"])}
+    if (fam_block[i-1,][,"rt"]!=-1000 & fam_block[i-1,][,"rt"]<0 ){
+        rt_col[(match(i,row_number))] <- -(480+fam_block[i-1,][,"rt"])   
     }}
 
 fam_trial <- data.frame(trial,rt_col,id)
