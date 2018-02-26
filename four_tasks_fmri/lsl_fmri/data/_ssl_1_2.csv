@@ -1,0 +1,6 @@
+instr1_key_resp.keys,instr1_key_resp.rt,instr2_key_resp.keys,instr2_key_resp.rt,instr3_key_resp.keys,instr3_key_resp.rt,instr4_key_resp.keys,instr4_key_resp.rt,instr5_key_resp.keys,instr5_key_resp.rt,Run,target,PartID,frameRate,expName,date,
+space,1.28153039387,,,,,,,,,1,b,,59.941797949,ssl,2017_Aug_22_1213,
+,,space,0.751410949539,,,,,,,1,b,,59.941797949,ssl,2017_Aug_22_1213,
+,,,,space,1.60052770049,,,,,1,b,,59.941797949,ssl,2017_Aug_22_1213,
+,,,,,,space,1.55633311974,,,1,b,,59.941797949,ssl,2017_Aug_22_1213,
+,,,,,,,,space,1.9396236754,1,b,,59.941797949,ssl,2017_Aug_22_1213,

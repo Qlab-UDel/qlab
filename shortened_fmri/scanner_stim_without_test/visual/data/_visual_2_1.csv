@@ -1,0 +1,3 @@
+word,location,image,repetition,trialnum,condition,l_block_trial_loop.thisRepN,l_block_trial_loop.thisTrialN,l_block_trial_loop.thisN,l_block_trial_loop.thisIndex,l_block_trial_key_resp.keys,Run,vtarget,PartID,ltarget,frameRate,expName,date,
+1,1,M.png,13,145,S,0,0,0,0,None,2,1,,a,59.8904268844,visual,2018_Feb_14_1222,
+1,2,K.png,13,146,S,0,1,1,1,None,2,1,,a,59.8904268844,visual,2018_Feb_14_1222,
