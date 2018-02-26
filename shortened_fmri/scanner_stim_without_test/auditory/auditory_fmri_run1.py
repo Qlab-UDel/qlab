@@ -7,9 +7,7 @@ If you publish work using this script please cite the relevant PsychoPy publicat
   Peirce, JW (2009) Generating stimuli for neuroscience using PsychoPy. Frontiers in Neuroinformatics, 2:10. doi: 10.3389/neuro.11.010.2008
 """
 
-# the experiment contains Three runs. each run contains three conditions: random, sequential and silence; Each condition contains 192 syllables (16 repetitions x 4 words x 3 syllables) 
-# or (96 x TR) seconds. Each run has 24 mini-blocks (8 mini-blocks per each condition), interspersed pseudorandomly. 
-# the third run will have a test session at the end.
+
 
 
 from __future__ import division  # so that 1/3=0.333 instead of 1/3=0
@@ -28,7 +26,7 @@ os.chdir(_thisDir)
 
 # Store info about the experiment session
 expName = 'auditory'  # from the Builder filename that created this script
-expInfo = {u'starget': u'', u'ttarget': u'', u'PartID': u''} # block: R(andom) and S(equential); target: then bi, pu, du, da; 
+expInfo = {u'starget': u'', u'ttarget': u'', u'PartID': u''} # starget: SSL target. ttarget: ASL target (third stimulus in the triplet)
 dlg = gui.DlgFromDict(dictionary=expInfo, title=expName)
 if dlg.OK == False: core.quit()  # user pressed cancel
 expInfo['date'] = data.getDateStr()  # add a simple timestamp

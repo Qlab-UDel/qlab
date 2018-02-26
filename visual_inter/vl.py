@@ -23,7 +23,7 @@ os.chdir(_thisDir)
 
 # Store info about the experiment session
 expName = 'vl'  # from the Builder filename that created this script
-expInfo = {u'PartID': u''} # block: R(andom) and S(equential); language: 1 or 2; target: if language 1, then bi, pu, du, da; if block 2, then ku, tu, pi, do.
+expInfo = {u'PartID': u''}
 dlg = gui.DlgFromDict(dictionary=expInfo, title=expName)
 if dlg.OK == False: core.quit()  # user pressed cancel
 expInfo['date'] = data.getDateStr()  # add a simple timestamp
