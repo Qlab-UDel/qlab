@@ -126,8 +126,8 @@ rt_df1 <- data.frame(trial,rt_col,id,group_cond)
 # rt_df1 <- data.frame(unlist(trial),unlist(rt_col),id,group_cond) 
 # colnames(rt_df1) <- c("trial","rt_col","id","group_cond")
 
-fam_block <- vsl[which(vsl$trial_index<=300 & vsl$trial_index>=13),] #the familiarization block starts with index number 13 and ends with index 300
-fam_trial <- rt_df1[which(rt_df1$trial<=300 & rt_df1$trial>=13), ]
+fam_block <- vsl[which(vsl$trial_index<=300 & vsl$trial_index>=12),] #the familiarization block starts with index number 13 and ends with index 300
+fam_trial <- rt_df1[which(rt_df1$trial<=300 & rt_df1$trial>=12), ]
 reindex <- rep(1:total_vsl_trial,total_participant)
 fam_trial$reindex <- reindex
 fam_trial <- fam_trial[which(!is.na(fam_trial$group_cond)),]
@@ -145,7 +145,7 @@ list_vsl_id <- unique(mean_table$id)
 
 for(id in list_vsl_id){
   mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
-  rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$trial[mean_table$id==id]))$coefficient[2,1],digits=3))
+  rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
   hit_rate<-append(hit_rate,round(sum(!is.na(mean_table$rt_col[mean_table$id==id]))/total_vsl_trial,digits =2))
   miss_rate<-append(miss_rate,round(sum(fam_trial$rt_col[fam_trial$id==id]==-1)/total_vsl_trial,digits=2))
   correct_rejection <- append(correct_rejection, round(sum(fam_block$rt[fam_block$par_id==id]==-1 & fam_block$targ[fam_block$par_id==id]!=fam_block$stimulus[fam_block$par_id==id])/264,digits=3)) #264 is the total number of stimuli in the familiarization block
