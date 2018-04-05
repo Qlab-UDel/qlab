@@ -7,23 +7,22 @@ output: html_document
 ```{r,echo=FALSE,warning=FALSE}
 #Loading library
 library(ggplot2)
-library(ppcor)
 library(knitr)
-library(nortest)
 library(readr)
 library(psych)
+library(ppcor)
 ```
 
 
 ```{r,echo=FALSE,warning=FALSE}
+#Please refer to mturk_vsl to see the specific comment for each step, since they are similar
+wj3 <- read.csv("C:/Users/Qlab/Downloads/mturk/mturk_data/wj3_score.csv")
+scf <-  read.csv("C:/Users/Qlab/Downloads/mturk/mturk_data/scf.csv")
 
-wj3 <- read.csv("C:/Users/Qlab/Downloads/mturk_data/wj3_score.csv")
-scf <-  read.csv("C:/Users/Qlab/Downloads/mturk_data/scf.csv")
+language_1 = list(1,1,1,2,2,1,1,2,2,2,1,2,1,1,2,2,1,1,1,1,2,1,2,2,1,2,2,2,1,2,2,1)
+language_2 = list(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2)
 
-language_1 = list(1,2,2,2,1,1,2,1,1,2,1,2,1,1,2,2,1,1,2,1,2,2,1,2,2,2,1,2,1,2,1,1)
-language_2 = list(1,1,2,1,1,1,2,2,2,2,1,1,1,2,2,1,2,2,1,1,2,1,2,1,2,1,2,1,1,2,2,2)
-
-path <- "C:/Users/Qlab/Downloads/mt/lsl/"
+path <- "C:/Users/Qlab/Downloads/mturk/mturk_data/lsl/lsl_rt_extract/"
 files <- list.files(path=path, pattern="*.csv") 
 for(file in files)
 {
@@ -75,13 +74,17 @@ mean_rt <- NULL
 rt_slope <- NULL
 
 mean_table <- fam_trial[which(fam_trial$rt_col!=-1 & fam_trial$rt_col<1000 & fam_trial$rt_col>-1000), ] #only accept answers in range of -1000 < x < 1000
+#exclude data that only press 1 (so rt slope cannot be computed)
+mean_table <- mean_table[mean_table$id!="mturk",]
+mean_table <- mean_table[mean_table$id!="A3SD02HCW68EUL",]
+mean_table <- mean_table[mean_table$id!="mtslAG1213",]
 list_lsl_id <- unique(mean_table$id)
+
+#note: if you run this to analyze ss2 - then no data is excluded
 
 for(id in list_lsl_id){
   mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
-  if(id=="A3SD02HCW68EUL" | id == "mtslAG1213" | id == "mturk"){rt_slope <- append(rt_slope,0)
-  } else {
-    rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))}
+rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
   
   hit_rate<-append(hit_rate,round(sum(!is.na(mean_table$rt_col[mean_table$id==id]))/24,digits =2))
  
@@ -99,6 +102,26 @@ subj_table$dprime <- round(dprime,3)
 
 
 
+#add in other info
+wj3$ID<-gsub("_wj3.csv","",wj3$ID)
+for(id in wj3$ID){ subj_table$wj3_score[which(subj_table$list_lsl_id==id)]<-wj3$total[wj3$ID==id]}
+for(id in scf$ID){ subj_table$age[which(subj_table$list_lsl_id==id)]<-paste(scf$age[scf$ID==id])}
+for(id in scf$ID){ subj_table$gender[which(subj_table$list_lsl_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in scf$ID){ subj_table$handedness[which(subj_table$list_lsl_id==id)]<-paste(scf$Hand[scf$ID==id])}
+for(id in scf$ID){ subj_table$Language[which(subj_table$list_lsl_id==id)]<-paste(scf$Language[scf$ID==id])}
+for(id in scf$ID){ subj_table$age[which(subj_table$list_lsl_id==id)]<-paste(scf$age[scf$ID==id])}
+subj_table$Language <- as.numeric(subj_table$Language)
+subj_table$age <- as.numeric(subj_table$age)
+
+#exclude data that is 2.5 std away from the mean
+lowerbound <- mean(subj_table$rt_slope) - 2.5*sd(subj_table$rt_slope)
+upperbound <- mean(subj_table$rt_slope) + 2.5*sd(subj_table$rt_slope)
+subj_table <- subj_table[subj_table$rt_slope>=lowerbound,]
+subj_table <- subj_table[subj_table$rt_slope<=upperbound,]
+
+subset2<- subj_table[subj_table$Language>=20,]
+subset1 <- subj_table[subj_table$gender!="Other",]
+
 
 ```
 
@@ -108,8 +131,9 @@ subj_table$dprime <- round(dprime,3)
 
 ```{r,echo=FALSE,warning=FALSE}
 lslacc <- list()
-path <- "C:/Users/Qlab/Downloads/mt/lsl/copy/"
+path <- "C:/Users/Qlab/Downloads/mturk/mturk_data/lsl/clean/"
 files <- list.files(path=path, pattern="*.csv") 
+lsl_acc1 <- read_csv("Z:/projects/mturk/raw/cleaned_data/lsl_acc1.csv")
 for(file in files)
 {
    
@@ -136,7 +160,7 @@ cond<- NULL
     cond <- append(cond,paste(test_block[i,]$cond))
   }
   
-lsl_accuracy <- data.frame(ans,subj,cond)
+lsl_accuracy <- data.frame(ans,cond)
 lsl_cond <- NULL
 for (i in seq(from=1,to=length(lsl_accuracy$cond),by=32)){lsl_cond<-append(lsl_cond,as.character(lsl_accuracy[i,]$cond))}
 
@@ -149,7 +173,7 @@ for(cond in lsl_cond){
 
 
 
-acc_id <- unique(lsl_accuracy$subj)
+#acc_id <- unique(lsl_accuracy$subj)
 
 lsl_accuracy$key <- keyv
 
@@ -160,60 +184,44 @@ corr <- NULL
 for (i in seq(from=1,to=length(lsl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(lsl_accuracy[i,]$ans==lsl_accuracy[i,]$key))}
 lsl_accuracy$corr <- corr
 subj_corr <- NULL
-for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(lsl_accuracy$corr[lsl_accuracy$subj==id])/32,digits=3))}
-lsl_acc_table <- data.frame(acc_id,subj_corr,lsl_cond)
+#for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(lsl_accuracy$corr[lsl_accuracy$subj==id])/32,digits=3))}
+#lsl_acc_table <- data.frame(acc_id,subj_corr,lsl_cond)
+lsl_acc_table <- read_csv("Z:/projects/mturk/raw/cleaned_data/lsl_acc1.csv")
 
-
-
-
-wj3$ID<-gsub("_wj3.csv","",wj3$ID)
-for(id in wj3$ID){ subj_table$wj3_score[which(subj_table$list_lsl_id==id)]<-wj3$total[wj3$ID==id]}
-
-for(id in scf$ID){ subj_table$gender[which(subj_table$list_lsl_id==id)]<-paste(scf$Gender[scf$ID==id])}
-for(id in scf$ID){ subj_table$handedness[which(subj_table$list_lsl_id==id)]<-paste(scf$Hand[scf$ID==id])}
-for(id in scf$ID){ subj_table$Language[which(subj_table$list_lsl_id==id)]<-paste(scf$Language[scf$ID==id])}
-subj_table$Language <- as.numeric(subj_table$Language)
-for(id in scf$ID){ subj_table$age[which(subj_table$list_lsl_id==id)]<-paste(scf$age[scf$ID==id])}
-subj_table$age <- as.numeric(subj_table$age)
-
-subset2<- subj_table[subj_table$Language>=20,]
-subset1 <- subj_table[subj_table$gender!="Other",]
+for(id in scf$ID){ lsl_acc_table$gender[which(lsl_acc_table$acc_id==id)]<-paste(scf$Gender[scf$ID==id])}
 
 for(id in scf$ID){ lsl_acc_table$gender[which(lsl_acc_table$acc_id==id)]<-paste(scf$Gender[scf$ID==id])}
 for(id in wj3$ID){ lsl_acc_table$wj3_score[which(lsl_acc_table$acc_id==id)]<-wj3$total[wj3$ID==id]}
+ for(id in scf$ID){ lsl_acc_table$age[which(lsl_acc_table$acc_id==id)]<-paste(scf$age[scf$ID==id])}
+ for(id in scf$ID){ lsl_acc_table$hand[which(lsl_acc_table$acc_id==id)]<-paste(scf$Hand[scf$ID==id])}
 
  for(id in scf$ID){ lsl_acc_table$Language[which(lsl_acc_table$acc_id==id)]<-paste(scf$Language[scf$ID==id])}
 lsl_acc_table$Language <- as.numeric(lsl_acc_table$Language)
-
-for(id in scf$ID){ lsl_acc_table$age[which(lsl_acc_table$acc_id==id)]<-paste(scf$age[scf$ID==id])}
 lsl_acc_table$age <- as.numeric(lsl_acc_table$age)
-for(id in scf$ID){ lsl_acc_table$handedness[which(lsl_acc_table$acc_id==id)]<-paste(scf$Hand[scf$ID==id])}
 
-
-
+lb <- mean(lsl_acc_table$subj_corr) - 2.5*sd(lsl_acc_table$subj_corr)
+ub <- mean(lsl_acc_table$subj_corr) + 2.5*sd(lsl_acc_table$subj_corr)
+lsl_acc_table <- lsl_acc_table[lsl_acc_table$subj_corr>=lb,]
+lsl_acc_table <- lsl_acc_table[lsl_acc_table$subj_corr<=ub,]
 ```
 
-### Cronbach's alpha score for the consistency of the lsl Accuracy task is 0.72. The consistency of the questions in this task is fair.
+### Cronbach's alpha score
 ```{r,echo=FALSE,warning=FALSE}
+#d <- matrix(nrow=144,ncol=32)
+#for(i in seq(from=1,to=144,by=1)){d[i,] <- rbind(lsl_accuracy$corr[((i-1)*32+1):(i*32)])}
+#psych::alpha(d,check.keys = TRUE)$total$std.alpha
 
-d <- matrix(nrow=144,ncol=32)
-for(i in seq(from=1,to=144,by=1)){d[i,] <- rbind(lsl_accuracy$corr[((i-1)*32+1):(i*32)])}
-psych::alpha(d,check.keys = TRUE)$total$std.alpha
-```
+lsl_acc1 <- lsl_accuracy[lsl_accuracy$cond=="lang1",]
+d1 <- matrix(nrow=77,ncol=32)
+for(i in seq(from=1,to=77,by=1)){d1[i,] <- rbind(lsl_acc1$corr[((i-1)*32+1):(i*32)])}
+a1<-psych::alpha(d1,check.keys = TRUE)$total$std.alpha
 
-
-
-##Check some variables for normality
-```{r,echo=FALSE}
-par(mfrow=c(2,2))
-qqnorm(subj_table$wj3_score,main="WJ4 Score");qqline(subj_table$wj3_score, col = 2)
-qqnorm(subj_table$rt_slope, main="RT Slope");qqline(subj_table$rt_slope, col = 2)
-qqnorm(subj_table$age,main="Age");qqline(subj_table$age, col = 2)
-qqnorm(lsl_acc_table$subj_corr,main="Accuracy");qqline(lsl_acc_table$subj_corr, col = 2)
-ad.test(subj_table$wj3_score)
-ad.test(subj_table$rt_slope)
-ad.test(subj_table$age)
-ad.test(lsl_acc_table$subj_corr)
+lsl_acc2 <- lsl_accuracy[lsl_accuracy$cond=="lang2",]
+d2 <- matrix(nrow=68,ncol=32)
+for(i in seq(from=1,to=68,by=1)){d2[i,] <- rbind(lsl_acc2$corr[((i-1)*32+1):(i*32)])}
+a2<-psych::alpha(d2,check.keys = TRUE)$total$std.alpha
+alpha <- mean(a1,a2)
+print(alpha)
 ```
 
 
@@ -221,16 +229,10 @@ ad.test(lsl_acc_table$subj_corr)
 ###Looking at RT 
 
 ```{r,echo=FALSE,warning=FALSE}
+t.test(subj_table$rt_slope,mu=0,alternative="less")
 
 ggplot(mean_table,aes(y=rt_col,x=reindex))+geom_point(color='deepskyblue3') + geom_smooth(method='lm') + labs(x="Trial Index", y="Response time (ms)",title="Resposne time by trial index in lsl")
 
-```
-
-
-###Whether trial index is related to response time
-```{r,echo=FALSE}
-m1 = aov(rt_col~reindex+Error(id/reindex),data=mean_table)
-summary(m1)
 ```
 
 
@@ -241,94 +243,54 @@ t.test(lsl_acc_table$subj_corr,mu=0.5,alternative="greater")
 
 #Relationship between SL and other factors
 
-
-##RT Slope
-```{r,echo=FALSE}
-summary(lm(rt_slope~ wj3_score * age + as.factor(handedness) + as.factor(gender),data=subj_table))
-
-```
-#Accuracy
-```{r,echo=FALSE}
-summary(lm(subj_corr ~ wj3_score * age + as.factor(handedness) + as.factor(gender) ,data=lsl_acc_table))
-
-```
-
-
 ##RT and other factors
-```{r,echo=FALSE,warning=FALSE}
+```{r,echo=FALSE,warning=FALSE,include=FALSE}
 #RT by WJ4 score
-#ggplot(subj_table[subj_table$wj3_score>25,],aes(y=mean_rt,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by WJ4 score in lsl") + ylim(c(100,700))
+ggplot(subj_table[subj_table$wj3_score>25,],aes(y=mean_rt,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by WJ4 score in lsl") + ylim(c(100,700))
 
 #RT Slope by WJ4
 ggplot(subj_table[subj_table$wj3_score>25,],aes(y=rt_slope,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time slope",title="Resposne time slope by WJ4 score in lsl")  + ylim(c(-15,15))
 
 #RT slope  vs WJ4 score by gender
-#qplot(wj3_score,rt_slope,data=subset1[subset1$wj3_score>25,],facets=(. ~ gender),color= gender, main="lsl RT slope vs WJ4 scpre by gender", ylab="RT Slope", xlab="WJ4 score", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Gender")
+qplot(wj3_score,rt_slope,data=subset1[subset1$wj3_score>25,],facets=(. ~ gender),color= gender, main="lsl RT slope vs WJ4 scpre by gender", ylab="RT Slope", xlab="WJ4 score", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Gender")
 
 
 #Mean rt vs WJ4 score by Handedness
-#qplot(wj3_score,mean_rt,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="lsl RT by Handedness", ylab="Response time", xlab="WJ4 Score", ylim=c(100,600)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+qplot(wj3_score,mean_rt,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="lsl RT by Handedness", ylab="Response time", xlab="Trial index", ylim=c(100,600)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
 #RT Slope vs WJ4 score by Handedness
-#qplot(wj3_score,rt_slope,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="lsl RT slope vs WJ4 score by Handedness", ylab="Response time slope", xlab="WJ4 Score", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+qplot(wj3_score,rt_slope,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="lsl RT slope by Handedness", ylab="Response time slope", xlab="Trial index", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
 
 
 
 #RT by Language
-#ggplot(subset2,aes(y=mean_rt,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by Language score in lsl") + ylim(c(100,700))
+ggplot(subset2,aes(y=mean_rt,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by Language score in lsl") + ylim(c(100,700))
 #RT Slope by Language
-#ggplot(subset2,aes(y=rt_slope,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time slope by Language score in lsl") + ylim(c(-15,15))
+ggplot(subset2,aes(y=rt_slope,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time slope by Language score in lsl") + ylim(c(-15,15))
 
 ```
 
 
 
-## A partial correlation test between WJ4 score and RT Slope, controlling for age
+## A simple correlation test between WJ4 score and RT Slope, controlling for age
 ```{r,echo=FALSE}
 
 #correlation test between rt slope and wj4 score
-pcor.test(subj_table$wj3_score, subj_table$rt_slope, subj_table$age, method="spearman")
+pcor.test(subj_table$rt_slope, subj_table$wj3_score,subj_table$age,method="spearman")
 ```
 
+## A simple correlation test between WJ4 score and Accuracy, controlling for age
+```{r,echo=FALSE}
+#correlation test between rt slope and wj4 score
+pcor.test(lsl_acc_table$subj_corr,lsl_acc_table$wj3_score,lsl_acc_table$age,method="spearman")
+```
 
+##RT slope and other factors
+```{r,echo=FALSE}
+a<-lm(formula = subj_corr ~ wj3_score * age + as.factor(hand) + as.factor(gender), data = lsl_acc_table)
+summary(a)
+```
 ##Accuracy and other factors
 ```{r,echo=FALSE}
-
-ggplot(lsl_acc_table[lsl_acc_table$wj3_score>25,],aes(y=subj_corr,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Accuracy",title="Accuracy by WJ4 score in lsl") 
-#ggplot(lsl_acc_table[lsl_acc_table$Language>=20,],aes(y=subj_corr,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="Language", y="Accuracy",title="Accuracy by Language in lsl") 
-
-
-
+a1<-lm(formula = rt_slope ~ wj3_score * age + as.factor(handedness) + as.factor(gender), data = subj_table)
+summary(a1)
 ```
-
-
-## A partial correlation test between WJ4 score and Accuracy, controlling for age
-```{r,echo=FALSE}
-
-#correlation test between rt slope and wj4 score
-pcor.test(lsl_acc_table$wj3_score, lsl_acc_table$subj_corr, lsl_acc_table$age, method="pearson")
-```
-
-
-#Appendix
-##Table 1
-```{r,echo=FALSE}
-table_output <- subj_table[,c("list_lsl_id","mean_rt","rt_slope","dprime")]
-a <- seq(1,119,1)
-new_id <- sprintf("mtsl_%03d", a)
-table_output$list_lsl_id<-new_id
-colnames(table_output) <- c("ID","Mean RT","RT Slope","D'")
-kable(table_output)
-```
-
-##Table 2
-
-
-```{r,echo=FALSE}
-table_output2 <- lsl_acc_table[,c("acc_id","subj_corr","lsl_cond")]
-a <- seq(1,144,1)
-new_id <- sprintf("mtsl_%03d", a)
-table_output2$acc_id<-new_id
-colnames(table_output2) <- c("ID","accuracy(%)","condition")
-kable(table_output2)
-```
-
