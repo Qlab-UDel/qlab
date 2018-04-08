@@ -1,4 +1,4 @@
- qlab
+# qlab
 The lab repository for experiment and analysis codes
 # To Start
 ## Setup git
@@ -55,7 +55,7 @@ git push origin master
 ```
 git checkout -b branch_name
 ```
-3) work on this branch: edit files, add files, create new folders etc. Make sure you never rename or move existing folders on your end.
+3) work on this branch: edit files, add files, create new folders etc. Make sure you **never rename or move** existing folders on your end.
 
 4) commit changes to this branch
 ```
