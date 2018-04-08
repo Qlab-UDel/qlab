@@ -1,0 +1,296 @@
+---
+title: "lsl_analylsis"
+author: "An Nguyen"
+date: "November 13, 2017"
+output: html_document
+---
+```{r,echo=FALSE,warning=FALSE}
+#Loading library
+library(ggplot2)
+library(knitr)
+library(readr)
+library(psych)
+library(ppcor)
+```
+
+
+```{r,echo=FALSE,warning=FALSE}
+#Please refer to mturk_vsl to see the specific comment for each step, since they are similar
+wj3 <- read.csv("C:/Users/Qlab/Downloads/mturk/mturk_data/wj3_score.csv")
+scf <-  read.csv("C:/Users/Qlab/Downloads/mturk/mturk_data/scf.csv")
+
+language_1 = list(1,1,1,2,2,1,1,2,2,2,1,2,1,1,2,2,1,1,1,1,2,1,2,2,1,2,2,2,1,2,2,1)
+language_2 = list(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2)
+
+path <- "C:/Users/Qlab/Downloads/mturk/mturk_data/lsl/lsl_rt_extract/"
+files <- list.files(path=path, pattern="*.csv") 
+for(file in files)
+{
+   
+    assign(
+        gsub(" ","",file), 
+        read.csv(paste(path,file,sep="")))
+}
+lsl <- list()
+
+for(file in files){lsl <- append(lsl,list(eval(parse(text=file))))}
+lsl <- do.call(rbind.data.frame, lsl)
+
+lsl$rt <- lsl$col1-lsl$time
+
+lsl$stim_disp<- gsub(".png","",lsl$stim_disp)
+lsl$stim_disp<- gsub("image/","",lsl$stim_disp)
+
+
+lsl$col2<- gsub(".png","",lsl$col2)
+lsl$col2<- gsub("image/","",lsl$col2)
+
+row_number <- which(lsl$target==lsl$stim_disp)
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+for (i in row_number){
+        rt_col <- append(rt_col,lsl[i,][,"rt"])
+        trial <- append(trial,lsl[i,][,"X"])
+        id <- append(id,paste(lsl[i,]$par_id))
+    if (!is.na(lsl[i+1,][,"rt"])){
+        rt_col[(match(i,row_number))] <- (480+lsl[i+1,][,"rt"])
+        
+    }
+    if (!is.na(lsl[i-1,][,"rt"])){
+        rt_col[(match(i,row_number))] <- (0-lsl[i+1,][,"rt"])
+        
+    }}
+fam_trial <- data.frame(trial,rt_col,id)
+
+reindex <- rep(1:24,length(fam_trial$trial)/24)
+fam_trial$reindex <- reindex
+hit_rate <- NULL
+miss_rate <- NULL
+correct_rejection <- NULL
+false_alarm <- NULL
+mean_rt <- NULL
+rt_slope <- NULL
+
+mean_table <- fam_trial[which(fam_trial$rt_col!=-1 & fam_trial$rt_col<1000 & fam_trial$rt_col>-1000), ] #only accept answers in range of -1000 < x < 1000
+#exclude data that only press 1 (so rt slope cannot be computed)
+mean_table <- mean_table[mean_table$id!="mturk",]
+mean_table <- mean_table[mean_table$id!="A3SD02HCW68EUL",]
+mean_table <- mean_table[mean_table$id!="mtslAG1213",]
+list_lsl_id <- unique(mean_table$id)
+
+#note: if you run this to analyze ss2 - then no data is excluded
+
+for(id in list_lsl_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+  
+  hit_rate<-append(hit_rate,round(sum(!is.na(mean_table$rt_col[mean_table$id==id]))/24,digits =2))
+ 
+   miss_rate<-append(miss_rate,round(sum(is.na(fam_trial$rt_col[fam_trial$id==id]))/24,digits =2))
+ 
+  correct_rejection <- append(correct_rejection,  round(sum(is.na(lsl$rt[lsl$par_id==id]) & lsl$target[lsl$par_id==id]!=lsl$stim_disp[lsl$par_id==id])/552,digits=2) )  #552 is the total number of stimuli in the familiarization block
+  false_alarm <- append(false_alarm, round(sum(!is.na(lsl$rt[lsl$par_id==id]) & lsl$target[lsl$par_id==id]!=lsl$stim_disp[lsl$par_id==id])/552,digits=2) ) 
+}
+subj_table <- data.frame(list_lsl_id,mean_rt, rt_slope,hit_rate, miss_rate,correct_rejection,false_alarm)
+
+dprime<-NULL
+for (i in seq(from=1,to=length(subj_table$list_lsl_id),by=1)){dprime<-append(dprime,qnorm(subj_table[i,]$hit_rate-0.00000001)-qnorm(subj_table[i,]$false_alarm+0.000000001))} #minus 0.000000001 to avoid perfect hit rate
+subj_table$dprime <- round(dprime,3)
+
+
+
+
+#add in other info
+wj3$ID<-gsub("_wj3.csv","",wj3$ID)
+for(id in wj3$ID){ subj_table$wj3_score[which(subj_table$list_lsl_id==id)]<-wj3$total[wj3$ID==id]}
+for(id in scf$ID){ subj_table$age[which(subj_table$list_lsl_id==id)]<-paste(scf$age[scf$ID==id])}
+for(id in scf$ID){ subj_table$gender[which(subj_table$list_lsl_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in scf$ID){ subj_table$handedness[which(subj_table$list_lsl_id==id)]<-paste(scf$Hand[scf$ID==id])}
+for(id in scf$ID){ subj_table$Language[which(subj_table$list_lsl_id==id)]<-paste(scf$Language[scf$ID==id])}
+for(id in scf$ID){ subj_table$age[which(subj_table$list_lsl_id==id)]<-paste(scf$age[scf$ID==id])}
+subj_table$Language <- as.numeric(subj_table$Language)
+subj_table$age <- as.numeric(subj_table$age)
+
+#exclude data that is 2.5 std away from the mean
+lowerbound <- mean(subj_table$rt_slope) - 2.5*sd(subj_table$rt_slope)
+upperbound <- mean(subj_table$rt_slope) + 2.5*sd(subj_table$rt_slope)
+subj_table <- subj_table[subj_table$rt_slope>=lowerbound,]
+subj_table <- subj_table[subj_table$rt_slope<=upperbound,]
+
+subset2<- subj_table[subj_table$Language>=20,]
+subset1 <- subj_table[subj_table$gender!="Other",]
+
+
+```
+
+
+
+
+
+```{r,echo=FALSE,warning=FALSE}
+lslacc <- list()
+path <- "C:/Users/Qlab/Downloads/mturk/mturk_data/lsl/clean/"
+files <- list.files(path=path, pattern="*.csv") 
+lsl_acc1 <- read_csv("Z:/projects/mturk/raw/cleaned_data/lsl_acc1.csv")
+for(file in files)
+{
+   
+    assign(
+        gsub(" ","",file), 
+        read.csv(paste(path,file,sep="")))
+}
+for(file in files){lslacc <- append(lslacc,list(eval(parse(text=file))))}
+lslacc <- do.call(rbind.data.frame, lslacc)
+
+test_block <- lslacc[which(lslacc$trial_index<=242 & lslacc$trial_index>=16),]
+test_block <- test_block[!(test_block$stimulus==""),]
+test_block <- test_block[!(test_block$stimulus=="image/white.png" & test_block$key_press==-1),]
+
+ans <- NULL
+keyv <- NULL
+subj <- NULL
+cond<- NULL
+
+ row_numberv <- which(test_block$key_press != -1 & test_block$stimulus=="image/white.png")
+  for (i in row_numberv){
+    ans<-append(ans,test_block[i,]$key_press)
+    subj <- append(subj,paste(test_block[i,]$par_id))
+    cond <- append(cond,paste(test_block[i,]$cond))
+  }
+  
+lsl_accuracy <- data.frame(ans,cond)
+lsl_cond <- NULL
+for (i in seq(from=1,to=length(lsl_accuracy$cond),by=32)){lsl_cond<-append(lsl_cond,as.character(lsl_accuracy[i,]$cond))}
+
+keyv<- NULL
+
+
+for(cond in lsl_cond){
+    if (cond=="lang1"){keyv<-append(keyv,language_1)}
+    else if (cond=="lang2"){keyv<-append(keyv,language_2)}}
+
+
+
+#acc_id <- unique(lsl_accuracy$subj)
+
+lsl_accuracy$key <- keyv
+
+lsl_accuracy$ans <- gsub(50,2,lsl_accuracy$ans)
+lsl_accuracy$ans <- gsub(49,1,lsl_accuracy$ans)
+
+corr <- NULL
+for (i in seq(from=1,to=length(lsl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(lsl_accuracy[i,]$ans==lsl_accuracy[i,]$key))}
+lsl_accuracy$corr <- corr
+subj_corr <- NULL
+#for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(lsl_accuracy$corr[lsl_accuracy$subj==id])/32,digits=3))}
+#lsl_acc_table <- data.frame(acc_id,subj_corr,lsl_cond)
+lsl_acc_table <- read_csv("Z:/projects/mturk/raw/cleaned_data/lsl_acc1.csv")
+
+for(id in scf$ID){ lsl_acc_table$gender[which(lsl_acc_table$acc_id==id)]<-paste(scf$Gender[scf$ID==id])}
+
+for(id in scf$ID){ lsl_acc_table$gender[which(lsl_acc_table$acc_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in wj3$ID){ lsl_acc_table$wj3_score[which(lsl_acc_table$acc_id==id)]<-wj3$total[wj3$ID==id]}
+ for(id in scf$ID){ lsl_acc_table$age[which(lsl_acc_table$acc_id==id)]<-paste(scf$age[scf$ID==id])}
+ for(id in scf$ID){ lsl_acc_table$hand[which(lsl_acc_table$acc_id==id)]<-paste(scf$Hand[scf$ID==id])}
+
+ for(id in scf$ID){ lsl_acc_table$Language[which(lsl_acc_table$acc_id==id)]<-paste(scf$Language[scf$ID==id])}
+lsl_acc_table$Language <- as.numeric(lsl_acc_table$Language)
+lsl_acc_table$age <- as.numeric(lsl_acc_table$age)
+
+lb <- mean(lsl_acc_table$subj_corr) - 2.5*sd(lsl_acc_table$subj_corr)
+ub <- mean(lsl_acc_table$subj_corr) + 2.5*sd(lsl_acc_table$subj_corr)
+lsl_acc_table <- lsl_acc_table[lsl_acc_table$subj_corr>=lb,]
+lsl_acc_table <- lsl_acc_table[lsl_acc_table$subj_corr<=ub,]
+```
+
+### Cronbach's alpha score
+```{r,echo=FALSE,warning=FALSE}
+#d <- matrix(nrow=144,ncol=32)
+#for(i in seq(from=1,to=144,by=1)){d[i,] <- rbind(lsl_accuracy$corr[((i-1)*32+1):(i*32)])}
+#psych::alpha(d,check.keys = TRUE)$total$std.alpha
+
+lsl_acc1 <- lsl_accuracy[lsl_accuracy$cond=="lang1",]
+d1 <- matrix(nrow=77,ncol=32)
+for(i in seq(from=1,to=77,by=1)){d1[i,] <- rbind(lsl_acc1$corr[((i-1)*32+1):(i*32)])}
+a1<-psych::alpha(d1,check.keys = TRUE)$total$std.alpha
+
+lsl_acc2 <- lsl_accuracy[lsl_accuracy$cond=="lang2",]
+d2 <- matrix(nrow=68,ncol=32)
+for(i in seq(from=1,to=68,by=1)){d2[i,] <- rbind(lsl_acc2$corr[((i-1)*32+1):(i*32)])}
+a2<-psych::alpha(d2,check.keys = TRUE)$total$std.alpha
+alpha <- mean(a1,a2)
+print(alpha)
+```
+
+
+#Testing SL ability through the task:
+###Looking at RT 
+
+```{r,echo=FALSE,warning=FALSE}
+t.test(subj_table$rt_slope,mu=0,alternative="less")
+
+ggplot(mean_table,aes(y=rt_col,x=reindex))+geom_point(color='deepskyblue3') + geom_smooth(method='lm') + labs(x="Trial Index", y="Response time (ms)",title="Resposne time by trial index in lsl")
+
+```
+
+
+###Looking at Accuracy: the mean accuracy of this task is above chance (50%)
+```{r,echo=FALSE}
+t.test(lsl_acc_table$subj_corr,mu=0.5,alternative="greater")
+```
+
+#Relationship between SL and other factors
+
+##RT and other factors
+```{r,echo=FALSE,warning=FALSE,include=FALSE}
+#RT by WJ4 score
+ggplot(subj_table[subj_table$wj3_score>25,],aes(y=mean_rt,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by WJ4 score in lsl") + ylim(c(100,700))
+
+#RT Slope by WJ4
+ggplot(subj_table[subj_table$wj3_score>25,],aes(y=rt_slope,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time slope",title="Resposne time slope by WJ4 score in lsl")  + ylim(c(-15,15))
+
+#RT slope  vs WJ4 score by gender
+qplot(wj3_score,rt_slope,data=subset1[subset1$wj3_score>25,],facets=(. ~ gender),color= gender, main="lsl RT slope vs WJ4 scpre by gender", ylab="RT Slope", xlab="WJ4 score", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Gender")
+
+
+#Mean rt vs WJ4 score by Handedness
+qplot(wj3_score,mean_rt,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="lsl RT by Handedness", ylab="Response time", xlab="Trial index", ylim=c(100,600)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+#RT Slope vs WJ4 score by Handedness
+qplot(wj3_score,rt_slope,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="lsl RT slope by Handedness", ylab="Response time slope", xlab="Trial index", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+
+
+
+#RT by Language
+ggplot(subset2,aes(y=mean_rt,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by Language score in lsl") + ylim(c(100,700))
+#RT Slope by Language
+ggplot(subset2,aes(y=rt_slope,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time slope by Language score in lsl") + ylim(c(-15,15))
+
+```
+
+
+
+## A simple correlation test between WJ4 score and RT Slope, controlling for age
+```{r,echo=FALSE}
+
+#correlation test between rt slope and wj4 score
+pcor.test(subj_table$rt_slope, subj_table$wj3_score,subj_table$age,method="spearman")
+```
+
+## A simple correlation test between WJ4 score and Accuracy, controlling for age
+```{r,echo=FALSE}
+#correlation test between rt slope and wj4 score
+pcor.test(lsl_acc_table$subj_corr,lsl_acc_table$wj3_score,lsl_acc_table$age,method="spearman")
+```
+
+##RT slope and other factors
+```{r,echo=FALSE}
+a<-lm(formula = subj_corr ~ wj3_score * age + as.factor(hand) + as.factor(gender), data = lsl_acc_table)
+summary(a)
+```
+##Accuracy and other factors
+```{r,echo=FALSE}
+a1<-lm(formula = rt_slope ~ wj3_score * age + as.factor(handedness) + as.factor(gender), data = subj_table)
+summary(a1)
+```

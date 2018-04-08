@@ -1,0 +1,81 @@
+---
+title: "Untitled"
+author: "An Nguyen"
+date: "November 2, 2017"
+output: html_document
+---
+
+
+```{r}
+
+substrRight <- function(x, n){
+  substr(x, nchar(x)-n+1, nchar(x))
+}
+
+
+path <- "C:/Users/Qlab/Downloads/working_dir/wj3/"
+files <- list.files(path=path, pattern="*.csv") 
+
+cleandata <- function(file) {
+  
+test1_wj3 <- as.matrix(read.table(file,sep=","))
+
+
+data <- matrix(ncol=3)
+key= NULL
+rt  <- NULL
+stim <- NULL
+wj3 <- test1_wj3[1:(length(test1_wj3)-4)]
+ for (i in seq(from=1, to=length(wj3), by=3)) {
+   key <- rbind(key,as.numeric(substrRight(paste(wj3[i]),2)))
+   
+ }
+
+for (j in seq(from=2, to=length(wj3), by=3)) {
+    rt<- rbind(rt,as.numeric(substr(wj3[j],4,7)))
+}
+    
+
+for (k in seq(from=3, to=length(wj3), by=3)) {
+    stim<- rbind(stim, gsub('.{2}$','',unlist(strsplit(paste(wj3[k]), split='\\+5\\>', fixed=TRUE))[2]))
+    
+}
+stim[1,1] <- substr(stim[1,1],1,11)
+
+table <- data.frame(key,rt,stim)
+table <- table[!(table$key==37),] #remove data when people press the back button
+table <- table[!rev(duplicated(rev(table$stim))),] #remove duplicate data and keep the last row (since people can go back and change their response)
+
+colnames(table) <- c("Key press", "rt", "stimulus")
+write.csv(table, file = as.character(file))
+}
+
+for (file in files)
+{
+  cleandata(paste0(path,file))
+}
+
+ID <- NULL
+total <- NULL
+key <- read.csv("C:/Users/Qlab/Downloads/mturk_data/wj3_key.csv")
+compute_score <- function(name){
+score<-0
+file <- read.csv(paste0("C:/Users/Qlab/Downloads/working_dir/mt/",name))  
+  for (i in seq(from=1,to=length(file$stimulus),by=1))
+     {if (file$Key.press[i]==key$Key[i])
+     {
+         score <- score + 1
+     }}
+
+return(score)
+  
+}
+for (name in files){
+    score<-compute_score(name)
+    ID<-append(ID,as.character(name))
+    total<-append(total,score)
+}
+```
+
+
+

@@ -1,0 +1,201 @@
+---
+title: "Visual_analysis"
+author: "An Nguyen"
+date: "October 6, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r, include=FALSE}
+library(readr)
+library(knitr)
+```
+
+##Import files & clean data:
+
+```{r}
+path <- "C:/Users/Qlab/Downloads/pilot_data/"
+files <- list.files(path=path, pattern="*.csv")
+for(file in files)
+{
+    perpos <- which(strsplit(file, "")[[1]]==".")
+    assign(
+        gsub(" ","",substr(file, 1, perpos-1)), 
+        read.csv(paste(path,file,sep="")))
+}
+
+##since there's only one participant now, I haven't written the code to loop through all the name yet and just chose to encode this by hand. Will work on this later
+list_lsl <- list(trial_lsl_1,trial_lsl_2,trial_lsl_3) 
+list_vsl <- list(trial_vsl_1,trial_vsl_2,trial_vsl_3)
+list_tsl <- list(trial_tsl_1,trial_tsl_2,trial_tsl_3)
+list_ssl <- list(trial_ssl_1,trial_ssl_2,trial_ssl_3)
+
+lsl_col <- c("letter","trialnum","condition","fam_trials_key_resp.keys","fam_trials_key_resp.rt","target","PartID")
+templsl<-lapply(list_lsl, function(x){x[lsl_col]})
+lsl <- do.call(rbind.data.frame, templsl)
+lsl$condition <- as.character(lsl$condition)  
+
+tsl_col <- c("soundFile","trialnum","condition","target_tone_key_resp.keys","target_tone_key_resp.rt","target","PartID")
+temptsl<-lapply(list_tsl, function(x){x[tsl_col]})
+tsl <- do.call(rbind.data.frame, temptsl)
+tsl$condition <- as.character(tsl$condition)  
+
+vsl_col <- c("image","trialnum","condition","fam_block_trial_key_resp.keys","fam_block_trial_key_resp.rt","target","PartID")
+tempvsl<-lapply(list_vsl, function(x){x[vsl_col]})
+vsl <- do.call(rbind.data.frame, tempvsl)
+vsl$condition <- as.character(vsl$condition)  
+
+ssl_col <- c("soundFile","trialnum","condition","fam_trials_key_resp.keys","fam_trials_key_resp.rt","target","PartID")
+tempssl<-lapply(list_ssl, function(x){x[ssl_col]})
+ssl <- do.call(rbind.data.frame, tempssl)
+ssl$condition <- as.character(ssl$condition)  
+
+##make the header of every file the same for easier analysis
+names(ssl) <- c("stimuli","trialnum","condition","fam_trials_key_resp.keys","fam_trials_key_resp.rt","target","PartID")
+names(vsl) <- c("stimuli","trialnum","condition","fam_trials_key_resp.keys","fam_trials_key_resp.rt","target","PartID")
+names(lsl) <- c("stimuli","trialnum","condition","fam_trials_key_resp.keys","fam_trials_key_resp.rt","target","PartID")
+names(tsl) <- c("stimuli","trialnum","condition","fam_trials_key_resp.keys","fam_trials_key_resp.rt","target","PartID")
+
+```
+
+##Start the analysis
+```{r}
+compute_visual <- function(data)
+{
+rt_col <- NULL
+cond <- NULL
+trial <- NULL
+name = deparse(substitute(data))
+if (name=="lsl"){
+        row_number <- which(tolower(data[,"target"])==tolower(substr(data[,"stimuli"],1,1)) & data[,"stimuli"]!="blank.png")}
+if (name=="vsl"){
+        row_number <- which(data$target==substr(data$stimuli,6,6))}
+rt <- matrix(nrow=length(row_number), ncol=1)
+for (i in row_number){ 
+    rt_col <- append(rt_col,data[i,][,"fam_trials_key_resp.rt"])
+    cond <- append(cond,data[i,][,"condition"])
+    trial <- append(trial,data[i,][,"trialnum"])
+    if (!is.na(data[i-1,][,"fam_trials_key_resp.rt"]) & (substr(data[i-1,]$stimuli,1,1) != data[i-1,][,"target"]) & (substr(data[i-2,]$stimuli,1,1) != data[i-2,][,"target"])){
+    rt_col[(match(i,row_number))] <- 0-data[i-1,][,"fam_trials_key_resp.rt"]
+  
+    }
+}
+
+rt_df1 <- data.frame(trial,rt_col,cond)
+rt_df1 <- rt_df1[order(trial),]
+mean_rt <- mean(rt_col, na.rm=TRUE)
+R_rt <- mean(rt_df1$rt_col[rt_df1$cond=="R"], na.rm=TRUE)
+S_rt <- mean(rt_df1$rt_col[rt_df1$cond=="S"], na.rm=TRUE)
+missR <- sum(is.na(rt_df1$rt_col[rt_df1$cond=="R"]))
+missS <- sum(is.na(rt_df1$rt_col[rt_df1$cond=="S"]))
+rt_df2 <- data.frame(mean_rt,R_rt,S_rt,missR,missS)
+colnames(rt_df2) <- c("mean_rt", "R_rt", "S_rt","R_miss","S_miss")
+print(kable(rt_df2))
+return(rt_df1)
+}
+```
+
+```{r}
+compute_auditory <- function(data)
+{
+rt_col <- NULL
+cond <- NULL
+trial <- NULL
+name = deparse(substitute(data))
+if (name=="tsl" || name=="ssl"){
+        row_number <- which(tolower(data$target)==tolower(substr(data$stimuli,1,2)))}
+rt <- matrix(nrow=length(row_number), ncol=1)
+for (i in row_number){ 
+rt_col <- append(rt_col,data[i,][,"fam_trials_key_resp.rt"])
+cond <- append(cond,data[i,][,"condition"])
+trial <- append(trial,data[i,][,"trialnum"])
+if (!is.na(data[i+1,][,"fam_trials_key_resp.rt"]))
+{
+    rt_col[(match(i,row_number))] <- 0.48+data[i+1,][,"fam_trials_key_resp.rt"]
+  
+}
+if (!is.na(data[i-1,][,"fam_trials_key_resp.rt"]))
+{
+    rt_col[(match(i,row_number))] <- 0-data[i-1,][,"fam_trials_key_resp.rt"]
+}
+}
+rt_df1 <- data.frame(trial,rt_col,cond)
+rt_df1 <- rt_df1[order(trial),]
+mean_rt <- mean(rt_col, na.rm=TRUE)
+R_rt <- mean(rt_df1$rt_col[rt_df1$cond=="R"], na.rm=TRUE)
+S_rt <- mean(rt_df1$rt_col[rt_df1$cond=="S"], na.rm=TRUE)
+missR <- sum(is.na(rt_df1$rt_col[rt_df1$cond=="R"]))
+missS <- sum(is.na(rt_df1$rt_col[rt_df1$cond=="S"]))
+rt_df2 <- data.frame(mean_rt,R_rt,S_rt,missR,missS)
+colnames(rt_df2) <- c("mean_rt", "R_rt", "S_rt","R_miss","S_miss")
+print(rt_df2)
+return(rt_df1)
+}
+```
+
+
+```{r}
+visual_plot <- function(rt_df1) {
+par(mfrow=c(1,2))
+plot(rt_df1$rt_col[rt_df1$cond=="S"]~rt_df1$trial[rt_df1$cond=="S"], xlab="Trial Number",ylab="Response Time (s)", main = "Structure block",col='darkblue',pch=19, xlim=c(0,1000),ylim=c(0,1))
+reg <- lm(rt_df1$rt_col[rt_df1$cond=="S"]~rt_df1$trial[rt_df1$cond=="S"])
+abline(reg)
+plot(rt_df1$rt_col[rt_df1$cond=="R"]~rt_df1$trial[rt_df1$cond=="R"], xlab="Trial Number",ylab="Response Time (s)", main = "Random block",col='darkgreen',pch=19,xlim=c(0,1000),ylim=c(0,1))
+regR <- lm(rt_df1$rt_col[rt_df1$cond=="R"]~rt_df1$trial[rt_df1$cond=="R"])
+abline(reg)
+}
+
+test_significant <- function(rt_df1) {t.test(rt_df1$rt_col[rt_df1$cond=="S"],rt_df1$rt_col[rt_df1$cond=="R"],alternative="less")}
+
+```
+
+#TSL
+```{r}
+tsl_rt <- compute_auditory(tsl)
+```
+```{r,echo=FALSE}
+plot(tsl_rt$rt_col[tsl_rt$cond=="S"]~tsl_rt$trial[tsl_rt$cond=="S"], xlab="Trial Number",ylab="Response Time (s)", main = "Structure block",col='darkblue',pch=19, xlim=c(0,1000),ylim=c(0,1))
+reg <- lm(tsl_rt$rt_col[tsl_rt$cond=="S"]~tsl_rt$trial[tsl_rt$cond=="S"])
+abline(reg)
+```
+
+#SSL
+```{r}
+ssl_rt <- compute_auditory(ssl)
+```
+```{r,echo=FALSE}
+visual_plot(ssl_rt)
+```
+
+#LSL
+```{r}
+lsl_rt <- compute_visual(lsl)
+```
+```{r,echo=FALSE}
+visual_plot(lsl_rt)
+
+```
+#VSL
+```{r}
+vsl_rt <- compute_visual(vsl)
+```
+```{r,echo=FALSE}
+visual_plot(vsl_rt)
+
+
+```
+
+
+#ACCURACY
+```{r, warning=FALSE}
+lsl_acc <- mean(as.numeric(paste(trial_lsl_3$question_key_resp.corr)),na.rm=TRUE)
+vsl_acc <- mean(as.numeric(paste(trial_vsl_3$question_key_resp.corr)),na.rm=TRUE)
+ssl_acc <- mean(as.numeric(paste(trial_ssl_3$question_key_resp.corr)),na.rm=TRUE)
+tsl_acc <- mean(as.numeric(paste(trial_tsl_3$key_resp_6.corr)),na.rm=TRUE)
+table <- cbind(lsl_acc,vsl_acc,ssl_acc,tsl_acc)
+colnames(table)<-c("LSL","VSL","SSL","TSL")
+kable(table)
+```
+

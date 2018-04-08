@@ -1,0 +1,39 @@
+---
+title: "concat_mturk"
+author: "An Nguyen"
+date: "April 5, 2018"
+output: html_document
+---
+
+```{r}
+#This is the cleaning script to concat all the online experiment files together. You can run the same thing with vsl and ssl, just change the variable a bit. LSL has a different dataframe because we used the animation plug-in to ensure present rate, so this won't apply. Please refer to lsl_clean_file to see how to extract the rt for lsl.
+
+total_tsl_trial <- 48
+length_tsl <- 832 #number of rows in a tsl excel file
+total_test_trial <- 32
+
+#importing raw files
+tsl <- list()
+tsl_par_id <- NULL
+path <- "C:/Users/Qlab/Downloads/abcd/raw/"  
+files <- list.files(path=path, pattern="*tsl.csv") 
+for(file in files)
+{
+   
+    assign(
+        gsub(" ","",file), 
+        read.csv(paste(path,file,sep="")))
+}
+for(file in files){tsl <- append(tsl,list(eval(parse(text=file))))}
+
+tsl <- do.call(rbind.data.frame, tsl)
+
+#add an ID column for each row
+for (i in seq(from=2,to=length(tsl$responses),by=length_tsl)){tsl_par_id<-append(tsl_par_id,rep(as.character(tsl$value[i]),length_tsl))}
+tsl$par_id <- tsl_par_id
+
+tsl$stimulus<- gsub(".wav","",tsl$stimulus)
+tsl$stimulus<- gsub("../../tones/","",tsl$stimulus)
+
+write.csv(tsl,"tsl.csv")
+```
