@@ -1,0 +1,3784 @@
+10.8435 	WARNING 	User requested fullscreen with size [1366  768], but screen is actually [1920, 1080]. Using actual size
+11.3927 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color='grey', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x205A4050>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1920, 1080]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+11.3928 	EXP 	window1: recordFrameIntervals = False
+11.4758 	EXP 	window1: recordFrameIntervals = True
+11.5675 	EXP 	window1: recordFrameIntervals = False
+11.6456 	EXP 	Created instr7_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr7_text', opacity=1.0, ori=0, pos=array([-0.3,  0. ]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+11.6507 	EXP 	Created instr7_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, image=u'Alien11.BMP', interpolate=True, mask=None, maskParams=None, name='instr7_image', opacity=1.0, ori=0.0, pos=array([ 0.5,  0. ]), size=array([ 0.3375    ,  0.34814815]), texRes=128, units=u'norm', win=Window(...))
+12.5339 	EXP 	Set  sound=C
+12.5391 	EXP 	Set  sound=reminder_pu.wav
+12.5391 	EXP 	Sound  set volume 1.000
+12.5452 	EXP 	Created treminder_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='treminder_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=u'Now press the button when you hear this!', units=u'norm', win=Window(...), wrapWidth=1)
+12.5484 	EXP 	Set  sound=reminder_2C.wav
+12.5484 	EXP 	Sound  set volume 1.000
+12.5512 	EXP 	Created TA_first = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='TA_first', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=u'+', units=u'norm', win=Window(...), wrapWidth=1)
+12.5727 	EXP 	Set  sound=A
+12.5727 	EXP 	Sound  set volume 1.000
+12.5781 	EXP 	Created fam_trials_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, image=u'Alien11.BMP', interpolate=True, mask=None, maskParams=None, name='fam_trials_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.3375    ,  0.34814815]), texRes=128, units=u'norm', win=Window(...))
+12.5994 	EXP 	Set  sound=A
+12.5994 	EXP 	Sound  set volume 1.000
+12.6100 	EXP 	Created alien = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, image='AlienTrumpet.png', interpolate=True, mask=None, maskParams=None, name='alien', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.196875  ,  0.48518519]), texRes=128, units=u'norm', win=Window(...))
+12.6106 	EXP 	window1: blendMode = 'avg'
+12.6518 	EXP 	instr7_text: autoDraw = True
+12.6518 	EXP 	instr7_image: autoDraw = True
+12.6521 	EXP 	window1: blendMode = 'avg'
+12.6546 	EXP 	window1: blendMode = 'avg'
+12.6596 	EXP 	window1: blendMode = 'avg'
+12.6681 	EXP 	window1: blendMode = 'avg'
+12.6762 	EXP 	window1: blendMode = 'avg'
+12.6846 	EXP 	window1: blendMode = 'avg'
+12.6931 	EXP 	window1: blendMode = 'avg'
+12.7013 	EXP 	window1: blendMode = 'avg'
+12.7097 	EXP 	window1: blendMode = 'avg'
+12.7180 	EXP 	window1: blendMode = 'avg'
+12.7263 	EXP 	window1: blendMode = 'avg'
+12.7348 	EXP 	window1: blendMode = 'avg'
+12.7430 	EXP 	window1: blendMode = 'avg'
+12.7513 	EXP 	window1: blendMode = 'avg'
+12.7596 	EXP 	window1: blendMode = 'avg'
+12.7680 	EXP 	window1: blendMode = 'avg'
+12.7763 	EXP 	window1: blendMode = 'avg'
+12.7846 	EXP 	window1: blendMode = 'avg'
+12.7930 	EXP 	window1: blendMode = 'avg'
+12.8013 	EXP 	window1: blendMode = 'avg'
+12.8096 	EXP 	window1: blendMode = 'avg'
+12.8179 	EXP 	window1: blendMode = 'avg'
+12.8262 	EXP 	window1: blendMode = 'avg'
+12.8482 	EXP 	window1: blendMode = 'avg'
+12.8490 	EXP 	window1: blendMode = 'avg'
+12.8510 	EXP 	window1: blendMode = 'avg'
+12.8595 	EXP 	window1: blendMode = 'avg'
+12.8678 	EXP 	window1: blendMode = 'avg'
+12.8762 	EXP 	window1: blendMode = 'avg'
+12.8845 	EXP 	window1: blendMode = 'avg'
+12.8928 	EXP 	window1: blendMode = 'avg'
+12.9011 	EXP 	window1: blendMode = 'avg'
+12.9095 	EXP 	window1: blendMode = 'avg'
+12.9178 	EXP 	window1: blendMode = 'avg'
+12.9261 	EXP 	window1: blendMode = 'avg'
+12.9344 	EXP 	window1: blendMode = 'avg'
+12.9428 	EXP 	window1: blendMode = 'avg'
+12.9514 	EXP 	window1: blendMode = 'avg'
+12.9595 	EXP 	window1: blendMode = 'avg'
+12.9679 	EXP 	window1: blendMode = 'avg'
+12.9762 	EXP 	window1: blendMode = 'avg'
+12.9845 	DATA 	Keypress: 5
+12.9852 	EXP 	Sound  started
+12.9926 	EXP 	instr7_text: autoDraw = False
+12.9926 	EXP 	instr7_image: autoDraw = False
+15.8682 	EXP 	Sound  stopped
+15.8714 	EXP 	Imported auditory_run5_1.csv as conditions, 48 conditions, 6 params
+15.8775 	EXP 	Created sequence: sequential, trialTypes=48, nReps=1, seed=None
+15.8779 	EXP 	New trial (rep=0, index=0): {'soundFile': u'bi.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 193, 'condition': u'R'}
+15.8814 	EXP 	Set  sound=bi.wav
+15.8817 	EXP 	Sound  started
+15.8825 	EXP 	fam_trials_image: autoDraw = True
+16.3349 	EXP 	Sound  stopped
+16.3516 	EXP 	Sound  stopped
+16.3521 	EXP 	New trial (rep=0, index=1): {'soundFile': u'ba.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 194, 'condition': u'R'}
+16.3535 	EXP 	Set  sound=ba.wav
+16.3539 	EXP 	Sound  started
+16.3599 	EXP 	fam_trials_image: autoDraw = False
+16.3599 	EXP 	fam_trials_image: autoDraw = True
+16.8100 	EXP 	Sound  stopped
+16.8269 	EXP 	Sound  stopped
+16.8272 	EXP 	New trial (rep=0, index=2): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 195, 'condition': u'R'}
+16.8285 	EXP 	Set  sound=bi.wav
+16.8289 	EXP 	Sound  started
+16.8349 	EXP 	fam_trials_image: autoDraw = False
+16.8349 	EXP 	fam_trials_image: autoDraw = False
+16.8349 	EXP 	fam_trials_image: autoDraw = True
+17.2852 	EXP 	Sound  stopped
+17.3019 	EXP 	Sound  stopped
+17.3023 	EXP 	New trial (rep=0, index=3): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 196, 'condition': u'R'}
+17.3037 	EXP 	Set  sound=ta.wav
+17.3040 	EXP 	Sound  started
+17.3100 	EXP 	fam_trials_image: autoDraw = False
+17.3100 	EXP 	fam_trials_image: autoDraw = False
+17.3100 	EXP 	fam_trials_image: autoDraw = True
+17.7603 	EXP 	Sound  stopped
+17.7770 	EXP 	Sound  stopped
+17.7773 	EXP 	New trial (rep=0, index=4): {'soundFile': u'pa.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 197, 'condition': u'R'}
+17.7786 	EXP 	Set  sound=pa.wav
+17.7790 	EXP 	Sound  started
+17.7851 	EXP 	fam_trials_image: autoDraw = False
+17.7851 	EXP 	fam_trials_image: autoDraw = False
+17.7851 	EXP 	fam_trials_image: autoDraw = True
+18.2353 	EXP 	Sound  stopped
+18.2520 	EXP 	Sound  stopped
+18.2523 	EXP 	New trial (rep=0, index=5): {'soundFile': u'du.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 198, 'condition': u'R'}
+18.2537 	EXP 	Set  sound=du.wav
+18.2540 	EXP 	Sound  started
+18.2602 	EXP 	fam_trials_image: autoDraw = False
+18.2602 	EXP 	fam_trials_image: autoDraw = False
+18.2602 	EXP 	fam_trials_image: autoDraw = True
+18.7103 	EXP 	Sound  stopped
+18.7271 	EXP 	Sound  stopped
+18.7274 	EXP 	New trial (rep=0, index=6): {'soundFile': u'da.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 199, 'condition': u'R'}
+18.7288 	EXP 	Set  sound=da.wav
+18.7291 	EXP 	Sound  started
+18.7353 	EXP 	fam_trials_image: autoDraw = False
+18.7353 	EXP 	fam_trials_image: autoDraw = False
+18.7353 	EXP 	fam_trials_image: autoDraw = True
+19.1855 	EXP 	Sound  stopped
+19.2023 	EXP 	Sound  stopped
+19.2026 	EXP 	New trial (rep=0, index=7): {'soundFile': u'tu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 200, 'condition': u'R'}
+19.2040 	EXP 	Set  sound=tu.wav
+19.2044 	EXP 	Sound  started
+19.2104 	EXP 	fam_trials_image: autoDraw = False
+19.2104 	EXP 	fam_trials_image: autoDraw = False
+19.2104 	EXP 	fam_trials_image: autoDraw = True
+19.6605 	EXP 	Sound  stopped
+19.6773 	EXP 	Sound  stopped
+19.6776 	EXP 	New trial (rep=0, index=8): {'soundFile': u'bu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 201, 'condition': u'R'}
+19.6789 	EXP 	Set  sound=bu.wav
+19.6793 	EXP 	Sound  started
+19.6855 	EXP 	fam_trials_image: autoDraw = False
+19.6855 	EXP 	fam_trials_image: autoDraw = False
+19.6855 	EXP 	fam_trials_image: autoDraw = True
+20.1356 	EXP 	Sound  stopped
+20.1524 	EXP 	Sound  stopped
+20.1527 	EXP 	New trial (rep=0, index=9): {'soundFile': u'pu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 202, 'condition': u'R'}
+20.1540 	EXP 	Set  sound=pu.wav
+20.1544 	EXP 	Sound  started
+20.1606 	EXP 	fam_trials_image: autoDraw = False
+20.1606 	EXP 	fam_trials_image: autoDraw = False
+20.1606 	EXP 	fam_trials_image: autoDraw = True
+20.5193 	DATA 	Keypress: 3
+20.6107 	EXP 	Sound  stopped
+20.6275 	EXP 	Sound  stopped
+20.6279 	EXP 	New trial (rep=0, index=10): {'soundFile': u'ti.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 203, 'condition': u'R'}
+20.6292 	EXP 	Set  sound=ti.wav
+20.6296 	EXP 	Sound  started
+20.6356 	EXP 	fam_trials_image: autoDraw = False
+20.6356 	EXP 	fam_trials_image: autoDraw = False
+20.6356 	EXP 	fam_trials_image: autoDraw = True
+21.0858 	EXP 	Sound  stopped
+21.1026 	EXP 	Sound  stopped
+21.1029 	EXP 	New trial (rep=0, index=11): {'soundFile': u'pi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 204, 'condition': u'R'}
+21.1043 	EXP 	Set  sound=pi.wav
+21.1047 	EXP 	Sound  started
+21.1107 	EXP 	fam_trials_image: autoDraw = False
+21.1107 	EXP 	fam_trials_image: autoDraw = False
+21.1107 	EXP 	fam_trials_image: autoDraw = True
+21.1109 	DATA 	Keypress: 3
+21.5609 	EXP 	Sound  stopped
+21.5777 	EXP 	Sound  stopped
+21.5781 	EXP 	New trial (rep=0, index=12): {'soundFile': u'bu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 205, 'condition': u'R'}
+21.5795 	EXP 	Set  sound=bu.wav
+21.5798 	EXP 	Sound  started
+21.5858 	EXP 	fam_trials_image: autoDraw = False
+21.5858 	EXP 	fam_trials_image: autoDraw = False
+21.5858 	EXP 	fam_trials_image: autoDraw = True
+22.0359 	EXP 	Sound  stopped
+22.0527 	EXP 	Sound  stopped
+22.0530 	EXP 	New trial (rep=0, index=13): {'soundFile': u'tu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 206, 'condition': u'R'}
+22.0544 	EXP 	Set  sound=tu.wav
+22.0548 	EXP 	Sound  started
+22.0609 	EXP 	fam_trials_image: autoDraw = False
+22.0609 	EXP 	fam_trials_image: autoDraw = False
+22.0609 	EXP 	fam_trials_image: autoDraw = True
+22.5111 	EXP 	Sound  stopped
+22.5278 	EXP 	Sound  stopped
+22.5282 	EXP 	New trial (rep=0, index=14): {'soundFile': u'ba.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 207, 'condition': u'R'}
+22.5296 	EXP 	Set  sound=ba.wav
+22.5300 	EXP 	Sound  started
+22.5360 	EXP 	fam_trials_image: autoDraw = False
+22.5360 	EXP 	fam_trials_image: autoDraw = False
+22.5360 	EXP 	fam_trials_image: autoDraw = True
+22.9862 	EXP 	Sound  stopped
+23.0029 	EXP 	Sound  stopped
+23.0032 	EXP 	New trial (rep=0, index=15): {'soundFile': u'pi.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 208, 'condition': u'R'}
+23.0046 	EXP 	Set  sound=pi.wav
+23.0049 	EXP 	Sound  started
+23.0111 	EXP 	fam_trials_image: autoDraw = False
+23.0111 	EXP 	fam_trials_image: autoDraw = False
+23.0111 	EXP 	fam_trials_image: autoDraw = True
+23.4612 	EXP 	Sound  stopped
+23.4780 	EXP 	Sound  stopped
+23.4783 	EXP 	New trial (rep=0, index=16): {'soundFile': u'di.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 209, 'condition': u'R'}
+23.4796 	EXP 	Set  sound=di.wav
+23.4800 	EXP 	Sound  started
+23.4862 	EXP 	fam_trials_image: autoDraw = False
+23.4862 	EXP 	fam_trials_image: autoDraw = False
+23.4862 	EXP 	fam_trials_image: autoDraw = True
+23.9364 	EXP 	Sound  stopped
+23.9531 	EXP 	Sound  stopped
+23.9534 	EXP 	New trial (rep=0, index=17): {'soundFile': u'da.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 210, 'condition': u'R'}
+23.9547 	EXP 	Set  sound=da.wav
+23.9551 	EXP 	Sound  started
+23.9612 	EXP 	fam_trials_image: autoDraw = False
+23.9612 	EXP 	fam_trials_image: autoDraw = False
+23.9612 	EXP 	fam_trials_image: autoDraw = True
+24.4114 	EXP 	Sound  stopped
+24.4282 	EXP 	Sound  stopped
+24.4285 	EXP 	New trial (rep=0, index=18): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 211, 'condition': u'R'}
+24.4298 	EXP 	Set  sound=du.wav
+24.4302 	EXP 	Sound  started
+24.4363 	EXP 	fam_trials_image: autoDraw = False
+24.4363 	EXP 	fam_trials_image: autoDraw = False
+24.4363 	EXP 	fam_trials_image: autoDraw = True
+24.8865 	EXP 	Sound  stopped
+24.9032 	EXP 	Sound  stopped
+24.9035 	EXP 	New trial (rep=0, index=19): {'soundFile': u'di.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 212, 'condition': u'R'}
+24.9049 	EXP 	Set  sound=di.wav
+24.9053 	EXP 	Sound  started
+24.9114 	EXP 	fam_trials_image: autoDraw = False
+24.9114 	EXP 	fam_trials_image: autoDraw = False
+24.9114 	EXP 	fam_trials_image: autoDraw = True
+25.3616 	EXP 	Sound  stopped
+25.3784 	EXP 	Sound  stopped
+25.3788 	EXP 	New trial (rep=0, index=20): {'soundFile': u'pu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 213, 'condition': u'R'}
+25.3802 	EXP 	Set  sound=pu.wav
+25.3806 	EXP 	Sound  started
+25.3866 	EXP 	fam_trials_image: autoDraw = False
+25.3866 	EXP 	fam_trials_image: autoDraw = False
+25.3866 	EXP 	fam_trials_image: autoDraw = True
+25.8367 	EXP 	Sound  stopped
+25.8534 	EXP 	Sound  stopped
+25.8537 	EXP 	New trial (rep=0, index=21): {'soundFile': u'ti.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 214, 'condition': u'R'}
+25.8551 	EXP 	Set  sound=ti.wav
+25.8554 	EXP 	Sound  started
+25.8616 	EXP 	fam_trials_image: autoDraw = False
+25.8616 	EXP 	fam_trials_image: autoDraw = False
+25.8616 	EXP 	fam_trials_image: autoDraw = True
+26.0952 	DATA 	Keypress: 3
+26.3118 	EXP 	Sound  stopped
+26.3285 	EXP 	Sound  stopped
+26.3289 	EXP 	New trial (rep=0, index=22): {'soundFile': u'pa.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 215, 'condition': u'R'}
+26.3302 	EXP 	Set  sound=pa.wav
+26.3305 	EXP 	Sound  started
+26.3367 	EXP 	fam_trials_image: autoDraw = False
+26.3367 	EXP 	fam_trials_image: autoDraw = False
+26.3367 	EXP 	fam_trials_image: autoDraw = True
+26.7869 	EXP 	Sound  stopped
+26.8036 	EXP 	Sound  stopped
+26.8040 	EXP 	New trial (rep=0, index=23): {'soundFile': u'ta.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 216, 'condition': u'R'}
+26.8053 	EXP 	Set  sound=ta.wav
+26.8057 	EXP 	Sound  started
+26.8118 	EXP 	fam_trials_image: autoDraw = False
+26.8118 	EXP 	fam_trials_image: autoDraw = False
+26.8118 	EXP 	fam_trials_image: autoDraw = True
+27.2620 	EXP 	Sound  stopped
+27.2787 	EXP 	Sound  stopped
+27.2791 	EXP 	New trial (rep=0, index=24): {'soundFile': u'bi.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 217, 'condition': u'R'}
+27.2804 	EXP 	Set  sound=bi.wav
+27.2808 	EXP 	Sound  started
+27.2869 	EXP 	fam_trials_image: autoDraw = False
+27.2869 	EXP 	fam_trials_image: autoDraw = False
+27.2869 	EXP 	fam_trials_image: autoDraw = True
+27.7371 	EXP 	Sound  stopped
+27.7538 	EXP 	Sound  stopped
+27.7541 	EXP 	New trial (rep=0, index=25): {'soundFile': u'du.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 218, 'condition': u'R'}
+27.7554 	EXP 	Set  sound=du.wav
+27.7558 	EXP 	Sound  started
+27.7620 	EXP 	fam_trials_image: autoDraw = False
+27.7620 	EXP 	fam_trials_image: autoDraw = False
+27.7620 	EXP 	fam_trials_image: autoDraw = True
+28.2122 	EXP 	Sound  stopped
+28.2288 	EXP 	Sound  stopped
+28.2292 	EXP 	New trial (rep=0, index=26): {'soundFile': u'ti.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 219, 'condition': u'R'}
+28.2305 	EXP 	Set  sound=ti.wav
+28.2309 	EXP 	Sound  started
+28.2371 	EXP 	fam_trials_image: autoDraw = False
+28.2371 	EXP 	fam_trials_image: autoDraw = False
+28.2371 	EXP 	fam_trials_image: autoDraw = True
+28.6873 	EXP 	Sound  stopped
+28.7040 	EXP 	Sound  stopped
+28.7044 	EXP 	New trial (rep=0, index=27): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 220, 'condition': u'R'}
+28.7058 	EXP 	Set  sound=du.wav
+28.7062 	EXP 	Sound  started
+28.7122 	EXP 	fam_trials_image: autoDraw = False
+28.7122 	EXP 	fam_trials_image: autoDraw = False
+28.7122 	EXP 	fam_trials_image: autoDraw = True
+29.1623 	EXP 	Sound  stopped
+29.1790 	EXP 	Sound  stopped
+29.1793 	EXP 	New trial (rep=0, index=28): {'soundFile': u'pi.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 221, 'condition': u'R'}
+29.1807 	EXP 	Set  sound=pi.wav
+29.1810 	EXP 	Sound  started
+29.1872 	EXP 	fam_trials_image: autoDraw = False
+29.1872 	EXP 	fam_trials_image: autoDraw = False
+29.1872 	EXP 	fam_trials_image: autoDraw = True
+29.6375 	EXP 	Sound  stopped
+29.6542 	EXP 	Sound  stopped
+29.6546 	EXP 	New trial (rep=0, index=29): {'soundFile': u'ba.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 222, 'condition': u'R'}
+29.6560 	EXP 	Set  sound=ba.wav
+29.6564 	EXP 	Sound  started
+29.6623 	EXP 	fam_trials_image: autoDraw = False
+29.6623 	EXP 	fam_trials_image: autoDraw = False
+29.6623 	EXP 	fam_trials_image: autoDraw = True
+30.1124 	EXP 	Sound  stopped
+30.1292 	EXP 	Sound  stopped
+30.1295 	EXP 	New trial (rep=0, index=30): {'soundFile': u'bu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 223, 'condition': u'R'}
+30.1309 	EXP 	Set  sound=bu.wav
+30.1312 	EXP 	Sound  started
+30.1374 	EXP 	fam_trials_image: autoDraw = False
+30.1374 	EXP 	fam_trials_image: autoDraw = False
+30.1374 	EXP 	fam_trials_image: autoDraw = True
+30.5875 	EXP 	Sound  stopped
+30.6043 	EXP 	Sound  stopped
+30.6046 	EXP 	New trial (rep=0, index=31): {'soundFile': u'pa.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 224, 'condition': u'R'}
+30.6059 	EXP 	Set  sound=pa.wav
+30.6063 	EXP 	Sound  started
+30.6125 	EXP 	fam_trials_image: autoDraw = False
+30.6125 	EXP 	fam_trials_image: autoDraw = False
+30.6125 	EXP 	fam_trials_image: autoDraw = True
+30.9462 	DATA 	Keypress: 3
+31.0626 	EXP 	Sound  stopped
+31.0796 	EXP 	Sound  stopped
+31.0800 	EXP 	New trial (rep=0, index=32): {'soundFile': u'pi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 225, 'condition': u'R'}
+31.0816 	EXP 	Set  sound=pi.wav
+31.0821 	EXP 	Sound  started
+31.0876 	EXP 	fam_trials_image: autoDraw = False
+31.0876 	EXP 	fam_trials_image: autoDraw = False
+31.0876 	EXP 	fam_trials_image: autoDraw = True
+31.5377 	EXP 	Sound  stopped
+31.5545 	EXP 	Sound  stopped
+31.5549 	EXP 	New trial (rep=0, index=33): {'soundFile': u'pa.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 226, 'condition': u'R'}
+31.5563 	EXP 	Set  sound=pa.wav
+31.5567 	EXP 	Sound  started
+31.5626 	EXP 	fam_trials_image: autoDraw = False
+31.5626 	EXP 	fam_trials_image: autoDraw = False
+31.5626 	EXP 	fam_trials_image: autoDraw = True
+32.0128 	EXP 	Sound  stopped
+32.0295 	EXP 	Sound  stopped
+32.0298 	EXP 	New trial (rep=0, index=34): {'soundFile': u'ti.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 227, 'condition': u'R'}
+32.0312 	EXP 	Set  sound=ti.wav
+32.0316 	EXP 	Sound  started
+32.0377 	EXP 	fam_trials_image: autoDraw = False
+32.0377 	EXP 	fam_trials_image: autoDraw = False
+32.0377 	EXP 	fam_trials_image: autoDraw = True
+32.4879 	EXP 	Sound  stopped
+32.5046 	EXP 	Sound  stopped
+32.5049 	EXP 	New trial (rep=0, index=35): {'soundFile': u'da.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 228, 'condition': u'R'}
+32.5063 	EXP 	Set  sound=da.wav
+32.5066 	EXP 	Sound  started
+32.5128 	EXP 	fam_trials_image: autoDraw = False
+32.5128 	EXP 	fam_trials_image: autoDraw = False
+32.5128 	EXP 	fam_trials_image: autoDraw = True
+32.9630 	EXP 	Sound  stopped
+32.9799 	EXP 	Sound  stopped
+32.9803 	EXP 	New trial (rep=0, index=36): {'soundFile': u'pu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 229, 'condition': u'R'}
+32.9817 	EXP 	Set  sound=pu.wav
+32.9821 	EXP 	Sound  started
+32.9879 	EXP 	fam_trials_image: autoDraw = False
+32.9879 	EXP 	fam_trials_image: autoDraw = False
+32.9879 	EXP 	fam_trials_image: autoDraw = True
+33.4380 	EXP 	Sound  stopped
+33.4548 	EXP 	Sound  stopped
+33.4551 	EXP 	New trial (rep=0, index=37): {'soundFile': u'bu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 230, 'condition': u'R'}
+33.4565 	EXP 	Set  sound=bu.wav
+33.4569 	EXP 	Sound  started
+33.4630 	EXP 	fam_trials_image: autoDraw = False
+33.4630 	EXP 	fam_trials_image: autoDraw = False
+33.4630 	EXP 	fam_trials_image: autoDraw = True
+33.7299 	DATA 	Keypress: 3
+33.9131 	EXP 	Sound  stopped
+33.9299 	EXP 	Sound  stopped
+33.9303 	EXP 	New trial (rep=0, index=38): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 231, 'condition': u'R'}
+33.9316 	EXP 	Set  sound=bi.wav
+33.9320 	EXP 	Sound  started
+33.9381 	EXP 	fam_trials_image: autoDraw = False
+33.9381 	EXP 	fam_trials_image: autoDraw = False
+33.9381 	EXP 	fam_trials_image: autoDraw = True
+34.2717 	DATA 	Keypress: 3
+34.3883 	EXP 	Sound  stopped
+34.4051 	EXP 	Sound  stopped
+34.4054 	EXP 	New trial (rep=0, index=39): {'soundFile': u'di.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 232, 'condition': u'R'}
+34.4068 	EXP 	Set  sound=di.wav
+34.4072 	EXP 	Sound  started
+34.4132 	EXP 	fam_trials_image: autoDraw = False
+34.4132 	EXP 	fam_trials_image: autoDraw = False
+34.4132 	EXP 	fam_trials_image: autoDraw = True
+34.8634 	EXP 	Sound  stopped
+34.8801 	EXP 	Sound  stopped
+34.8804 	EXP 	New trial (rep=0, index=40): {'soundFile': u'da.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 233, 'condition': u'R'}
+34.8818 	EXP 	Set  sound=da.wav
+34.8821 	EXP 	Sound  started
+34.8883 	EXP 	fam_trials_image: autoDraw = False
+34.8883 	EXP 	fam_trials_image: autoDraw = False
+34.8883 	EXP 	fam_trials_image: autoDraw = True
+35.3385 	EXP 	Sound  stopped
+35.3552 	EXP 	Sound  stopped
+35.3555 	EXP 	New trial (rep=0, index=41): {'soundFile': u'pa.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 234, 'condition': u'R'}
+35.3569 	EXP 	Set  sound=pa.wav
+35.3572 	EXP 	Sound  started
+35.3634 	EXP 	fam_trials_image: autoDraw = False
+35.3634 	EXP 	fam_trials_image: autoDraw = False
+35.3634 	EXP 	fam_trials_image: autoDraw = True
+35.8135 	EXP 	Sound  stopped
+35.8303 	EXP 	Sound  stopped
+35.8306 	EXP 	New trial (rep=0, index=42): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 235, 'condition': u'R'}
+35.8320 	EXP 	Set  sound=ta.wav
+35.8323 	EXP 	Sound  started
+35.8385 	EXP 	fam_trials_image: autoDraw = False
+35.8385 	EXP 	fam_trials_image: autoDraw = False
+35.8385 	EXP 	fam_trials_image: autoDraw = True
+36.2886 	EXP 	Sound  stopped
+36.3053 	EXP 	Sound  stopped
+36.3057 	EXP 	New trial (rep=0, index=43): {'soundFile': u'da.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 236, 'condition': u'R'}
+36.3070 	EXP 	Set  sound=da.wav
+36.3074 	EXP 	Sound  started
+36.3135 	EXP 	fam_trials_image: autoDraw = False
+36.3135 	EXP 	fam_trials_image: autoDraw = False
+36.3135 	EXP 	fam_trials_image: autoDraw = True
+36.7637 	EXP 	Sound  stopped
+36.7804 	EXP 	Sound  stopped
+36.7808 	EXP 	New trial (rep=0, index=44): {'soundFile': u'ta.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 237, 'condition': u'R'}
+36.7821 	EXP 	Set  sound=ta.wav
+36.7824 	EXP 	Sound  started
+36.7886 	EXP 	fam_trials_image: autoDraw = False
+36.7886 	EXP 	fam_trials_image: autoDraw = False
+36.7886 	EXP 	fam_trials_image: autoDraw = True
+37.2389 	EXP 	Sound  stopped
+37.2556 	EXP 	Sound  stopped
+37.2559 	EXP 	New trial (rep=0, index=45): {'soundFile': u'tu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 238, 'condition': u'R'}
+37.2573 	EXP 	Set  sound=tu.wav
+37.2577 	EXP 	Sound  started
+37.2638 	EXP 	fam_trials_image: autoDraw = False
+37.2638 	EXP 	fam_trials_image: autoDraw = False
+37.2638 	EXP 	fam_trials_image: autoDraw = True
+37.7140 	EXP 	Sound  stopped
+37.7307 	EXP 	Sound  stopped
+37.7310 	EXP 	New trial (rep=0, index=46): {'soundFile': u'bu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 239, 'condition': u'R'}
+37.7323 	EXP 	Set  sound=bu.wav
+37.7327 	EXP 	Sound  started
+37.7389 	EXP 	fam_trials_image: autoDraw = False
+37.7389 	EXP 	fam_trials_image: autoDraw = False
+37.7389 	EXP 	fam_trials_image: autoDraw = True
+38.1891 	EXP 	Sound  stopped
+38.2058 	EXP 	Sound  stopped
+38.2061 	EXP 	New trial (rep=0, index=47): {'soundFile': u'tu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 240, 'condition': u'R'}
+38.2074 	EXP 	Set  sound=tu.wav
+38.2078 	EXP 	Sound  started
+38.2140 	EXP 	fam_trials_image: autoDraw = False
+38.2140 	EXP 	fam_trials_image: autoDraw = False
+38.2140 	EXP 	fam_trials_image: autoDraw = True
+38.5476 	DATA 	Keypress: 3
+38.6645 	EXP 	Sound  stopped
+38.6810 	EXP 	Sound  stopped
+38.6818 	EXP 	Sound  started
+38.6892 	EXP 	fam_trials_image: autoDraw = False
+38.6892 	EXP 	fam_trials_image: autoDraw = False
+41.5563 	EXP 	Sound  stopped
+41.5599 	EXP 	Imported auditory_run5_2.csv as conditions, 60 conditions, 6 params
+41.5602 	EXP 	Created sequence: sequential, trialTypes=60, nReps=1, seed=None
+41.5604 	EXP 	New trial (rep=0, index=0): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 17, 'trialnum': 193, 'condition': u'S'}
+41.5637 	EXP 	Set  sound=3A.wav
+41.5641 	EXP 	Sound  started
+41.5649 	EXP 	alien: autoDraw = True
+42.0148 	EXP 	Sound  stopped
+42.0153 	EXP 	New trial (rep=0, index=1): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 17, 'trialnum': 194, 'condition': u'S'}
+42.0165 	EXP 	Set  sound=3B.wav
+42.0169 	EXP 	Sound  started
+42.0229 	EXP 	alien: autoDraw = False
+42.0229 	EXP 	alien: autoDraw = False
+42.0229 	EXP 	alien: autoDraw = True
+42.4731 	EXP 	Sound  stopped
+42.4734 	EXP 	New trial (rep=0, index=2): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 17, 'trialnum': 195, 'condition': u'S'}
+42.4746 	EXP 	Set  sound=3C.wav
+42.4750 	EXP 	Sound  started
+42.5199 	EXP 	alien: autoDraw = False
+42.5199 	EXP 	alien: autoDraw = False
+42.5199 	EXP 	alien: autoDraw = True
+42.9315 	EXP 	Sound  stopped
+42.9319 	EXP 	New trial (rep=0, index=3): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 17, 'trialnum': 196, 'condition': u'S'}
+42.9331 	EXP 	Set  sound=2A.wav
+42.9334 	EXP 	Sound  started
+42.9397 	EXP 	alien: autoDraw = False
+42.9397 	EXP 	alien: autoDraw = False
+42.9397 	EXP 	alien: autoDraw = True
+43.3900 	EXP 	Sound  stopped
+43.3903 	EXP 	New trial (rep=0, index=4): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 17, 'trialnum': 197, 'condition': u'S'}
+43.3915 	EXP 	Set  sound=2B.wav
+43.3919 	EXP 	Sound  started
+43.3982 	EXP 	alien: autoDraw = False
+43.3982 	EXP 	alien: autoDraw = False
+43.3982 	EXP 	alien: autoDraw = True
+43.8483 	EXP 	Sound  stopped
+43.8487 	EXP 	New trial (rep=0, index=5): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 17, 'trialnum': 198, 'condition': u'S'}
+43.8499 	EXP 	Set  sound=2C.wav
+43.8502 	EXP 	Sound  started
+43.8566 	EXP 	alien: autoDraw = False
+43.8566 	EXP 	alien: autoDraw = False
+43.8566 	EXP 	alien: autoDraw = True
+44.3068 	EXP 	Sound  stopped
+44.3072 	EXP 	New trial (rep=0, index=6): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 17, 'trialnum': 199, 'condition': u'S'}
+44.3084 	EXP 	Set  sound=1A.wav
+44.3087 	EXP 	Sound  started
+44.3150 	EXP 	alien: autoDraw = False
+44.3150 	EXP 	alien: autoDraw = False
+44.3150 	EXP 	alien: autoDraw = True
+44.4404 	DATA 	Keypress: 3
+44.7653 	EXP 	Sound  stopped
+44.7657 	EXP 	New trial (rep=0, index=7): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 17, 'trialnum': 200, 'condition': u'S'}
+44.7669 	EXP 	Set  sound=1B.wav
+44.7672 	EXP 	Sound  started
+44.7734 	EXP 	alien: autoDraw = False
+44.7734 	EXP 	alien: autoDraw = False
+44.7734 	EXP 	alien: autoDraw = True
+45.2236 	EXP 	Sound  stopped
+45.2239 	EXP 	New trial (rep=0, index=8): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 17, 'trialnum': 201, 'condition': u'S'}
+45.2251 	EXP 	Set  sound=1C.wav
+45.2255 	EXP 	Sound  started
+45.2318 	EXP 	alien: autoDraw = False
+45.2318 	EXP 	alien: autoDraw = False
+45.2318 	EXP 	alien: autoDraw = True
+45.6820 	EXP 	Sound  stopped
+45.6823 	EXP 	New trial (rep=0, index=9): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 17, 'trialnum': 202, 'condition': u'S'}
+45.6835 	EXP 	Set  sound=4A.wav
+45.6839 	EXP 	Sound  started
+45.6902 	EXP 	alien: autoDraw = False
+45.6902 	EXP 	alien: autoDraw = False
+45.6902 	EXP 	alien: autoDraw = True
+46.1405 	EXP 	Sound  stopped
+46.1408 	EXP 	New trial (rep=0, index=10): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 17, 'trialnum': 203, 'condition': u'S'}
+46.1420 	EXP 	Set  sound=4B.wav
+46.1424 	EXP 	Sound  started
+46.1486 	EXP 	alien: autoDraw = False
+46.1486 	EXP 	alien: autoDraw = False
+46.1486 	EXP 	alien: autoDraw = True
+46.5989 	EXP 	Sound  stopped
+46.5993 	EXP 	New trial (rep=0, index=11): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 17, 'trialnum': 204, 'condition': u'S'}
+46.6006 	EXP 	Set  sound=4C.wav
+46.6009 	EXP 	Sound  started
+46.6071 	EXP 	alien: autoDraw = False
+46.6071 	EXP 	alien: autoDraw = False
+46.6071 	EXP 	alien: autoDraw = True
+47.0573 	EXP 	Sound  stopped
+47.0576 	EXP 	New trial (rep=0, index=12): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 18, 'trialnum': 205, 'condition': u'S'}
+47.0588 	EXP 	Set  sound=2A.wav
+47.0591 	EXP 	Sound  started
+47.0655 	EXP 	alien: autoDraw = False
+47.0655 	EXP 	alien: autoDraw = False
+47.0655 	EXP 	alien: autoDraw = True
+47.2658 	DATA 	Keypress: 3
+47.5157 	EXP 	Sound  stopped
+47.5162 	EXP 	New trial (rep=0, index=13): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 18, 'trialnum': 206, 'condition': u'S'}
+47.5174 	EXP 	Set  sound=2B.wav
+47.5177 	EXP 	Sound  started
+47.5239 	EXP 	alien: autoDraw = False
+47.5239 	EXP 	alien: autoDraw = False
+47.5239 	EXP 	alien: autoDraw = True
+47.9741 	EXP 	Sound  stopped
+47.9744 	EXP 	New trial (rep=0, index=14): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 18, 'trialnum': 207, 'condition': u'S'}
+47.9756 	EXP 	Set  sound=2C.wav
+47.9760 	EXP 	Sound  started
+47.9823 	EXP 	alien: autoDraw = False
+47.9823 	EXP 	alien: autoDraw = False
+47.9823 	EXP 	alien: autoDraw = True
+48.4326 	EXP 	Sound  stopped
+48.4329 	EXP 	New trial (rep=0, index=15): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 18, 'trialnum': 208, 'condition': u'S'}
+48.4342 	EXP 	Set  sound=3A.wav
+48.4345 	EXP 	Sound  started
+48.4407 	EXP 	alien: autoDraw = False
+48.4407 	EXP 	alien: autoDraw = False
+48.4407 	EXP 	alien: autoDraw = True
+48.6077 	DATA 	Keypress: 3
+48.9130 	EXP 	Sound  stopped
+48.9134 	EXP 	New trial (rep=0, index=16): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 18, 'trialnum': 209, 'condition': u'S'}
+48.9146 	EXP 	Set  sound=3B.wav
+48.9149 	EXP 	Sound  started
+48.9541 	EXP 	alien: autoDraw = False
+48.9541 	EXP 	alien: autoDraw = False
+48.9541 	EXP 	alien: autoDraw = True
+49.3744 	EXP 	Sound  stopped
+49.3747 	EXP 	New trial (rep=0, index=17): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 18, 'trialnum': 210, 'condition': u'S'}
+49.3759 	EXP 	Set  sound=3C.wav
+49.3763 	EXP 	Sound  started
+49.3826 	EXP 	alien: autoDraw = False
+49.3826 	EXP 	alien: autoDraw = False
+49.3826 	EXP 	alien: autoDraw = True
+49.8328 	EXP 	Sound  stopped
+49.8331 	EXP 	New trial (rep=0, index=18): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 18, 'trialnum': 211, 'condition': u'S'}
+49.8343 	EXP 	Set  sound=1A.wav
+49.8347 	EXP 	Sound  started
+49.8410 	EXP 	alien: autoDraw = False
+49.8410 	EXP 	alien: autoDraw = False
+49.8410 	EXP 	alien: autoDraw = True
+50.2912 	EXP 	Sound  stopped
+50.2916 	EXP 	New trial (rep=0, index=19): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 18, 'trialnum': 212, 'condition': u'S'}
+50.2928 	EXP 	Set  sound=1B.wav
+50.2931 	EXP 	Sound  started
+50.2994 	EXP 	alien: autoDraw = False
+50.2994 	EXP 	alien: autoDraw = False
+50.2994 	EXP 	alien: autoDraw = True
+50.7496 	EXP 	Sound  stopped
+50.7500 	EXP 	New trial (rep=0, index=20): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 18, 'trialnum': 213, 'condition': u'S'}
+50.7512 	EXP 	Set  sound=1C.wav
+50.7515 	EXP 	Sound  started
+50.7578 	EXP 	alien: autoDraw = False
+50.7578 	EXP 	alien: autoDraw = False
+50.7578 	EXP 	alien: autoDraw = True
+51.2080 	EXP 	Sound  stopped
+51.2083 	EXP 	New trial (rep=0, index=21): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 18, 'trialnum': 214, 'condition': u'S'}
+51.2095 	EXP 	Set  sound=4A.wav
+51.2099 	EXP 	Sound  started
+51.2162 	EXP 	alien: autoDraw = False
+51.2162 	EXP 	alien: autoDraw = False
+51.2162 	EXP 	alien: autoDraw = True
+51.6665 	EXP 	Sound  stopped
+51.6669 	EXP 	New trial (rep=0, index=22): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 18, 'trialnum': 215, 'condition': u'S'}
+51.6681 	EXP 	Set  sound=4B.wav
+51.6684 	EXP 	Sound  started
+51.6747 	EXP 	alien: autoDraw = False
+51.6747 	EXP 	alien: autoDraw = False
+51.6747 	EXP 	alien: autoDraw = True
+52.1249 	EXP 	Sound  stopped
+52.1253 	EXP 	New trial (rep=0, index=23): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 18, 'trialnum': 216, 'condition': u'S'}
+52.1265 	EXP 	Set  sound=4C.wav
+52.1268 	EXP 	Sound  started
+52.1331 	EXP 	alien: autoDraw = False
+52.1331 	EXP 	alien: autoDraw = False
+52.1331 	EXP 	alien: autoDraw = True
+52.5833 	EXP 	Sound  stopped
+52.5836 	EXP 	New trial (rep=0, index=24): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 19, 'trialnum': 217, 'condition': u'S'}
+52.5848 	EXP 	Set  sound=3A.wav
+52.5852 	EXP 	Sound  started
+52.5915 	EXP 	alien: autoDraw = False
+52.5915 	EXP 	alien: autoDraw = False
+52.5915 	EXP 	alien: autoDraw = True
+52.7725 	DATA 	Keypress: 3
+53.0417 	EXP 	Sound  stopped
+53.0421 	EXP 	New trial (rep=0, index=25): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 19, 'trialnum': 218, 'condition': u'S'}
+53.0433 	EXP 	Set  sound=3B.wav
+53.0436 	EXP 	Sound  started
+53.0499 	EXP 	alien: autoDraw = False
+53.0499 	EXP 	alien: autoDraw = False
+53.0499 	EXP 	alien: autoDraw = True
+53.5002 	EXP 	Sound  stopped
+53.5005 	EXP 	New trial (rep=0, index=26): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 19, 'trialnum': 219, 'condition': u'S'}
+53.5017 	EXP 	Set  sound=3C.wav
+53.5021 	EXP 	Sound  started
+53.5083 	EXP 	alien: autoDraw = False
+53.5083 	EXP 	alien: autoDraw = False
+53.5083 	EXP 	alien: autoDraw = True
+53.9585 	EXP 	Sound  stopped
+53.9589 	EXP 	New trial (rep=0, index=27): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 19, 'trialnum': 220, 'condition': u'S'}
+53.9600 	EXP 	Set  sound=4A.wav
+53.9604 	EXP 	Sound  started
+53.9668 	EXP 	alien: autoDraw = False
+53.9668 	EXP 	alien: autoDraw = False
+53.9668 	EXP 	alien: autoDraw = True
+54.4170 	EXP 	Sound  stopped
+54.4173 	EXP 	New trial (rep=0, index=28): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 19, 'trialnum': 221, 'condition': u'S'}
+54.4184 	EXP 	Set  sound=4B.wav
+54.4188 	EXP 	Sound  started
+54.4251 	EXP 	alien: autoDraw = False
+54.4251 	EXP 	alien: autoDraw = False
+54.4251 	EXP 	alien: autoDraw = True
+54.8754 	EXP 	Sound  stopped
+54.8758 	EXP 	New trial (rep=0, index=29): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 19, 'trialnum': 222, 'condition': u'S'}
+54.8770 	EXP 	Set  sound=4C.wav
+54.8774 	EXP 	Sound  started
+54.8836 	EXP 	alien: autoDraw = False
+54.8836 	EXP 	alien: autoDraw = False
+54.8836 	EXP 	alien: autoDraw = True
+55.3338 	EXP 	Sound  stopped
+55.3341 	EXP 	New trial (rep=0, index=30): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 19, 'trialnum': 223, 'condition': u'S'}
+55.3353 	EXP 	Set  sound=2A.wav
+55.3357 	EXP 	Sound  started
+55.3420 	EXP 	alien: autoDraw = False
+55.3420 	EXP 	alien: autoDraw = False
+55.3420 	EXP 	alien: autoDraw = True
+55.5506 	DATA 	Keypress: 3
+55.7922 	EXP 	Sound  stopped
+55.7926 	EXP 	New trial (rep=0, index=31): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 19, 'trialnum': 224, 'condition': u'S'}
+55.7938 	EXP 	Set  sound=2B.wav
+55.7941 	EXP 	Sound  started
+55.8004 	EXP 	alien: autoDraw = False
+55.8004 	EXP 	alien: autoDraw = False
+55.8004 	EXP 	alien: autoDraw = True
+56.2506 	EXP 	Sound  stopped
+56.2510 	EXP 	New trial (rep=0, index=32): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 19, 'trialnum': 225, 'condition': u'S'}
+56.2522 	EXP 	Set  sound=2C.wav
+56.2525 	EXP 	Sound  started
+56.2588 	EXP 	alien: autoDraw = False
+56.2588 	EXP 	alien: autoDraw = False
+56.2588 	EXP 	alien: autoDraw = True
+56.7091 	EXP 	Sound  stopped
+56.7094 	EXP 	New trial (rep=0, index=33): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 19, 'trialnum': 226, 'condition': u'S'}
+56.7106 	EXP 	Set  sound=1A.wav
+56.7109 	EXP 	Sound  started
+56.7173 	EXP 	alien: autoDraw = False
+56.7173 	EXP 	alien: autoDraw = False
+56.7173 	EXP 	alien: autoDraw = True
+56.8592 	DATA 	Keypress: 3
+57.1675 	EXP 	Sound  stopped
+57.1679 	EXP 	New trial (rep=0, index=34): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 19, 'trialnum': 227, 'condition': u'S'}
+57.1691 	EXP 	Set  sound=1B.wav
+57.1695 	EXP 	Sound  started
+57.1757 	EXP 	alien: autoDraw = False
+57.1757 	EXP 	alien: autoDraw = False
+57.1757 	EXP 	alien: autoDraw = True
+57.6263 	EXP 	Sound  stopped
+57.6267 	EXP 	New trial (rep=0, index=35): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 19, 'trialnum': 228, 'condition': u'S'}
+57.6279 	EXP 	Set  sound=1C.wav
+57.6282 	EXP 	Sound  started
+57.6341 	EXP 	alien: autoDraw = False
+57.6341 	EXP 	alien: autoDraw = False
+57.6341 	EXP 	alien: autoDraw = True
+58.0843 	EXP 	Sound  stopped
+58.0846 	EXP 	New trial (rep=0, index=36): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 20, 'trialnum': 229, 'condition': u'S'}
+58.0858 	EXP 	Set  sound=2A.wav
+58.0862 	EXP 	Sound  started
+58.0925 	EXP 	alien: autoDraw = False
+58.0925 	EXP 	alien: autoDraw = False
+58.0925 	EXP 	alien: autoDraw = True
+58.5427 	EXP 	Sound  stopped
+58.5430 	EXP 	New trial (rep=0, index=37): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 20, 'trialnum': 230, 'condition': u'S'}
+58.5442 	EXP 	Set  sound=2B.wav
+58.5446 	EXP 	Sound  started
+58.5509 	EXP 	alien: autoDraw = False
+58.5509 	EXP 	alien: autoDraw = False
+58.5509 	EXP 	alien: autoDraw = True
+59.0012 	EXP 	Sound  stopped
+59.0015 	EXP 	New trial (rep=0, index=38): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 20, 'trialnum': 231, 'condition': u'S'}
+59.0027 	EXP 	Set  sound=2C.wav
+59.0031 	EXP 	Sound  started
+59.0093 	EXP 	alien: autoDraw = False
+59.0093 	EXP 	alien: autoDraw = False
+59.0093 	EXP 	alien: autoDraw = True
+59.3602 	DATA 	Keypress: 3
+59.4596 	EXP 	Sound  stopped
+59.4599 	EXP 	New trial (rep=0, index=39): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 20, 'trialnum': 232, 'condition': u'S'}
+59.4611 	EXP 	Set  sound=4A.wav
+59.4615 	EXP 	Sound  started
+59.4677 	EXP 	alien: autoDraw = False
+59.4677 	EXP 	alien: autoDraw = False
+59.4677 	EXP 	alien: autoDraw = True
+59.9180 	EXP 	Sound  stopped
+59.9183 	EXP 	New trial (rep=0, index=40): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 20, 'trialnum': 233, 'condition': u'S'}
+59.9195 	EXP 	Set  sound=4B.wav
+59.9198 	EXP 	Sound  started
+59.9262 	EXP 	alien: autoDraw = False
+59.9262 	EXP 	alien: autoDraw = False
+59.9262 	EXP 	alien: autoDraw = True
+60.3766 	EXP 	Sound  stopped
+60.3770 	EXP 	New trial (rep=0, index=41): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 20, 'trialnum': 234, 'condition': u'S'}
+60.3781 	EXP 	Set  sound=4C.wav
+60.3785 	EXP 	Sound  started
+60.3846 	EXP 	alien: autoDraw = False
+60.3846 	EXP 	alien: autoDraw = False
+60.3846 	EXP 	alien: autoDraw = True
+60.4181 	DATA 	Keypress: 3
+60.8348 	EXP 	Sound  stopped
+60.8352 	EXP 	New trial (rep=0, index=42): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 20, 'trialnum': 235, 'condition': u'S'}
+60.8366 	EXP 	Set  sound=3A.wav
+60.8370 	EXP 	Sound  started
+60.8430 	EXP 	alien: autoDraw = False
+60.8430 	EXP 	alien: autoDraw = False
+60.8430 	EXP 	alien: autoDraw = True
+61.2932 	EXP 	Sound  stopped
+61.2935 	EXP 	New trial (rep=0, index=43): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 20, 'trialnum': 236, 'condition': u'S'}
+61.2947 	EXP 	Set  sound=3B.wav
+61.2951 	EXP 	Sound  started
+61.3014 	EXP 	alien: autoDraw = False
+61.3014 	EXP 	alien: autoDraw = False
+61.3014 	EXP 	alien: autoDraw = True
+61.7518 	EXP 	Sound  stopped
+61.7521 	EXP 	New trial (rep=0, index=44): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 20, 'trialnum': 237, 'condition': u'S'}
+61.7533 	EXP 	Set  sound=3C.wav
+61.7536 	EXP 	Sound  started
+61.7598 	EXP 	alien: autoDraw = False
+61.7598 	EXP 	alien: autoDraw = False
+61.7598 	EXP 	alien: autoDraw = True
+62.2101 	EXP 	Sound  stopped
+62.2104 	EXP 	New trial (rep=0, index=45): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 20, 'trialnum': 238, 'condition': u'S'}
+62.2116 	EXP 	Set  sound=1A.wav
+62.2119 	EXP 	Sound  started
+62.2182 	EXP 	alien: autoDraw = False
+62.2182 	EXP 	alien: autoDraw = False
+62.2182 	EXP 	alien: autoDraw = True
+62.6685 	EXP 	Sound  stopped
+62.6688 	EXP 	New trial (rep=0, index=46): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 20, 'trialnum': 239, 'condition': u'S'}
+62.6700 	EXP 	Set  sound=1B.wav
+62.6704 	EXP 	Sound  started
+62.6767 	EXP 	alien: autoDraw = False
+62.6767 	EXP 	alien: autoDraw = False
+62.6767 	EXP 	alien: autoDraw = True
+63.1269 	EXP 	Sound  stopped
+63.1272 	EXP 	New trial (rep=0, index=47): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 20, 'trialnum': 240, 'condition': u'S'}
+63.1284 	EXP 	Set  sound=1C.wav
+63.1287 	EXP 	Sound  started
+63.1351 	EXP 	alien: autoDraw = False
+63.1351 	EXP 	alien: autoDraw = False
+63.1351 	EXP 	alien: autoDraw = True
+63.5853 	EXP 	Sound  stopped
+63.5856 	EXP 	New trial (rep=0, index=48): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+63.5872 	EXP 	Set  sound=silence.wav
+63.5876 	EXP 	Sound  started
+63.5935 	EXP 	alien: autoDraw = False
+63.5935 	EXP 	alien: autoDraw = False
+63.5935 	EXP 	alien: autoDraw = True
+64.0437 	EXP 	Sound  stopped
+64.0438 	EXP 	Sound  stopped
+64.0441 	EXP 	New trial (rep=0, index=49): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+64.0456 	EXP 	Set  sound=silence.wav
+64.0460 	EXP 	Sound  started
+64.0519 	EXP 	alien: autoDraw = False
+64.0519 	EXP 	alien: autoDraw = False
+64.0519 	EXP 	alien: autoDraw = True
+64.5021 	EXP 	Sound  stopped
+64.5022 	EXP 	Sound  stopped
+64.5025 	EXP 	New trial (rep=0, index=50): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+64.5040 	EXP 	Set  sound=silence.wav
+64.5044 	EXP 	Sound  started
+64.5103 	EXP 	alien: autoDraw = False
+64.5103 	EXP 	alien: autoDraw = False
+64.5103 	EXP 	alien: autoDraw = True
+64.9605 	EXP 	Sound  stopped
+64.9606 	EXP 	Sound  stopped
+64.9610 	EXP 	New trial (rep=0, index=51): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+64.9624 	EXP 	Set  sound=silence.wav
+64.9628 	EXP 	Sound  started
+64.9687 	EXP 	alien: autoDraw = False
+64.9687 	EXP 	alien: autoDraw = False
+64.9687 	EXP 	alien: autoDraw = True
+65.4190 	EXP 	Sound  stopped
+65.4191 	EXP 	Sound  stopped
+65.4194 	EXP 	New trial (rep=0, index=52): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+65.4210 	EXP 	Set  sound=silence.wav
+65.4213 	EXP 	Sound  started
+65.4272 	EXP 	alien: autoDraw = False
+65.4272 	EXP 	alien: autoDraw = False
+65.4272 	EXP 	alien: autoDraw = True
+65.8773 	EXP 	Sound  stopped
+65.8774 	EXP 	Sound  stopped
+65.8777 	EXP 	New trial (rep=0, index=53): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+65.8792 	EXP 	Set  sound=silence.wav
+65.8796 	EXP 	Sound  started
+65.8856 	EXP 	alien: autoDraw = False
+65.8856 	EXP 	alien: autoDraw = False
+65.8856 	EXP 	alien: autoDraw = True
+66.3357 	EXP 	Sound  stopped
+66.3358 	EXP 	Sound  stopped
+66.3362 	EXP 	New trial (rep=0, index=54): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+66.3377 	EXP 	Set  sound=silence.wav
+66.3380 	EXP 	Sound  started
+66.3440 	EXP 	alien: autoDraw = False
+66.3440 	EXP 	alien: autoDraw = False
+66.3440 	EXP 	alien: autoDraw = True
+66.7941 	EXP 	Sound  stopped
+66.7943 	EXP 	Sound  stopped
+66.7946 	EXP 	New trial (rep=0, index=55): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+66.7961 	EXP 	Set  sound=silence.wav
+66.7964 	EXP 	Sound  started
+66.8024 	EXP 	alien: autoDraw = False
+66.8024 	EXP 	alien: autoDraw = False
+66.8024 	EXP 	alien: autoDraw = True
+67.2526 	EXP 	Sound  stopped
+67.2527 	EXP 	Sound  stopped
+67.2530 	EXP 	New trial (rep=0, index=56): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+67.2544 	EXP 	Set  sound=silence.wav
+67.2548 	EXP 	Sound  started
+67.2608 	EXP 	alien: autoDraw = False
+67.2608 	EXP 	alien: autoDraw = False
+67.2608 	EXP 	alien: autoDraw = True
+67.7110 	EXP 	Sound  stopped
+67.7111 	EXP 	Sound  stopped
+67.7114 	EXP 	New trial (rep=0, index=57): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+67.7129 	EXP 	Set  sound=silence.wav
+67.7133 	EXP 	Sound  started
+67.7192 	EXP 	alien: autoDraw = False
+67.7192 	EXP 	alien: autoDraw = False
+67.7192 	EXP 	alien: autoDraw = True
+68.1695 	EXP 	Sound  stopped
+68.1696 	EXP 	Sound  stopped
+68.1701 	EXP 	New trial (rep=0, index=58): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+68.1716 	EXP 	Set  sound=silence.wav
+68.1719 	EXP 	Sound  started
+68.1777 	EXP 	alien: autoDraw = False
+68.1777 	EXP 	alien: autoDraw = False
+68.1777 	EXP 	alien: autoDraw = True
+68.6278 	EXP 	Sound  stopped
+68.6279 	EXP 	Sound  stopped
+68.6283 	EXP 	New trial (rep=0, index=59): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+68.6297 	EXP 	Set  sound=silence.wav
+68.6301 	EXP 	Sound  started
+68.6361 	EXP 	alien: autoDraw = False
+68.6361 	EXP 	alien: autoDraw = False
+68.6361 	EXP 	alien: autoDraw = True
+69.0862 	EXP 	Sound  stopped
+69.0863 	EXP 	Sound  stopped
+69.0869 	EXP 	Sound  started
+69.0945 	EXP 	alien: autoDraw = False
+69.0945 	EXP 	alien: autoDraw = False
+71.9701 	EXP 	Sound  stopped
+71.9749 	EXP 	Imported auditory_run5_3.csv as conditions, 96 conditions, 6 params
+71.9753 	EXP 	Created sequence: sequential, trialTypes=96, nReps=1, seed=None
+71.9755 	EXP 	New trial (rep=0, index=0): {'soundFile': u'ti.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 241, 'condition': u'R'}
+71.9768 	EXP 	Set  sound=ti.wav
+71.9771 	EXP 	Sound  started
+71.9783 	EXP 	fam_trials_image: autoDraw = True
+72.4743 	EXP 	Sound  stopped
+72.4747 	EXP 	New trial (rep=0, index=1): {'soundFile': u'ba.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 242, 'condition': u'R'}
+72.4760 	EXP 	Set  sound=ba.wav
+72.4764 	EXP 	Sound  started
+72.5129 	EXP 	fam_trials_image: autoDraw = False
+72.5129 	EXP 	fam_trials_image: autoDraw = True
+72.9286 	EXP 	Sound  stopped
+72.9370 	EXP 	Sound  stopped
+72.9373 	EXP 	New trial (rep=0, index=2): {'soundFile': u'di.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 243, 'condition': u'R'}
+72.9387 	EXP 	Set  sound=di.wav
+72.9390 	EXP 	Sound  started
+72.9452 	EXP 	fam_trials_image: autoDraw = False
+72.9452 	EXP 	fam_trials_image: autoDraw = True
+73.3954 	EXP 	Sound  stopped
+73.4121 	EXP 	Sound  stopped
+73.4124 	EXP 	New trial (rep=0, index=3): {'soundFile': u'pu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 244, 'condition': u'R'}
+73.4138 	EXP 	Set  sound=pu.wav
+73.4142 	EXP 	Sound  started
+73.4203 	EXP 	fam_trials_image: autoDraw = False
+73.4203 	EXP 	fam_trials_image: autoDraw = True
+73.8704 	EXP 	Sound  stopped
+73.8872 	EXP 	Sound  stopped
+73.8875 	EXP 	New trial (rep=0, index=4): {'soundFile': u'pu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 245, 'condition': u'R'}
+73.8889 	EXP 	Set  sound=pu.wav
+73.8893 	EXP 	Sound  started
+73.8954 	EXP 	fam_trials_image: autoDraw = False
+73.8954 	EXP 	fam_trials_image: autoDraw = False
+73.8954 	EXP 	fam_trials_image: autoDraw = True
+74.1373 	DATA 	Keypress: 3
+74.3456 	EXP 	Sound  stopped
+74.3623 	EXP 	Sound  stopped
+74.3627 	EXP 	New trial (rep=0, index=5): {'soundFile': u'ba.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 246, 'condition': u'R'}
+74.3640 	EXP 	Set  sound=ba.wav
+74.3644 	EXP 	Sound  started
+74.3705 	EXP 	fam_trials_image: autoDraw = False
+74.3705 	EXP 	fam_trials_image: autoDraw = False
+74.3705 	EXP 	fam_trials_image: autoDraw = True
+74.6546 	DATA 	Keypress: 3
+74.8206 	EXP 	Sound  stopped
+74.8373 	EXP 	Sound  stopped
+74.8378 	EXP 	New trial (rep=0, index=6): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 247, 'condition': u'R'}
+74.8391 	EXP 	Set  sound=du.wav
+74.8395 	EXP 	Sound  started
+74.8455 	EXP 	fam_trials_image: autoDraw = False
+74.8455 	EXP 	fam_trials_image: autoDraw = False
+74.8455 	EXP 	fam_trials_image: autoDraw = True
+75.2958 	EXP 	Sound  stopped
+75.3125 	EXP 	Sound  stopped
+75.3128 	EXP 	New trial (rep=0, index=7): {'soundFile': u'bi.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 248, 'condition': u'R'}
+75.3142 	EXP 	Set  sound=bi.wav
+75.3146 	EXP 	Sound  started
+75.3206 	EXP 	fam_trials_image: autoDraw = False
+75.3206 	EXP 	fam_trials_image: autoDraw = False
+75.3206 	EXP 	fam_trials_image: autoDraw = True
+75.7708 	EXP 	Sound  stopped
+75.7875 	EXP 	Sound  stopped
+75.7878 	EXP 	New trial (rep=0, index=8): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 249, 'condition': u'R'}
+75.7892 	EXP 	Set  sound=bi.wav
+75.7896 	EXP 	Sound  started
+75.7957 	EXP 	fam_trials_image: autoDraw = False
+75.7957 	EXP 	fam_trials_image: autoDraw = False
+75.7957 	EXP 	fam_trials_image: autoDraw = True
+76.2459 	EXP 	Sound  stopped
+76.2626 	EXP 	Sound  stopped
+76.2629 	EXP 	New trial (rep=0, index=9): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 250, 'condition': u'R'}
+76.2643 	EXP 	Set  sound=ta.wav
+76.2647 	EXP 	Sound  started
+76.2709 	EXP 	fam_trials_image: autoDraw = False
+76.2709 	EXP 	fam_trials_image: autoDraw = False
+76.2709 	EXP 	fam_trials_image: autoDraw = True
+76.7209 	EXP 	Sound  stopped
+76.7377 	EXP 	Sound  stopped
+76.7380 	EXP 	New trial (rep=0, index=10): {'soundFile': u'ta.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 251, 'condition': u'R'}
+76.7394 	EXP 	Set  sound=ta.wav
+76.7397 	EXP 	Sound  started
+76.7459 	EXP 	fam_trials_image: autoDraw = False
+76.7459 	EXP 	fam_trials_image: autoDraw = False
+76.7459 	EXP 	fam_trials_image: autoDraw = True
+77.1960 	EXP 	Sound  stopped
+77.2128 	EXP 	Sound  stopped
+77.2131 	EXP 	New trial (rep=0, index=11): {'soundFile': u'ba.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 252, 'condition': u'R'}
+77.2145 	EXP 	Set  sound=ba.wav
+77.2148 	EXP 	Sound  started
+77.2210 	EXP 	fam_trials_image: autoDraw = False
+77.2210 	EXP 	fam_trials_image: autoDraw = False
+77.2210 	EXP 	fam_trials_image: autoDraw = True
+77.6712 	EXP 	Sound  stopped
+77.6879 	EXP 	Sound  stopped
+77.6882 	EXP 	New trial (rep=0, index=12): {'soundFile': u'da.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 253, 'condition': u'R'}
+77.6895 	EXP 	Set  sound=da.wav
+77.6899 	EXP 	Sound  started
+77.6961 	EXP 	fam_trials_image: autoDraw = False
+77.6961 	EXP 	fam_trials_image: autoDraw = False
+77.6961 	EXP 	fam_trials_image: autoDraw = True
+78.1463 	EXP 	Sound  stopped
+78.1630 	EXP 	Sound  stopped
+78.1633 	EXP 	New trial (rep=0, index=13): {'soundFile': u'tu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 254, 'condition': u'R'}
+78.1648 	EXP 	Set  sound=tu.wav
+78.1652 	EXP 	Sound  started
+78.1712 	EXP 	fam_trials_image: autoDraw = False
+78.1712 	EXP 	fam_trials_image: autoDraw = False
+78.1712 	EXP 	fam_trials_image: autoDraw = True
+78.6213 	EXP 	Sound  stopped
+78.6381 	EXP 	Sound  stopped
+78.6384 	EXP 	New trial (rep=0, index=14): {'soundFile': u'di.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 255, 'condition': u'R'}
+78.6398 	EXP 	Set  sound=di.wav
+78.6402 	EXP 	Sound  started
+78.6463 	EXP 	fam_trials_image: autoDraw = False
+78.6463 	EXP 	fam_trials_image: autoDraw = False
+78.6463 	EXP 	fam_trials_image: autoDraw = True
+79.0964 	EXP 	Sound  stopped
+79.1132 	EXP 	Sound  stopped
+79.1135 	EXP 	New trial (rep=0, index=15): {'soundFile': u'ti.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 256, 'condition': u'R'}
+79.1149 	EXP 	Set  sound=ti.wav
+79.1152 	EXP 	Sound  started
+79.1591 	EXP 	fam_trials_image: autoDraw = False
+79.1591 	EXP 	fam_trials_image: autoDraw = False
+79.1591 	EXP 	fam_trials_image: autoDraw = True
+79.5715 	EXP 	Sound  stopped
+79.5882 	EXP 	Sound  stopped
+79.5885 	EXP 	New trial (rep=0, index=16): {'soundFile': u'pi.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 257, 'condition': u'R'}
+79.5899 	EXP 	Set  sound=pi.wav
+79.5903 	EXP 	Sound  started
+79.5964 	EXP 	fam_trials_image: autoDraw = False
+79.5964 	EXP 	fam_trials_image: autoDraw = False
+79.5964 	EXP 	fam_trials_image: autoDraw = True
+80.0466 	EXP 	Sound  stopped
+80.0633 	EXP 	Sound  stopped
+80.0636 	EXP 	New trial (rep=0, index=17): {'soundFile': u'pu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 258, 'condition': u'R'}
+80.0650 	EXP 	Set  sound=pu.wav
+80.0653 	EXP 	Sound  started
+80.0715 	EXP 	fam_trials_image: autoDraw = False
+80.0715 	EXP 	fam_trials_image: autoDraw = False
+80.0715 	EXP 	fam_trials_image: autoDraw = True
+80.5217 	EXP 	Sound  stopped
+80.5384 	EXP 	Sound  stopped
+80.5388 	EXP 	New trial (rep=0, index=18): {'soundFile': u'pi.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 259, 'condition': u'R'}
+80.5401 	EXP 	Set  sound=pi.wav
+80.5405 	EXP 	Sound  started
+80.5466 	EXP 	fam_trials_image: autoDraw = False
+80.5466 	EXP 	fam_trials_image: autoDraw = False
+80.5466 	EXP 	fam_trials_image: autoDraw = True
+80.8552 	DATA 	Keypress: 3
+80.9968 	EXP 	Sound  stopped
+81.0135 	EXP 	Sound  stopped
+81.0140 	EXP 	New trial (rep=0, index=19): {'soundFile': u'du.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 260, 'condition': u'R'}
+81.0154 	EXP 	Set  sound=du.wav
+81.0158 	EXP 	Sound  started
+81.0217 	EXP 	fam_trials_image: autoDraw = False
+81.0217 	EXP 	fam_trials_image: autoDraw = False
+81.0217 	EXP 	fam_trials_image: autoDraw = True
+81.4719 	EXP 	Sound  stopped
+81.4885 	EXP 	Sound  stopped
+81.4889 	EXP 	New trial (rep=0, index=20): {'soundFile': u'di.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 261, 'condition': u'R'}
+81.4902 	EXP 	Set  sound=di.wav
+81.4906 	EXP 	Sound  started
+81.4968 	EXP 	fam_trials_image: autoDraw = False
+81.4968 	EXP 	fam_trials_image: autoDraw = False
+81.4968 	EXP 	fam_trials_image: autoDraw = True
+81.9469 	EXP 	Sound  stopped
+81.9636 	EXP 	Sound  stopped
+81.9640 	EXP 	New trial (rep=0, index=21): {'soundFile': u'bu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 262, 'condition': u'R'}
+81.9653 	EXP 	Set  sound=bu.wav
+81.9657 	EXP 	Sound  started
+81.9719 	EXP 	fam_trials_image: autoDraw = False
+81.9719 	EXP 	fam_trials_image: autoDraw = False
+81.9719 	EXP 	fam_trials_image: autoDraw = True
+82.4220 	EXP 	Sound  stopped
+82.4387 	EXP 	Sound  stopped
+82.4391 	EXP 	New trial (rep=0, index=22): {'soundFile': u'pa.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 263, 'condition': u'R'}
+82.4405 	EXP 	Set  sound=pa.wav
+82.4408 	EXP 	Sound  started
+82.4469 	EXP 	fam_trials_image: autoDraw = False
+82.4469 	EXP 	fam_trials_image: autoDraw = False
+82.4469 	EXP 	fam_trials_image: autoDraw = True
+82.7057 	DATA 	Keypress: 3
+82.8971 	EXP 	Sound  stopped
+82.9138 	EXP 	Sound  stopped
+82.9143 	EXP 	New trial (rep=0, index=23): {'soundFile': u'tu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 264, 'condition': u'R'}
+82.9156 	EXP 	Set  sound=tu.wav
+82.9160 	EXP 	Sound  started
+82.9220 	EXP 	fam_trials_image: autoDraw = False
+82.9220 	EXP 	fam_trials_image: autoDraw = False
+82.9220 	EXP 	fam_trials_image: autoDraw = True
+83.3722 	EXP 	Sound  stopped
+83.3889 	EXP 	Sound  stopped
+83.3892 	EXP 	New trial (rep=0, index=24): {'soundFile': u'pi.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 265, 'condition': u'R'}
+83.3906 	EXP 	Set  sound=pi.wav
+83.3909 	EXP 	Sound  started
+83.3971 	EXP 	fam_trials_image: autoDraw = False
+83.3971 	EXP 	fam_trials_image: autoDraw = False
+83.3971 	EXP 	fam_trials_image: autoDraw = True
+83.8472 	EXP 	Sound  stopped
+83.8640 	EXP 	Sound  stopped
+83.8643 	EXP 	New trial (rep=0, index=25): {'soundFile': u'ta.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 266, 'condition': u'R'}
+83.8657 	EXP 	Set  sound=ta.wav
+83.8660 	EXP 	Sound  started
+83.8722 	EXP 	fam_trials_image: autoDraw = False
+83.8722 	EXP 	fam_trials_image: autoDraw = False
+83.8722 	EXP 	fam_trials_image: autoDraw = True
+84.3224 	EXP 	Sound  stopped
+84.3392 	EXP 	Sound  stopped
+84.3396 	EXP 	New trial (rep=0, index=26): {'soundFile': u'da.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 267, 'condition': u'R'}
+84.3410 	EXP 	Set  sound=da.wav
+84.3413 	EXP 	Sound  started
+84.3473 	EXP 	fam_trials_image: autoDraw = False
+84.3473 	EXP 	fam_trials_image: autoDraw = False
+84.3473 	EXP 	fam_trials_image: autoDraw = True
+84.7974 	EXP 	Sound  stopped
+84.8142 	EXP 	Sound  stopped
+84.8145 	EXP 	New trial (rep=0, index=27): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 268, 'condition': u'R'}
+84.8158 	EXP 	Set  sound=ta.wav
+84.8162 	EXP 	Sound  started
+84.8224 	EXP 	fam_trials_image: autoDraw = False
+84.8224 	EXP 	fam_trials_image: autoDraw = False
+84.8224 	EXP 	fam_trials_image: autoDraw = True
+85.2725 	EXP 	Sound  stopped
+85.2893 	EXP 	Sound  stopped
+85.2898 	EXP 	New trial (rep=0, index=28): {'soundFile': u'tu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 269, 'condition': u'R'}
+85.2912 	EXP 	Set  sound=tu.wav
+85.2915 	EXP 	Sound  started
+85.2975 	EXP 	fam_trials_image: autoDraw = False
+85.2975 	EXP 	fam_trials_image: autoDraw = False
+85.2975 	EXP 	fam_trials_image: autoDraw = True
+85.7477 	EXP 	Sound  stopped
+85.7645 	EXP 	Sound  stopped
+85.7648 	EXP 	New trial (rep=0, index=29): {'soundFile': u'tu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 270, 'condition': u'R'}
+85.7662 	EXP 	Set  sound=tu.wav
+85.7665 	EXP 	Sound  started
+85.7726 	EXP 	fam_trials_image: autoDraw = False
+85.7726 	EXP 	fam_trials_image: autoDraw = False
+85.7726 	EXP 	fam_trials_image: autoDraw = True
+86.2227 	EXP 	Sound  stopped
+86.2395 	EXP 	Sound  stopped
+86.2398 	EXP 	New trial (rep=0, index=30): {'soundFile': u'ba.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 271, 'condition': u'R'}
+86.2412 	EXP 	Set  sound=ba.wav
+86.2416 	EXP 	Sound  started
+86.2477 	EXP 	fam_trials_image: autoDraw = False
+86.2477 	EXP 	fam_trials_image: autoDraw = False
+86.2477 	EXP 	fam_trials_image: autoDraw = True
+86.6978 	EXP 	Sound  stopped
+86.7145 	EXP 	Sound  stopped
+86.7150 	EXP 	New trial (rep=0, index=31): {'soundFile': u'pu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 272, 'condition': u'R'}
+86.7163 	EXP 	Set  sound=pu.wav
+86.7167 	EXP 	Sound  started
+86.7227 	EXP 	fam_trials_image: autoDraw = False
+86.7227 	EXP 	fam_trials_image: autoDraw = False
+86.7227 	EXP 	fam_trials_image: autoDraw = True
+87.1729 	EXP 	Sound  stopped
+87.1896 	EXP 	Sound  stopped
+87.1900 	EXP 	New trial (rep=0, index=32): {'soundFile': u'pa.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 273, 'condition': u'R'}
+87.1913 	EXP 	Set  sound=pa.wav
+87.1917 	EXP 	Sound  started
+87.1978 	EXP 	fam_trials_image: autoDraw = False
+87.1978 	EXP 	fam_trials_image: autoDraw = False
+87.1978 	EXP 	fam_trials_image: autoDraw = True
+87.6480 	EXP 	Sound  stopped
+87.6647 	EXP 	Sound  stopped
+87.6651 	EXP 	New trial (rep=0, index=33): {'soundFile': u'bi.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 274, 'condition': u'R'}
+87.6664 	EXP 	Set  sound=bi.wav
+87.6668 	EXP 	Sound  started
+87.6729 	EXP 	fam_trials_image: autoDraw = False
+87.6729 	EXP 	fam_trials_image: autoDraw = False
+87.6729 	EXP 	fam_trials_image: autoDraw = True
+87.7565 	DATA 	Keypress: 3
+88.1231 	EXP 	Sound  stopped
+88.1769 	EXP 	Sound  stopped
+88.1772 	EXP 	New trial (rep=0, index=34): {'soundFile': u'pu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 275, 'condition': u'R'}
+88.1786 	EXP 	Set  sound=pu.wav
+88.1789 	EXP 	Sound  started
+88.2156 	EXP 	fam_trials_image: autoDraw = False
+88.2156 	EXP 	fam_trials_image: autoDraw = False
+88.2156 	EXP 	fam_trials_image: autoDraw = True
+88.6316 	EXP 	Sound  stopped
+88.6567 	EXP 	Sound  stopped
+88.6570 	EXP 	New trial (rep=0, index=35): {'soundFile': u'bu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 276, 'condition': u'R'}
+88.6583 	EXP 	Set  sound=bu.wav
+88.6587 	EXP 	Sound  started
+88.6649 	EXP 	fam_trials_image: autoDraw = False
+88.6649 	EXP 	fam_trials_image: autoDraw = False
+88.6649 	EXP 	fam_trials_image: autoDraw = True
+88.9485 	DATA 	Keypress: 3
+89.1150 	EXP 	Sound  stopped
+89.1317 	EXP 	Sound  stopped
+89.1321 	EXP 	New trial (rep=0, index=36): {'soundFile': u'ti.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 277, 'condition': u'R'}
+89.1334 	EXP 	Set  sound=ti.wav
+89.1338 	EXP 	Sound  started
+89.1765 	EXP 	fam_trials_image: autoDraw = False
+89.1765 	EXP 	fam_trials_image: autoDraw = False
+89.1765 	EXP 	fam_trials_image: autoDraw = True
+89.5319 	DATA 	Keypress: 3
+89.5902 	EXP 	Sound  stopped
+89.6068 	EXP 	Sound  stopped
+89.6074 	EXP 	New trial (rep=0, index=37): {'soundFile': u'du.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 278, 'condition': u'R'}
+89.6087 	EXP 	Set  sound=du.wav
+89.6090 	EXP 	Sound  started
+89.6151 	EXP 	fam_trials_image: autoDraw = False
+89.6151 	EXP 	fam_trials_image: autoDraw = False
+89.6151 	EXP 	fam_trials_image: autoDraw = True
+90.0652 	EXP 	Sound  stopped
+90.0819 	EXP 	Sound  stopped
+90.0823 	EXP 	New trial (rep=0, index=38): {'soundFile': u'tu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 279, 'condition': u'R'}
+90.0836 	EXP 	Set  sound=tu.wav
+90.0839 	EXP 	Sound  started
+90.1260 	EXP 	fam_trials_image: autoDraw = False
+90.1260 	EXP 	fam_trials_image: autoDraw = False
+90.1260 	EXP 	fam_trials_image: autoDraw = True
+90.5403 	EXP 	Sound  stopped
+90.5570 	EXP 	Sound  stopped
+90.5573 	EXP 	New trial (rep=0, index=39): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 280, 'condition': u'R'}
+90.5586 	EXP 	Set  sound=du.wav
+90.5589 	EXP 	Sound  started
+90.5653 	EXP 	fam_trials_image: autoDraw = False
+90.5653 	EXP 	fam_trials_image: autoDraw = False
+90.5653 	EXP 	fam_trials_image: autoDraw = True
+91.0154 	EXP 	Sound  stopped
+91.0321 	EXP 	Sound  stopped
+91.0324 	EXP 	New trial (rep=0, index=40): {'soundFile': u'di.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 281, 'condition': u'R'}
+91.0338 	EXP 	Set  sound=di.wav
+91.0341 	EXP 	Sound  started
+91.0404 	EXP 	fam_trials_image: autoDraw = False
+91.0404 	EXP 	fam_trials_image: autoDraw = False
+91.0404 	EXP 	fam_trials_image: autoDraw = True
+91.4904 	EXP 	Sound  stopped
+91.5071 	EXP 	Sound  stopped
+91.5074 	EXP 	New trial (rep=0, index=41): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 282, 'condition': u'R'}
+91.5087 	EXP 	Set  sound=bi.wav
+91.5091 	EXP 	Sound  started
+91.5153 	EXP 	fam_trials_image: autoDraw = False
+91.5153 	EXP 	fam_trials_image: autoDraw = False
+91.5153 	EXP 	fam_trials_image: autoDraw = True
+91.9655 	EXP 	Sound  stopped
+91.9822 	EXP 	Sound  stopped
+91.9825 	EXP 	New trial (rep=0, index=42): {'soundFile': u'ti.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 283, 'condition': u'R'}
+91.9838 	EXP 	Set  sound=ti.wav
+91.9842 	EXP 	Sound  started
+91.9904 	EXP 	fam_trials_image: autoDraw = False
+91.9904 	EXP 	fam_trials_image: autoDraw = False
+91.9904 	EXP 	fam_trials_image: autoDraw = True
+92.4405 	EXP 	Sound  stopped
+92.4572 	EXP 	Sound  stopped
+92.4575 	EXP 	New trial (rep=0, index=43): {'soundFile': u'di.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 284, 'condition': u'R'}
+92.4589 	EXP 	Set  sound=di.wav
+92.4593 	EXP 	Sound  started
+92.5015 	EXP 	fam_trials_image: autoDraw = False
+92.5015 	EXP 	fam_trials_image: autoDraw = False
+92.5015 	EXP 	fam_trials_image: autoDraw = True
+92.9156 	EXP 	Sound  stopped
+92.9323 	EXP 	Sound  stopped
+92.9327 	EXP 	New trial (rep=0, index=44): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 285, 'condition': u'R'}
+92.9340 	EXP 	Set  sound=bi.wav
+92.9344 	EXP 	Sound  started
+92.9406 	EXP 	fam_trials_image: autoDraw = False
+92.9406 	EXP 	fam_trials_image: autoDraw = False
+92.9406 	EXP 	fam_trials_image: autoDraw = True
+93.3907 	EXP 	Sound  stopped
+93.4074 	EXP 	Sound  stopped
+93.4078 	EXP 	New trial (rep=0, index=45): {'soundFile': u'ba.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 286, 'condition': u'R'}
+93.4091 	EXP 	Set  sound=ba.wav
+93.4095 	EXP 	Sound  started
+93.4156 	EXP 	fam_trials_image: autoDraw = False
+93.4156 	EXP 	fam_trials_image: autoDraw = False
+93.4156 	EXP 	fam_trials_image: autoDraw = True
+93.8659 	EXP 	Sound  stopped
+93.8825 	EXP 	Sound  stopped
+93.8828 	EXP 	New trial (rep=0, index=46): {'soundFile': u'pi.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 287, 'condition': u'R'}
+93.8842 	EXP 	Set  sound=pi.wav
+93.8845 	EXP 	Sound  started
+93.8907 	EXP 	fam_trials_image: autoDraw = False
+93.8907 	EXP 	fam_trials_image: autoDraw = False
+93.8907 	EXP 	fam_trials_image: autoDraw = True
+94.3409 	EXP 	Sound  stopped
+94.3576 	EXP 	Sound  stopped
+94.3579 	EXP 	New trial (rep=0, index=47): {'soundFile': u'pi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 288, 'condition': u'R'}
+94.3593 	EXP 	Set  sound=pi.wav
+94.3597 	EXP 	Sound  started
+94.3658 	EXP 	fam_trials_image: autoDraw = False
+94.3658 	EXP 	fam_trials_image: autoDraw = False
+94.3658 	EXP 	fam_trials_image: autoDraw = True
+94.8159 	EXP 	Sound  stopped
+94.8328 	EXP 	Sound  stopped
+94.8331 	EXP 	New trial (rep=0, index=48): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+94.8346 	EXP 	Set  sound=silence.wav
+94.8350 	EXP 	Sound  started
+94.8409 	EXP 	fam_trials_image: autoDraw = False
+94.8409 	EXP 	fam_trials_image: autoDraw = False
+94.8409 	EXP 	fam_trials_image: autoDraw = True
+95.2910 	EXP 	Sound  stopped
+95.3078 	EXP 	Sound  stopped
+95.3082 	EXP 	New trial (rep=0, index=49): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+95.3097 	EXP 	Set  sound=silence.wav
+95.3100 	EXP 	Sound  started
+95.3160 	EXP 	fam_trials_image: autoDraw = False
+95.3160 	EXP 	fam_trials_image: autoDraw = False
+95.3160 	EXP 	fam_trials_image: autoDraw = True
+95.7661 	EXP 	Sound  stopped
+95.7828 	EXP 	Sound  stopped
+95.7832 	EXP 	New trial (rep=0, index=50): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+95.7847 	EXP 	Set  sound=silence.wav
+95.7850 	EXP 	Sound  started
+95.7910 	EXP 	fam_trials_image: autoDraw = False
+95.7910 	EXP 	fam_trials_image: autoDraw = False
+95.7910 	EXP 	fam_trials_image: autoDraw = True
+96.2412 	EXP 	Sound  stopped
+96.2580 	EXP 	Sound  stopped
+96.2584 	EXP 	New trial (rep=0, index=51): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+96.2599 	EXP 	Set  sound=silence.wav
+96.2603 	EXP 	Sound  started
+96.2661 	EXP 	fam_trials_image: autoDraw = False
+96.2661 	EXP 	fam_trials_image: autoDraw = False
+96.2661 	EXP 	fam_trials_image: autoDraw = True
+96.7163 	EXP 	Sound  stopped
+96.7330 	EXP 	Sound  stopped
+96.7334 	EXP 	New trial (rep=0, index=52): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+96.7349 	EXP 	Set  sound=silence.wav
+96.7352 	EXP 	Sound  started
+96.7413 	EXP 	fam_trials_image: autoDraw = False
+96.7413 	EXP 	fam_trials_image: autoDraw = False
+96.7413 	EXP 	fam_trials_image: autoDraw = True
+97.1914 	EXP 	Sound  stopped
+97.2081 	EXP 	Sound  stopped
+97.2084 	EXP 	New trial (rep=0, index=53): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+97.2099 	EXP 	Set  sound=silence.wav
+97.2102 	EXP 	Sound  started
+97.2163 	EXP 	fam_trials_image: autoDraw = False
+97.2163 	EXP 	fam_trials_image: autoDraw = False
+97.2163 	EXP 	fam_trials_image: autoDraw = True
+97.6665 	EXP 	Sound  stopped
+97.6832 	EXP 	Sound  stopped
+97.6835 	EXP 	New trial (rep=0, index=54): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+97.6850 	EXP 	Set  sound=silence.wav
+97.6853 	EXP 	Sound  started
+97.6914 	EXP 	fam_trials_image: autoDraw = False
+97.6914 	EXP 	fam_trials_image: autoDraw = False
+97.6914 	EXP 	fam_trials_image: autoDraw = True
+98.1415 	EXP 	Sound  stopped
+98.1583 	EXP 	Sound  stopped
+98.1586 	EXP 	New trial (rep=0, index=55): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+98.1601 	EXP 	Set  sound=silence.wav
+98.1605 	EXP 	Sound  started
+98.1665 	EXP 	fam_trials_image: autoDraw = False
+98.1665 	EXP 	fam_trials_image: autoDraw = False
+98.1665 	EXP 	fam_trials_image: autoDraw = True
+98.6166 	EXP 	Sound  stopped
+98.6334 	EXP 	Sound  stopped
+98.6338 	EXP 	New trial (rep=0, index=56): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+98.6352 	EXP 	Set  sound=silence.wav
+98.6355 	EXP 	Sound  started
+98.6416 	EXP 	fam_trials_image: autoDraw = False
+98.6416 	EXP 	fam_trials_image: autoDraw = False
+98.6416 	EXP 	fam_trials_image: autoDraw = True
+99.0917 	EXP 	Sound  stopped
+99.1085 	EXP 	Sound  stopped
+99.1089 	EXP 	New trial (rep=0, index=57): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+99.1103 	EXP 	Set  sound=silence.wav
+99.1107 	EXP 	Sound  started
+99.1166 	EXP 	fam_trials_image: autoDraw = False
+99.1166 	EXP 	fam_trials_image: autoDraw = False
+99.1166 	EXP 	fam_trials_image: autoDraw = True
+99.5668 	EXP 	Sound  stopped
+99.5835 	EXP 	Sound  stopped
+99.5838 	EXP 	New trial (rep=0, index=58): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+99.5853 	EXP 	Set  sound=silence.wav
+99.5857 	EXP 	Sound  started
+99.5917 	EXP 	fam_trials_image: autoDraw = False
+99.5917 	EXP 	fam_trials_image: autoDraw = False
+99.5917 	EXP 	fam_trials_image: autoDraw = True
+100.0419 	EXP 	Sound  stopped
+100.0586 	EXP 	Sound  stopped
+100.0590 	EXP 	New trial (rep=0, index=59): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+100.0604 	EXP 	Set  sound=silence.wav
+100.0608 	EXP 	Sound  started
+100.0668 	EXP 	fam_trials_image: autoDraw = False
+100.0668 	EXP 	fam_trials_image: autoDraw = False
+100.0668 	EXP 	fam_trials_image: autoDraw = True
+100.5170 	EXP 	Sound  stopped
+100.5337 	EXP 	Sound  stopped
+100.5340 	EXP 	New trial (rep=0, index=60): {'soundFile': u'ba.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 289, 'condition': u'R'}
+100.5354 	EXP 	Set  sound=ba.wav
+100.5357 	EXP 	Sound  started
+100.5419 	EXP 	fam_trials_image: autoDraw = False
+100.5419 	EXP 	fam_trials_image: autoDraw = False
+100.5419 	EXP 	fam_trials_image: autoDraw = True
+100.9921 	EXP 	Sound  stopped
+101.0088 	EXP 	Sound  stopped
+101.0091 	EXP 	New trial (rep=0, index=61): {'soundFile': u'tu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 290, 'condition': u'R'}
+101.0105 	EXP 	Set  sound=tu.wav
+101.0108 	EXP 	Sound  started
+101.0170 	EXP 	fam_trials_image: autoDraw = False
+101.0170 	EXP 	fam_trials_image: autoDraw = False
+101.0170 	EXP 	fam_trials_image: autoDraw = True
+101.4671 	EXP 	Sound  stopped
+101.4840 	EXP 	Sound  stopped
+101.4843 	EXP 	New trial (rep=0, index=62): {'soundFile': u'pi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 291, 'condition': u'R'}
+101.4857 	EXP 	Set  sound=pi.wav
+101.4860 	EXP 	Sound  started
+101.4921 	EXP 	fam_trials_image: autoDraw = False
+101.4921 	EXP 	fam_trials_image: autoDraw = False
+101.4921 	EXP 	fam_trials_image: autoDraw = True
+101.9422 	EXP 	Sound  stopped
+101.9590 	EXP 	Sound  stopped
+101.9593 	EXP 	New trial (rep=0, index=63): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 292, 'condition': u'R'}
+101.9607 	EXP 	Set  sound=du.wav
+101.9610 	EXP 	Sound  started
+101.9672 	EXP 	fam_trials_image: autoDraw = False
+101.9672 	EXP 	fam_trials_image: autoDraw = False
+101.9672 	EXP 	fam_trials_image: autoDraw = True
+102.4173 	EXP 	Sound  stopped
+102.4341 	EXP 	Sound  stopped
+102.4344 	EXP 	New trial (rep=0, index=64): {'soundFile': u'ti.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 293, 'condition': u'R'}
+102.4358 	EXP 	Set  sound=ti.wav
+102.4361 	EXP 	Sound  started
+102.4423 	EXP 	fam_trials_image: autoDraw = False
+102.4423 	EXP 	fam_trials_image: autoDraw = False
+102.4423 	EXP 	fam_trials_image: autoDraw = True
+102.8925 	EXP 	Sound  stopped
+102.9091 	EXP 	Sound  stopped
+102.9094 	EXP 	New trial (rep=0, index=65): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 294, 'condition': u'R'}
+102.9108 	EXP 	Set  sound=bi.wav
+102.9112 	EXP 	Sound  started
+102.9173 	EXP 	fam_trials_image: autoDraw = False
+102.9173 	EXP 	fam_trials_image: autoDraw = False
+102.9173 	EXP 	fam_trials_image: autoDraw = True
+103.3675 	EXP 	Sound  stopped
+103.3842 	EXP 	Sound  stopped
+103.3846 	EXP 	New trial (rep=0, index=66): {'soundFile': u'pu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 295, 'condition': u'R'}
+103.3859 	EXP 	Set  sound=pu.wav
+103.3863 	EXP 	Sound  started
+103.3924 	EXP 	fam_trials_image: autoDraw = False
+103.3924 	EXP 	fam_trials_image: autoDraw = False
+103.3924 	EXP 	fam_trials_image: autoDraw = True
+103.8427 	EXP 	Sound  stopped
+103.8593 	EXP 	Sound  stopped
+103.8597 	EXP 	New trial (rep=0, index=67): {'soundFile': u'di.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 296, 'condition': u'R'}
+103.8610 	EXP 	Set  sound=di.wav
+103.8613 	EXP 	Sound  started
+103.8675 	EXP 	fam_trials_image: autoDraw = False
+103.8675 	EXP 	fam_trials_image: autoDraw = False
+103.8675 	EXP 	fam_trials_image: autoDraw = True
+104.2595 	DATA 	Keypress: 3
+104.3177 	EXP 	Sound  stopped
+104.3344 	EXP 	Sound  stopped
+104.3348 	EXP 	New trial (rep=0, index=68): {'soundFile': u'tu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 297, 'condition': u'R'}
+104.3361 	EXP 	Set  sound=tu.wav
+104.3365 	EXP 	Sound  started
+104.3426 	EXP 	fam_trials_image: autoDraw = False
+104.3426 	EXP 	fam_trials_image: autoDraw = False
+104.3426 	EXP 	fam_trials_image: autoDraw = True
+104.7928 	EXP 	Sound  stopped
+104.8095 	EXP 	Sound  stopped
+104.8099 	EXP 	New trial (rep=0, index=69): {'soundFile': u'da.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 298, 'condition': u'R'}
+104.8113 	EXP 	Set  sound=da.wav
+104.8116 	EXP 	Sound  started
+104.8177 	EXP 	fam_trials_image: autoDraw = False
+104.8177 	EXP 	fam_trials_image: autoDraw = False
+104.8177 	EXP 	fam_trials_image: autoDraw = True
+105.2679 	EXP 	Sound  stopped
+105.2846 	EXP 	Sound  stopped
+105.2850 	EXP 	New trial (rep=0, index=70): {'soundFile': u'da.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 299, 'condition': u'R'}
+105.2864 	EXP 	Set  sound=da.wav
+105.2867 	EXP 	Sound  started
+105.2928 	EXP 	fam_trials_image: autoDraw = False
+105.2928 	EXP 	fam_trials_image: autoDraw = False
+105.2928 	EXP 	fam_trials_image: autoDraw = True
+105.7429 	EXP 	Sound  stopped
+105.7597 	EXP 	Sound  stopped
+105.7600 	EXP 	New trial (rep=0, index=71): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 300, 'condition': u'R'}
+105.7614 	EXP 	Set  sound=bi.wav
+105.7617 	EXP 	Sound  started
+105.7679 	EXP 	fam_trials_image: autoDraw = False
+105.7679 	EXP 	fam_trials_image: autoDraw = False
+105.7679 	EXP 	fam_trials_image: autoDraw = True
+106.2180 	EXP 	Sound  stopped
+106.2347 	EXP 	Sound  stopped
+106.2351 	EXP 	New trial (rep=0, index=72): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 301, 'condition': u'R'}
+106.2364 	EXP 	Set  sound=du.wav
+106.2367 	EXP 	Sound  started
+106.2429 	EXP 	fam_trials_image: autoDraw = False
+106.2429 	EXP 	fam_trials_image: autoDraw = False
+106.2429 	EXP 	fam_trials_image: autoDraw = True
+106.6931 	EXP 	Sound  stopped
+106.7098 	EXP 	Sound  stopped
+106.7102 	EXP 	New trial (rep=0, index=73): {'soundFile': u'bu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 302, 'condition': u'R'}
+106.7115 	EXP 	Set  sound=bu.wav
+106.7119 	EXP 	Sound  started
+106.7180 	EXP 	fam_trials_image: autoDraw = False
+106.7180 	EXP 	fam_trials_image: autoDraw = False
+106.7180 	EXP 	fam_trials_image: autoDraw = True
+107.1682 	EXP 	Sound  stopped
+107.1849 	EXP 	Sound  stopped
+107.1852 	EXP 	New trial (rep=0, index=74): {'soundFile': u'pa.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 303, 'condition': u'R'}
+107.1866 	EXP 	Set  sound=pa.wav
+107.1869 	EXP 	Sound  started
+107.1931 	EXP 	fam_trials_image: autoDraw = False
+107.1931 	EXP 	fam_trials_image: autoDraw = False
+107.1931 	EXP 	fam_trials_image: autoDraw = True
+107.6435 	EXP 	Sound  stopped
+107.6438 	DATA 	Keypress: 3
+107.6600 	EXP 	Sound  stopped
+107.6604 	EXP 	New trial (rep=0, index=75): {'soundFile': u'ti.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 304, 'condition': u'R'}
+107.6617 	EXP 	Set  sound=ti.wav
+107.6621 	EXP 	Sound  started
+107.7049 	EXP 	fam_trials_image: autoDraw = False
+107.7049 	EXP 	fam_trials_image: autoDraw = False
+107.7049 	EXP 	fam_trials_image: autoDraw = True
+108.1184 	EXP 	Sound  stopped
+108.1351 	EXP 	Sound  stopped
+108.1355 	EXP 	New trial (rep=0, index=76): {'soundFile': u'pi.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 305, 'condition': u'R'}
+108.1368 	EXP 	Set  sound=pi.wav
+108.1372 	EXP 	Sound  started
+108.1433 	EXP 	fam_trials_image: autoDraw = False
+108.1433 	EXP 	fam_trials_image: autoDraw = False
+108.1433 	EXP 	fam_trials_image: autoDraw = True
+108.5935 	EXP 	Sound  stopped
+108.6102 	EXP 	Sound  stopped
+108.6106 	EXP 	New trial (rep=0, index=77): {'soundFile': u'pa.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 306, 'condition': u'R'}
+108.6119 	EXP 	Set  sound=pa.wav
+108.6124 	EXP 	Sound  started
+108.6184 	EXP 	fam_trials_image: autoDraw = False
+108.6184 	EXP 	fam_trials_image: autoDraw = False
+108.6184 	EXP 	fam_trials_image: autoDraw = True
+109.0685 	EXP 	Sound  stopped
+109.0853 	EXP 	Sound  stopped
+109.0857 	EXP 	New trial (rep=0, index=78): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 307, 'condition': u'R'}
+109.0870 	EXP 	Set  sound=ta.wav
+109.0875 	EXP 	Sound  started
+109.0935 	EXP 	fam_trials_image: autoDraw = False
+109.0935 	EXP 	fam_trials_image: autoDraw = False
+109.0935 	EXP 	fam_trials_image: autoDraw = True
+109.5437 	EXP 	Sound  stopped
+109.5604 	EXP 	Sound  stopped
+109.5607 	EXP 	New trial (rep=0, index=79): {'soundFile': u'pa.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 308, 'condition': u'R'}
+109.5620 	EXP 	Set  sound=pa.wav
+109.5624 	EXP 	Sound  started
+109.5685 	EXP 	fam_trials_image: autoDraw = False
+109.5685 	EXP 	fam_trials_image: autoDraw = False
+109.5685 	EXP 	fam_trials_image: autoDraw = True
+110.0187 	EXP 	Sound  stopped
+110.0354 	EXP 	Sound  stopped
+110.0358 	EXP 	New trial (rep=0, index=80): {'soundFile': u'bu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 309, 'condition': u'R'}
+110.0371 	EXP 	Set  sound=bu.wav
+110.0375 	EXP 	Sound  started
+110.0436 	EXP 	fam_trials_image: autoDraw = False
+110.0436 	EXP 	fam_trials_image: autoDraw = False
+110.0436 	EXP 	fam_trials_image: autoDraw = True
+110.4938 	EXP 	Sound  stopped
+110.5106 	EXP 	Sound  stopped
+110.5109 	EXP 	New trial (rep=0, index=81): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 310, 'condition': u'R'}
+110.5123 	EXP 	Set  sound=ta.wav
+110.5126 	EXP 	Sound  started
+110.5187 	EXP 	fam_trials_image: autoDraw = False
+110.5187 	EXP 	fam_trials_image: autoDraw = False
+110.5187 	EXP 	fam_trials_image: autoDraw = True
+110.9690 	EXP 	Sound  stopped
+110.9774 	DATA 	Keypress: 3
+110.9856 	EXP 	Sound  stopped
+110.9860 	EXP 	New trial (rep=0, index=82): {'soundFile': u'bu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 311, 'condition': u'R'}
+110.9874 	EXP 	Set  sound=bu.wav
+110.9878 	EXP 	Sound  started
+110.9938 	EXP 	fam_trials_image: autoDraw = False
+110.9938 	EXP 	fam_trials_image: autoDraw = False
+110.9938 	EXP 	fam_trials_image: autoDraw = True
+111.4439 	EXP 	Sound  stopped
+111.4607 	EXP 	Sound  stopped
+111.4611 	EXP 	New trial (rep=0, index=83): {'soundFile': u'da.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 312, 'condition': u'R'}
+111.4624 	EXP 	Set  sound=da.wav
+111.4628 	EXP 	Sound  started
+111.4689 	EXP 	fam_trials_image: autoDraw = False
+111.4689 	EXP 	fam_trials_image: autoDraw = False
+111.4689 	EXP 	fam_trials_image: autoDraw = True
+111.8608 	DATA 	Keypress: 3
+111.9191 	EXP 	Sound  stopped
+111.9358 	EXP 	Sound  stopped
+111.9362 	EXP 	New trial (rep=0, index=84): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+111.9377 	EXP 	Set  sound=silence.wav
+111.9381 	EXP 	Sound  started
+111.9440 	EXP 	fam_trials_image: autoDraw = False
+111.9440 	EXP 	fam_trials_image: autoDraw = False
+111.9440 	EXP 	fam_trials_image: autoDraw = True
+112.3942 	EXP 	Sound  stopped
+112.4109 	EXP 	Sound  stopped
+112.4112 	EXP 	New trial (rep=0, index=85): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+112.4127 	EXP 	Set  sound=silence.wav
+112.4131 	EXP 	Sound  started
+112.4191 	EXP 	fam_trials_image: autoDraw = False
+112.4191 	EXP 	fam_trials_image: autoDraw = False
+112.4191 	EXP 	fam_trials_image: autoDraw = True
+112.8692 	EXP 	Sound  stopped
+112.8860 	EXP 	Sound  stopped
+112.8863 	EXP 	New trial (rep=0, index=86): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+112.8878 	EXP 	Set  sound=silence.wav
+112.8882 	EXP 	Sound  started
+112.8941 	EXP 	fam_trials_image: autoDraw = False
+112.8941 	EXP 	fam_trials_image: autoDraw = False
+112.8941 	EXP 	fam_trials_image: autoDraw = True
+113.3443 	EXP 	Sound  stopped
+113.3610 	EXP 	Sound  stopped
+113.3614 	EXP 	New trial (rep=0, index=87): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+113.3629 	EXP 	Set  sound=silence.wav
+113.3633 	EXP 	Sound  started
+113.3693 	EXP 	fam_trials_image: autoDraw = False
+113.3693 	EXP 	fam_trials_image: autoDraw = False
+113.3693 	EXP 	fam_trials_image: autoDraw = True
+113.8194 	EXP 	Sound  stopped
+113.8362 	EXP 	Sound  stopped
+113.8365 	EXP 	New trial (rep=0, index=88): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+113.8381 	EXP 	Set  sound=silence.wav
+113.8385 	EXP 	Sound  started
+113.8443 	EXP 	fam_trials_image: autoDraw = False
+113.8443 	EXP 	fam_trials_image: autoDraw = False
+113.8443 	EXP 	fam_trials_image: autoDraw = True
+114.2945 	EXP 	Sound  stopped
+114.3113 	EXP 	Sound  stopped
+114.3116 	EXP 	New trial (rep=0, index=89): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+114.3131 	EXP 	Set  sound=silence.wav
+114.3134 	EXP 	Sound  started
+114.3194 	EXP 	fam_trials_image: autoDraw = False
+114.3194 	EXP 	fam_trials_image: autoDraw = False
+114.3194 	EXP 	fam_trials_image: autoDraw = True
+114.7696 	EXP 	Sound  stopped
+114.7864 	EXP 	Sound  stopped
+114.7867 	EXP 	New trial (rep=0, index=90): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+114.7882 	EXP 	Set  sound=silence.wav
+114.7885 	EXP 	Sound  started
+114.7945 	EXP 	fam_trials_image: autoDraw = False
+114.7945 	EXP 	fam_trials_image: autoDraw = False
+114.7945 	EXP 	fam_trials_image: autoDraw = True
+115.2447 	EXP 	Sound  stopped
+115.2614 	EXP 	Sound  stopped
+115.2617 	EXP 	New trial (rep=0, index=91): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+115.2632 	EXP 	Set  sound=silence.wav
+115.2636 	EXP 	Sound  started
+115.2696 	EXP 	fam_trials_image: autoDraw = False
+115.2696 	EXP 	fam_trials_image: autoDraw = False
+115.2696 	EXP 	fam_trials_image: autoDraw = True
+115.7198 	EXP 	Sound  stopped
+115.7365 	EXP 	Sound  stopped
+115.7368 	EXP 	New trial (rep=0, index=92): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+115.7383 	EXP 	Set  sound=silence.wav
+115.7387 	EXP 	Sound  started
+115.7447 	EXP 	fam_trials_image: autoDraw = False
+115.7447 	EXP 	fam_trials_image: autoDraw = False
+115.7447 	EXP 	fam_trials_image: autoDraw = True
+116.1949 	EXP 	Sound  stopped
+116.2116 	EXP 	Sound  stopped
+116.2119 	EXP 	New trial (rep=0, index=93): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+116.2134 	EXP 	Set  sound=silence.wav
+116.2138 	EXP 	Sound  started
+116.2198 	EXP 	fam_trials_image: autoDraw = False
+116.2198 	EXP 	fam_trials_image: autoDraw = False
+116.2198 	EXP 	fam_trials_image: autoDraw = True
+116.6699 	EXP 	Sound  stopped
+116.6867 	EXP 	Sound  stopped
+116.6871 	EXP 	New trial (rep=0, index=94): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+116.6885 	EXP 	Set  sound=silence.wav
+116.6889 	EXP 	Sound  started
+116.6948 	EXP 	fam_trials_image: autoDraw = False
+116.6948 	EXP 	fam_trials_image: autoDraw = False
+116.6948 	EXP 	fam_trials_image: autoDraw = True
+117.1450 	EXP 	Sound  stopped
+117.1618 	EXP 	Sound  stopped
+117.1621 	EXP 	New trial (rep=0, index=95): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+117.1636 	EXP 	Set  sound=silence.wav
+117.1639 	EXP 	Sound  started
+117.1699 	EXP 	fam_trials_image: autoDraw = False
+117.1699 	EXP 	fam_trials_image: autoDraw = False
+117.1699 	EXP 	fam_trials_image: autoDraw = True
+117.6201 	EXP 	Sound  stopped
+117.6369 	EXP 	Sound  stopped
+117.6374 	EXP 	Sound  started
+117.6450 	EXP 	fam_trials_image: autoDraw = False
+117.6450 	EXP 	fam_trials_image: autoDraw = False
+120.5124 	EXP 	Sound  stopped
+120.5182 	EXP 	Imported auditory_run5_4.csv as conditions, 132 conditions, 6 params
+120.5186 	EXP 	Created sequence: sequential, trialTypes=132, nReps=1, seed=None
+120.5189 	EXP 	New trial (rep=0, index=0): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 21, 'trialnum': 241, 'condition': u'S'}
+120.5200 	EXP 	Set  sound=2A.wav
+120.5204 	EXP 	Sound  started
+120.5212 	EXP 	alien: autoDraw = True
+120.9791 	EXP 	Sound  stopped
+120.9795 	EXP 	New trial (rep=0, index=1): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 21, 'trialnum': 242, 'condition': u'S'}
+120.9807 	EXP 	Set  sound=2B.wav
+120.9811 	EXP 	Sound  started
+120.9873 	EXP 	alien: autoDraw = False
+120.9873 	EXP 	alien: autoDraw = True
+121.4374 	EXP 	Sound  stopped
+121.4378 	EXP 	New trial (rep=0, index=2): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 21, 'trialnum': 243, 'condition': u'S'}
+121.4389 	EXP 	Set  sound=2C.wav
+121.4393 	EXP 	Sound  started
+121.4457 	EXP 	alien: autoDraw = False
+121.4457 	EXP 	alien: autoDraw = True
+121.8959 	EXP 	Sound  stopped
+121.8962 	EXP 	New trial (rep=0, index=3): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 21, 'trialnum': 244, 'condition': u'S'}
+121.8974 	EXP 	Set  sound=3A.wav
+121.8977 	EXP 	Sound  started
+121.9042 	EXP 	alien: autoDraw = False
+121.9042 	EXP 	alien: autoDraw = True
+122.2128 	DATA 	Keypress: 3
+122.3544 	EXP 	Sound  stopped
+122.3548 	EXP 	New trial (rep=0, index=4): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 21, 'trialnum': 245, 'condition': u'S'}
+122.3560 	EXP 	Set  sound=3B.wav
+122.3563 	EXP 	Sound  started
+122.3625 	EXP 	alien: autoDraw = False
+122.3625 	EXP 	alien: autoDraw = True
+122.8317 	EXP 	Sound  stopped
+122.8320 	EXP 	New trial (rep=0, index=5): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 21, 'trialnum': 246, 'condition': u'S'}
+122.8331 	EXP 	Set  sound=3C.wav
+122.8335 	EXP 	Sound  started
+122.8695 	EXP 	alien: autoDraw = False
+122.8695 	EXP 	alien: autoDraw = True
+123.2796 	EXP 	Sound  stopped
+123.2799 	EXP 	New trial (rep=0, index=6): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 21, 'trialnum': 247, 'condition': u'S'}
+123.2811 	EXP 	Set  sound=4A.wav
+123.2814 	EXP 	Sound  started
+123.2877 	EXP 	alien: autoDraw = False
+123.2877 	EXP 	alien: autoDraw = True
+123.7379 	EXP 	Sound  stopped
+123.7382 	EXP 	New trial (rep=0, index=7): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 21, 'trialnum': 248, 'condition': u'S'}
+123.7396 	EXP 	Set  sound=4B.wav
+123.7399 	EXP 	Sound  started
+123.7461 	EXP 	alien: autoDraw = False
+123.7461 	EXP 	alien: autoDraw = True
+124.1963 	EXP 	Sound  stopped
+124.1966 	EXP 	New trial (rep=0, index=8): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 21, 'trialnum': 249, 'condition': u'S'}
+124.1979 	EXP 	Set  sound=4C.wav
+124.2001 	EXP 	Sound  started
+124.2046 	EXP 	alien: autoDraw = False
+124.2046 	EXP 	alien: autoDraw = True
+124.3965 	DATA 	Keypress: 3
+124.6548 	EXP 	Sound  stopped
+124.6552 	EXP 	New trial (rep=0, index=9): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 22, 'trialnum': 250, 'condition': u'S'}
+124.6564 	EXP 	Set  sound=2A.wav
+124.6567 	EXP 	Sound  started
+124.6630 	EXP 	alien: autoDraw = False
+124.6630 	EXP 	alien: autoDraw = True
+125.1131 	EXP 	Sound  stopped
+125.1135 	EXP 	New trial (rep=0, index=10): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 22, 'trialnum': 251, 'condition': u'S'}
+125.1146 	EXP 	Set  sound=2B.wav
+125.1150 	EXP 	Sound  started
+125.1214 	EXP 	alien: autoDraw = False
+125.1214 	EXP 	alien: autoDraw = True
+125.5716 	EXP 	Sound  stopped
+125.5719 	EXP 	New trial (rep=0, index=11): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 22, 'trialnum': 252, 'condition': u'S'}
+125.5731 	EXP 	Set  sound=2C.wav
+125.5735 	EXP 	Sound  started
+125.5799 	EXP 	alien: autoDraw = False
+125.5799 	EXP 	alien: autoDraw = False
+125.5799 	EXP 	alien: autoDraw = True
+126.0300 	EXP 	Sound  stopped
+126.0304 	EXP 	New trial (rep=0, index=12): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 22, 'trialnum': 253, 'condition': u'S'}
+126.0316 	EXP 	Set  sound=3A.wav
+126.0320 	EXP 	Sound  started
+126.0382 	EXP 	alien: autoDraw = False
+126.0382 	EXP 	alien: autoDraw = False
+126.0382 	EXP 	alien: autoDraw = True
+126.1468 	DATA 	Keypress: 3
+126.4884 	EXP 	Sound  stopped
+126.4888 	EXP 	New trial (rep=0, index=13): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 22, 'trialnum': 254, 'condition': u'S'}
+126.4900 	EXP 	Set  sound=3B.wav
+126.4903 	EXP 	Sound  started
+126.5323 	EXP 	alien: autoDraw = False
+126.5323 	EXP 	alien: autoDraw = False
+126.5323 	EXP 	alien: autoDraw = True
+126.9469 	EXP 	Sound  stopped
+126.9472 	EXP 	New trial (rep=0, index=14): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 22, 'trialnum': 255, 'condition': u'S'}
+126.9484 	EXP 	Set  sound=3C.wav
+126.9487 	EXP 	Sound  started
+126.9550 	EXP 	alien: autoDraw = False
+126.9550 	EXP 	alien: autoDraw = False
+126.9550 	EXP 	alien: autoDraw = True
+127.4053 	EXP 	Sound  stopped
+127.4056 	EXP 	New trial (rep=0, index=15): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 22, 'trialnum': 256, 'condition': u'S'}
+127.4068 	EXP 	Set  sound=4A.wav
+127.4071 	EXP 	Sound  started
+127.4135 	EXP 	alien: autoDraw = False
+127.4135 	EXP 	alien: autoDraw = False
+127.4135 	EXP 	alien: autoDraw = True
+127.8638 	EXP 	Sound  stopped
+127.8642 	EXP 	New trial (rep=0, index=16): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 22, 'trialnum': 257, 'condition': u'S'}
+127.8654 	EXP 	Set  sound=4B.wav
+127.8658 	EXP 	Sound  started
+127.8719 	EXP 	alien: autoDraw = False
+127.8719 	EXP 	alien: autoDraw = False
+127.8719 	EXP 	alien: autoDraw = True
+128.3221 	EXP 	Sound  stopped
+128.3224 	EXP 	New trial (rep=0, index=17): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 22, 'trialnum': 258, 'condition': u'S'}
+128.3236 	EXP 	Set  sound=4C.wav
+128.3240 	EXP 	Sound  started
+128.3303 	EXP 	alien: autoDraw = False
+128.3303 	EXP 	alien: autoDraw = False
+128.3303 	EXP 	alien: autoDraw = True
+128.5639 	DATA 	Keypress: 3
+128.7806 	EXP 	Sound  stopped
+128.7810 	EXP 	New trial (rep=0, index=18): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 21, 'trialnum': 259, 'condition': u'S'}
+128.7821 	EXP 	Set  sound=1A.wav
+128.7825 	EXP 	Sound  started
+128.7887 	EXP 	alien: autoDraw = False
+128.7887 	EXP 	alien: autoDraw = False
+128.7887 	EXP 	alien: autoDraw = True
+129.2389 	EXP 	Sound  stopped
+129.2392 	EXP 	New trial (rep=0, index=19): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 21, 'trialnum': 260, 'condition': u'S'}
+129.2404 	EXP 	Set  sound=1B.wav
+129.2408 	EXP 	Sound  started
+129.2471 	EXP 	alien: autoDraw = False
+129.2471 	EXP 	alien: autoDraw = False
+129.2471 	EXP 	alien: autoDraw = True
+129.6974 	EXP 	Sound  stopped
+129.6977 	EXP 	New trial (rep=0, index=20): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 21, 'trialnum': 261, 'condition': u'S'}
+129.6989 	EXP 	Set  sound=1C.wav
+129.6993 	EXP 	Sound  started
+129.7056 	EXP 	alien: autoDraw = False
+129.7056 	EXP 	alien: autoDraw = False
+129.7056 	EXP 	alien: autoDraw = True
+129.9308 	DATA 	Keypress: 3
+130.1913 	EXP 	Sound  stopped
+130.1917 	EXP 	New trial (rep=0, index=21): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 23, 'trialnum': 262, 'condition': u'S'}
+130.1928 	EXP 	Set  sound=2A.wav
+130.1932 	EXP 	Sound  started
+130.2290 	EXP 	alien: autoDraw = False
+130.2290 	EXP 	alien: autoDraw = True
+130.6392 	EXP 	Sound  stopped
+130.6395 	EXP 	New trial (rep=0, index=22): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 23, 'trialnum': 263, 'condition': u'S'}
+130.6407 	EXP 	Set  sound=2B.wav
+130.6411 	EXP 	Sound  started
+130.6474 	EXP 	alien: autoDraw = False
+130.6474 	EXP 	alien: autoDraw = True
+131.0976 	EXP 	Sound  stopped
+131.0979 	EXP 	New trial (rep=0, index=23): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 23, 'trialnum': 264, 'condition': u'S'}
+131.0991 	EXP 	Set  sound=2C.wav
+131.0995 	EXP 	Sound  started
+131.1059 	EXP 	alien: autoDraw = False
+131.1059 	EXP 	alien: autoDraw = True
+131.1144 	DATA 	Keypress: 3
+131.5560 	EXP 	Sound  stopped
+131.5564 	EXP 	New trial (rep=0, index=24): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+131.5579 	EXP 	Set  sound=silence.wav
+131.5583 	EXP 	Sound  started
+131.5642 	EXP 	alien: autoDraw = False
+131.5642 	EXP 	alien: autoDraw = True
+131.8812 	DATA 	Keypress: 3
+132.0145 	EXP 	Sound  stopped
+132.0148 	EXP 	New trial (rep=0, index=25): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+132.0164 	EXP 	Set  sound=silence.wav
+132.0168 	EXP 	Sound  started
+132.0226 	EXP 	alien: autoDraw = False
+132.0226 	EXP 	alien: autoDraw = True
+132.4728 	EXP 	Sound  stopped
+132.4731 	EXP 	New trial (rep=0, index=26): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+132.4746 	EXP 	Set  sound=silence.wav
+132.4750 	EXP 	Sound  started
+132.4811 	EXP 	alien: autoDraw = False
+132.4811 	EXP 	alien: autoDraw = True
+132.9313 	EXP 	Sound  stopped
+132.9314 	EXP 	Sound  stopped
+132.9318 	EXP 	New trial (rep=0, index=27): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+132.9333 	EXP 	Set  sound=silence.wav
+132.9337 	EXP 	Sound  started
+132.9395 	EXP 	alien: autoDraw = False
+132.9395 	EXP 	alien: autoDraw = False
+132.9395 	EXP 	alien: autoDraw = True
+133.3896 	EXP 	Sound  stopped
+133.3897 	EXP 	Sound  stopped
+133.3901 	EXP 	New trial (rep=0, index=28): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+133.3916 	EXP 	Set  sound=silence.wav
+133.3919 	EXP 	Sound  started
+133.3979 	EXP 	alien: autoDraw = False
+133.3979 	EXP 	alien: autoDraw = False
+133.3979 	EXP 	alien: autoDraw = True
+133.8481 	EXP 	Sound  stopped
+133.8482 	EXP 	Sound  stopped
+133.8485 	EXP 	New trial (rep=0, index=29): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+133.8501 	EXP 	Set  sound=silence.wav
+133.8504 	EXP 	Sound  started
+133.8563 	EXP 	alien: autoDraw = False
+133.8563 	EXP 	alien: autoDraw = False
+133.8563 	EXP 	alien: autoDraw = True
+134.3068 	EXP 	Sound  stopped
+134.3071 	EXP 	Sound  stopped
+134.3076 	EXP 	New trial (rep=0, index=30): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+134.3109 	EXP 	Set  sound=silence.wav
+134.3117 	EXP 	Sound  started
+134.3148 	EXP 	alien: autoDraw = False
+134.3148 	EXP 	alien: autoDraw = False
+134.3148 	EXP 	alien: autoDraw = True
+134.7649 	EXP 	Sound  stopped
+134.7650 	EXP 	Sound  stopped
+134.7653 	EXP 	New trial (rep=0, index=31): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+134.7668 	EXP 	Set  sound=silence.wav
+134.7671 	EXP 	Sound  started
+134.7731 	EXP 	alien: autoDraw = False
+134.7731 	EXP 	alien: autoDraw = False
+134.7731 	EXP 	alien: autoDraw = True
+135.2233 	EXP 	Sound  stopped
+135.2234 	EXP 	Sound  stopped
+135.2237 	EXP 	New trial (rep=0, index=32): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+135.2253 	EXP 	Set  sound=silence.wav
+135.2256 	EXP 	Sound  started
+135.2316 	EXP 	alien: autoDraw = False
+135.2316 	EXP 	alien: autoDraw = False
+135.2316 	EXP 	alien: autoDraw = True
+135.6818 	EXP 	Sound  stopped
+135.6819 	EXP 	Sound  stopped
+135.6822 	EXP 	New trial (rep=0, index=33): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+135.6837 	EXP 	Set  sound=silence.wav
+135.6840 	EXP 	Sound  started
+135.6900 	EXP 	alien: autoDraw = False
+135.6900 	EXP 	alien: autoDraw = False
+135.6900 	EXP 	alien: autoDraw = True
+136.1401 	EXP 	Sound  stopped
+136.1402 	EXP 	Sound  stopped
+136.1405 	EXP 	New trial (rep=0, index=34): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+136.1421 	EXP 	Set  sound=silence.wav
+136.1424 	EXP 	Sound  started
+136.1484 	EXP 	alien: autoDraw = False
+136.1484 	EXP 	alien: autoDraw = False
+136.1484 	EXP 	alien: autoDraw = True
+136.5986 	EXP 	Sound  stopped
+136.5987 	EXP 	Sound  stopped
+136.5991 	EXP 	New trial (rep=0, index=35): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+136.6006 	EXP 	Set  sound=silence.wav
+136.6009 	EXP 	Sound  started
+136.6068 	EXP 	alien: autoDraw = False
+136.6068 	EXP 	alien: autoDraw = False
+136.6068 	EXP 	alien: autoDraw = True
+137.0570 	EXP 	Sound  stopped
+137.0571 	EXP 	Sound  stopped
+137.0575 	EXP 	New trial (rep=0, index=36): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 22, 'trialnum': 265, 'condition': u'S'}
+137.0587 	EXP 	Set  sound=1A.wav
+137.0590 	EXP 	Sound  started
+137.0652 	EXP 	alien: autoDraw = False
+137.0652 	EXP 	alien: autoDraw = False
+137.0652 	EXP 	alien: autoDraw = True
+137.5155 	EXP 	Sound  stopped
+137.5158 	EXP 	New trial (rep=0, index=37): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 22, 'trialnum': 266, 'condition': u'S'}
+137.5170 	EXP 	Set  sound=1B.wav
+137.5173 	EXP 	Sound  started
+137.5237 	EXP 	alien: autoDraw = False
+137.5237 	EXP 	alien: autoDraw = False
+137.5237 	EXP 	alien: autoDraw = True
+137.9739 	EXP 	Sound  stopped
+137.9742 	EXP 	New trial (rep=0, index=38): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 22, 'trialnum': 267, 'condition': u'S'}
+137.9753 	EXP 	Set  sound=1C.wav
+137.9757 	EXP 	Sound  started
+137.9821 	EXP 	alien: autoDraw = False
+137.9821 	EXP 	alien: autoDraw = False
+137.9821 	EXP 	alien: autoDraw = True
+138.4323 	EXP 	Sound  stopped
+138.4326 	EXP 	New trial (rep=0, index=39): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 23, 'trialnum': 268, 'condition': u'S'}
+138.4338 	EXP 	Set  sound=4A.wav
+138.4342 	EXP 	Sound  started
+138.4405 	EXP 	alien: autoDraw = False
+138.4405 	EXP 	alien: autoDraw = False
+138.4405 	EXP 	alien: autoDraw = True
+138.8907 	EXP 	Sound  stopped
+138.8910 	EXP 	New trial (rep=0, index=40): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 23, 'trialnum': 269, 'condition': u'S'}
+138.8923 	EXP 	Set  sound=4B.wav
+138.8926 	EXP 	Sound  started
+138.8989 	EXP 	alien: autoDraw = False
+138.8989 	EXP 	alien: autoDraw = False
+138.8989 	EXP 	alien: autoDraw = True
+139.3493 	EXP 	Sound  stopped
+139.3497 	EXP 	New trial (rep=0, index=41): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 23, 'trialnum': 270, 'condition': u'S'}
+139.3509 	EXP 	Set  sound=4C.wav
+139.3513 	EXP 	Sound  started
+139.3574 	EXP 	alien: autoDraw = False
+139.3574 	EXP 	alien: autoDraw = False
+139.3574 	EXP 	alien: autoDraw = True
+139.8077 	EXP 	Sound  stopped
+139.8080 	EXP 	New trial (rep=0, index=42): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 23, 'trialnum': 271, 'condition': u'S'}
+139.8092 	EXP 	Set  sound=3A.wav
+139.8096 	EXP 	Sound  started
+139.8158 	EXP 	alien: autoDraw = False
+139.8158 	EXP 	alien: autoDraw = False
+139.8158 	EXP 	alien: autoDraw = True
+140.2661 	EXP 	Sound  stopped
+140.2664 	EXP 	New trial (rep=0, index=43): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 23, 'trialnum': 272, 'condition': u'S'}
+140.2676 	EXP 	Set  sound=3B.wav
+140.2679 	EXP 	Sound  started
+140.2743 	EXP 	alien: autoDraw = False
+140.2743 	EXP 	alien: autoDraw = False
+140.2743 	EXP 	alien: autoDraw = True
+140.7245 	EXP 	Sound  stopped
+140.7248 	EXP 	New trial (rep=0, index=44): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 23, 'trialnum': 273, 'condition': u'S'}
+140.7259 	EXP 	Set  sound=3C.wav
+140.7263 	EXP 	Sound  started
+140.7327 	EXP 	alien: autoDraw = False
+140.7327 	EXP 	alien: autoDraw = False
+140.7327 	EXP 	alien: autoDraw = True
+141.1829 	EXP 	Sound  stopped
+141.1833 	EXP 	New trial (rep=0, index=45): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 23, 'trialnum': 274, 'condition': u'S'}
+141.1845 	EXP 	Set  sound=1A.wav
+141.1848 	EXP 	Sound  started
+141.1911 	EXP 	alien: autoDraw = False
+141.1911 	EXP 	alien: autoDraw = False
+141.1911 	EXP 	alien: autoDraw = True
+141.6413 	EXP 	Sound  stopped
+141.6417 	EXP 	New trial (rep=0, index=46): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 23, 'trialnum': 275, 'condition': u'S'}
+141.6428 	EXP 	Set  sound=1B.wav
+141.6432 	EXP 	Sound  started
+141.6495 	EXP 	alien: autoDraw = False
+141.6495 	EXP 	alien: autoDraw = False
+141.6495 	EXP 	alien: autoDraw = True
+142.0998 	EXP 	Sound  stopped
+142.1001 	EXP 	New trial (rep=0, index=47): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 23, 'trialnum': 276, 'condition': u'S'}
+142.1012 	EXP 	Set  sound=1C.wav
+142.1016 	EXP 	Sound  started
+142.1080 	EXP 	alien: autoDraw = False
+142.1080 	EXP 	alien: autoDraw = False
+142.1080 	EXP 	alien: autoDraw = True
+142.5581 	EXP 	Sound  stopped
+142.5584 	EXP 	New trial (rep=0, index=48): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 24, 'trialnum': 277, 'condition': u'S'}
+142.5596 	EXP 	Set  sound=4A.wav
+142.5600 	EXP 	Sound  started
+142.5663 	EXP 	alien: autoDraw = False
+142.5663 	EXP 	alien: autoDraw = False
+142.5663 	EXP 	alien: autoDraw = True
+143.0165 	EXP 	Sound  stopped
+143.0168 	EXP 	New trial (rep=0, index=49): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 24, 'trialnum': 278, 'condition': u'S'}
+143.0180 	EXP 	Set  sound=4B.wav
+143.0184 	EXP 	Sound  started
+143.0246 	EXP 	alien: autoDraw = False
+143.0246 	EXP 	alien: autoDraw = False
+143.0246 	EXP 	alien: autoDraw = True
+143.4749 	EXP 	Sound  stopped
+143.4753 	EXP 	New trial (rep=0, index=50): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 24, 'trialnum': 279, 'condition': u'S'}
+143.4765 	EXP 	Set  sound=4C.wav
+143.4769 	EXP 	Sound  started
+143.4831 	EXP 	alien: autoDraw = False
+143.4831 	EXP 	alien: autoDraw = False
+143.4831 	EXP 	alien: autoDraw = True
+143.7083 	DATA 	Keypress: 3
+143.9333 	EXP 	Sound  stopped
+143.9337 	EXP 	New trial (rep=0, index=51): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 24, 'trialnum': 280, 'condition': u'S'}
+143.9350 	EXP 	Set  sound=2A.wav
+143.9353 	EXP 	Sound  started
+143.9415 	EXP 	alien: autoDraw = False
+143.9415 	EXP 	alien: autoDraw = False
+143.9415 	EXP 	alien: autoDraw = True
+144.3942 	EXP 	Sound  stopped
+144.3945 	EXP 	New trial (rep=0, index=52): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 24, 'trialnum': 281, 'condition': u'S'}
+144.3957 	EXP 	Set  sound=2B.wav
+144.3960 	EXP 	Sound  started
+144.4319 	EXP 	alien: autoDraw = False
+144.4319 	EXP 	alien: autoDraw = False
+144.4319 	EXP 	alien: autoDraw = True
+144.6503 	DATA 	Keypress: 3
+144.8503 	EXP 	Sound  stopped
+144.8507 	EXP 	New trial (rep=0, index=53): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 24, 'trialnum': 282, 'condition': u'S'}
+144.8519 	EXP 	Set  sound=2C.wav
+144.8522 	EXP 	Sound  started
+144.8583 	EXP 	alien: autoDraw = False
+144.8583 	EXP 	alien: autoDraw = False
+144.8583 	EXP 	alien: autoDraw = True
+145.3086 	EXP 	Sound  stopped
+145.3089 	EXP 	New trial (rep=0, index=54): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 24, 'trialnum': 283, 'condition': u'S'}
+145.3100 	EXP 	Set  sound=3A.wav
+145.3104 	EXP 	Sound  started
+145.3167 	EXP 	alien: autoDraw = False
+145.3167 	EXP 	alien: autoDraw = False
+145.3167 	EXP 	alien: autoDraw = True
+145.6441 	DATA 	Keypress: 3
+145.7669 	EXP 	Sound  stopped
+145.7673 	EXP 	New trial (rep=0, index=55): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 24, 'trialnum': 284, 'condition': u'S'}
+145.7685 	EXP 	Set  sound=3B.wav
+145.7689 	EXP 	Sound  started
+145.7752 	EXP 	alien: autoDraw = False
+145.7752 	EXP 	alien: autoDraw = False
+145.7752 	EXP 	alien: autoDraw = True
+146.2254 	EXP 	Sound  stopped
+146.2257 	EXP 	New trial (rep=0, index=56): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 24, 'trialnum': 285, 'condition': u'S'}
+146.2269 	EXP 	Set  sound=3C.wav
+146.2272 	EXP 	Sound  started
+146.2336 	EXP 	alien: autoDraw = False
+146.2336 	EXP 	alien: autoDraw = False
+146.2336 	EXP 	alien: autoDraw = True
+146.6839 	EXP 	Sound  stopped
+146.6842 	EXP 	New trial (rep=0, index=57): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 24, 'trialnum': 286, 'condition': u'S'}
+146.6854 	EXP 	Set  sound=1A.wav
+146.6858 	EXP 	Sound  started
+146.6920 	EXP 	alien: autoDraw = False
+146.6920 	EXP 	alien: autoDraw = False
+146.6920 	EXP 	alien: autoDraw = True
+147.1423 	EXP 	Sound  stopped
+147.1427 	EXP 	New trial (rep=0, index=58): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 24, 'trialnum': 287, 'condition': u'S'}
+147.1439 	EXP 	Set  sound=1B.wav
+147.1443 	EXP 	Sound  started
+147.1504 	EXP 	alien: autoDraw = False
+147.1504 	EXP 	alien: autoDraw = False
+147.1504 	EXP 	alien: autoDraw = True
+147.6007 	EXP 	Sound  stopped
+147.6010 	EXP 	New trial (rep=0, index=59): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 24, 'trialnum': 288, 'condition': u'S'}
+147.6022 	EXP 	Set  sound=1C.wav
+147.6026 	EXP 	Sound  started
+147.6088 	EXP 	alien: autoDraw = False
+147.6088 	EXP 	alien: autoDraw = False
+147.6088 	EXP 	alien: autoDraw = True
+148.0590 	EXP 	Sound  stopped
+148.0594 	EXP 	New trial (rep=0, index=60): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+148.0608 	EXP 	Set  sound=silence.wav
+148.0612 	EXP 	Sound  started
+148.0672 	EXP 	alien: autoDraw = False
+148.0672 	EXP 	alien: autoDraw = False
+148.0672 	EXP 	alien: autoDraw = True
+148.5174 	EXP 	Sound  stopped
+148.5175 	EXP 	Sound  stopped
+148.5178 	EXP 	New trial (rep=0, index=61): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+148.5193 	EXP 	Set  sound=silence.wav
+148.5197 	EXP 	Sound  started
+148.5256 	EXP 	alien: autoDraw = False
+148.5256 	EXP 	alien: autoDraw = False
+148.5256 	EXP 	alien: autoDraw = True
+148.9758 	EXP 	Sound  stopped
+148.9759 	EXP 	Sound  stopped
+148.9763 	EXP 	New trial (rep=0, index=62): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+148.9777 	EXP 	Set  sound=silence.wav
+148.9781 	EXP 	Sound  started
+148.9841 	EXP 	alien: autoDraw = False
+148.9841 	EXP 	alien: autoDraw = False
+148.9841 	EXP 	alien: autoDraw = True
+149.4342 	EXP 	Sound  stopped
+149.4343 	EXP 	Sound  stopped
+149.4346 	EXP 	New trial (rep=0, index=63): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+149.4361 	EXP 	Set  sound=silence.wav
+149.4365 	EXP 	Sound  started
+149.4425 	EXP 	alien: autoDraw = False
+149.4425 	EXP 	alien: autoDraw = False
+149.4425 	EXP 	alien: autoDraw = True
+149.8926 	EXP 	Sound  stopped
+149.8927 	EXP 	Sound  stopped
+149.8931 	EXP 	New trial (rep=0, index=64): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+149.8945 	EXP 	Set  sound=silence.wav
+149.8949 	EXP 	Sound  started
+149.9009 	EXP 	alien: autoDraw = False
+149.9009 	EXP 	alien: autoDraw = False
+149.9009 	EXP 	alien: autoDraw = True
+150.3511 	EXP 	Sound  stopped
+150.3512 	EXP 	Sound  stopped
+150.3515 	EXP 	New trial (rep=0, index=65): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+150.3530 	EXP 	Set  sound=silence.wav
+150.3533 	EXP 	Sound  started
+150.3593 	EXP 	alien: autoDraw = False
+150.3593 	EXP 	alien: autoDraw = False
+150.3593 	EXP 	alien: autoDraw = True
+150.8095 	EXP 	Sound  stopped
+150.8096 	EXP 	Sound  stopped
+150.8099 	EXP 	New trial (rep=0, index=66): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+150.8114 	EXP 	Set  sound=silence.wav
+150.8118 	EXP 	Sound  started
+150.8177 	EXP 	alien: autoDraw = False
+150.8177 	EXP 	alien: autoDraw = False
+150.8177 	EXP 	alien: autoDraw = True
+151.2679 	EXP 	Sound  stopped
+151.2680 	EXP 	Sound  stopped
+151.2683 	EXP 	New trial (rep=0, index=67): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+151.2698 	EXP 	Set  sound=silence.wav
+151.2702 	EXP 	Sound  started
+151.2762 	EXP 	alien: autoDraw = False
+151.2762 	EXP 	alien: autoDraw = False
+151.2762 	EXP 	alien: autoDraw = True
+151.7263 	EXP 	Sound  stopped
+151.7264 	EXP 	Sound  stopped
+151.7267 	EXP 	New trial (rep=0, index=68): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+151.7282 	EXP 	Set  sound=silence.wav
+151.7285 	EXP 	Sound  started
+151.7346 	EXP 	alien: autoDraw = False
+151.7346 	EXP 	alien: autoDraw = False
+151.7346 	EXP 	alien: autoDraw = True
+152.1847 	EXP 	Sound  stopped
+152.1848 	EXP 	Sound  stopped
+152.1851 	EXP 	New trial (rep=0, index=69): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+152.1866 	EXP 	Set  sound=silence.wav
+152.1869 	EXP 	Sound  started
+152.1930 	EXP 	alien: autoDraw = False
+152.1930 	EXP 	alien: autoDraw = False
+152.1930 	EXP 	alien: autoDraw = True
+152.6432 	EXP 	Sound  stopped
+152.6433 	EXP 	Sound  stopped
+152.6437 	EXP 	New trial (rep=0, index=70): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+152.6451 	EXP 	Set  sound=silence.wav
+152.6455 	EXP 	Sound  started
+152.6514 	EXP 	alien: autoDraw = False
+152.6514 	EXP 	alien: autoDraw = False
+152.6514 	EXP 	alien: autoDraw = True
+153.1015 	EXP 	Sound  stopped
+153.1017 	EXP 	Sound  stopped
+153.1020 	EXP 	New trial (rep=0, index=71): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+153.1035 	EXP 	Set  sound=silence.wav
+153.1038 	EXP 	Sound  started
+153.1098 	EXP 	alien: autoDraw = False
+153.1098 	EXP 	alien: autoDraw = False
+153.1098 	EXP 	alien: autoDraw = True
+153.5600 	EXP 	Sound  stopped
+153.5601 	EXP 	Sound  stopped
+153.5604 	EXP 	New trial (rep=0, index=72): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 25, 'trialnum': 289, 'condition': u'S'}
+153.5616 	EXP 	Set  sound=3A.wav
+153.5620 	EXP 	Sound  started
+153.5683 	EXP 	alien: autoDraw = False
+153.5683 	EXP 	alien: autoDraw = False
+153.5683 	EXP 	alien: autoDraw = True
+154.0187 	EXP 	Sound  stopped
+154.0190 	EXP 	New trial (rep=0, index=73): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 25, 'trialnum': 290, 'condition': u'S'}
+154.0201 	EXP 	Set  sound=3B.wav
+154.0205 	EXP 	Sound  started
+154.0266 	EXP 	alien: autoDraw = False
+154.0266 	EXP 	alien: autoDraw = False
+154.0266 	EXP 	alien: autoDraw = True
+154.4769 	EXP 	Sound  stopped
+154.4772 	EXP 	New trial (rep=0, index=74): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 25, 'trialnum': 291, 'condition': u'S'}
+154.4785 	EXP 	Set  sound=3C.wav
+154.4788 	EXP 	Sound  started
+154.4851 	EXP 	alien: autoDraw = False
+154.4851 	EXP 	alien: autoDraw = False
+154.4851 	EXP 	alien: autoDraw = True
+154.9353 	EXP 	Sound  stopped
+154.9356 	EXP 	New trial (rep=0, index=75): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 25, 'trialnum': 292, 'condition': u'S'}
+154.9369 	EXP 	Set  sound=1A.wav
+154.9372 	EXP 	Sound  started
+154.9436 	EXP 	alien: autoDraw = False
+154.9436 	EXP 	alien: autoDraw = False
+154.9436 	EXP 	alien: autoDraw = True
+155.3938 	EXP 	Sound  stopped
+155.3941 	EXP 	New trial (rep=0, index=76): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 25, 'trialnum': 293, 'condition': u'S'}
+155.3953 	EXP 	Set  sound=1B.wav
+155.3956 	EXP 	Sound  started
+155.4019 	EXP 	alien: autoDraw = False
+155.4019 	EXP 	alien: autoDraw = False
+155.4019 	EXP 	alien: autoDraw = True
+155.8624 	EXP 	Sound  stopped
+155.8627 	EXP 	New trial (rep=0, index=77): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 25, 'trialnum': 294, 'condition': u'S'}
+155.8639 	EXP 	Set  sound=1C.wav
+155.8643 	EXP 	Sound  started
+155.8998 	EXP 	alien: autoDraw = False
+155.8998 	EXP 	alien: autoDraw = False
+155.8998 	EXP 	alien: autoDraw = True
+156.3190 	EXP 	Sound  stopped
+156.3193 	EXP 	New trial (rep=0, index=78): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 25, 'trialnum': 295, 'condition': u'S'}
+156.3205 	EXP 	Set  sound=4A.wav
+156.3208 	EXP 	Sound  started
+156.3271 	EXP 	alien: autoDraw = False
+156.3271 	EXP 	alien: autoDraw = False
+156.3271 	EXP 	alien: autoDraw = True
+156.7773 	EXP 	Sound  stopped
+156.7776 	EXP 	New trial (rep=0, index=79): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 25, 'trialnum': 296, 'condition': u'S'}
+156.7788 	EXP 	Set  sound=4B.wav
+156.7792 	EXP 	Sound  started
+156.7855 	EXP 	alien: autoDraw = False
+156.7855 	EXP 	alien: autoDraw = False
+156.7855 	EXP 	alien: autoDraw = True
+157.2357 	EXP 	Sound  stopped
+157.2361 	EXP 	New trial (rep=0, index=80): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 25, 'trialnum': 297, 'condition': u'S'}
+157.2372 	EXP 	Set  sound=4C.wav
+157.2376 	EXP 	Sound  started
+157.2440 	EXP 	alien: autoDraw = False
+157.2440 	EXP 	alien: autoDraw = False
+157.2440 	EXP 	alien: autoDraw = True
+157.4859 	DATA 	Keypress: 3
+157.6942 	EXP 	Sound  stopped
+157.6946 	EXP 	New trial (rep=0, index=81): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 26, 'trialnum': 298, 'condition': u'S'}
+157.6958 	EXP 	Set  sound=3A.wav
+157.6961 	EXP 	Sound  started
+157.7023 	EXP 	alien: autoDraw = False
+157.7023 	EXP 	alien: autoDraw = False
+157.7023 	EXP 	alien: autoDraw = True
+158.1526 	EXP 	Sound  stopped
+158.1529 	EXP 	New trial (rep=0, index=82): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 26, 'trialnum': 299, 'condition': u'S'}
+158.1541 	EXP 	Set  sound=3B.wav
+158.1545 	EXP 	Sound  started
+158.1607 	EXP 	alien: autoDraw = False
+158.1607 	EXP 	alien: autoDraw = False
+158.1607 	EXP 	alien: autoDraw = True
+158.6110 	EXP 	Sound  stopped
+158.6113 	EXP 	New trial (rep=0, index=83): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 26, 'trialnum': 300, 'condition': u'S'}
+158.6125 	EXP 	Set  sound=3C.wav
+158.6128 	EXP 	Sound  started
+158.6192 	EXP 	alien: autoDraw = False
+158.6192 	EXP 	alien: autoDraw = False
+158.6192 	EXP 	alien: autoDraw = True
+159.0694 	EXP 	Sound  stopped
+159.0697 	EXP 	New trial (rep=0, index=84): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 25, 'trialnum': 301, 'condition': u'S'}
+159.0709 	EXP 	Set  sound=2A.wav
+159.0713 	EXP 	Sound  started
+159.0776 	EXP 	alien: autoDraw = False
+159.0776 	EXP 	alien: autoDraw = False
+159.0776 	EXP 	alien: autoDraw = True
+159.5278 	EXP 	Sound  stopped
+159.5281 	EXP 	New trial (rep=0, index=85): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 25, 'trialnum': 302, 'condition': u'S'}
+159.5293 	EXP 	Set  sound=2B.wav
+159.5296 	EXP 	Sound  started
+159.5360 	EXP 	alien: autoDraw = False
+159.5360 	EXP 	alien: autoDraw = False
+159.5360 	EXP 	alien: autoDraw = True
+159.7280 	DATA 	Keypress: 3
+159.8469 	DATA 	Keypress: 3
+159.9862 	EXP 	Sound  stopped
+159.9866 	EXP 	New trial (rep=0, index=86): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 25, 'trialnum': 303, 'condition': u'S'}
+159.9878 	EXP 	Set  sound=2C.wav
+159.9881 	EXP 	Sound  started
+159.9944 	EXP 	alien: autoDraw = False
+159.9944 	EXP 	alien: autoDraw = False
+159.9944 	EXP 	alien: autoDraw = True
+160.4446 	EXP 	Sound  stopped
+160.4450 	EXP 	New trial (rep=0, index=87): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 26, 'trialnum': 304, 'condition': u'S'}
+160.4461 	EXP 	Set  sound=1A.wav
+160.4465 	EXP 	Sound  started
+160.4528 	EXP 	alien: autoDraw = False
+160.4528 	EXP 	alien: autoDraw = False
+160.4528 	EXP 	alien: autoDraw = True
+160.6698 	DATA 	Keypress: 3
+160.9031 	EXP 	Sound  stopped
+160.9034 	EXP 	New trial (rep=0, index=88): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 26, 'trialnum': 305, 'condition': u'S'}
+160.9046 	EXP 	Set  sound=1B.wav
+160.9050 	EXP 	Sound  started
+160.9112 	EXP 	alien: autoDraw = False
+160.9112 	EXP 	alien: autoDraw = False
+160.9112 	EXP 	alien: autoDraw = True
+161.3615 	EXP 	Sound  stopped
+161.3618 	EXP 	New trial (rep=0, index=89): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 26, 'trialnum': 306, 'condition': u'S'}
+161.3630 	EXP 	Set  sound=1C.wav
+161.3634 	EXP 	Sound  started
+161.3697 	EXP 	alien: autoDraw = False
+161.3697 	EXP 	alien: autoDraw = False
+161.3697 	EXP 	alien: autoDraw = True
+161.8199 	EXP 	Sound  stopped
+161.8204 	EXP 	New trial (rep=0, index=90): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 26, 'trialnum': 307, 'condition': u'S'}
+161.8215 	EXP 	Set  sound=4A.wav
+161.8219 	EXP 	Sound  started
+161.8281 	EXP 	alien: autoDraw = False
+161.8281 	EXP 	alien: autoDraw = False
+161.8281 	EXP 	alien: autoDraw = True
+162.2783 	EXP 	Sound  stopped
+162.2786 	EXP 	New trial (rep=0, index=91): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 26, 'trialnum': 308, 'condition': u'S'}
+162.2798 	EXP 	Set  sound=4B.wav
+162.2801 	EXP 	Sound  started
+162.2865 	EXP 	alien: autoDraw = False
+162.2865 	EXP 	alien: autoDraw = False
+162.2865 	EXP 	alien: autoDraw = True
+162.7367 	EXP 	Sound  stopped
+162.7371 	EXP 	New trial (rep=0, index=92): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 26, 'trialnum': 309, 'condition': u'S'}
+162.7383 	EXP 	Set  sound=4C.wav
+162.7387 	EXP 	Sound  started
+162.7449 	EXP 	alien: autoDraw = False
+162.7449 	EXP 	alien: autoDraw = False
+162.7449 	EXP 	alien: autoDraw = True
+163.0119 	DATA 	Keypress: 3
+163.1952 	EXP 	Sound  stopped
+163.1956 	EXP 	New trial (rep=0, index=93): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 27, 'trialnum': 310, 'condition': u'S'}
+163.1968 	EXP 	Set  sound=3A.wav
+163.1971 	EXP 	Sound  started
+163.2033 	EXP 	alien: autoDraw = False
+163.2033 	EXP 	alien: autoDraw = False
+163.2033 	EXP 	alien: autoDraw = True
+163.6535 	EXP 	Sound  stopped
+163.6539 	EXP 	New trial (rep=0, index=94): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 27, 'trialnum': 311, 'condition': u'S'}
+163.6550 	EXP 	Set  sound=3B.wav
+163.6554 	EXP 	Sound  started
+163.6617 	EXP 	alien: autoDraw = False
+163.6617 	EXP 	alien: autoDraw = False
+163.6617 	EXP 	alien: autoDraw = True
+164.1121 	EXP 	Sound  stopped
+164.1124 	EXP 	New trial (rep=0, index=95): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 27, 'trialnum': 312, 'condition': u'S'}
+164.1136 	EXP 	Set  sound=3C.wav
+164.1140 	EXP 	Sound  started
+164.1202 	EXP 	alien: autoDraw = False
+164.1202 	EXP 	alien: autoDraw = False
+164.1202 	EXP 	alien: autoDraw = True
+164.5704 	EXP 	Sound  stopped
+164.5707 	EXP 	New trial (rep=0, index=96): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 26, 'trialnum': 313, 'condition': u'S'}
+164.5719 	EXP 	Set  sound=2A.wav
+164.5723 	EXP 	Sound  started
+164.5786 	EXP 	alien: autoDraw = False
+164.5786 	EXP 	alien: autoDraw = False
+164.5786 	EXP 	alien: autoDraw = True
+165.0291 	EXP 	Sound  stopped
+165.0295 	EXP 	New trial (rep=0, index=97): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 26, 'trialnum': 314, 'condition': u'S'}
+165.0308 	EXP 	Set  sound=2B.wav
+165.0311 	EXP 	Sound  started
+165.0370 	EXP 	alien: autoDraw = False
+165.0370 	EXP 	alien: autoDraw = False
+165.0370 	EXP 	alien: autoDraw = True
+165.2060 	DATA 	Keypress: 3
+165.4872 	EXP 	Sound  stopped
+165.4876 	EXP 	New trial (rep=0, index=98): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 26, 'trialnum': 315, 'condition': u'S'}
+165.4888 	EXP 	Set  sound=2C.wav
+165.4891 	EXP 	Sound  started
+165.4954 	EXP 	alien: autoDraw = False
+165.4954 	EXP 	alien: autoDraw = False
+165.4954 	EXP 	alien: autoDraw = True
+165.9456 	EXP 	Sound  stopped
+165.9460 	EXP 	New trial (rep=0, index=99): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 27, 'trialnum': 316, 'condition': u'S'}
+165.9471 	EXP 	Set  sound=1A.wav
+165.9475 	EXP 	Sound  started
+165.9538 	EXP 	alien: autoDraw = False
+165.9538 	EXP 	alien: autoDraw = False
+165.9538 	EXP 	alien: autoDraw = True
+166.1124 	DATA 	Keypress: 3
+166.4041 	EXP 	Sound  stopped
+166.4045 	EXP 	New trial (rep=0, index=100): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 27, 'trialnum': 317, 'condition': u'S'}
+166.4058 	EXP 	Set  sound=1B.wav
+166.4061 	EXP 	Sound  started
+166.4123 	EXP 	alien: autoDraw = False
+166.4123 	EXP 	alien: autoDraw = False
+166.4123 	EXP 	alien: autoDraw = True
+166.8625 	EXP 	Sound  stopped
+166.8628 	EXP 	New trial (rep=0, index=101): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 27, 'trialnum': 318, 'condition': u'S'}
+166.8640 	EXP 	Set  sound=1C.wav
+166.8644 	EXP 	Sound  started
+166.8707 	EXP 	alien: autoDraw = False
+166.8707 	EXP 	alien: autoDraw = False
+166.8707 	EXP 	alien: autoDraw = True
+167.3209 	EXP 	Sound  stopped
+167.3213 	EXP 	New trial (rep=0, index=102): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 27, 'trialnum': 319, 'condition': u'S'}
+167.3225 	EXP 	Set  sound=2A.wav
+167.3228 	EXP 	Sound  started
+167.3291 	EXP 	alien: autoDraw = False
+167.3291 	EXP 	alien: autoDraw = False
+167.3291 	EXP 	alien: autoDraw = True
+167.7793 	EXP 	Sound  stopped
+167.7796 	EXP 	New trial (rep=0, index=103): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 27, 'trialnum': 320, 'condition': u'S'}
+167.7808 	EXP 	Set  sound=2B.wav
+167.7812 	EXP 	Sound  started
+167.7875 	EXP 	alien: autoDraw = False
+167.7875 	EXP 	alien: autoDraw = False
+167.7875 	EXP 	alien: autoDraw = True
+168.2377 	EXP 	Sound  stopped
+168.2381 	EXP 	New trial (rep=0, index=104): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 27, 'trialnum': 321, 'condition': u'S'}
+168.2393 	EXP 	Set  sound=2C.wav
+168.2396 	EXP 	Sound  started
+168.2459 	EXP 	alien: autoDraw = False
+168.2459 	EXP 	alien: autoDraw = False
+168.2459 	EXP 	alien: autoDraw = True
+168.6963 	EXP 	Sound  stopped
+168.6966 	EXP 	New trial (rep=0, index=105): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 27, 'trialnum': 322, 'condition': u'S'}
+168.6978 	EXP 	Set  sound=4A.wav
+168.6982 	EXP 	Sound  started
+168.7043 	EXP 	alien: autoDraw = False
+168.7043 	EXP 	alien: autoDraw = False
+168.7043 	EXP 	alien: autoDraw = True
+168.9963 	DATA 	Keypress: 3
+169.0046 	DATA 	Keypress: 3
+169.0213 	DATA 	Keypress: 3
+169.1546 	EXP 	Sound  stopped
+169.1549 	EXP 	New trial (rep=0, index=106): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 27, 'trialnum': 323, 'condition': u'S'}
+169.1561 	EXP 	Set  sound=4B.wav
+169.1565 	EXP 	Sound  started
+169.1627 	EXP 	alien: autoDraw = False
+169.1627 	EXP 	alien: autoDraw = False
+169.1627 	EXP 	alien: autoDraw = True
+169.6130 	EXP 	Sound  stopped
+169.6133 	EXP 	New trial (rep=0, index=107): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 27, 'trialnum': 324, 'condition': u'S'}
+169.6145 	EXP 	Set  sound=4C.wav
+169.6148 	EXP 	Sound  started
+169.6212 	EXP 	alien: autoDraw = False
+169.6212 	EXP 	alien: autoDraw = False
+169.6212 	EXP 	alien: autoDraw = True
+170.0714 	EXP 	Sound  stopped
+170.0717 	EXP 	New trial (rep=0, index=108): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 28, 'trialnum': 325, 'condition': u'S'}
+170.0729 	EXP 	Set  sound=3A.wav
+170.0733 	EXP 	Sound  started
+170.0796 	EXP 	alien: autoDraw = False
+170.0796 	EXP 	alien: autoDraw = False
+170.0796 	EXP 	alien: autoDraw = True
+170.3132 	DATA 	Keypress: 3
+170.5298 	EXP 	Sound  stopped
+170.5302 	EXP 	New trial (rep=0, index=109): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 28, 'trialnum': 326, 'condition': u'S'}
+170.5314 	EXP 	Set  sound=3B.wav
+170.5317 	EXP 	Sound  started
+170.5380 	EXP 	alien: autoDraw = False
+170.5380 	EXP 	alien: autoDraw = False
+170.5380 	EXP 	alien: autoDraw = True
+170.9882 	EXP 	Sound  stopped
+170.9886 	EXP 	New trial (rep=0, index=110): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 28, 'trialnum': 327, 'condition': u'S'}
+170.9897 	EXP 	Set  sound=3C.wav
+170.9901 	EXP 	Sound  started
+171.0317 	EXP 	alien: autoDraw = False
+171.0317 	EXP 	alien: autoDraw = False
+171.0317 	EXP 	alien: autoDraw = True
+171.4467 	EXP 	Sound  stopped
+171.4470 	EXP 	New trial (rep=0, index=111): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 28, 'trialnum': 328, 'condition': u'S'}
+171.4482 	EXP 	Set  sound=4A.wav
+171.4485 	EXP 	Sound  started
+171.4548 	EXP 	alien: autoDraw = False
+171.4548 	EXP 	alien: autoDraw = False
+171.4548 	EXP 	alien: autoDraw = True
+171.9051 	EXP 	Sound  stopped
+171.9054 	EXP 	New trial (rep=0, index=112): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 28, 'trialnum': 329, 'condition': u'S'}
+171.9066 	EXP 	Set  sound=4B.wav
+171.9070 	EXP 	Sound  started
+171.9133 	EXP 	alien: autoDraw = False
+171.9133 	EXP 	alien: autoDraw = False
+171.9133 	EXP 	alien: autoDraw = True
+172.3635 	EXP 	Sound  stopped
+172.3639 	EXP 	New trial (rep=0, index=113): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 28, 'trialnum': 330, 'condition': u'S'}
+172.3651 	EXP 	Set  sound=4C.wav
+172.3654 	EXP 	Sound  started
+172.4070 	EXP 	alien: autoDraw = False
+172.4070 	EXP 	alien: autoDraw = False
+172.4070 	EXP 	alien: autoDraw = True
+172.5553 	DATA 	Keypress: 3
+172.8220 	EXP 	Sound  stopped
+172.8224 	EXP 	New trial (rep=0, index=114): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 29, 'trialnum': 331, 'condition': u'S'}
+172.8236 	EXP 	Set  sound=3A.wav
+172.8240 	EXP 	Sound  started
+172.8301 	EXP 	alien: autoDraw = False
+172.8301 	EXP 	alien: autoDraw = False
+172.8301 	EXP 	alien: autoDraw = True
+173.2804 	EXP 	Sound  stopped
+173.2807 	EXP 	New trial (rep=0, index=115): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 29, 'trialnum': 332, 'condition': u'S'}
+173.2819 	EXP 	Set  sound=3B.wav
+173.2822 	EXP 	Sound  started
+173.2885 	EXP 	alien: autoDraw = False
+173.2885 	EXP 	alien: autoDraw = False
+173.2885 	EXP 	alien: autoDraw = True
+173.7388 	EXP 	Sound  stopped
+173.7391 	EXP 	New trial (rep=0, index=116): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 29, 'trialnum': 333, 'condition': u'S'}
+173.7403 	EXP 	Set  sound=3C.wav
+173.7406 	EXP 	Sound  started
+173.7469 	EXP 	alien: autoDraw = False
+173.7469 	EXP 	alien: autoDraw = False
+173.7469 	EXP 	alien: autoDraw = True
+174.1971 	EXP 	Sound  stopped
+174.1975 	EXP 	New trial (rep=0, index=117): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 28, 'trialnum': 334, 'condition': u'S'}
+174.1986 	EXP 	Set  sound=2A.wav
+174.1990 	EXP 	Sound  started
+174.2053 	EXP 	alien: autoDraw = False
+174.2053 	EXP 	alien: autoDraw = False
+174.2053 	EXP 	alien: autoDraw = True
+174.6556 	EXP 	Sound  stopped
+174.6559 	EXP 	New trial (rep=0, index=118): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 28, 'trialnum': 335, 'condition': u'S'}
+174.6571 	EXP 	Set  sound=2B.wav
+174.6574 	EXP 	Sound  started
+174.6638 	EXP 	alien: autoDraw = False
+174.6638 	EXP 	alien: autoDraw = False
+174.6638 	EXP 	alien: autoDraw = True
+175.1140 	EXP 	Sound  stopped
+175.1143 	EXP 	New trial (rep=0, index=119): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 28, 'trialnum': 336, 'condition': u'S'}
+175.1156 	EXP 	Set  sound=2C.wav
+175.1159 	EXP 	Sound  started
+175.1222 	EXP 	alien: autoDraw = False
+175.1222 	EXP 	alien: autoDraw = False
+175.1222 	EXP 	alien: autoDraw = True
+175.5724 	EXP 	Sound  stopped
+175.5728 	EXP 	New trial (rep=0, index=120): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+175.5743 	EXP 	Set  sound=silence.wav
+175.5747 	EXP 	Sound  started
+175.5806 	EXP 	alien: autoDraw = False
+175.5806 	EXP 	alien: autoDraw = False
+175.5806 	EXP 	alien: autoDraw = True
+175.7558 	DATA 	Keypress: 3
+175.7726 	DATA 	Keypress: 3
+176.0307 	EXP 	Sound  stopped
+176.0308 	EXP 	Sound  stopped
+176.0312 	EXP 	New trial (rep=0, index=121): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+176.0327 	EXP 	Set  sound=silence.wav
+176.0331 	EXP 	Sound  started
+176.0390 	EXP 	alien: autoDraw = False
+176.0390 	EXP 	alien: autoDraw = False
+176.0390 	EXP 	alien: autoDraw = True
+176.4892 	EXP 	Sound  stopped
+176.4893 	EXP 	Sound  stopped
+176.4896 	EXP 	New trial (rep=0, index=122): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+176.4911 	EXP 	Set  sound=silence.wav
+176.4914 	EXP 	Sound  started
+176.4974 	EXP 	alien: autoDraw = False
+176.4974 	EXP 	alien: autoDraw = False
+176.4974 	EXP 	alien: autoDraw = True
+176.9476 	EXP 	Sound  stopped
+176.9477 	EXP 	Sound  stopped
+176.9480 	EXP 	New trial (rep=0, index=123): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+176.9495 	EXP 	Set  sound=silence.wav
+176.9498 	EXP 	Sound  started
+176.9558 	EXP 	alien: autoDraw = False
+176.9558 	EXP 	alien: autoDraw = False
+176.9558 	EXP 	alien: autoDraw = True
+177.4060 	EXP 	Sound  stopped
+177.4061 	EXP 	Sound  stopped
+177.4065 	EXP 	New trial (rep=0, index=124): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+177.4080 	EXP 	Set  sound=silence.wav
+177.4084 	EXP 	Sound  started
+177.4143 	EXP 	alien: autoDraw = False
+177.4143 	EXP 	alien: autoDraw = False
+177.4143 	EXP 	alien: autoDraw = True
+177.8644 	EXP 	Sound  stopped
+177.8645 	EXP 	Sound  stopped
+177.8648 	EXP 	New trial (rep=0, index=125): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+177.8663 	EXP 	Set  sound=silence.wav
+177.8667 	EXP 	Sound  started
+177.8727 	EXP 	alien: autoDraw = False
+177.8727 	EXP 	alien: autoDraw = False
+177.8727 	EXP 	alien: autoDraw = True
+178.3229 	EXP 	Sound  stopped
+178.3230 	EXP 	Sound  stopped
+178.3233 	EXP 	New trial (rep=0, index=126): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+178.3248 	EXP 	Set  sound=silence.wav
+178.3251 	EXP 	Sound  started
+178.3312 	EXP 	alien: autoDraw = False
+178.3312 	EXP 	alien: autoDraw = False
+178.3312 	EXP 	alien: autoDraw = True
+178.7813 	EXP 	Sound  stopped
+178.7815 	EXP 	Sound  stopped
+178.7819 	EXP 	New trial (rep=0, index=127): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+178.7834 	EXP 	Set  sound=silence.wav
+178.7837 	EXP 	Sound  started
+178.7895 	EXP 	alien: autoDraw = False
+178.7895 	EXP 	alien: autoDraw = False
+178.7895 	EXP 	alien: autoDraw = True
+179.2396 	EXP 	Sound  stopped
+179.2397 	EXP 	Sound  stopped
+179.2400 	EXP 	New trial (rep=0, index=128): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+179.2415 	EXP 	Set  sound=silence.wav
+179.2419 	EXP 	Sound  started
+179.2480 	EXP 	alien: autoDraw = False
+179.2480 	EXP 	alien: autoDraw = False
+179.2480 	EXP 	alien: autoDraw = True
+179.6981 	EXP 	Sound  stopped
+179.6982 	EXP 	Sound  stopped
+179.6986 	EXP 	New trial (rep=0, index=129): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+179.7000 	EXP 	Set  sound=silence.wav
+179.7004 	EXP 	Sound  started
+179.7063 	EXP 	alien: autoDraw = False
+179.7063 	EXP 	alien: autoDraw = False
+179.7063 	EXP 	alien: autoDraw = True
+180.1565 	EXP 	Sound  stopped
+180.1566 	EXP 	Sound  stopped
+180.1569 	EXP 	New trial (rep=0, index=130): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+180.1584 	EXP 	Set  sound=silence.wav
+180.1587 	EXP 	Sound  started
+180.1647 	EXP 	alien: autoDraw = False
+180.1647 	EXP 	alien: autoDraw = False
+180.1647 	EXP 	alien: autoDraw = True
+180.6151 	EXP 	Sound  stopped
+180.6152 	EXP 	Sound  stopped
+180.6155 	EXP 	New trial (rep=0, index=131): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+180.6170 	EXP 	Set  sound=silence.wav
+180.6173 	EXP 	Sound  started
+180.6232 	EXP 	alien: autoDraw = False
+180.6232 	EXP 	alien: autoDraw = False
+180.6232 	EXP 	alien: autoDraw = True
+181.0733 	EXP 	Sound  stopped
+181.0734 	EXP 	Sound  stopped
+181.0740 	EXP 	Sound  started
+181.0816 	EXP 	alien: autoDraw = False
+181.0816 	EXP 	alien: autoDraw = False
+183.9573 	EXP 	Sound  stopped
+183.9617 	EXP 	Imported auditory_run5_5.csv as conditions, 84 conditions, 6 params
+183.9621 	EXP 	Created sequence: sequential, trialTypes=84, nReps=1, seed=None
+183.9624 	EXP 	New trial (rep=0, index=0): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 337, 'condition': u'R'}
+183.9637 	EXP 	Set  sound=du.wav
+183.9641 	EXP 	Sound  started
+183.9654 	EXP 	fam_trials_image: autoDraw = True
+184.4406 	EXP 	Sound  stopped
+184.4412 	EXP 	New trial (rep=0, index=1): {'soundFile': u'ba.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 338, 'condition': u'R'}
+184.4425 	EXP 	Set  sound=ba.wav
+184.4429 	EXP 	Sound  started
+184.4489 	EXP 	fam_trials_image: autoDraw = False
+184.4489 	EXP 	fam_trials_image: autoDraw = True
+184.8990 	EXP 	Sound  stopped
+184.9157 	EXP 	Sound  stopped
+184.9161 	EXP 	New trial (rep=0, index=2): {'soundFile': u'ti.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 339, 'condition': u'R'}
+184.9175 	EXP 	Set  sound=ti.wav
+184.9178 	EXP 	Sound  started
+184.9239 	EXP 	fam_trials_image: autoDraw = False
+184.9239 	EXP 	fam_trials_image: autoDraw = False
+184.9239 	EXP 	fam_trials_image: autoDraw = True
+185.3741 	EXP 	Sound  stopped
+185.3909 	EXP 	Sound  stopped
+185.3913 	EXP 	New trial (rep=0, index=3): {'soundFile': u'bu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 340, 'condition': u'R'}
+185.3926 	EXP 	Set  sound=bu.wav
+185.3930 	EXP 	Sound  started
+185.3991 	EXP 	fam_trials_image: autoDraw = False
+185.3991 	EXP 	fam_trials_image: autoDraw = False
+185.3991 	EXP 	fam_trials_image: autoDraw = True
+185.8492 	EXP 	Sound  stopped
+185.8659 	EXP 	Sound  stopped
+185.8663 	EXP 	New trial (rep=0, index=4): {'soundFile': u'bi.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 341, 'condition': u'R'}
+185.8676 	EXP 	Set  sound=bi.wav
+185.8680 	EXP 	Sound  started
+185.8741 	EXP 	fam_trials_image: autoDraw = False
+185.8741 	EXP 	fam_trials_image: autoDraw = False
+185.8741 	EXP 	fam_trials_image: autoDraw = True
+186.1665 	DATA 	Keypress: 3
+186.3243 	EXP 	Sound  stopped
+186.3410 	EXP 	Sound  stopped
+186.3415 	EXP 	New trial (rep=0, index=5): {'soundFile': u'ti.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 342, 'condition': u'R'}
+186.3428 	EXP 	Set  sound=ti.wav
+186.3432 	EXP 	Sound  started
+186.3492 	EXP 	fam_trials_image: autoDraw = False
+186.3492 	EXP 	fam_trials_image: autoDraw = False
+186.3492 	EXP 	fam_trials_image: autoDraw = True
+186.7994 	EXP 	Sound  stopped
+186.8162 	EXP 	Sound  stopped
+186.8165 	EXP 	New trial (rep=0, index=6): {'soundFile': u'pu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 343, 'condition': u'R'}
+186.8179 	EXP 	Set  sound=pu.wav
+186.8183 	EXP 	Sound  started
+186.8243 	EXP 	fam_trials_image: autoDraw = False
+186.8243 	EXP 	fam_trials_image: autoDraw = False
+186.8243 	EXP 	fam_trials_image: autoDraw = True
+187.2745 	EXP 	Sound  stopped
+187.2913 	EXP 	Sound  stopped
+187.2916 	EXP 	New trial (rep=0, index=7): {'soundFile': u'ba.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 344, 'condition': u'R'}
+187.2930 	EXP 	Set  sound=ba.wav
+187.2933 	EXP 	Sound  started
+187.2994 	EXP 	fam_trials_image: autoDraw = False
+187.2994 	EXP 	fam_trials_image: autoDraw = False
+187.2994 	EXP 	fam_trials_image: autoDraw = True
+187.6081 	DATA 	Keypress: 3
+187.7496 	EXP 	Sound  stopped
+187.7663 	EXP 	Sound  stopped
+187.7667 	EXP 	New trial (rep=0, index=8): {'soundFile': u'ta.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 345, 'condition': u'R'}
+187.7681 	EXP 	Set  sound=ta.wav
+187.7684 	EXP 	Sound  started
+187.7745 	EXP 	fam_trials_image: autoDraw = False
+187.7745 	EXP 	fam_trials_image: autoDraw = False
+187.7745 	EXP 	fam_trials_image: autoDraw = True
+188.2247 	EXP 	Sound  stopped
+188.2414 	EXP 	Sound  stopped
+188.2417 	EXP 	New trial (rep=0, index=9): {'soundFile': u'pa.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 346, 'condition': u'R'}
+188.2431 	EXP 	Set  sound=pa.wav
+188.2434 	EXP 	Sound  started
+188.2496 	EXP 	fam_trials_image: autoDraw = False
+188.2496 	EXP 	fam_trials_image: autoDraw = False
+188.2496 	EXP 	fam_trials_image: autoDraw = True
+188.6998 	EXP 	Sound  stopped
+188.7165 	EXP 	Sound  stopped
+188.7168 	EXP 	New trial (rep=0, index=10): {'soundFile': u'tu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 347, 'condition': u'R'}
+188.7182 	EXP 	Set  sound=tu.wav
+188.7185 	EXP 	Sound  started
+188.7247 	EXP 	fam_trials_image: autoDraw = False
+188.7247 	EXP 	fam_trials_image: autoDraw = False
+188.7247 	EXP 	fam_trials_image: autoDraw = True
+189.1748 	EXP 	Sound  stopped
+189.1916 	EXP 	Sound  stopped
+189.1919 	EXP 	New trial (rep=0, index=11): {'soundFile': u'bu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 348, 'condition': u'R'}
+189.1932 	EXP 	Set  sound=bu.wav
+189.1936 	EXP 	Sound  started
+189.1998 	EXP 	fam_trials_image: autoDraw = False
+189.1998 	EXP 	fam_trials_image: autoDraw = False
+189.1998 	EXP 	fam_trials_image: autoDraw = True
+189.6499 	EXP 	Sound  stopped
+189.6666 	EXP 	Sound  stopped
+189.6670 	EXP 	New trial (rep=0, index=12): {'soundFile': u'pu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 349, 'condition': u'R'}
+189.6683 	EXP 	Set  sound=pu.wav
+189.6687 	EXP 	Sound  started
+189.6749 	EXP 	fam_trials_image: autoDraw = False
+189.6749 	EXP 	fam_trials_image: autoDraw = False
+189.6749 	EXP 	fam_trials_image: autoDraw = True
+189.9919 	DATA 	Keypress: 3
+190.1250 	EXP 	Sound  stopped
+190.1417 	EXP 	Sound  stopped
+190.1421 	EXP 	New trial (rep=0, index=13): {'soundFile': u'di.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 350, 'condition': u'R'}
+190.1436 	EXP 	Set  sound=di.wav
+190.1439 	EXP 	Sound  started
+190.1499 	EXP 	fam_trials_image: autoDraw = False
+190.1499 	EXP 	fam_trials_image: autoDraw = False
+190.1499 	EXP 	fam_trials_image: autoDraw = True
+190.5336 	DATA 	Keypress: 3
+190.6002 	EXP 	Sound  stopped
+190.6169 	EXP 	Sound  stopped
+190.6174 	EXP 	New trial (rep=0, index=14): {'soundFile': u'pi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 351, 'condition': u'R'}
+190.6188 	EXP 	Set  sound=pi.wav
+190.6192 	EXP 	Sound  started
+190.6251 	EXP 	fam_trials_image: autoDraw = False
+190.6251 	EXP 	fam_trials_image: autoDraw = False
+190.6251 	EXP 	fam_trials_image: autoDraw = True
+191.0752 	EXP 	Sound  stopped
+191.0921 	EXP 	Sound  stopped
+191.0924 	EXP 	New trial (rep=0, index=15): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 352, 'condition': u'R'}
+191.0937 	EXP 	Set  sound=du.wav
+191.0941 	EXP 	Sound  started
+191.1358 	EXP 	fam_trials_image: autoDraw = False
+191.1358 	EXP 	fam_trials_image: autoDraw = False
+191.1358 	EXP 	fam_trials_image: autoDraw = True
+191.5504 	EXP 	Sound  stopped
+191.5671 	EXP 	Sound  stopped
+191.5674 	EXP 	New trial (rep=0, index=16): {'soundFile': u'da.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 353, 'condition': u'R'}
+191.5689 	EXP 	Set  sound=da.wav
+191.5692 	EXP 	Sound  started
+191.5753 	EXP 	fam_trials_image: autoDraw = False
+191.5753 	EXP 	fam_trials_image: autoDraw = False
+191.5753 	EXP 	fam_trials_image: autoDraw = True
+192.0255 	EXP 	Sound  stopped
+192.0422 	EXP 	Sound  stopped
+192.0426 	EXP 	New trial (rep=0, index=17): {'soundFile': u'pi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 354, 'condition': u'R'}
+192.0441 	EXP 	Set  sound=pi.wav
+192.0444 	EXP 	Sound  started
+192.0504 	EXP 	fam_trials_image: autoDraw = False
+192.0504 	EXP 	fam_trials_image: autoDraw = False
+192.0504 	EXP 	fam_trials_image: autoDraw = True
+192.5005 	EXP 	Sound  stopped
+192.5172 	EXP 	Sound  stopped
+192.5175 	EXP 	New trial (rep=0, index=18): {'soundFile': u'di.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 355, 'condition': u'R'}
+192.5189 	EXP 	Set  sound=di.wav
+192.5193 	EXP 	Sound  started
+192.5255 	EXP 	fam_trials_image: autoDraw = False
+192.5255 	EXP 	fam_trials_image: autoDraw = False
+192.5255 	EXP 	fam_trials_image: autoDraw = True
+192.9756 	EXP 	Sound  stopped
+192.9923 	EXP 	Sound  stopped
+192.9927 	EXP 	New trial (rep=0, index=19): {'soundFile': u'tu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 356, 'condition': u'R'}
+192.9941 	EXP 	Set  sound=tu.wav
+192.9944 	EXP 	Sound  started
+193.0006 	EXP 	fam_trials_image: autoDraw = False
+193.0006 	EXP 	fam_trials_image: autoDraw = False
+193.0006 	EXP 	fam_trials_image: autoDraw = True
+193.4506 	EXP 	Sound  stopped
+193.4673 	EXP 	Sound  stopped
+193.4676 	EXP 	New trial (rep=0, index=20): {'soundFile': u'pa.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 357, 'condition': u'R'}
+193.4690 	EXP 	Set  sound=pa.wav
+193.4693 	EXP 	Sound  started
+193.4755 	EXP 	fam_trials_image: autoDraw = False
+193.4755 	EXP 	fam_trials_image: autoDraw = False
+193.4755 	EXP 	fam_trials_image: autoDraw = True
+193.9257 	EXP 	Sound  stopped
+193.9424 	EXP 	Sound  stopped
+193.9427 	EXP 	New trial (rep=0, index=21): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 358, 'condition': u'R'}
+193.9441 	EXP 	Set  sound=ta.wav
+193.9444 	EXP 	Sound  started
+193.9506 	EXP 	fam_trials_image: autoDraw = False
+193.9506 	EXP 	fam_trials_image: autoDraw = False
+193.9506 	EXP 	fam_trials_image: autoDraw = True
+194.4008 	EXP 	Sound  stopped
+194.4175 	EXP 	Sound  stopped
+194.4179 	EXP 	New trial (rep=0, index=22): {'soundFile': u'da.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 359, 'condition': u'R'}
+194.4193 	EXP 	Set  sound=da.wav
+194.4197 	EXP 	Sound  started
+194.4257 	EXP 	fam_trials_image: autoDraw = False
+194.4257 	EXP 	fam_trials_image: autoDraw = False
+194.4257 	EXP 	fam_trials_image: autoDraw = True
+194.8761 	EXP 	Sound  stopped
+194.8926 	EXP 	Sound  stopped
+194.8929 	EXP 	New trial (rep=0, index=23): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 360, 'condition': u'R'}
+194.8943 	EXP 	Set  sound=bi.wav
+194.8946 	EXP 	Sound  started
+194.9008 	EXP 	fam_trials_image: autoDraw = False
+194.9008 	EXP 	fam_trials_image: autoDraw = False
+194.9008 	EXP 	fam_trials_image: autoDraw = True
+195.3509 	EXP 	Sound  stopped
+195.3677 	EXP 	Sound  stopped
+195.3680 	EXP 	New trial (rep=0, index=24): {'soundFile': u'ba.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 313, 'condition': u'R'}
+195.3694 	EXP 	Set  sound=ba.wav
+195.3697 	EXP 	Sound  started
+195.3759 	EXP 	fam_trials_image: autoDraw = False
+195.3759 	EXP 	fam_trials_image: autoDraw = False
+195.3759 	EXP 	fam_trials_image: autoDraw = True
+195.8260 	EXP 	Sound  stopped
+195.8429 	EXP 	Sound  stopped
+195.8432 	EXP 	New trial (rep=0, index=25): {'soundFile': u'di.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 314, 'condition': u'R'}
+195.8446 	EXP 	Set  sound=di.wav
+195.8449 	EXP 	Sound  started
+195.8510 	EXP 	fam_trials_image: autoDraw = False
+195.8510 	EXP 	fam_trials_image: autoDraw = False
+195.8510 	EXP 	fam_trials_image: autoDraw = True
+196.3012 	EXP 	Sound  stopped
+196.3179 	EXP 	Sound  stopped
+196.3182 	EXP 	New trial (rep=0, index=26): {'soundFile': u'pu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 315, 'condition': u'R'}
+196.3197 	EXP 	Set  sound=pu.wav
+196.3200 	EXP 	Sound  started
+196.3261 	EXP 	fam_trials_image: autoDraw = False
+196.3261 	EXP 	fam_trials_image: autoDraw = False
+196.3261 	EXP 	fam_trials_image: autoDraw = True
+196.7762 	EXP 	Sound  stopped
+196.7930 	EXP 	Sound  stopped
+196.7934 	EXP 	New trial (rep=0, index=27): {'soundFile': u'bu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 316, 'condition': u'R'}
+196.7949 	EXP 	Set  sound=bu.wav
+196.7952 	EXP 	Sound  started
+196.8011 	EXP 	fam_trials_image: autoDraw = False
+196.8011 	EXP 	fam_trials_image: autoDraw = False
+196.8011 	EXP 	fam_trials_image: autoDraw = True
+197.2513 	EXP 	Sound  stopped
+197.2680 	EXP 	Sound  stopped
+197.2684 	EXP 	New trial (rep=0, index=28): {'soundFile': u'pu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 317, 'condition': u'R'}
+197.2698 	EXP 	Set  sound=pu.wav
+197.2701 	EXP 	Sound  started
+197.2762 	EXP 	fam_trials_image: autoDraw = False
+197.2762 	EXP 	fam_trials_image: autoDraw = False
+197.2762 	EXP 	fam_trials_image: autoDraw = True
+197.3848 	DATA 	Keypress: 3
+197.7264 	EXP 	Sound  stopped
+197.7432 	DATA 	Keypress: 3
+197.7434 	EXP 	Sound  stopped
+197.7438 	EXP 	New trial (rep=0, index=29): {'soundFile': u'du.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 318, 'condition': u'R'}
+197.7453 	EXP 	Set  sound=du.wav
+197.7456 	EXP 	Sound  started
+197.7513 	EXP 	fam_trials_image: autoDraw = False
+197.7513 	EXP 	fam_trials_image: autoDraw = False
+197.7513 	EXP 	fam_trials_image: autoDraw = True
+198.1766 	DATA 	Keypress: 3
+198.2015 	EXP 	Sound  stopped
+198.2182 	EXP 	Sound  stopped
+198.2186 	EXP 	New trial (rep=0, index=30): {'soundFile': u'da.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 319, 'condition': u'R'}
+198.2199 	EXP 	Set  sound=da.wav
+198.2203 	EXP 	Sound  started
+198.2264 	EXP 	fam_trials_image: autoDraw = False
+198.2264 	EXP 	fam_trials_image: autoDraw = False
+198.2264 	EXP 	fam_trials_image: autoDraw = True
+198.6765 	EXP 	Sound  stopped
+198.6933 	EXP 	Sound  stopped
+198.6936 	EXP 	New trial (rep=0, index=31): {'soundFile': u'pa.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 320, 'condition': u'R'}
+198.6950 	EXP 	Set  sound=pa.wav
+198.6953 	EXP 	Sound  started
+198.7015 	EXP 	fam_trials_image: autoDraw = False
+198.7015 	EXP 	fam_trials_image: autoDraw = False
+198.7015 	EXP 	fam_trials_image: autoDraw = True
+199.1517 	EXP 	Sound  stopped
+199.1684 	EXP 	Sound  stopped
+199.1687 	EXP 	New trial (rep=0, index=32): {'soundFile': u'da.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 321, 'condition': u'R'}
+199.1701 	EXP 	Set  sound=da.wav
+199.1704 	EXP 	Sound  started
+199.1766 	EXP 	fam_trials_image: autoDraw = False
+199.1766 	EXP 	fam_trials_image: autoDraw = False
+199.1766 	EXP 	fam_trials_image: autoDraw = True
+199.6267 	EXP 	Sound  stopped
+199.6434 	EXP 	Sound  stopped
+199.6438 	EXP 	New trial (rep=0, index=33): {'soundFile': u'ti.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 322, 'condition': u'R'}
+199.6451 	EXP 	Set  sound=ti.wav
+199.6455 	EXP 	Sound  started
+199.6517 	EXP 	fam_trials_image: autoDraw = False
+199.6517 	EXP 	fam_trials_image: autoDraw = False
+199.6517 	EXP 	fam_trials_image: autoDraw = True
+200.1018 	EXP 	Sound  stopped
+200.1185 	EXP 	Sound  stopped
+200.1189 	EXP 	New trial (rep=0, index=34): {'soundFile': u'ti.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 323, 'condition': u'R'}
+200.1203 	EXP 	Set  sound=ti.wav
+200.1206 	EXP 	Sound  started
+200.1267 	EXP 	fam_trials_image: autoDraw = False
+200.1267 	EXP 	fam_trials_image: autoDraw = False
+200.1267 	EXP 	fam_trials_image: autoDraw = True
+200.5770 	EXP 	Sound  stopped
+200.5936 	EXP 	Sound  stopped
+200.5940 	EXP 	New trial (rep=0, index=35): {'soundFile': u'bu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 324, 'condition': u'R'}
+200.5954 	EXP 	Set  sound=bu.wav
+200.5957 	EXP 	Sound  started
+200.6018 	EXP 	fam_trials_image: autoDraw = False
+200.6018 	EXP 	fam_trials_image: autoDraw = False
+200.6018 	EXP 	fam_trials_image: autoDraw = True
+201.0520 	EXP 	Sound  stopped
+201.0687 	EXP 	Sound  stopped
+201.0690 	EXP 	New trial (rep=0, index=36): {'soundFile': u'di.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 325, 'condition': u'R'}
+201.0706 	EXP 	Set  sound=di.wav
+201.0709 	EXP 	Sound  started
+201.0769 	EXP 	fam_trials_image: autoDraw = False
+201.0769 	EXP 	fam_trials_image: autoDraw = False
+201.0769 	EXP 	fam_trials_image: autoDraw = True
+201.4189 	DATA 	Keypress: 3
+201.5271 	EXP 	Sound  stopped
+201.5439 	EXP 	Sound  stopped
+201.5443 	EXP 	New trial (rep=0, index=37): {'soundFile': u'ta.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 326, 'condition': u'R'}
+201.5457 	EXP 	Set  sound=ta.wav
+201.5461 	EXP 	Sound  started
+201.5520 	EXP 	fam_trials_image: autoDraw = False
+201.5520 	EXP 	fam_trials_image: autoDraw = False
+201.5520 	EXP 	fam_trials_image: autoDraw = True
+202.0022 	EXP 	Sound  stopped
+202.0189 	EXP 	Sound  stopped
+202.0192 	EXP 	New trial (rep=0, index=38): {'soundFile': u'pa.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 327, 'condition': u'R'}
+202.0206 	EXP 	Set  sound=pa.wav
+202.0210 	EXP 	Sound  started
+202.0271 	EXP 	fam_trials_image: autoDraw = False
+202.0271 	EXP 	fam_trials_image: autoDraw = False
+202.0271 	EXP 	fam_trials_image: autoDraw = True
+202.4773 	EXP 	Sound  stopped
+202.4940 	EXP 	Sound  stopped
+202.4943 	EXP 	New trial (rep=0, index=39): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 328, 'condition': u'R'}
+202.4957 	EXP 	Set  sound=ta.wav
+202.4961 	EXP 	Sound  started
+202.5022 	EXP 	fam_trials_image: autoDraw = False
+202.5022 	EXP 	fam_trials_image: autoDraw = False
+202.5022 	EXP 	fam_trials_image: autoDraw = True
+202.9524 	EXP 	Sound  stopped
+202.9690 	EXP 	Sound  stopped
+202.9694 	EXP 	New trial (rep=0, index=40): {'soundFile': u'ba.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 329, 'condition': u'R'}
+202.9708 	EXP 	Set  sound=ba.wav
+202.9711 	EXP 	Sound  started
+202.9772 	EXP 	fam_trials_image: autoDraw = False
+202.9772 	EXP 	fam_trials_image: autoDraw = False
+202.9772 	EXP 	fam_trials_image: autoDraw = True
+203.4274 	EXP 	Sound  stopped
+203.4442 	EXP 	Sound  stopped
+203.4446 	EXP 	New trial (rep=0, index=41): {'soundFile': u'di.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 330, 'condition': u'R'}
+203.4460 	EXP 	Set  sound=di.wav
+203.4464 	EXP 	Sound  started
+203.4524 	EXP 	fam_trials_image: autoDraw = False
+203.4524 	EXP 	fam_trials_image: autoDraw = False
+203.4524 	EXP 	fam_trials_image: autoDraw = True
+203.9025 	EXP 	Sound  stopped
+203.9193 	EXP 	Sound  stopped
+203.9196 	EXP 	New trial (rep=0, index=42): {'soundFile': u'tu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 331, 'condition': u'R'}
+203.9210 	EXP 	Set  sound=tu.wav
+203.9213 	EXP 	Sound  started
+203.9274 	EXP 	fam_trials_image: autoDraw = False
+203.9274 	EXP 	fam_trials_image: autoDraw = False
+203.9274 	EXP 	fam_trials_image: autoDraw = True
+204.3776 	EXP 	Sound  stopped
+204.3943 	EXP 	Sound  stopped
+204.3947 	EXP 	New trial (rep=0, index=43): {'soundFile': u'pu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 332, 'condition': u'R'}
+204.3961 	EXP 	Set  sound=pu.wav
+204.3964 	EXP 	Sound  started
+204.4025 	EXP 	fam_trials_image: autoDraw = False
+204.4025 	EXP 	fam_trials_image: autoDraw = False
+204.4025 	EXP 	fam_trials_image: autoDraw = True
+204.8527 	EXP 	Sound  stopped
+204.8694 	EXP 	Sound  stopped
+204.8697 	EXP 	New trial (rep=0, index=44): {'soundFile': u'bi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 333, 'condition': u'R'}
+204.8711 	EXP 	Set  sound=bi.wav
+204.8715 	EXP 	Sound  started
+204.8776 	EXP 	fam_trials_image: autoDraw = False
+204.8776 	EXP 	fam_trials_image: autoDraw = False
+204.8776 	EXP 	fam_trials_image: autoDraw = True
+205.1779 	DATA 	Keypress: 3
+205.3278 	EXP 	Sound  stopped
+205.3445 	EXP 	Sound  stopped
+205.3449 	EXP 	New trial (rep=0, index=45): {'soundFile': u'ba.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 334, 'condition': u'R'}
+205.3462 	EXP 	Set  sound=ba.wav
+205.3466 	EXP 	Sound  started
+205.3527 	EXP 	fam_trials_image: autoDraw = False
+205.3527 	EXP 	fam_trials_image: autoDraw = False
+205.3527 	EXP 	fam_trials_image: autoDraw = True
+205.8028 	EXP 	Sound  stopped
+205.8196 	EXP 	Sound  stopped
+205.8199 	EXP 	New trial (rep=0, index=46): {'soundFile': u'du.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 335, 'condition': u'R'}
+205.8213 	EXP 	Set  sound=du.wav
+205.8216 	EXP 	Sound  started
+205.8278 	EXP 	fam_trials_image: autoDraw = False
+205.8278 	EXP 	fam_trials_image: autoDraw = False
+205.8278 	EXP 	fam_trials_image: autoDraw = True
+206.2779 	EXP 	Sound  stopped
+206.2947 	EXP 	Sound  stopped
+206.2951 	EXP 	New trial (rep=0, index=47): {'soundFile': u'pi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 336, 'condition': u'R'}
+206.2965 	EXP 	Set  sound=pi.wav
+206.2968 	EXP 	Sound  started
+206.3029 	EXP 	fam_trials_image: autoDraw = False
+206.3029 	EXP 	fam_trials_image: autoDraw = False
+206.3029 	EXP 	fam_trials_image: autoDraw = True
+206.7530 	EXP 	Sound  stopped
+206.7697 	EXP 	Sound  stopped
+206.7700 	EXP 	New trial (rep=0, index=48): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+206.7716 	EXP 	Set  sound=silence.wav
+206.7720 	EXP 	Sound  started
+206.7780 	EXP 	fam_trials_image: autoDraw = False
+206.7780 	EXP 	fam_trials_image: autoDraw = False
+206.7780 	EXP 	fam_trials_image: autoDraw = True
+207.2281 	EXP 	Sound  stopped
+207.2449 	EXP 	Sound  stopped
+207.2452 	EXP 	New trial (rep=0, index=49): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+207.2468 	EXP 	Set  sound=silence.wav
+207.2472 	EXP 	Sound  started
+207.2530 	EXP 	fam_trials_image: autoDraw = False
+207.2530 	EXP 	fam_trials_image: autoDraw = False
+207.2530 	EXP 	fam_trials_image: autoDraw = True
+207.7032 	EXP 	Sound  stopped
+207.7200 	EXP 	Sound  stopped
+207.7203 	EXP 	New trial (rep=0, index=50): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+207.7218 	EXP 	Set  sound=silence.wav
+207.7222 	EXP 	Sound  started
+207.7281 	EXP 	fam_trials_image: autoDraw = False
+207.7281 	EXP 	fam_trials_image: autoDraw = False
+207.7281 	EXP 	fam_trials_image: autoDraw = True
+208.1783 	EXP 	Sound  stopped
+208.1951 	EXP 	Sound  stopped
+208.1955 	EXP 	New trial (rep=0, index=51): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+208.1969 	EXP 	Set  sound=silence.wav
+208.1973 	EXP 	Sound  started
+208.2032 	EXP 	fam_trials_image: autoDraw = False
+208.2032 	EXP 	fam_trials_image: autoDraw = False
+208.2032 	EXP 	fam_trials_image: autoDraw = True
+208.6534 	EXP 	Sound  stopped
+208.6701 	EXP 	Sound  stopped
+208.6705 	EXP 	New trial (rep=0, index=52): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+208.6719 	EXP 	Set  sound=silence.wav
+208.6723 	EXP 	Sound  started
+208.6783 	EXP 	fam_trials_image: autoDraw = False
+208.6783 	EXP 	fam_trials_image: autoDraw = False
+208.6783 	EXP 	fam_trials_image: autoDraw = True
+209.1285 	EXP 	Sound  stopped
+209.1452 	EXP 	Sound  stopped
+209.1455 	EXP 	New trial (rep=0, index=53): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+209.1470 	EXP 	Set  sound=silence.wav
+209.1474 	EXP 	Sound  started
+209.1534 	EXP 	fam_trials_image: autoDraw = False
+209.1534 	EXP 	fam_trials_image: autoDraw = False
+209.1534 	EXP 	fam_trials_image: autoDraw = True
+209.6036 	EXP 	Sound  stopped
+209.6203 	EXP 	Sound  stopped
+209.6207 	EXP 	New trial (rep=0, index=54): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+209.6222 	EXP 	Set  sound=silence.wav
+209.6225 	EXP 	Sound  started
+209.6285 	EXP 	fam_trials_image: autoDraw = False
+209.6285 	EXP 	fam_trials_image: autoDraw = False
+209.6285 	EXP 	fam_trials_image: autoDraw = True
+210.0786 	EXP 	Sound  stopped
+210.0954 	EXP 	Sound  stopped
+210.0957 	EXP 	New trial (rep=0, index=55): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+210.0972 	EXP 	Set  sound=silence.wav
+210.0975 	EXP 	Sound  started
+210.1036 	EXP 	fam_trials_image: autoDraw = False
+210.1036 	EXP 	fam_trials_image: autoDraw = False
+210.1036 	EXP 	fam_trials_image: autoDraw = True
+210.5537 	EXP 	Sound  stopped
+210.5704 	EXP 	Sound  stopped
+210.5708 	EXP 	New trial (rep=0, index=56): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+210.5722 	EXP 	Set  sound=silence.wav
+210.5726 	EXP 	Sound  started
+210.5787 	EXP 	fam_trials_image: autoDraw = False
+210.5787 	EXP 	fam_trials_image: autoDraw = False
+210.5787 	EXP 	fam_trials_image: autoDraw = True
+211.0288 	EXP 	Sound  stopped
+211.0457 	EXP 	Sound  stopped
+211.0461 	EXP 	New trial (rep=0, index=57): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+211.0476 	EXP 	Set  sound=silence.wav
+211.0480 	EXP 	Sound  started
+211.0537 	EXP 	fam_trials_image: autoDraw = False
+211.0537 	EXP 	fam_trials_image: autoDraw = False
+211.0537 	EXP 	fam_trials_image: autoDraw = True
+211.5039 	EXP 	Sound  stopped
+211.5208 	EXP 	Sound  stopped
+211.5212 	EXP 	New trial (rep=0, index=58): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+211.5227 	EXP 	Set  sound=silence.wav
+211.5230 	EXP 	Sound  started
+211.5288 	EXP 	fam_trials_image: autoDraw = False
+211.5288 	EXP 	fam_trials_image: autoDraw = False
+211.5288 	EXP 	fam_trials_image: autoDraw = True
+211.9790 	EXP 	Sound  stopped
+211.9958 	EXP 	Sound  stopped
+211.9962 	EXP 	New trial (rep=0, index=59): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+211.9977 	EXP 	Set  sound=silence.wav
+211.9980 	EXP 	Sound  started
+212.0039 	EXP 	fam_trials_image: autoDraw = False
+212.0039 	EXP 	fam_trials_image: autoDraw = False
+212.0039 	EXP 	fam_trials_image: autoDraw = True
+212.4541 	EXP 	Sound  stopped
+212.4708 	EXP 	Sound  stopped
+212.4711 	EXP 	New trial (rep=0, index=60): {'soundFile': u'di.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 361, 'condition': u'R'}
+212.4725 	EXP 	Set  sound=di.wav
+212.4728 	EXP 	Sound  started
+212.4790 	EXP 	fam_trials_image: autoDraw = False
+212.4790 	EXP 	fam_trials_image: autoDraw = False
+212.4790 	EXP 	fam_trials_image: autoDraw = True
+212.9291 	EXP 	Sound  stopped
+212.9459 	EXP 	Sound  stopped
+212.9463 	EXP 	New trial (rep=0, index=61): {'soundFile': u'pu.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 362, 'condition': u'R'}
+212.9477 	EXP 	Set  sound=pu.wav
+212.9481 	EXP 	Sound  started
+212.9541 	EXP 	fam_trials_image: autoDraw = False
+212.9541 	EXP 	fam_trials_image: autoDraw = False
+212.9541 	EXP 	fam_trials_image: autoDraw = True
+213.4042 	EXP 	Sound  stopped
+213.4210 	EXP 	Sound  stopped
+213.4214 	EXP 	New trial (rep=0, index=62): {'soundFile': u'ta.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 363, 'condition': u'R'}
+213.4227 	EXP 	Set  sound=ta.wav
+213.4231 	EXP 	Sound  started
+213.4293 	EXP 	fam_trials_image: autoDraw = False
+213.4293 	EXP 	fam_trials_image: autoDraw = False
+213.4293 	EXP 	fam_trials_image: autoDraw = True
+213.7544 	DATA 	Keypress: 3
+213.8794 	EXP 	Sound  stopped
+213.8961 	EXP 	Sound  stopped
+213.8965 	EXP 	New trial (rep=0, index=63): {'soundFile': u'pi.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 364, 'condition': u'R'}
+213.8978 	EXP 	Set  sound=pi.wav
+213.8981 	EXP 	Sound  started
+213.9043 	EXP 	fam_trials_image: autoDraw = False
+213.9043 	EXP 	fam_trials_image: autoDraw = False
+213.9043 	EXP 	fam_trials_image: autoDraw = True
+214.3544 	EXP 	Sound  stopped
+214.3712 	EXP 	Sound  stopped
+214.3715 	EXP 	New trial (rep=0, index=64): {'soundFile': u'ti.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 365, 'condition': u'R'}
+214.3729 	EXP 	Set  sound=ti.wav
+214.3732 	EXP 	Sound  started
+214.3793 	EXP 	fam_trials_image: autoDraw = False
+214.3793 	EXP 	fam_trials_image: autoDraw = False
+214.3793 	EXP 	fam_trials_image: autoDraw = True
+214.8295 	EXP 	Sound  stopped
+214.8463 	EXP 	Sound  stopped
+214.8466 	EXP 	New trial (rep=0, index=65): {'soundFile': u'pa.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 366, 'condition': u'R'}
+214.8480 	EXP 	Set  sound=pa.wav
+214.8483 	EXP 	Sound  started
+214.8544 	EXP 	fam_trials_image: autoDraw = False
+214.8544 	EXP 	fam_trials_image: autoDraw = False
+214.8544 	EXP 	fam_trials_image: autoDraw = True
+215.3046 	EXP 	Sound  stopped
+215.3213 	EXP 	Sound  stopped
+215.3216 	EXP 	New trial (rep=0, index=66): {'soundFile': u'pu.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 367, 'condition': u'R'}
+215.3230 	EXP 	Set  sound=pu.wav
+215.3234 	EXP 	Sound  started
+215.3295 	EXP 	fam_trials_image: autoDraw = False
+215.3295 	EXP 	fam_trials_image: autoDraw = False
+215.3295 	EXP 	fam_trials_image: autoDraw = True
+215.7797 	EXP 	Sound  stopped
+215.7965 	EXP 	Sound  stopped
+215.7968 	EXP 	New trial (rep=0, index=67): {'soundFile': u'di.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 368, 'condition': u'R'}
+215.7982 	EXP 	Set  sound=di.wav
+215.7986 	EXP 	Sound  started
+215.8046 	EXP 	fam_trials_image: autoDraw = False
+215.8046 	EXP 	fam_trials_image: autoDraw = False
+215.8046 	EXP 	fam_trials_image: autoDraw = True
+216.1135 	DATA 	Keypress: 3
+216.2547 	EXP 	Sound  stopped
+216.2715 	EXP 	Sound  stopped
+216.2719 	EXP 	New trial (rep=0, index=68): {'soundFile': u'bu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 369, 'condition': u'R'}
+216.2732 	EXP 	Set  sound=bu.wav
+216.2736 	EXP 	Sound  started
+216.2797 	EXP 	fam_trials_image: autoDraw = False
+216.2797 	EXP 	fam_trials_image: autoDraw = False
+216.2797 	EXP 	fam_trials_image: autoDraw = True
+216.7298 	EXP 	Sound  stopped
+216.7467 	EXP 	Sound  stopped
+216.7470 	EXP 	New trial (rep=0, index=69): {'soundFile': u'ta.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 370, 'condition': u'R'}
+216.7483 	EXP 	Set  sound=ta.wav
+216.7487 	EXP 	Sound  started
+216.7548 	EXP 	fam_trials_image: autoDraw = False
+216.7548 	EXP 	fam_trials_image: autoDraw = False
+216.7548 	EXP 	fam_trials_image: autoDraw = True
+217.1968 	DATA 	Keypress: 3
+217.2049 	EXP 	Sound  stopped
+217.2217 	EXP 	Sound  stopped
+217.2221 	EXP 	New trial (rep=0, index=70): {'soundFile': u'bi.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 371, 'condition': u'R'}
+217.2234 	EXP 	Set  sound=bi.wav
+217.2238 	EXP 	Sound  started
+217.2299 	EXP 	fam_trials_image: autoDraw = False
+217.2299 	EXP 	fam_trials_image: autoDraw = False
+217.2299 	EXP 	fam_trials_image: autoDraw = True
+217.6800 	EXP 	Sound  stopped
+217.6969 	EXP 	Sound  stopped
+217.6972 	EXP 	New trial (rep=0, index=71): {'soundFile': u'bu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 372, 'condition': u'R'}
+217.6986 	EXP 	Set  sound=bu.wav
+217.6990 	EXP 	Sound  started
+217.7050 	EXP 	fam_trials_image: autoDraw = False
+217.7050 	EXP 	fam_trials_image: autoDraw = False
+217.7050 	EXP 	fam_trials_image: autoDraw = True
+218.1552 	EXP 	Sound  stopped
+218.1719 	EXP 	Sound  stopped
+218.1722 	EXP 	New trial (rep=0, index=72): {'soundFile': u'du.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 373, 'condition': u'R'}
+218.1736 	EXP 	Set  sound=du.wav
+218.1740 	EXP 	Sound  started
+218.1800 	EXP 	fam_trials_image: autoDraw = False
+218.1800 	EXP 	fam_trials_image: autoDraw = False
+218.1800 	EXP 	fam_trials_image: autoDraw = True
+218.6302 	EXP 	Sound  stopped
+218.6470 	EXP 	Sound  stopped
+218.6473 	EXP 	New trial (rep=0, index=73): {'soundFile': u'da.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 374, 'condition': u'R'}
+218.6486 	EXP 	Set  sound=da.wav
+218.6490 	EXP 	Sound  started
+218.6552 	EXP 	fam_trials_image: autoDraw = False
+218.6552 	EXP 	fam_trials_image: autoDraw = False
+218.6552 	EXP 	fam_trials_image: autoDraw = True
+219.1053 	EXP 	Sound  stopped
+219.1221 	EXP 	Sound  stopped
+219.1224 	EXP 	New trial (rep=0, index=74): {'soundFile': u'pi.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 375, 'condition': u'R'}
+219.1238 	EXP 	Set  sound=pi.wav
+219.1241 	EXP 	Sound  started
+219.1302 	EXP 	fam_trials_image: autoDraw = False
+219.1302 	EXP 	fam_trials_image: autoDraw = False
+219.1302 	EXP 	fam_trials_image: autoDraw = True
+219.5804 	EXP 	Sound  stopped
+219.5971 	EXP 	Sound  stopped
+219.5975 	EXP 	New trial (rep=0, index=75): {'soundFile': u'ba.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 376, 'condition': u'R'}
+219.5988 	EXP 	Set  sound=ba.wav
+219.5991 	EXP 	Sound  started
+219.6053 	EXP 	fam_trials_image: autoDraw = False
+219.6053 	EXP 	fam_trials_image: autoDraw = False
+219.6053 	EXP 	fam_trials_image: autoDraw = True
+220.0557 	EXP 	Sound  stopped
+220.0726 	EXP 	Sound  stopped
+220.0730 	EXP 	New trial (rep=0, index=76): {'soundFile': u'ba.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 377, 'condition': u'R'}
+220.0743 	EXP 	Set  sound=ba.wav
+220.0747 	EXP 	Sound  started
+220.0805 	EXP 	fam_trials_image: autoDraw = False
+220.0805 	EXP 	fam_trials_image: autoDraw = False
+220.0805 	EXP 	fam_trials_image: autoDraw = True
+220.5305 	EXP 	Sound  stopped
+220.5473 	EXP 	Sound  stopped
+220.5476 	EXP 	New trial (rep=0, index=77): {'soundFile': u'tu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 378, 'condition': u'R'}
+220.5490 	EXP 	Set  sound=tu.wav
+220.5493 	EXP 	Sound  started
+220.5555 	EXP 	fam_trials_image: autoDraw = False
+220.5555 	EXP 	fam_trials_image: autoDraw = False
+220.5555 	EXP 	fam_trials_image: autoDraw = True
+221.0056 	EXP 	Sound  stopped
+221.0224 	EXP 	Sound  stopped
+221.0228 	EXP 	New trial (rep=0, index=78): {'soundFile': u'ti.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 379, 'condition': u'R'}
+221.0242 	EXP 	Set  sound=ti.wav
+221.0245 	EXP 	Sound  started
+221.0664 	EXP 	fam_trials_image: autoDraw = False
+221.0664 	EXP 	fam_trials_image: autoDraw = False
+221.0664 	EXP 	fam_trials_image: autoDraw = True
+221.4807 	EXP 	Sound  stopped
+221.4976 	EXP 	Sound  stopped
+221.4979 	EXP 	New trial (rep=0, index=79): {'soundFile': u'bi.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 380, 'condition': u'R'}
+221.4993 	EXP 	Set  sound=bi.wav
+221.4996 	EXP 	Sound  started
+221.5056 	EXP 	fam_trials_image: autoDraw = False
+221.5056 	EXP 	fam_trials_image: autoDraw = False
+221.5056 	EXP 	fam_trials_image: autoDraw = True
+221.9558 	EXP 	Sound  stopped
+221.9725 	EXP 	Sound  stopped
+221.9729 	EXP 	New trial (rep=0, index=80): {'soundFile': u'du.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 381, 'condition': u'R'}
+221.9742 	EXP 	Set  sound=du.wav
+221.9746 	EXP 	Sound  started
+221.9807 	EXP 	fam_trials_image: autoDraw = False
+221.9807 	EXP 	fam_trials_image: autoDraw = False
+221.9807 	EXP 	fam_trials_image: autoDraw = True
+222.4309 	EXP 	Sound  stopped
+222.4476 	EXP 	Sound  stopped
+222.4479 	EXP 	New trial (rep=0, index=81): {'soundFile': u'pa.wav', 'word': 0, 'location': 1, 'repetition': 1, 'trialnum': 382, 'condition': u'R'}
+222.4493 	EXP 	Set  sound=pa.wav
+222.4497 	EXP 	Sound  started
+222.4558 	EXP 	fam_trials_image: autoDraw = False
+222.4558 	EXP 	fam_trials_image: autoDraw = False
+222.4558 	EXP 	fam_trials_image: autoDraw = True
+222.9060 	EXP 	Sound  stopped
+222.9227 	EXP 	Sound  stopped
+222.9230 	EXP 	New trial (rep=0, index=82): {'soundFile': u'da.wav', 'word': 0, 'location': 2, 'repetition': 1, 'trialnum': 383, 'condition': u'R'}
+222.9244 	EXP 	Set  sound=da.wav
+222.9247 	EXP 	Sound  started
+222.9309 	EXP 	fam_trials_image: autoDraw = False
+222.9309 	EXP 	fam_trials_image: autoDraw = False
+222.9309 	EXP 	fam_trials_image: autoDraw = True
+223.3810 	EXP 	Sound  stopped
+223.3979 	EXP 	Sound  stopped
+223.3982 	EXP 	New trial (rep=0, index=83): {'soundFile': u'tu.wav', 'word': 0, 'location': 3, 'repetition': 1, 'trialnum': 384, 'condition': u'R'}
+223.3995 	EXP 	Set  sound=tu.wav
+223.3999 	EXP 	Sound  started
+223.4060 	EXP 	fam_trials_image: autoDraw = False
+223.4060 	EXP 	fam_trials_image: autoDraw = False
+223.4060 	EXP 	fam_trials_image: autoDraw = True
+223.8561 	EXP 	Sound  stopped
+223.8729 	EXP 	Sound  stopped
+223.8735 	EXP 	Sound  started
+223.8811 	EXP 	fam_trials_image: autoDraw = False
+223.8811 	EXP 	fam_trials_image: autoDraw = False
+226.7484 	EXP 	Sound  stopped
+226.7520 	EXP 	Imported auditory_run5_6.csv as conditions, 60 conditions, 6 params
+226.7523 	EXP 	Created sequence: sequential, trialTypes=60, nReps=1, seed=None
+226.7526 	EXP 	New trial (rep=0, index=0): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 28, 'trialnum': 337, 'condition': u'S'}
+226.7537 	EXP 	Set  sound=1A.wav
+226.7540 	EXP 	Sound  started
+226.7566 	EXP 	alien: autoDraw = True
+227.2068 	EXP 	Sound  stopped
+227.2072 	EXP 	New trial (rep=0, index=1): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 28, 'trialnum': 338, 'condition': u'S'}
+227.2084 	EXP 	Set  sound=1B.wav
+227.2088 	EXP 	Sound  started
+227.2506 	EXP 	alien: autoDraw = False
+227.2506 	EXP 	alien: autoDraw = False
+227.2506 	EXP 	alien: autoDraw = True
+227.6652 	EXP 	Sound  stopped
+227.6656 	EXP 	New trial (rep=0, index=2): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 28, 'trialnum': 339, 'condition': u'S'}
+227.6667 	EXP 	Set  sound=1C.wav
+227.6671 	EXP 	Sound  started
+227.6734 	EXP 	alien: autoDraw = False
+227.6734 	EXP 	alien: autoDraw = False
+227.6734 	EXP 	alien: autoDraw = True
+228.1238 	EXP 	Sound  stopped
+228.1241 	EXP 	New trial (rep=0, index=3): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 29, 'trialnum': 340, 'condition': u'S'}
+228.1253 	EXP 	Set  sound=4A.wav
+228.1257 	EXP 	Sound  started
+228.1318 	EXP 	alien: autoDraw = False
+228.1318 	EXP 	alien: autoDraw = False
+228.1318 	EXP 	alien: autoDraw = True
+228.5821 	EXP 	Sound  stopped
+228.5824 	EXP 	New trial (rep=0, index=4): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 29, 'trialnum': 341, 'condition': u'S'}
+228.5836 	EXP 	Set  sound=4B.wav
+228.5840 	EXP 	Sound  started
+228.6258 	EXP 	alien: autoDraw = False
+228.6258 	EXP 	alien: autoDraw = False
+228.6258 	EXP 	alien: autoDraw = True
+229.0405 	EXP 	Sound  stopped
+229.0409 	EXP 	New trial (rep=0, index=5): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 29, 'trialnum': 342, 'condition': u'S'}
+229.0421 	EXP 	Set  sound=4C.wav
+229.0425 	EXP 	Sound  started
+229.0487 	EXP 	alien: autoDraw = False
+229.0487 	EXP 	alien: autoDraw = False
+229.0487 	EXP 	alien: autoDraw = True
+229.2156 	DATA 	Keypress: 3
+229.4989 	EXP 	Sound  stopped
+229.4994 	EXP 	New trial (rep=0, index=6): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 30, 'trialnum': 343, 'condition': u'S'}
+229.5005 	EXP 	Set  sound=3A.wav
+229.5009 	EXP 	Sound  started
+229.5071 	EXP 	alien: autoDraw = False
+229.5071 	EXP 	alien: autoDraw = False
+229.5071 	EXP 	alien: autoDraw = True
+229.9573 	EXP 	Sound  stopped
+229.9576 	EXP 	New trial (rep=0, index=7): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 30, 'trialnum': 344, 'condition': u'S'}
+229.9589 	EXP 	Set  sound=3B.wav
+229.9593 	EXP 	Sound  started
+230.0010 	EXP 	alien: autoDraw = False
+230.0010 	EXP 	alien: autoDraw = False
+230.0010 	EXP 	alien: autoDraw = True
+230.4158 	EXP 	Sound  stopped
+230.4161 	EXP 	New trial (rep=0, index=8): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 30, 'trialnum': 345, 'condition': u'S'}
+230.4173 	EXP 	Set  sound=3C.wav
+230.4176 	EXP 	Sound  started
+230.4240 	EXP 	alien: autoDraw = False
+230.4240 	EXP 	alien: autoDraw = False
+230.4240 	EXP 	alien: autoDraw = True
+230.8742 	EXP 	Sound  stopped
+230.8745 	EXP 	New trial (rep=0, index=9): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 29, 'trialnum': 346, 'condition': u'S'}
+230.8757 	EXP 	Set  sound=2A.wav
+230.8760 	EXP 	Sound  started
+230.8824 	EXP 	alien: autoDraw = False
+230.8824 	EXP 	alien: autoDraw = False
+230.8824 	EXP 	alien: autoDraw = True
+231.3327 	EXP 	Sound  stopped
+231.3330 	EXP 	New trial (rep=0, index=10): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 29, 'trialnum': 347, 'condition': u'S'}
+231.3343 	EXP 	Set  sound=2B.wav
+231.3346 	EXP 	Sound  started
+231.3408 	EXP 	alien: autoDraw = False
+231.3408 	EXP 	alien: autoDraw = False
+231.3408 	EXP 	alien: autoDraw = True
+231.7910 	EXP 	Sound  stopped
+231.7913 	EXP 	New trial (rep=0, index=11): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 29, 'trialnum': 348, 'condition': u'S'}
+231.7925 	EXP 	Set  sound=2C.wav
+231.7929 	EXP 	Sound  started
+231.7992 	EXP 	alien: autoDraw = False
+231.7992 	EXP 	alien: autoDraw = False
+231.7992 	EXP 	alien: autoDraw = True
+232.2495 	EXP 	Sound  stopped
+232.2498 	EXP 	New trial (rep=0, index=12): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 29, 'trialnum': 349, 'condition': u'S'}
+232.2510 	EXP 	Set  sound=1A.wav
+232.2514 	EXP 	Sound  started
+232.2576 	EXP 	alien: autoDraw = False
+232.2576 	EXP 	alien: autoDraw = False
+232.2576 	EXP 	alien: autoDraw = True
+232.4101 	DATA 	Keypress: 3
+232.7079 	EXP 	Sound  stopped
+232.7082 	EXP 	New trial (rep=0, index=13): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 29, 'trialnum': 350, 'condition': u'S'}
+232.7094 	EXP 	Set  sound=1B.wav
+232.7098 	EXP 	Sound  started
+232.7161 	EXP 	alien: autoDraw = False
+232.7161 	EXP 	alien: autoDraw = False
+232.7161 	EXP 	alien: autoDraw = True
+233.1663 	EXP 	Sound  stopped
+233.1666 	EXP 	New trial (rep=0, index=14): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 29, 'trialnum': 351, 'condition': u'S'}
+233.1678 	EXP 	Set  sound=1C.wav
+233.1682 	EXP 	Sound  started
+233.1744 	EXP 	alien: autoDraw = False
+233.1744 	EXP 	alien: autoDraw = False
+233.1744 	EXP 	alien: autoDraw = True
+233.6247 	EXP 	Sound  stopped
+233.6250 	EXP 	New trial (rep=0, index=15): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 30, 'trialnum': 352, 'condition': u'S'}
+233.6263 	EXP 	Set  sound=2A.wav
+233.6266 	EXP 	Sound  started
+233.6328 	EXP 	alien: autoDraw = False
+233.6328 	EXP 	alien: autoDraw = False
+233.6328 	EXP 	alien: autoDraw = True
+234.0831 	EXP 	Sound  stopped
+234.0834 	EXP 	New trial (rep=0, index=16): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 30, 'trialnum': 353, 'condition': u'S'}
+234.0846 	EXP 	Set  sound=2B.wav
+234.0849 	EXP 	Sound  started
+234.0913 	EXP 	alien: autoDraw = False
+234.0913 	EXP 	alien: autoDraw = False
+234.0913 	EXP 	alien: autoDraw = True
+234.5415 	EXP 	Sound  stopped
+234.5418 	EXP 	New trial (rep=0, index=17): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 30, 'trialnum': 354, 'condition': u'S'}
+234.5430 	EXP 	Set  sound=2C.wav
+234.5434 	EXP 	Sound  started
+234.5497 	EXP 	alien: autoDraw = False
+234.5497 	EXP 	alien: autoDraw = False
+234.5497 	EXP 	alien: autoDraw = True
+234.9999 	EXP 	Sound  stopped
+235.0002 	EXP 	New trial (rep=0, index=18): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 31, 'trialnum': 355, 'condition': u'S'}
+235.0014 	EXP 	Set  sound=3A.wav
+235.0018 	EXP 	Sound  started
+235.0081 	EXP 	alien: autoDraw = False
+235.0081 	EXP 	alien: autoDraw = False
+235.0081 	EXP 	alien: autoDraw = True
+235.2751 	DATA 	Keypress: 3
+235.4583 	EXP 	Sound  stopped
+235.4587 	EXP 	New trial (rep=0, index=19): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 31, 'trialnum': 356, 'condition': u'S'}
+235.4599 	EXP 	Set  sound=3B.wav
+235.4603 	EXP 	Sound  started
+235.4665 	EXP 	alien: autoDraw = False
+235.4665 	EXP 	alien: autoDraw = False
+235.4665 	EXP 	alien: autoDraw = True
+235.9167 	EXP 	Sound  stopped
+235.9171 	EXP 	New trial (rep=0, index=20): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 31, 'trialnum': 357, 'condition': u'S'}
+235.9182 	EXP 	Set  sound=3C.wav
+235.9186 	EXP 	Sound  started
+235.9250 	EXP 	alien: autoDraw = False
+235.9250 	EXP 	alien: autoDraw = False
+235.9250 	EXP 	alien: autoDraw = True
+236.3752 	EXP 	Sound  stopped
+236.3755 	EXP 	New trial (rep=0, index=21): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 30, 'trialnum': 358, 'condition': u'S'}
+236.3767 	EXP 	Set  sound=4A.wav
+236.3771 	EXP 	Sound  started
+236.3833 	EXP 	alien: autoDraw = False
+236.3833 	EXP 	alien: autoDraw = False
+236.3833 	EXP 	alien: autoDraw = True
+236.8336 	EXP 	Sound  stopped
+236.8339 	EXP 	New trial (rep=0, index=22): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 30, 'trialnum': 359, 'condition': u'S'}
+236.8351 	EXP 	Set  sound=4B.wav
+236.8355 	EXP 	Sound  started
+236.8418 	EXP 	alien: autoDraw = False
+236.8418 	EXP 	alien: autoDraw = False
+236.8418 	EXP 	alien: autoDraw = True
+237.2920 	EXP 	Sound  stopped
+237.2923 	EXP 	New trial (rep=0, index=23): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 30, 'trialnum': 360, 'condition': u'S'}
+237.2935 	EXP 	Set  sound=4C.wav
+237.2939 	EXP 	Sound  started
+237.3002 	EXP 	alien: autoDraw = False
+237.3002 	EXP 	alien: autoDraw = False
+237.3002 	EXP 	alien: autoDraw = True
+237.7504 	EXP 	Sound  stopped
+237.7507 	EXP 	New trial (rep=0, index=24): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+237.7522 	EXP 	Set  sound=silence.wav
+237.7525 	EXP 	Sound  started
+237.7586 	EXP 	alien: autoDraw = False
+237.7586 	EXP 	alien: autoDraw = False
+237.7586 	EXP 	alien: autoDraw = True
+238.2087 	EXP 	Sound  stopped
+238.2088 	EXP 	Sound  stopped
+238.2091 	EXP 	New trial (rep=0, index=25): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+238.2106 	EXP 	Set  sound=silence.wav
+238.2110 	EXP 	Sound  started
+238.2170 	EXP 	alien: autoDraw = False
+238.2170 	EXP 	alien: autoDraw = False
+238.2170 	EXP 	alien: autoDraw = True
+238.6672 	EXP 	Sound  stopped
+238.6673 	EXP 	Sound  stopped
+238.6676 	EXP 	New trial (rep=0, index=26): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+238.6691 	EXP 	Set  sound=silence.wav
+238.6695 	EXP 	Sound  started
+238.6754 	EXP 	alien: autoDraw = False
+238.6754 	EXP 	alien: autoDraw = False
+238.6754 	EXP 	alien: autoDraw = True
+239.1256 	EXP 	Sound  stopped
+239.1257 	EXP 	Sound  stopped
+239.1260 	EXP 	New trial (rep=0, index=27): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+239.1275 	EXP 	Set  sound=silence.wav
+239.1278 	EXP 	Sound  started
+239.1339 	EXP 	alien: autoDraw = False
+239.1339 	EXP 	alien: autoDraw = False
+239.1339 	EXP 	alien: autoDraw = True
+239.5840 	EXP 	Sound  stopped
+239.5841 	EXP 	Sound  stopped
+239.5844 	EXP 	New trial (rep=0, index=28): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+239.5860 	EXP 	Set  sound=silence.wav
+239.5863 	EXP 	Sound  started
+239.5923 	EXP 	alien: autoDraw = False
+239.5923 	EXP 	alien: autoDraw = False
+239.5923 	EXP 	alien: autoDraw = True
+240.0424 	EXP 	Sound  stopped
+240.0425 	EXP 	Sound  stopped
+240.0429 	EXP 	New trial (rep=0, index=29): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+240.0443 	EXP 	Set  sound=silence.wav
+240.0447 	EXP 	Sound  started
+240.0508 	EXP 	alien: autoDraw = False
+240.0508 	EXP 	alien: autoDraw = False
+240.0508 	EXP 	alien: autoDraw = True
+240.5009 	EXP 	Sound  stopped
+240.5010 	EXP 	Sound  stopped
+240.5013 	EXP 	New trial (rep=0, index=30): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+240.5028 	EXP 	Set  sound=silence.wav
+240.5031 	EXP 	Sound  started
+240.5091 	EXP 	alien: autoDraw = False
+240.5091 	EXP 	alien: autoDraw = False
+240.5091 	EXP 	alien: autoDraw = True
+240.9593 	EXP 	Sound  stopped
+240.9594 	EXP 	Sound  stopped
+240.9597 	EXP 	New trial (rep=0, index=31): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+240.9612 	EXP 	Set  sound=silence.wav
+240.9615 	EXP 	Sound  started
+240.9676 	EXP 	alien: autoDraw = False
+240.9676 	EXP 	alien: autoDraw = False
+240.9676 	EXP 	alien: autoDraw = True
+241.4177 	EXP 	Sound  stopped
+241.4178 	EXP 	Sound  stopped
+241.4182 	EXP 	New trial (rep=0, index=32): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+241.4196 	EXP 	Set  sound=silence.wav
+241.4200 	EXP 	Sound  started
+241.4260 	EXP 	alien: autoDraw = False
+241.4260 	EXP 	alien: autoDraw = False
+241.4260 	EXP 	alien: autoDraw = True
+241.8762 	EXP 	Sound  stopped
+241.8763 	EXP 	Sound  stopped
+241.8766 	EXP 	New trial (rep=0, index=33): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+241.8781 	EXP 	Set  sound=silence.wav
+241.8784 	EXP 	Sound  started
+241.8845 	EXP 	alien: autoDraw = False
+241.8845 	EXP 	alien: autoDraw = False
+241.8845 	EXP 	alien: autoDraw = True
+242.3347 	EXP 	Sound  stopped
+242.3348 	EXP 	Sound  stopped
+242.3351 	EXP 	New trial (rep=0, index=34): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+242.3366 	EXP 	Set  sound=silence.wav
+242.3369 	EXP 	Sound  started
+242.3429 	EXP 	alien: autoDraw = False
+242.3429 	EXP 	alien: autoDraw = False
+242.3429 	EXP 	alien: autoDraw = True
+242.7931 	EXP 	Sound  stopped
+242.7932 	EXP 	Sound  stopped
+242.7935 	EXP 	New trial (rep=0, index=35): {'soundFile': u'silence.wav', 'word': 0, 'location': 0, 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+242.7950 	EXP 	Set  sound=silence.wav
+242.7953 	EXP 	Sound  started
+242.8013 	EXP 	alien: autoDraw = False
+242.8013 	EXP 	alien: autoDraw = False
+242.8013 	EXP 	alien: autoDraw = True
+243.2514 	EXP 	Sound  stopped
+243.2515 	EXP 	Sound  stopped
+243.2519 	EXP 	New trial (rep=0, index=36): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 30, 'trialnum': 361, 'condition': u'S'}
+243.2531 	EXP 	Set  sound=1A.wav
+243.2534 	EXP 	Sound  started
+243.2598 	EXP 	alien: autoDraw = False
+243.2598 	EXP 	alien: autoDraw = False
+243.2598 	EXP 	alien: autoDraw = True
+243.7100 	EXP 	Sound  stopped
+243.7104 	EXP 	New trial (rep=0, index=37): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 30, 'trialnum': 362, 'condition': u'S'}
+243.7115 	EXP 	Set  sound=1B.wav
+243.7119 	EXP 	Sound  started
+243.7181 	EXP 	alien: autoDraw = False
+243.7181 	EXP 	alien: autoDraw = False
+243.7181 	EXP 	alien: autoDraw = True
+244.1685 	EXP 	Sound  stopped
+244.1688 	EXP 	New trial (rep=0, index=38): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 30, 'trialnum': 363, 'condition': u'S'}
+244.1700 	EXP 	Set  sound=1C.wav
+244.1704 	EXP 	Sound  started
+244.1765 	EXP 	alien: autoDraw = False
+244.1765 	EXP 	alien: autoDraw = False
+244.1765 	EXP 	alien: autoDraw = True
+244.6267 	EXP 	Sound  stopped
+244.6271 	EXP 	New trial (rep=0, index=39): {'soundFile': u'3A.wav', 'word': 1, 'location': 1, 'repetition': 32, 'trialnum': 364, 'condition': u'S'}
+244.6283 	EXP 	Set  sound=3A.wav
+244.6287 	EXP 	Sound  started
+244.6349 	EXP 	alien: autoDraw = False
+244.6349 	EXP 	alien: autoDraw = False
+244.6349 	EXP 	alien: autoDraw = True
+245.0851 	EXP 	Sound  stopped
+245.0854 	EXP 	New trial (rep=0, index=40): {'soundFile': u'3B.wav', 'word': 1, 'location': 2, 'repetition': 32, 'trialnum': 365, 'condition': u'S'}
+245.0866 	EXP 	Set  sound=3B.wav
+245.0870 	EXP 	Sound  started
+245.0933 	EXP 	alien: autoDraw = False
+245.0933 	EXP 	alien: autoDraw = False
+245.0933 	EXP 	alien: autoDraw = True
+245.5436 	EXP 	Sound  stopped
+245.5440 	EXP 	New trial (rep=0, index=41): {'soundFile': u'3C.wav', 'word': 1, 'location': 3, 'repetition': 32, 'trialnum': 366, 'condition': u'S'}
+245.5453 	EXP 	Set  sound=3C.wav
+245.5457 	EXP 	Sound  started
+245.5517 	EXP 	alien: autoDraw = False
+245.5517 	EXP 	alien: autoDraw = False
+245.5517 	EXP 	alien: autoDraw = True
+246.0019 	EXP 	Sound  stopped
+246.0022 	EXP 	New trial (rep=0, index=42): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 31, 'trialnum': 367, 'condition': u'S'}
+246.0034 	EXP 	Set  sound=2A.wav
+246.0038 	EXP 	Sound  started
+246.0101 	EXP 	alien: autoDraw = False
+246.0101 	EXP 	alien: autoDraw = False
+246.0101 	EXP 	alien: autoDraw = True
+246.4604 	EXP 	Sound  stopped
+246.4608 	EXP 	New trial (rep=0, index=43): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 31, 'trialnum': 368, 'condition': u'S'}
+246.4620 	EXP 	Set  sound=2B.wav
+246.4623 	EXP 	Sound  started
+246.4685 	EXP 	alien: autoDraw = False
+246.4685 	EXP 	alien: autoDraw = False
+246.4685 	EXP 	alien: autoDraw = True
+246.6521 	DATA 	Keypress: 3
+246.9188 	EXP 	Sound  stopped
+246.9192 	EXP 	New trial (rep=0, index=44): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 31, 'trialnum': 369, 'condition': u'S'}
+246.9204 	EXP 	Set  sound=2C.wav
+246.9208 	EXP 	Sound  started
+246.9270 	EXP 	alien: autoDraw = False
+246.9270 	EXP 	alien: autoDraw = False
+246.9270 	EXP 	alien: autoDraw = True
+247.3772 	EXP 	Sound  stopped
+247.3775 	EXP 	New trial (rep=0, index=45): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 31, 'trialnum': 370, 'condition': u'S'}
+247.3787 	EXP 	Set  sound=4A.wav
+247.3791 	EXP 	Sound  started
+247.3854 	EXP 	alien: autoDraw = False
+247.3854 	EXP 	alien: autoDraw = False
+247.3854 	EXP 	alien: autoDraw = True
+247.5607 	DATA 	Keypress: 3
+247.8357 	EXP 	Sound  stopped
+247.8361 	EXP 	New trial (rep=0, index=46): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 31, 'trialnum': 371, 'condition': u'S'}
+247.8373 	EXP 	Set  sound=4B.wav
+247.8376 	EXP 	Sound  started
+247.8438 	EXP 	alien: autoDraw = False
+247.8438 	EXP 	alien: autoDraw = False
+247.8438 	EXP 	alien: autoDraw = True
+248.2940 	EXP 	Sound  stopped
+248.2944 	EXP 	New trial (rep=0, index=47): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 31, 'trialnum': 372, 'condition': u'S'}
+248.2957 	EXP 	Set  sound=4C.wav
+248.2961 	EXP 	Sound  started
+248.3022 	EXP 	alien: autoDraw = False
+248.3022 	EXP 	alien: autoDraw = False
+248.3022 	EXP 	alien: autoDraw = True
+248.6525 	DATA 	Keypress: 3
+248.7524 	EXP 	Sound  stopped
+248.7528 	EXP 	New trial (rep=0, index=48): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 31, 'trialnum': 373, 'condition': u'S'}
+248.7540 	EXP 	Set  sound=1A.wav
+248.7543 	EXP 	Sound  started
+248.7607 	EXP 	alien: autoDraw = False
+248.7607 	EXP 	alien: autoDraw = False
+248.7607 	EXP 	alien: autoDraw = True
+249.2109 	EXP 	Sound  stopped
+249.2113 	EXP 	New trial (rep=0, index=49): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 31, 'trialnum': 374, 'condition': u'S'}
+249.2124 	EXP 	Set  sound=1B.wav
+249.2128 	EXP 	Sound  started
+249.2190 	EXP 	alien: autoDraw = False
+249.2190 	EXP 	alien: autoDraw = False
+249.2190 	EXP 	alien: autoDraw = True
+249.6692 	EXP 	Sound  stopped
+249.6695 	EXP 	New trial (rep=0, index=50): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 31, 'trialnum': 375, 'condition': u'S'}
+249.6707 	EXP 	Set  sound=1C.wav
+249.6711 	EXP 	Sound  started
+249.6774 	EXP 	alien: autoDraw = False
+249.6774 	EXP 	alien: autoDraw = False
+249.6774 	EXP 	alien: autoDraw = True
+250.1277 	EXP 	Sound  stopped
+250.1281 	EXP 	New trial (rep=0, index=51): {'soundFile': u'2A.wav', 'word': 4, 'location': 1, 'repetition': 32, 'trialnum': 376, 'condition': u'S'}
+250.1293 	EXP 	Set  sound=2A.wav
+250.1296 	EXP 	Sound  started
+250.1359 	EXP 	alien: autoDraw = False
+250.1359 	EXP 	alien: autoDraw = False
+250.1359 	EXP 	alien: autoDraw = True
+250.5862 	EXP 	Sound  stopped
+250.5867 	EXP 	New trial (rep=0, index=52): {'soundFile': u'2B.wav', 'word': 4, 'location': 2, 'repetition': 32, 'trialnum': 377, 'condition': u'S'}
+250.5879 	EXP 	Set  sound=2B.wav
+250.5882 	EXP 	Sound  started
+250.5943 	EXP 	alien: autoDraw = False
+250.5943 	EXP 	alien: autoDraw = False
+250.5943 	EXP 	alien: autoDraw = True
+250.6612 	DATA 	Keypress: 3
+251.0445 	EXP 	Sound  stopped
+251.0449 	EXP 	New trial (rep=0, index=53): {'soundFile': u'2C.wav', 'word': 4, 'location': 3, 'repetition': 32, 'trialnum': 378, 'condition': u'S'}
+251.0461 	EXP 	Set  sound=2C.wav
+251.0465 	EXP 	Sound  started
+251.0527 	EXP 	alien: autoDraw = False
+251.0527 	EXP 	alien: autoDraw = False
+251.0527 	EXP 	alien: autoDraw = True
+251.5029 	EXP 	Sound  stopped
+251.5032 	EXP 	New trial (rep=0, index=54): {'soundFile': u'4A.wav', 'word': 3, 'location': 1, 'repetition': 32, 'trialnum': 382, 'condition': u'S'}
+251.5044 	EXP 	Set  sound=4A.wav
+251.5048 	EXP 	Sound  started
+251.5112 	EXP 	alien: autoDraw = False
+251.5112 	EXP 	alien: autoDraw = False
+251.5112 	EXP 	alien: autoDraw = True
+251.7365 	DATA 	Keypress: 3
+251.9614 	EXP 	Sound  stopped
+251.9617 	EXP 	New trial (rep=0, index=55): {'soundFile': u'4B.wav', 'word': 3, 'location': 2, 'repetition': 32, 'trialnum': 383, 'condition': u'S'}
+251.9629 	EXP 	Set  sound=4B.wav
+251.9633 	EXP 	Sound  started
+251.9695 	EXP 	alien: autoDraw = False
+251.9695 	EXP 	alien: autoDraw = False
+251.9695 	EXP 	alien: autoDraw = True
+252.4197 	EXP 	Sound  stopped
+252.4200 	EXP 	New trial (rep=0, index=56): {'soundFile': u'4C.wav', 'word': 3, 'location': 3, 'repetition': 32, 'trialnum': 384, 'condition': u'S'}
+252.4212 	EXP 	Set  sound=4C.wav
+252.4216 	EXP 	Sound  started
+252.4279 	EXP 	alien: autoDraw = False
+252.4279 	EXP 	alien: autoDraw = False
+252.4279 	EXP 	alien: autoDraw = True
+252.8782 	EXP 	Sound  stopped
+252.8785 	EXP 	New trial (rep=0, index=57): {'soundFile': u'1A.wav', 'word': 2, 'location': 1, 'repetition': 32, 'trialnum': 388, 'condition': u'S'}
+252.8798 	EXP 	Set  sound=1A.wav
+252.8802 	EXP 	Sound  started
+252.8864 	EXP 	alien: autoDraw = False
+252.8864 	EXP 	alien: autoDraw = False
+252.8864 	EXP 	alien: autoDraw = True
+253.0783 	DATA 	Keypress: 3
+253.3366 	EXP 	Sound  stopped
+253.3370 	EXP 	New trial (rep=0, index=58): {'soundFile': u'1B.wav', 'word': 2, 'location': 2, 'repetition': 32, 'trialnum': 389, 'condition': u'S'}
+253.3382 	EXP 	Set  sound=1B.wav
+253.3385 	EXP 	Sound  started
+253.3448 	EXP 	alien: autoDraw = False
+253.3448 	EXP 	alien: autoDraw = False
+253.3448 	EXP 	alien: autoDraw = True
+253.7950 	EXP 	Sound  stopped
+253.7953 	EXP 	New trial (rep=0, index=59): {'soundFile': u'1C.wav', 'word': 2, 'location': 3, 'repetition': 32, 'trialnum': 390, 'condition': u'S'}
+253.7965 	EXP 	Set  sound=1C.wav
+253.7969 	EXP 	Sound  started
+253.8388 	EXP 	alien: autoDraw = False
+253.8388 	EXP 	alien: autoDraw = False
+253.8388 	EXP 	alien: autoDraw = True
+254.2534 	EXP 	Sound  stopped
+254.3877 	EXP 	window1: mouseVisible = True

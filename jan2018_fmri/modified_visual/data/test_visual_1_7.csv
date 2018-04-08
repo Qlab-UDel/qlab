@@ -1,0 +1,6 @@
+word,location,image,repetition,trialnum,condition,l_block_trial_loop.thisRepN,l_block_trial_loop.thisTrialN,l_block_trial_loop.thisN,l_block_trial_loop.thisIndex,l_block_trial_key_resp.keys,Run,vtarget,PartID,ltarget,frameRate,expName,date,
+1,1,M.png,1,1,S,0,0,0,0,None,1,1,test,a,119.996143052,visual,2017_Dec_06_1212,
+1,2,K.png,1,2,S,0,1,1,1,None,1,1,test,a,119.996143052,visual,2017_Dec_06_1212,
+1,3,B.png,1,3,S,0,2,2,2,None,1,1,test,a,119.996143052,visual,2017_Dec_06_1212,
+2,1,A.png,1,4,S,0,3,3,3,None,1,1,test,a,119.996143052,visual,2017_Dec_06_1212,
+2,2,J.png,1,5,S,0,4,4,4,None,1,1,test,a,119.996143052,visual,2017_Dec_06_1212,

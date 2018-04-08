@@ -1,0 +1,86 @@
+94.2277 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color='white', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x157B8A10>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1366,  768]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+94.2278 	EXP 	window1: recordFrameIntervals = False
+94.3931 	EXP 	window1: recordFrameIntervals = True
+94.5771 	EXP 	window1: recordFrameIntervals = False
+95.5132 	EXP 	Created instr1_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='instr1_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+101.8366 	EXP 	Set  sound=C
+101.9538 	EXP 	Set  sound=lsl_instr1.wav
+101.9539 	EXP 	Sound  set volume 1.000
+102.0444 	EXP 	Created instr2_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr2_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+102.0649 	EXP 	Set  sound=lsl_instr2.wav
+102.0650 	EXP 	Sound  set volume 1.000
+102.1164 	EXP 	Created instr3_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr3_text', opacity=1.0, ori=0, pos=array([-0.3,  0. ]), rgb=array([ 0.,  0.,  0.]), text=u'This is Klaptoo!', units=u'norm', win=Window(...), wrapWidth=1)
+102.1191 	ERROR 	Couldn't find image klaptoo.png; check path? (tried: D:\work\work1\fmri for lsl\klaptoo.png)
+28.4948 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color='white', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x1578BA10>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1366,  768]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+28.4950 	EXP 	window1: recordFrameIntervals = False
+28.6604 	EXP 	window1: recordFrameIntervals = True
+28.8442 	EXP 	window1: recordFrameIntervals = False
+29.3288 	EXP 	Created instr1_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='instr1_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+32.4022 	EXP 	Set  sound=C
+32.4973 	EXP 	Set  sound=lsl_instr1.wav
+32.4974 	EXP 	Sound  set volume 1.000
+32.5892 	EXP 	Created instr2_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr2_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+32.6189 	EXP 	Set  sound=lsl_instr2.wav
+32.6190 	EXP 	Sound  set volume 1.000
+32.6716 	EXP 	Created instr3_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr3_text', opacity=1.0, ori=0, pos=array([-0.3,  0. ]), rgb=array([ 0.,  0.,  0.]), text=u'This is Klaptoo!', units=u'norm', win=Window(...), wrapWidth=1)
+32.7790 	EXP 	Created instr3_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, image=u'klaptoo.png', interpolate=True, mask=None, maskParams=None, name='instr3_image', opacity=1.0, ori=0.0, pos=array([ 0.5,  0. ]), size=array([ 0.28111274,  0.69010417]), texRes=128, units=u'norm', win=Window(...))
+32.7887 	EXP 	Set  sound=lsl_instr3.wav
+32.7888 	EXP 	Sound  set volume 1.000
+32.8385 	EXP 	Set  sound=lsl_instr4.wav
+32.8388 	EXP 	Sound  set volume 1.000
+32.9998 	EXP 	Created instr4_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr4_text', opacity=1.0, ori=0, pos=array([ 0. , -0.4]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+33.0047 	ERROR 	Couldn't find image Alien9.BMP; check path? (tried: D:\work\work1\fmri for lsl\Alien9.BMP)
+13.3965 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color='white', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x155FBA10>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1366,  768]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+13.3967 	EXP 	window1: recordFrameIntervals = False
+13.5630 	EXP 	window1: recordFrameIntervals = True
+13.7458 	EXP 	window1: recordFrameIntervals = False
+14.2119 	EXP 	Created instr1_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='instr1_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+16.9523 	EXP 	Set  sound=C
+11.7364 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color='white', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x14FBE710>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1366,  768]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+11.7365 	EXP 	window1: recordFrameIntervals = False
+11.9021 	EXP 	window1: recordFrameIntervals = True
+12.0858 	EXP 	window1: recordFrameIntervals = False
+12.5011 	EXP 	Created instr1_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='instr1_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+15.4044 	EXP 	Set  sound=C
+15.4950 	EXP 	Set  sound=lsl_instr1.wav
+15.4951 	EXP 	Sound  set volume 1.000
+15.5889 	EXP 	Created instr2_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr2_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+15.6085 	EXP 	Set  sound=lsl_instr2.wav
+15.6089 	EXP 	Sound  set volume 1.000
+15.6461 	EXP 	Created instr3_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr3_text', opacity=1.0, ori=0, pos=array([-0.3,  0. ]), rgb=array([ 0.,  0.,  0.]), text=u'This is Klaptoo!', units=u'norm', win=Window(...), wrapWidth=1)
+15.6678 	EXP 	Created instr3_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, image=u'klaptoo.png', interpolate=True, mask=None, maskParams=None, name='instr3_image', opacity=1.0, ori=0.0, pos=array([ 0.5,  0. ]), size=array([ 0.28111274,  0.69010417]), texRes=128, units=u'norm', win=Window(...))
+15.6763 	EXP 	Set  sound=lsl_instr3.wav
+15.6764 	EXP 	Sound  set volume 1.000
+15.7257 	EXP 	Set  sound=lsl_instr4.wav
+15.7258 	EXP 	Sound  set volume 1.000
+15.8654 	EXP 	Created instr4_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr4_text', opacity=1.0, ori=0, pos=array([ 0. , -0.4]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+15.8841 	EXP 	Created instr4_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, image=u'klaptoo.png', interpolate=True, mask=None, maskParams=None, name='instr4_image', opacity=1.0, ori=0.0, pos=array([ 0. ,  0.3]), size=array([ 0.28111274,  0.69010417]), texRes=128, units=u'norm', win=Window(...))
+15.8865 	ERROR 	Couldn't find image 1.png; check path? (tried: D:\work\work1\fmri for lsl\1.png)
+10.1158 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color='white', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x155BB6F0>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1366,  768]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+10.1160 	EXP 	window1: recordFrameIntervals = False
+10.2811 	EXP 	window1: recordFrameIntervals = True
+10.4650 	EXP 	window1: recordFrameIntervals = False
+10.8960 	EXP 	Created instr1_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='instr1_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+12.8533 	DATA 	Keypress: escape
+12.8541 	DATA 	Keypress: escape
+13.5717 	EXP 	Set  sound=C
+13.6380 	EXP 	Set  sound=lsl_instr1.wav
+13.6381 	EXP 	Sound  set volume 1.000
+13.7047 	EXP 	Created instr2_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr2_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+13.7225 	EXP 	Set  sound=lsl_instr2.wav
+13.7227 	EXP 	Sound  set volume 1.000
+13.7595 	EXP 	Created instr3_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr3_text', opacity=1.0, ori=0, pos=array([-0.3,  0. ]), rgb=array([ 0.,  0.,  0.]), text=u'This is Klaptoo!', units=u'norm', win=Window(...), wrapWidth=1)
+13.7754 	EXP 	Created instr3_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, image=u'klaptoo.png', interpolate=True, mask=None, maskParams=None, name='instr3_image', opacity=1.0, ori=0.0, pos=array([ 0.5,  0. ]), size=array([ 0.28111274,  0.69010417]), texRes=128, units=u'norm', win=Window(...))
+13.7827 	EXP 	Set  sound=lsl_instr3.wav
+13.7828 	EXP 	Sound  set volume 1.000
+13.8365 	EXP 	Set  sound=lsl_instr4.wav
+13.8366 	EXP 	Sound  set volume 1.000
+13.9722 	EXP 	Created instr4_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='instr4_text', opacity=1.0, ori=0, pos=array([ 0. , -0.4]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+13.9871 	EXP 	Created instr4_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, image=u'klaptoo.png', interpolate=True, mask=None, maskParams=None, name='instr4_image', opacity=1.0, ori=0.0, pos=array([ 0. ,  0.3]), size=array([ 0.28111274,  0.69010417]), texRes=128, units=u'norm', win=Window(...))
+13.9889 	ERROR 	Couldn't find image bi.png; check path? (tried: D:\work\work1\fmri for lsl\bi.png)
+13.1647 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color='white', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x14DEE710>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1366,  768]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+13.1648 	EXP 	window1: recordFrameIntervals = False
+13.3297 	EXP 	window1: recordFrameIntervals = True
+13.5139 	EXP 	window1: recordFrameIntervals = False
+13.9429 	EXP 	Created instr1_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='instr1_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=unicode(...), units=u'norm', win=Window(...), wrapWidth=1)
+16.8086 	EXP 	Set  sound=C

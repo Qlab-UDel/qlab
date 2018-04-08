@@ -1,0 +1,6 @@
+instr1_key_resp.keys,instr1_key_resp.rt,instr2_key_resp.keys,instr2_key_resp.rt,instr3_key_resp.keys,instr3_key_resp.rt,instr4_key_resp.keys,instr4_key_resp.rt,target_letter_key_resp.keys,target_letter_key_resp.rt,Run,target,PartID,frameRate,expName,date,
+space,0.963323790158,,,,,,,,,1,B,,60.0558473566,lsl,2017_Aug_22_1238,
+,,space,0.817421701671,,,,,,,1,B,,60.0558473566,lsl,2017_Aug_22_1238,
+,,,,space,0.620513474969,,,,,1,B,,60.0558473566,lsl,2017_Aug_22_1238,
+,,,,,,space,0.988687415331,,,1,B,,60.0558473566,lsl,2017_Aug_22_1238,
+,,,,,,,,space,0.853830179149,1,B,,60.0558473566,lsl,2017_Aug_22_1238,
