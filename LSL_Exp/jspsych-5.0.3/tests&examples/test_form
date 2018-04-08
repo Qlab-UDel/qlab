@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="jspsych-5.0.3/jspsych.js"></script>
+ 
+<script src="jspsych-5.0.3/plugins/jspsych-form.js"></script>
+<script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
+    <link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+
+<head>
+	<title></title>
+</head>
+<body>
+
+</body>
+<script>
+	
+	var schema = {
+		form: {form_title: 'Test #1'}, // , ribbon_bg: "img/ribbon.jpg", layout_color: "grey-300", content_bg_color: "grey-100"},
+		"Question #1": {type: "short answer", correct: "Answer #1", required: true},
+		"Question #2": {type: "password"},
+		"Question #3": {type: "checkbox", labels: ["option1", "option2"], correctAnswers: ["value1", "value2"], values:["value1", "value2"]},
+		"Question #4": {type: "radio", labels: ["option1", "option2"], correctAnswers: ["option1"]},
+		"Question #5": {type: "range"},
+		"Question #6": {type: "dropdown"},
+		"Question #8<p>Some random contents</p>": {type: "long answer", question_description: ""},
+		
+	}
+	var text_trial = {
+		type: 'text',
+		text: 'Press any key to view form.'
+	}
+	var form_trial = {
+		type: 'form',
+		schema: schema
+	}
+	
+	jsPsych.init({
+		timeline: [text_trial, form_trial],
+		on_finish: function(){ jsPsych.data.displayData(); }
+	});
+</script>
+
+</html>
