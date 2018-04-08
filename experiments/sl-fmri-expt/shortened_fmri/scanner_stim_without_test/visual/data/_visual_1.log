@@ -1,0 +1,2847 @@
+5.3042 	ERROR 	avbin.dll failed to load. Try importing psychopy.visual
+  as the first library (before anything that uses scipy)
+  and make sure that avbin is installed.
+15.0705 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color=u'grey', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x120DE790>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1920, 1080]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+15.0705 	EXP 	window1: recordFrameIntervals = False
+15.2299 	EXP 	window1: recordFrameIntervals = True
+15.4128 	EXP 	window1: recordFrameIntervals = False
+15.7736 	EXP 	Created start_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='start_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=u"Are you ready? Let's get started!", units=u'norm', win=Window(...), wrapWidth=1)
+15.7967 	EXP 	Created vreminder_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image=u'Alien1.BMP', interpolate=True, mask=None, maskParams=None, name='vreminder_image', opacity=1.0, ori=0.0, pos=array([ 0. , -0.3]), size=array([ 0.3       ,  0.46851852]), texRes=128, units=u'norm', win=Window(...))
+15.8241 	EXP 	Created vreminder_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='vreminder_text', opacity=1.0, ori=0, pos=array([ 0. ,  0.4]), rgb=array([ 0.,  0.,  0.]), text=u'Press the button when you see this!', units=u'norm', win=Window(...), wrapWidth=1)
+18.1720 	EXP 	Set  sound=C
+18.1899 	EXP 	Set  sound=reminder.wav
+18.1899 	EXP 	Sound  set volume 1.000
+18.2675 	EXP 	Created lreminder_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='a.png', interpolate=True, mask=None, maskParams=None, name='lreminder_image', opacity=1.0, ori=0.0, pos=array([ 0. , -0.3]), size=array([ 0.5       ,  1.07407407]), texRes=128, units=u'norm', win=Window(...))
+18.2880 	EXP 	Created lreminder_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='lreminder_text', opacity=1.0, ori=0, pos=array([-0. ,  0.4]), rgb=array([ 0.,  0.,  0.]), text=u'Press the button when you see this!', units=u'norm', win=Window(...), wrapWidth=1)
+18.2914 	EXP 	Set  sound=reminder.wav
+18.2915 	EXP 	Sound  set volume 1.000
+18.2935 	EXP 	Created l_block_trial_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='l_block_trial_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.5,  0.5]), texRes=128, units=u'norm', win=Window(...))
+18.3425 	EXP 	Created l_block_trial_blank = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, image=u'blanka.png', interpolate=True, mask=None, maskParams=None, name='l_block_trial_blank', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.5       ,  1.07407407]), texRes=128, units=u'norm', win=Window(...))
+18.3450 	EXP 	Created v_block_trial_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='v_block_trial_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.5,  0.5]), texRes=128, units=u'norm', win=Window(...))
+18.3590 	EXP 	Created blank_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, image=u'blank.PNG', interpolate=True, mask=None, maskParams=None, name='blank_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.3       ,  0.26666667]), texRes=128, units=u'norm', win=Window(...))
+18.3609 	EXP 	Created blank_block_trial_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='blank_block_trial_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.5,  0.5]), texRes=128, units=u'norm', win=Window(...))
+18.3621 	EXP 	window1: blendMode = 'avg'
+18.3732 	EXP 	start_text: autoDraw = True
+18.3737 	EXP 	window1: blendMode = 'avg'
+18.3850 	EXP 	window1: blendMode = 'avg'
+18.4014 	EXP 	window1: blendMode = 'avg'
+18.4181 	EXP 	window1: blendMode = 'avg'
+18.4348 	EXP 	window1: blendMode = 'avg'
+18.4517 	EXP 	window1: blendMode = 'avg'
+18.4683 	EXP 	window1: blendMode = 'avg'
+18.4853 	EXP 	window1: blendMode = 'avg'
+18.5019 	EXP 	window1: blendMode = 'avg'
+18.5184 	EXP 	window1: blendMode = 'avg'
+18.5353 	EXP 	window1: blendMode = 'avg'
+18.5519 	EXP 	window1: blendMode = 'avg'
+18.5685 	EXP 	window1: blendMode = 'avg'
+18.5857 	EXP 	window1: blendMode = 'avg'
+18.6018 	EXP 	window1: blendMode = 'avg'
+18.6184 	EXP 	window1: blendMode = 'avg'
+18.6360 	EXP 	window1: blendMode = 'avg'
+18.6521 	EXP 	window1: blendMode = 'avg'
+18.6686 	EXP 	window1: blendMode = 'avg'
+18.6856 	EXP 	window1: blendMode = 'avg'
+18.7018 	EXP 	window1: blendMode = 'avg'
+18.7189 	EXP 	window1: blendMode = 'avg'
+18.7355 	EXP 	window1: blendMode = 'avg'
+18.7522 	EXP 	window1: blendMode = 'avg'
+18.7689 	EXP 	window1: blendMode = 'avg'
+18.7857 	EXP 	window1: blendMode = 'avg'
+18.8020 	EXP 	window1: blendMode = 'avg'
+18.8185 	EXP 	window1: blendMode = 'avg'
+18.8357 	EXP 	window1: blendMode = 'avg'
+18.8519 	EXP 	window1: blendMode = 'avg'
+18.8688 	EXP 	window1: blendMode = 'avg'
+18.8855 	EXP 	window1: blendMode = 'avg'
+18.9023 	EXP 	window1: blendMode = 'avg'
+18.9192 	EXP 	window1: blendMode = 'avg'
+18.9357 	EXP 	window1: blendMode = 'avg'
+18.9524 	EXP 	window1: blendMode = 'avg'
+18.9689 	EXP 	window1: blendMode = 'avg'
+18.9862 	EXP 	window1: blendMode = 'avg'
+19.0029 	EXP 	window1: blendMode = 'avg'
+19.0191 	EXP 	window1: blendMode = 'avg'
+19.0362 	EXP 	window1: blendMode = 'avg'
+19.0528 	EXP 	window1: blendMode = 'avg'
+19.0692 	EXP 	window1: blendMode = 'avg'
+19.0858 	EXP 	window1: blendMode = 'avg'
+19.1024 	EXP 	window1: blendMode = 'avg'
+19.1189 	EXP 	window1: blendMode = 'avg'
+19.1360 	EXP 	window1: blendMode = 'avg'
+19.1524 	EXP 	window1: blendMode = 'avg'
+19.1691 	EXP 	window1: blendMode = 'avg'
+19.1864 	EXP 	window1: blendMode = 'avg'
+19.2025 	EXP 	window1: blendMode = 'avg'
+19.2194 	EXP 	window1: blendMode = 'avg'
+19.2363 	EXP 	window1: blendMode = 'avg'
+19.2532 	EXP 	window1: blendMode = 'avg'
+19.2691 	EXP 	window1: blendMode = 'avg'
+19.2863 	EXP 	window1: blendMode = 'avg'
+19.3032 	EXP 	window1: blendMode = 'avg'
+19.3199 	EXP 	window1: blendMode = 'avg'
+19.3367 	EXP 	window1: blendMode = 'avg'
+19.3533 	EXP 	window1: blendMode = 'avg'
+19.3698 	EXP 	window1: blendMode = 'avg'
+19.3865 	EXP 	window1: blendMode = 'avg'
+19.4032 	EXP 	window1: blendMode = 'avg'
+19.4199 	EXP 	window1: blendMode = 'avg'
+19.4367 	EXP 	window1: blendMode = 'avg'
+19.4537 	EXP 	window1: blendMode = 'avg'
+19.4698 	EXP 	window1: blendMode = 'avg'
+19.4866 	EXP 	window1: blendMode = 'avg'
+19.5037 	EXP 	window1: blendMode = 'avg'
+19.5206 	EXP 	window1: blendMode = 'avg'
+19.5367 	EXP 	window1: blendMode = 'avg'
+19.5534 	EXP 	window1: blendMode = 'avg'
+19.5701 	EXP 	window1: blendMode = 'avg'
+19.5867 	EXP 	window1: blendMode = 'avg'
+19.6045 	EXP 	window1: blendMode = 'avg'
+19.6201 	EXP 	window1: blendMode = 'avg'
+19.6369 	EXP 	window1: blendMode = 'avg'
+19.6542 	EXP 	window1: blendMode = 'avg'
+19.6715 	EXP 	window1: blendMode = 'avg'
+19.6874 	EXP 	window1: blendMode = 'avg'
+19.7034 	EXP 	window1: blendMode = 'avg'
+19.7200 	EXP 	window1: blendMode = 'avg'
+19.7374 	EXP 	window1: blendMode = 'avg'
+19.7535 	EXP 	window1: blendMode = 'avg'
+19.7698 	EXP 	window1: blendMode = 'avg'
+19.7872 	EXP 	window1: blendMode = 'avg'
+19.8037 	EXP 	window1: blendMode = 'avg'
+19.8200 	EXP 	window1: blendMode = 'avg'
+19.8372 	EXP 	window1: blendMode = 'avg'
+19.8539 	EXP 	window1: blendMode = 'avg'
+19.8704 	EXP 	window1: blendMode = 'avg'
+19.8873 	EXP 	window1: blendMode = 'avg'
+19.9045 	EXP 	window1: blendMode = 'avg'
+19.9204 	EXP 	window1: blendMode = 'avg'
+19.9374 	EXP 	window1: blendMode = 'avg'
+19.9542 	DATA 	Keypress: 5
+19.9554 	EXP 	window1: blendMode = 'avg'
+19.9562 	EXP 	Sound  started
+19.9696 	EXP 	start_text: autoDraw = False
+19.9702 	EXP 	window1: blendMode = 'avg'
+19.9874 	EXP 	window1: blendMode = 'avg'
+20.0047 	EXP 	window1: blendMode = 'avg'
+20.0208 	EXP 	window1: blendMode = 'avg'
+20.0377 	EXP 	window1: blendMode = 'avg'
+20.0545 	EXP 	window1: blendMode = 'avg'
+20.0711 	EXP 	window1: blendMode = 'avg'
+20.0870 	EXP 	window1: blendMode = 'avg'
+20.1044 	EXP 	window1: blendMode = 'avg'
+20.1207 	EXP 	window1: blendMode = 'avg'
+20.1376 	EXP 	window1: blendMode = 'avg'
+20.1549 	EXP 	window1: blendMode = 'avg'
+20.1715 	EXP 	window1: blendMode = 'avg'
+20.1877 	EXP 	window1: blendMode = 'avg'
+20.2050 	EXP 	window1: blendMode = 'avg'
+20.2211 	EXP 	window1: blendMode = 'avg'
+20.2378 	EXP 	window1: blendMode = 'avg'
+20.2560 	EXP 	window1: blendMode = 'avg'
+20.2709 	EXP 	window1: blendMode = 'avg'
+20.2880 	EXP 	window1: blendMode = 'avg'
+20.3049 	EXP 	window1: blendMode = 'avg'
+20.3209 	EXP 	window1: blendMode = 'avg'
+20.3379 	EXP 	window1: blendMode = 'avg'
+20.3543 	EXP 	window1: blendMode = 'avg'
+20.3715 	EXP 	window1: blendMode = 'avg'
+20.3881 	EXP 	window1: blendMode = 'avg'
+20.4051 	EXP 	window1: blendMode = 'avg'
+20.4214 	EXP 	window1: blendMode = 'avg'
+20.4384 	EXP 	window1: blendMode = 'avg'
+20.4553 	EXP 	window1: blendMode = 'avg'
+20.4715 	EXP 	window1: blendMode = 'avg'
+20.4883 	EXP 	window1: blendMode = 'avg'
+20.5055 	EXP 	window1: blendMode = 'avg'
+20.5221 	EXP 	window1: blendMode = 'avg'
+20.5387 	EXP 	window1: blendMode = 'avg'
+20.5549 	EXP 	window1: blendMode = 'avg'
+20.5712 	EXP 	window1: blendMode = 'avg'
+20.5884 	EXP 	window1: blendMode = 'avg'
+20.6049 	EXP 	window1: blendMode = 'avg'
+20.6214 	EXP 	window1: blendMode = 'avg'
+20.6380 	EXP 	window1: blendMode = 'avg'
+20.6553 	EXP 	window1: blendMode = 'avg'
+20.6717 	EXP 	window1: blendMode = 'avg'
+20.6887 	EXP 	window1: blendMode = 'avg'
+20.7055 	EXP 	window1: blendMode = 'avg'
+20.7217 	EXP 	window1: blendMode = 'avg'
+20.7386 	EXP 	window1: blendMode = 'avg'
+20.7561 	EXP 	window1: blendMode = 'avg'
+20.7720 	EXP 	window1: blendMode = 'avg'
+20.7886 	EXP 	window1: blendMode = 'avg'
+20.8058 	EXP 	window1: blendMode = 'avg'
+20.8220 	EXP 	window1: blendMode = 'avg'
+20.8386 	EXP 	window1: blendMode = 'avg'
+20.8557 	EXP 	window1: blendMode = 'avg'
+20.8721 	EXP 	window1: blendMode = 'avg'
+20.8889 	EXP 	window1: blendMode = 'avg'
+20.9057 	EXP 	window1: blendMode = 'avg'
+20.9221 	EXP 	window1: blendMode = 'avg'
+20.9389 	EXP 	window1: blendMode = 'avg'
+20.9562 	EXP 	window1: blendMode = 'avg'
+20.9721 	EXP 	window1: blendMode = 'avg'
+20.9889 	EXP 	window1: blendMode = 'avg'
+21.0062 	EXP 	window1: blendMode = 'avg'
+21.0233 	EXP 	window1: blendMode = 'avg'
+21.0392 	EXP 	window1: blendMode = 'avg'
+21.0561 	EXP 	window1: blendMode = 'avg'
+21.0726 	EXP 	window1: blendMode = 'avg'
+21.0889 	EXP 	window1: blendMode = 'avg'
+21.1065 	EXP 	window1: blendMode = 'avg'
+21.1228 	EXP 	window1: blendMode = 'avg'
+21.1391 	EXP 	window1: blendMode = 'avg'
+21.1566 	EXP 	window1: blendMode = 'avg'
+21.1728 	EXP 	window1: blendMode = 'avg'
+21.1893 	EXP 	window1: blendMode = 'avg'
+21.2066 	EXP 	window1: blendMode = 'avg'
+21.2231 	EXP 	window1: blendMode = 'avg'
+21.2396 	EXP 	window1: blendMode = 'avg'
+21.2564 	EXP 	window1: blendMode = 'avg'
+21.2729 	EXP 	window1: blendMode = 'avg'
+21.2892 	EXP 	window1: blendMode = 'avg'
+21.3068 	EXP 	window1: blendMode = 'avg'
+21.3236 	EXP 	window1: blendMode = 'avg'
+21.3397 	EXP 	window1: blendMode = 'avg'
+21.3566 	EXP 	window1: blendMode = 'avg'
+21.3732 	EXP 	window1: blendMode = 'avg'
+21.3900 	EXP 	window1: blendMode = 'avg'
+21.4066 	EXP 	window1: blendMode = 'avg'
+21.4229 	EXP 	window1: blendMode = 'avg'
+21.4397 	EXP 	window1: blendMode = 'avg'
+21.4568 	EXP 	window1: blendMode = 'avg'
+21.4734 	EXP 	window1: blendMode = 'avg'
+21.4900 	EXP 	window1: blendMode = 'avg'
+21.5068 	EXP 	window1: blendMode = 'avg'
+21.5234 	EXP 	window1: blendMode = 'avg'
+21.5398 	EXP 	window1: blendMode = 'avg'
+21.5567 	EXP 	window1: blendMode = 'avg'
+21.5734 	EXP 	window1: blendMode = 'avg'
+21.5899 	EXP 	window1: blendMode = 'avg'
+21.6071 	EXP 	window1: blendMode = 'avg'
+21.6233 	EXP 	window1: blendMode = 'avg'
+21.6404 	EXP 	window1: blendMode = 'avg'
+21.6570 	EXP 	window1: blendMode = 'avg'
+21.6737 	EXP 	window1: blendMode = 'avg'
+21.6900 	EXP 	window1: blendMode = 'avg'
+21.7072 	EXP 	window1: blendMode = 'avg'
+21.7234 	EXP 	window1: blendMode = 'avg'
+21.7236 	EXP 	Sound  stopped
+21.7751 	EXP 	Imported visual_run1_6.xlsx as conditions, 60 conditions, 6 params
+21.7761 	EXP 	Created sequence: sequential, trialTypes=60, nReps=1, seed=None
+21.7765 	EXP 	New trial (rep=0, index=0): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 97, 'condition': u'R'}
+21.8179 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+21.8179 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+21.8179 	EXP 	v_block_trial_image: autoDraw = True
+22.5911 	EXP 	v_block_trial_image: autoDraw = False
+22.6079 	EXP 	blank_image: autoDraw = True
+22.7259 	EXP 	New trial (rep=0, index=1): {'word': 0, 'location': 2, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 98, 'condition': u'R'}
+22.7470 	EXP 	v_block_trial_image: autoDraw = False
+22.7470 	EXP 	blank_image: autoDraw = False
+22.7470 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+22.7470 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+22.7470 	EXP 	v_block_trial_image: autoDraw = True
+23.5425 	EXP 	v_block_trial_image: autoDraw = False
+23.5589 	EXP 	blank_image: autoDraw = True
+23.7265 	EXP 	New trial (rep=0, index=2): {'word': 0, 'location': 3, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 99, 'condition': u'R'}
+23.7612 	EXP 	v_block_trial_image: autoDraw = False
+23.7612 	EXP 	blank_image: autoDraw = False
+23.7612 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+23.7612 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+23.7612 	EXP 	v_block_trial_image: autoDraw = True
+24.5440 	EXP 	v_block_trial_image: autoDraw = False
+24.5440 	EXP 	blank_image: autoDraw = True
+24.7281 	EXP 	New trial (rep=0, index=3): {'word': 0, 'location': 1, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 100, 'condition': u'R'}
+24.7684 	EXP 	v_block_trial_image: autoDraw = False
+24.7684 	EXP 	blank_image: autoDraw = False
+24.7684 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+24.7684 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+24.7684 	EXP 	v_block_trial_image: autoDraw = True
+25.5454 	EXP 	v_block_trial_image: autoDraw = False
+25.5454 	EXP 	blank_image: autoDraw = True
+25.7291 	EXP 	New trial (rep=0, index=4): {'word': 0, 'location': 2, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 101, 'condition': u'R'}
+25.7577 	EXP 	v_block_trial_image: autoDraw = False
+25.7577 	EXP 	blank_image: autoDraw = False
+25.7577 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+25.7577 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+25.7577 	EXP 	v_block_trial_image: autoDraw = True
+26.5471 	EXP 	v_block_trial_image: autoDraw = False
+26.5471 	EXP 	blank_image: autoDraw = True
+26.7309 	EXP 	New trial (rep=0, index=5): {'word': 0, 'location': 3, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 102, 'condition': u'R'}
+26.7611 	EXP 	v_block_trial_image: autoDraw = False
+26.7611 	EXP 	blank_image: autoDraw = False
+26.7611 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+26.7611 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+26.7611 	EXP 	v_block_trial_image: autoDraw = True
+27.5484 	EXP 	v_block_trial_image: autoDraw = False
+27.5484 	EXP 	blank_image: autoDraw = True
+27.7331 	EXP 	New trial (rep=0, index=6): {'word': 0, 'location': 1, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 103, 'condition': u'R'}
+27.8450 	EXP 	v_block_trial_image: autoDraw = False
+27.8450 	EXP 	blank_image: autoDraw = False
+27.8450 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+27.8450 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+27.8450 	EXP 	v_block_trial_image: autoDraw = True
+28.5502 	EXP 	v_block_trial_image: autoDraw = False
+28.5502 	EXP 	blank_image: autoDraw = True
+28.7346 	EXP 	New trial (rep=0, index=7): {'word': 0, 'location': 2, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 104, 'condition': u'R'}
+28.7963 	EXP 	v_block_trial_image: autoDraw = False
+28.7963 	EXP 	blank_image: autoDraw = False
+28.7963 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+28.7963 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+28.7963 	EXP 	v_block_trial_image: autoDraw = True
+29.5521 	EXP 	v_block_trial_image: autoDraw = False
+29.5521 	EXP 	blank_image: autoDraw = True
+29.7362 	EXP 	New trial (rep=0, index=8): {'word': 0, 'location': 3, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 105, 'condition': u'R'}
+29.7519 	EXP 	v_block_trial_image: autoDraw = False
+29.7519 	EXP 	blank_image: autoDraw = False
+29.7519 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+29.7519 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+29.7519 	EXP 	v_block_trial_image: autoDraw = True
+30.5536 	EXP 	v_block_trial_image: autoDraw = False
+30.5536 	EXP 	blank_image: autoDraw = True
+30.7374 	EXP 	New trial (rep=0, index=9): {'word': 0, 'location': 1, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 106, 'condition': u'R'}
+30.7533 	EXP 	v_block_trial_image: autoDraw = False
+30.7533 	EXP 	blank_image: autoDraw = False
+30.7533 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+30.7533 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+30.7533 	EXP 	v_block_trial_image: autoDraw = True
+31.5551 	EXP 	v_block_trial_image: autoDraw = False
+31.5551 	EXP 	blank_image: autoDraw = True
+31.7395 	EXP 	New trial (rep=0, index=10): {'word': 0, 'location': 2, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 107, 'condition': u'R'}
+31.7561 	EXP 	v_block_trial_image: autoDraw = False
+31.7561 	EXP 	blank_image: autoDraw = False
+31.7561 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+31.7561 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+31.7561 	EXP 	v_block_trial_image: autoDraw = True
+32.5565 	EXP 	v_block_trial_image: autoDraw = False
+32.5565 	EXP 	blank_image: autoDraw = True
+32.7405 	EXP 	New trial (rep=0, index=11): {'word': 0, 'location': 3, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 108, 'condition': u'R'}
+32.7619 	EXP 	v_block_trial_image: autoDraw = False
+32.7619 	EXP 	blank_image: autoDraw = False
+32.7619 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+32.7619 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+32.7619 	EXP 	v_block_trial_image: autoDraw = True
+33.5577 	EXP 	v_block_trial_image: autoDraw = False
+33.5577 	EXP 	blank_image: autoDraw = True
+33.7260 	EXP 	New trial (rep=0, index=12): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 109, 'condition': u'R'}
+33.7682 	EXP 	v_block_trial_image: autoDraw = False
+33.7682 	EXP 	blank_image: autoDraw = False
+33.7682 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+33.7682 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+33.7682 	EXP 	v_block_trial_image: autoDraw = True
+34.5427 	EXP 	v_block_trial_image: autoDraw = False
+34.5427 	EXP 	blank_image: autoDraw = True
+34.7274 	EXP 	New trial (rep=0, index=13): {'word': 0, 'location': 2, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 110, 'condition': u'R'}
+34.7432 	EXP 	v_block_trial_image: autoDraw = False
+34.7432 	EXP 	blank_image: autoDraw = False
+34.7432 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+34.7432 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+34.7432 	EXP 	v_block_trial_image: autoDraw = True
+35.5445 	EXP 	v_block_trial_image: autoDraw = False
+35.5445 	EXP 	blank_image: autoDraw = True
+35.7283 	EXP 	New trial (rep=0, index=14): {'word': 0, 'location': 3, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 111, 'condition': u'R'}
+35.7493 	EXP 	v_block_trial_image: autoDraw = False
+35.7493 	EXP 	blank_image: autoDraw = False
+35.7493 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+35.7493 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+35.7493 	EXP 	v_block_trial_image: autoDraw = True
+36.5460 	EXP 	v_block_trial_image: autoDraw = False
+36.5460 	EXP 	blank_image: autoDraw = True
+36.7301 	EXP 	New trial (rep=0, index=15): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 112, 'condition': u'R'}
+36.7467 	EXP 	v_block_trial_image: autoDraw = False
+36.7467 	EXP 	blank_image: autoDraw = False
+36.7467 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+36.7467 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+36.7467 	EXP 	v_block_trial_image: autoDraw = True
+37.5476 	EXP 	v_block_trial_image: autoDraw = False
+37.5476 	EXP 	blank_image: autoDraw = True
+37.7318 	EXP 	New trial (rep=0, index=16): {'word': 0, 'location': 2, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 113, 'condition': u'R'}
+37.7537 	EXP 	v_block_trial_image: autoDraw = False
+37.7537 	EXP 	blank_image: autoDraw = False
+37.7537 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+37.7537 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+37.7537 	EXP 	v_block_trial_image: autoDraw = True
+38.5492 	EXP 	v_block_trial_image: autoDraw = False
+38.5492 	EXP 	blank_image: autoDraw = True
+38.7337 	EXP 	New trial (rep=0, index=17): {'word': 0, 'location': 3, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 114, 'condition': u'R'}
+38.7696 	EXP 	v_block_trial_image: autoDraw = False
+38.7696 	EXP 	blank_image: autoDraw = False
+38.7696 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+38.7696 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+38.7696 	EXP 	v_block_trial_image: autoDraw = True
+39.5505 	EXP 	v_block_trial_image: autoDraw = False
+39.5505 	EXP 	blank_image: autoDraw = True
+39.7347 	EXP 	New trial (rep=0, index=18): {'word': 0, 'location': 1, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 115, 'condition': u'R'}
+39.7513 	EXP 	v_block_trial_image: autoDraw = False
+39.7513 	EXP 	blank_image: autoDraw = False
+39.7513 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+39.7513 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+39.7513 	EXP 	v_block_trial_image: autoDraw = True
+40.5523 	EXP 	v_block_trial_image: autoDraw = False
+40.5523 	EXP 	blank_image: autoDraw = True
+40.7363 	EXP 	New trial (rep=0, index=19): {'word': 0, 'location': 2, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 116, 'condition': u'R'}
+40.7576 	EXP 	v_block_trial_image: autoDraw = False
+40.7576 	EXP 	blank_image: autoDraw = False
+40.7576 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+40.7576 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+40.7576 	EXP 	v_block_trial_image: autoDraw = True
+41.5540 	EXP 	v_block_trial_image: autoDraw = False
+41.5540 	EXP 	blank_image: autoDraw = True
+41.7380 	EXP 	New trial (rep=0, index=20): {'word': 0, 'location': 3, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 117, 'condition': u'R'}
+41.7598 	EXP 	v_block_trial_image: autoDraw = False
+41.7598 	EXP 	blank_image: autoDraw = False
+41.7598 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+41.7598 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+41.7598 	EXP 	v_block_trial_image: autoDraw = True
+42.5557 	EXP 	v_block_trial_image: autoDraw = False
+42.5557 	EXP 	blank_image: autoDraw = True
+42.7397 	EXP 	New trial (rep=0, index=21): {'word': 0, 'location': 1, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 118, 'condition': u'R'}
+42.7624 	EXP 	v_block_trial_image: autoDraw = False
+42.7624 	EXP 	blank_image: autoDraw = False
+42.7624 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+42.7624 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+42.7624 	EXP 	v_block_trial_image: autoDraw = True
+43.5569 	EXP 	v_block_trial_image: autoDraw = False
+43.5569 	EXP 	blank_image: autoDraw = True
+43.7249 	EXP 	New trial (rep=0, index=22): {'word': 0, 'location': 2, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 119, 'condition': u'R'}
+43.7408 	EXP 	v_block_trial_image: autoDraw = False
+43.7408 	EXP 	blank_image: autoDraw = False
+43.7408 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+43.7408 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+43.7408 	EXP 	v_block_trial_image: autoDraw = True
+44.5415 	EXP 	v_block_trial_image: autoDraw = False
+44.5415 	EXP 	blank_image: autoDraw = True
+44.7259 	EXP 	New trial (rep=0, index=23): {'word': 0, 'location': 3, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 120, 'condition': u'R'}
+44.7513 	EXP 	v_block_trial_image: autoDraw = False
+44.7513 	EXP 	blank_image: autoDraw = False
+44.7513 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+44.7513 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+44.7513 	EXP 	v_block_trial_image: autoDraw = True
+45.5437 	EXP 	v_block_trial_image: autoDraw = False
+45.5437 	EXP 	blank_image: autoDraw = True
+45.7277 	EXP 	New trial (rep=0, index=24): {'word': 0, 'location': 1, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 121, 'condition': u'R'}
+45.7437 	EXP 	v_block_trial_image: autoDraw = False
+45.7437 	EXP 	blank_image: autoDraw = False
+45.7437 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+45.7437 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+45.7437 	EXP 	v_block_trial_image: autoDraw = True
+46.5451 	EXP 	v_block_trial_image: autoDraw = False
+46.5451 	EXP 	blank_image: autoDraw = True
+46.7290 	EXP 	New trial (rep=0, index=25): {'word': 0, 'location': 2, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 122, 'condition': u'R'}
+46.7453 	EXP 	v_block_trial_image: autoDraw = False
+46.7453 	EXP 	blank_image: autoDraw = False
+46.7453 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+46.7453 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+46.7453 	EXP 	v_block_trial_image: autoDraw = True
+47.5467 	EXP 	v_block_trial_image: autoDraw = False
+47.5467 	EXP 	blank_image: autoDraw = True
+47.7305 	EXP 	New trial (rep=0, index=26): {'word': 0, 'location': 3, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 123, 'condition': u'R'}
+47.7469 	EXP 	v_block_trial_image: autoDraw = False
+47.7469 	EXP 	blank_image: autoDraw = False
+47.7469 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+47.7469 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+47.7469 	EXP 	v_block_trial_image: autoDraw = True
+48.5479 	EXP 	v_block_trial_image: autoDraw = False
+48.5479 	EXP 	blank_image: autoDraw = True
+48.7324 	EXP 	New trial (rep=0, index=27): {'word': 0, 'location': 1, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 124, 'condition': u'R'}
+48.7480 	EXP 	v_block_trial_image: autoDraw = False
+48.7480 	EXP 	blank_image: autoDraw = False
+48.7480 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+48.7480 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+48.7480 	EXP 	v_block_trial_image: autoDraw = True
+49.5498 	EXP 	v_block_trial_image: autoDraw = False
+49.5498 	EXP 	blank_image: autoDraw = True
+49.7342 	EXP 	New trial (rep=0, index=28): {'word': 0, 'location': 2, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 125, 'condition': u'R'}
+49.7499 	EXP 	v_block_trial_image: autoDraw = False
+49.7499 	EXP 	blank_image: autoDraw = False
+49.7499 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+49.7499 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+49.7499 	EXP 	v_block_trial_image: autoDraw = True
+50.5508 	EXP 	v_block_trial_image: autoDraw = False
+50.5508 	EXP 	blank_image: autoDraw = True
+50.7358 	EXP 	New trial (rep=0, index=29): {'word': 0, 'location': 3, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 126, 'condition': u'R'}
+50.7625 	EXP 	v_block_trial_image: autoDraw = False
+50.7625 	EXP 	blank_image: autoDraw = False
+50.7625 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+50.7625 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+50.7625 	EXP 	v_block_trial_image: autoDraw = True
+51.5526 	EXP 	v_block_trial_image: autoDraw = False
+51.5526 	EXP 	blank_image: autoDraw = True
+51.7371 	EXP 	New trial (rep=0, index=30): {'word': 0, 'location': 1, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 127, 'condition': u'R'}
+51.7535 	EXP 	v_block_trial_image: autoDraw = False
+51.7535 	EXP 	blank_image: autoDraw = False
+51.7535 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+51.7535 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+51.7535 	EXP 	v_block_trial_image: autoDraw = True
+52.5543 	EXP 	v_block_trial_image: autoDraw = False
+52.5543 	EXP 	blank_image: autoDraw = True
+52.7386 	EXP 	New trial (rep=0, index=31): {'word': 0, 'location': 2, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 128, 'condition': u'R'}
+52.7547 	EXP 	v_block_trial_image: autoDraw = False
+52.7547 	EXP 	blank_image: autoDraw = False
+52.7547 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+52.7547 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+52.7547 	EXP 	v_block_trial_image: autoDraw = True
+53.5560 	EXP 	v_block_trial_image: autoDraw = False
+53.5723 	EXP 	blank_image: autoDraw = True
+53.7401 	EXP 	New trial (rep=0, index=32): {'word': 0, 'location': 3, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 129, 'condition': u'R'}
+53.7608 	EXP 	v_block_trial_image: autoDraw = False
+53.7608 	EXP 	blank_image: autoDraw = False
+53.7608 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+53.7608 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+53.7608 	EXP 	v_block_trial_image: autoDraw = True
+54.5574 	EXP 	v_block_trial_image: autoDraw = False
+54.5574 	EXP 	blank_image: autoDraw = True
+54.7249 	EXP 	New trial (rep=0, index=33): {'word': 0, 'location': 1, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 130, 'condition': u'R'}
+54.7406 	EXP 	v_block_trial_image: autoDraw = False
+54.7406 	EXP 	blank_image: autoDraw = False
+54.7406 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+54.7406 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+54.7406 	EXP 	v_block_trial_image: autoDraw = True
+55.5426 	EXP 	v_block_trial_image: autoDraw = False
+55.5426 	EXP 	blank_image: autoDraw = True
+55.7267 	EXP 	New trial (rep=0, index=34): {'word': 0, 'location': 2, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 131, 'condition': u'R'}
+55.7423 	EXP 	v_block_trial_image: autoDraw = False
+55.7423 	EXP 	blank_image: autoDraw = False
+55.7423 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+55.7423 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+55.7423 	EXP 	v_block_trial_image: autoDraw = True
+56.5438 	EXP 	v_block_trial_image: autoDraw = False
+56.5438 	EXP 	blank_image: autoDraw = True
+56.7282 	EXP 	New trial (rep=0, index=35): {'word': 0, 'location': 3, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 132, 'condition': u'R'}
+56.7469 	EXP 	v_block_trial_image: autoDraw = False
+56.7469 	EXP 	blank_image: autoDraw = False
+56.7469 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+56.7469 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+56.7469 	EXP 	v_block_trial_image: autoDraw = True
+57.5454 	EXP 	v_block_trial_image: autoDraw = False
+57.5454 	EXP 	blank_image: autoDraw = True
+57.7295 	EXP 	New trial (rep=0, index=36): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 133, 'condition': u'R'}
+57.7505 	EXP 	v_block_trial_image: autoDraw = False
+57.7505 	EXP 	blank_image: autoDraw = False
+57.7505 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+57.7505 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+57.7505 	EXP 	v_block_trial_image: autoDraw = True
+58.5472 	EXP 	v_block_trial_image: autoDraw = False
+58.5472 	EXP 	blank_image: autoDraw = True
+58.7308 	EXP 	New trial (rep=0, index=37): {'word': 0, 'location': 2, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 134, 'condition': u'R'}
+58.7467 	EXP 	v_block_trial_image: autoDraw = False
+58.7467 	EXP 	blank_image: autoDraw = False
+58.7467 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+58.7467 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+58.7467 	EXP 	v_block_trial_image: autoDraw = True
+59.5482 	EXP 	v_block_trial_image: autoDraw = False
+59.5482 	EXP 	blank_image: autoDraw = True
+59.7327 	EXP 	New trial (rep=0, index=38): {'word': 0, 'location': 3, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 135, 'condition': u'R'}
+59.7543 	EXP 	v_block_trial_image: autoDraw = False
+59.7543 	EXP 	blank_image: autoDraw = False
+59.7543 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+59.7543 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+59.7543 	EXP 	v_block_trial_image: autoDraw = True
+60.5505 	EXP 	v_block_trial_image: autoDraw = False
+60.5505 	EXP 	blank_image: autoDraw = True
+60.7343 	EXP 	New trial (rep=0, index=39): {'word': 0, 'location': 1, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 136, 'condition': u'R'}
+60.7501 	EXP 	v_block_trial_image: autoDraw = False
+60.7501 	EXP 	blank_image: autoDraw = False
+60.7501 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+60.7501 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+60.7501 	EXP 	v_block_trial_image: autoDraw = True
+61.5511 	EXP 	v_block_trial_image: autoDraw = False
+61.5511 	EXP 	blank_image: autoDraw = True
+61.7358 	EXP 	New trial (rep=0, index=40): {'word': 0, 'location': 2, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 137, 'condition': u'R'}
+61.7520 	EXP 	v_block_trial_image: autoDraw = False
+61.7520 	EXP 	blank_image: autoDraw = False
+61.7520 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+61.7520 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+61.7520 	EXP 	v_block_trial_image: autoDraw = True
+62.5531 	EXP 	v_block_trial_image: autoDraw = False
+62.5531 	EXP 	blank_image: autoDraw = True
+62.7377 	EXP 	New trial (rep=0, index=41): {'word': 0, 'location': 3, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 138, 'condition': u'R'}
+62.7540 	EXP 	v_block_trial_image: autoDraw = False
+62.7540 	EXP 	blank_image: autoDraw = False
+62.7540 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+62.7540 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+62.7540 	EXP 	v_block_trial_image: autoDraw = True
+63.5550 	EXP 	v_block_trial_image: autoDraw = False
+63.5550 	EXP 	blank_image: autoDraw = True
+63.7387 	EXP 	New trial (rep=0, index=42): {'word': 0, 'location': 1, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 139, 'condition': u'R'}
+63.7606 	EXP 	v_block_trial_image: autoDraw = False
+63.7606 	EXP 	blank_image: autoDraw = False
+63.7606 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+63.7606 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+63.7606 	EXP 	v_block_trial_image: autoDraw = True
+64.5562 	EXP 	v_block_trial_image: autoDraw = False
+64.5562 	EXP 	blank_image: autoDraw = True
+64.7403 	EXP 	New trial (rep=0, index=43): {'word': 0, 'location': 2, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 140, 'condition': u'R'}
+64.7625 	EXP 	v_block_trial_image: autoDraw = False
+64.7625 	EXP 	blank_image: autoDraw = False
+64.7625 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+64.7625 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+64.7625 	EXP 	v_block_trial_image: autoDraw = True
+65.5576 	EXP 	v_block_trial_image: autoDraw = False
+65.5576 	EXP 	blank_image: autoDraw = True
+65.7255 	EXP 	New trial (rep=0, index=44): {'word': 0, 'location': 3, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 141, 'condition': u'R'}
+65.7416 	EXP 	v_block_trial_image: autoDraw = False
+65.7416 	EXP 	blank_image: autoDraw = False
+65.7416 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+65.7416 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+65.7416 	EXP 	v_block_trial_image: autoDraw = True
+66.5430 	EXP 	v_block_trial_image: autoDraw = False
+66.5430 	EXP 	blank_image: autoDraw = True
+66.7270 	EXP 	New trial (rep=0, index=45): {'word': 0, 'location': 1, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 142, 'condition': u'R'}
+66.7484 	EXP 	v_block_trial_image: autoDraw = False
+66.7484 	EXP 	blank_image: autoDraw = False
+66.7484 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+66.7484 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+66.7484 	EXP 	v_block_trial_image: autoDraw = True
+67.5445 	EXP 	v_block_trial_image: autoDraw = False
+67.5445 	EXP 	blank_image: autoDraw = True
+67.7280 	EXP 	New trial (rep=0, index=46): {'word': 0, 'location': 2, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 143, 'condition': u'R'}
+67.7501 	EXP 	v_block_trial_image: autoDraw = False
+67.7501 	EXP 	blank_image: autoDraw = False
+67.7501 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+67.7501 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+67.7501 	EXP 	v_block_trial_image: autoDraw = True
+68.5459 	EXP 	v_block_trial_image: autoDraw = False
+68.5459 	EXP 	blank_image: autoDraw = True
+68.7299 	EXP 	New trial (rep=0, index=47): {'word': 0, 'location': 3, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 144, 'condition': u'R'}
+68.7574 	EXP 	v_block_trial_image: autoDraw = False
+68.7574 	EXP 	blank_image: autoDraw = False
+68.7574 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+68.7574 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+68.7574 	EXP 	v_block_trial_image: autoDraw = True
+69.5475 	EXP 	v_block_trial_image: autoDraw = False
+69.5475 	EXP 	blank_image: autoDraw = True
+69.7317 	EXP 	New trial (rep=0, index=48): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+69.7540 	EXP 	v_block_trial_image: autoDraw = False
+69.7540 	EXP 	blank_image: autoDraw = False
+69.7540 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+69.7540 	EXP 	v_block_trial_image: image = u'blank.png'
+69.7540 	EXP 	v_block_trial_image: autoDraw = True
+70.5490 	EXP 	v_block_trial_image: autoDraw = False
+70.5490 	EXP 	blank_image: autoDraw = True
+70.7333 	EXP 	New trial (rep=0, index=49): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+70.7494 	EXP 	v_block_trial_image: autoDraw = False
+70.7494 	EXP 	blank_image: autoDraw = False
+70.7494 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+70.7494 	EXP 	v_block_trial_image: image = u'blank.png'
+70.7494 	EXP 	v_block_trial_image: autoDraw = True
+71.5501 	EXP 	v_block_trial_image: autoDraw = False
+71.5669 	EXP 	blank_image: autoDraw = True
+71.7347 	EXP 	New trial (rep=0, index=50): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+71.7507 	EXP 	v_block_trial_image: autoDraw = False
+71.7507 	EXP 	blank_image: autoDraw = False
+71.7507 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+71.7507 	EXP 	v_block_trial_image: image = u'blank.png'
+71.7507 	EXP 	v_block_trial_image: autoDraw = True
+72.5520 	EXP 	v_block_trial_image: autoDraw = False
+72.5520 	EXP 	blank_image: autoDraw = True
+72.7360 	EXP 	New trial (rep=0, index=51): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+72.7521 	EXP 	v_block_trial_image: autoDraw = False
+72.7521 	EXP 	blank_image: autoDraw = False
+72.7521 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+72.7521 	EXP 	v_block_trial_image: image = u'blank.png'
+72.7521 	EXP 	v_block_trial_image: autoDraw = True
+73.5538 	EXP 	v_block_trial_image: autoDraw = False
+73.5538 	EXP 	blank_image: autoDraw = True
+73.7377 	EXP 	New trial (rep=0, index=52): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+73.7548 	EXP 	v_block_trial_image: autoDraw = False
+73.7548 	EXP 	blank_image: autoDraw = False
+73.7548 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+73.7548 	EXP 	v_block_trial_image: image = u'blank.png'
+73.7548 	EXP 	v_block_trial_image: autoDraw = True
+74.5556 	EXP 	v_block_trial_image: autoDraw = False
+74.5556 	EXP 	blank_image: autoDraw = True
+74.7400 	EXP 	New trial (rep=0, index=53): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+74.7557 	EXP 	v_block_trial_image: autoDraw = False
+74.7557 	EXP 	blank_image: autoDraw = False
+74.7557 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+74.7557 	EXP 	v_block_trial_image: image = u'blank.png'
+74.7557 	EXP 	v_block_trial_image: autoDraw = True
+75.5566 	EXP 	v_block_trial_image: autoDraw = False
+75.5566 	EXP 	blank_image: autoDraw = True
+75.7245 	EXP 	New trial (rep=0, index=54): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+75.7399 	EXP 	v_block_trial_image: autoDraw = False
+75.7399 	EXP 	blank_image: autoDraw = False
+75.7399 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+75.7399 	EXP 	v_block_trial_image: image = u'blank.png'
+75.7399 	EXP 	v_block_trial_image: autoDraw = True
+76.5413 	EXP 	v_block_trial_image: autoDraw = False
+76.5413 	EXP 	blank_image: autoDraw = True
+76.7255 	EXP 	New trial (rep=0, index=55): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+76.7416 	EXP 	v_block_trial_image: autoDraw = False
+76.7416 	EXP 	blank_image: autoDraw = False
+76.7416 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+76.7416 	EXP 	v_block_trial_image: image = u'blank.png'
+76.7416 	EXP 	v_block_trial_image: autoDraw = True
+77.5432 	EXP 	v_block_trial_image: autoDraw = False
+77.5432 	EXP 	blank_image: autoDraw = True
+77.7274 	EXP 	New trial (rep=0, index=56): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+77.7433 	EXP 	v_block_trial_image: autoDraw = False
+77.7433 	EXP 	blank_image: autoDraw = False
+77.7433 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+77.7433 	EXP 	v_block_trial_image: image = u'blank.png'
+77.7433 	EXP 	v_block_trial_image: autoDraw = True
+78.5445 	EXP 	v_block_trial_image: autoDraw = False
+78.5445 	EXP 	blank_image: autoDraw = True
+78.7289 	EXP 	New trial (rep=0, index=57): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+78.7453 	EXP 	v_block_trial_image: autoDraw = False
+78.7453 	EXP 	blank_image: autoDraw = False
+78.7453 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+78.7453 	EXP 	v_block_trial_image: image = u'blank.png'
+78.7453 	EXP 	v_block_trial_image: autoDraw = True
+79.5462 	EXP 	v_block_trial_image: autoDraw = False
+79.5462 	EXP 	blank_image: autoDraw = True
+79.7301 	EXP 	New trial (rep=0, index=58): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+79.7465 	EXP 	v_block_trial_image: autoDraw = False
+79.7465 	EXP 	blank_image: autoDraw = False
+79.7465 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+79.7465 	EXP 	v_block_trial_image: image = u'blank.png'
+79.7465 	EXP 	v_block_trial_image: autoDraw = True
+80.5476 	EXP 	v_block_trial_image: autoDraw = False
+80.5476 	EXP 	blank_image: autoDraw = True
+80.7319 	EXP 	New trial (rep=0, index=59): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+80.7479 	EXP 	v_block_trial_image: autoDraw = False
+80.7479 	EXP 	blank_image: autoDraw = False
+80.7479 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+80.7479 	EXP 	v_block_trial_image: image = u'blank.png'
+80.7479 	EXP 	v_block_trial_image: autoDraw = True
+81.5492 	EXP 	v_block_trial_image: autoDraw = False
+81.5492 	EXP 	blank_image: autoDraw = True
+81.7336 	EXP 	window1: blendMode = 'avg'
+81.7354 	EXP 	Sound  started
+81.7494 	EXP 	v_block_trial_image: autoDraw = False
+81.7494 	EXP 	blank_image: autoDraw = False
+81.7499 	EXP 	window1: blendMode = 'avg'
+81.7670 	EXP 	window1: blendMode = 'avg'
+81.7833 	EXP 	window1: blendMode = 'avg'
+81.8002 	EXP 	window1: blendMode = 'avg'
+81.8172 	EXP 	window1: blendMode = 'avg'
+81.8335 	EXP 	window1: blendMode = 'avg'
+81.8504 	EXP 	window1: blendMode = 'avg'
+81.8668 	EXP 	window1: blendMode = 'avg'
+81.8841 	EXP 	window1: blendMode = 'avg'
+81.9006 	EXP 	window1: blendMode = 'avg'
+81.9172 	EXP 	window1: blendMode = 'avg'
+81.9337 	EXP 	window1: blendMode = 'avg'
+81.9503 	EXP 	window1: blendMode = 'avg'
+81.9672 	EXP 	window1: blendMode = 'avg'
+81.9841 	EXP 	window1: blendMode = 'avg'
+82.0003 	EXP 	window1: blendMode = 'avg'
+82.0172 	EXP 	window1: blendMode = 'avg'
+82.0338 	EXP 	window1: blendMode = 'avg'
+82.0503 	EXP 	window1: blendMode = 'avg'
+82.0671 	EXP 	window1: blendMode = 'avg'
+82.0841 	EXP 	window1: blendMode = 'avg'
+82.1004 	EXP 	window1: blendMode = 'avg'
+82.1175 	EXP 	window1: blendMode = 'avg'
+82.1356 	EXP 	window1: blendMode = 'avg'
+82.1519 	EXP 	window1: blendMode = 'avg'
+82.1686 	EXP 	window1: blendMode = 'avg'
+82.1854 	EXP 	window1: blendMode = 'avg'
+82.2019 	EXP 	window1: blendMode = 'avg'
+82.2182 	EXP 	window1: blendMode = 'avg'
+82.2351 	EXP 	window1: blendMode = 'avg'
+82.2514 	EXP 	window1: blendMode = 'avg'
+82.2683 	EXP 	window1: blendMode = 'avg'
+82.2853 	EXP 	window1: blendMode = 'avg'
+82.3014 	EXP 	window1: blendMode = 'avg'
+82.3182 	EXP 	window1: blendMode = 'avg'
+82.3353 	EXP 	window1: blendMode = 'avg'
+82.3516 	EXP 	window1: blendMode = 'avg'
+82.3687 	EXP 	window1: blendMode = 'avg'
+82.3851 	EXP 	window1: blendMode = 'avg'
+82.4020 	EXP 	window1: blendMode = 'avg'
+82.4184 	EXP 	window1: blendMode = 'avg'
+82.4354 	EXP 	window1: blendMode = 'avg'
+82.4517 	EXP 	window1: blendMode = 'avg'
+82.4685 	EXP 	window1: blendMode = 'avg'
+82.4852 	EXP 	window1: blendMode = 'avg'
+82.5018 	EXP 	window1: blendMode = 'avg'
+82.5187 	EXP 	window1: blendMode = 'avg'
+82.5356 	EXP 	window1: blendMode = 'avg'
+82.5518 	EXP 	window1: blendMode = 'avg'
+82.5687 	EXP 	window1: blendMode = 'avg'
+82.5861 	EXP 	window1: blendMode = 'avg'
+82.6019 	EXP 	window1: blendMode = 'avg'
+82.6187 	EXP 	window1: blendMode = 'avg'
+82.6354 	EXP 	window1: blendMode = 'avg'
+82.6521 	EXP 	window1: blendMode = 'avg'
+82.6689 	EXP 	window1: blendMode = 'avg'
+82.6857 	EXP 	window1: blendMode = 'avg'
+82.7021 	EXP 	window1: blendMode = 'avg'
+82.7194 	EXP 	window1: blendMode = 'avg'
+82.7356 	EXP 	window1: blendMode = 'avg'
+82.7522 	EXP 	window1: blendMode = 'avg'
+82.7689 	EXP 	window1: blendMode = 'avg'
+82.7855 	EXP 	window1: blendMode = 'avg'
+82.8022 	EXP 	window1: blendMode = 'avg'
+82.8193 	EXP 	window1: blendMode = 'avg'
+82.8361 	EXP 	window1: blendMode = 'avg'
+82.8523 	EXP 	window1: blendMode = 'avg'
+82.8690 	EXP 	window1: blendMode = 'avg'
+82.8858 	EXP 	window1: blendMode = 'avg'
+82.9024 	EXP 	window1: blendMode = 'avg'
+82.9186 	EXP 	window1: blendMode = 'avg'
+82.9359 	EXP 	window1: blendMode = 'avg'
+82.9521 	EXP 	window1: blendMode = 'avg'
+82.9685 	EXP 	window1: blendMode = 'avg'
+82.9853 	EXP 	window1: blendMode = 'avg'
+83.0018 	EXP 	window1: blendMode = 'avg'
+83.0185 	EXP 	window1: blendMode = 'avg'
+83.0354 	EXP 	window1: blendMode = 'avg'
+83.0519 	EXP 	window1: blendMode = 'avg'
+83.0687 	EXP 	window1: blendMode = 'avg'
+83.0855 	EXP 	window1: blendMode = 'avg'
+83.1020 	EXP 	window1: blendMode = 'avg'
+83.1186 	EXP 	window1: blendMode = 'avg'
+83.1358 	EXP 	window1: blendMode = 'avg'
+83.1521 	EXP 	window1: blendMode = 'avg'
+83.1688 	EXP 	window1: blendMode = 'avg'
+83.1856 	EXP 	window1: blendMode = 'avg'
+83.2021 	EXP 	window1: blendMode = 'avg'
+83.2188 	EXP 	window1: blendMode = 'avg'
+83.2355 	EXP 	window1: blendMode = 'avg'
+83.2521 	EXP 	window1: blendMode = 'avg'
+83.2689 	EXP 	window1: blendMode = 'avg'
+83.2858 	EXP 	window1: blendMode = 'avg'
+83.3023 	EXP 	window1: blendMode = 'avg'
+83.3191 	EXP 	window1: blendMode = 'avg'
+83.3357 	EXP 	window1: blendMode = 'avg'
+83.3524 	EXP 	window1: blendMode = 'avg'
+83.3691 	EXP 	window1: blendMode = 'avg'
+83.3858 	EXP 	window1: blendMode = 'avg'
+83.4026 	EXP 	window1: blendMode = 'avg'
+83.4192 	EXP 	window1: blendMode = 'avg'
+83.4359 	EXP 	window1: blendMode = 'avg'
+83.4526 	EXP 	window1: blendMode = 'avg'
+83.4692 	EXP 	window1: blendMode = 'avg'
+83.4860 	EXP 	window1: blendMode = 'avg'
+83.5027 	EXP 	window1: blendMode = 'avg'
+83.5028 	EXP 	Sound  stopped
+83.5259 	EXP 	Imported visual_run1_4.xlsx as conditions, 60 conditions, 6 params
+83.5262 	EXP 	Created sequence: sequential, trialTypes=60, nReps=1, seed=None
+83.5265 	EXP 	New trial (rep=0, index=0): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 49, 'condition': u'R'}
+83.5533 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+83.5533 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+83.5533 	EXP 	v_block_trial_image: autoDraw = True
+84.3368 	EXP 	v_block_trial_image: autoDraw = False
+84.3538 	EXP 	blank_image: autoDraw = True
+84.5047 	EXP 	New trial (rep=0, index=1): {'word': 0, 'location': 2, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 50, 'condition': u'R'}
+84.5288 	EXP 	v_block_trial_image: autoDraw = False
+84.5288 	EXP 	blank_image: autoDraw = False
+84.5288 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+84.5288 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+84.5288 	EXP 	v_block_trial_image: autoDraw = True
+85.3215 	EXP 	v_block_trial_image: autoDraw = False
+85.3215 	EXP 	blank_image: autoDraw = True
+85.5062 	EXP 	New trial (rep=0, index=2): {'word': 0, 'location': 3, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 51, 'condition': u'R'}
+85.5340 	EXP 	v_block_trial_image: autoDraw = False
+85.5340 	EXP 	blank_image: autoDraw = False
+85.5340 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+85.5340 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+85.5340 	EXP 	v_block_trial_image: autoDraw = True
+86.3232 	EXP 	v_block_trial_image: autoDraw = False
+86.3232 	EXP 	blank_image: autoDraw = True
+86.5078 	EXP 	New trial (rep=0, index=3): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 52, 'condition': u'R'}
+86.5325 	EXP 	v_block_trial_image: autoDraw = False
+86.5325 	EXP 	blank_image: autoDraw = False
+86.5325 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+86.5325 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+86.5325 	EXP 	v_block_trial_image: autoDraw = True
+87.3248 	EXP 	v_block_trial_image: autoDraw = False
+87.3248 	EXP 	blank_image: autoDraw = True
+87.5090 	EXP 	New trial (rep=0, index=4): {'word': 0, 'location': 2, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 53, 'condition': u'R'}
+87.5355 	EXP 	v_block_trial_image: autoDraw = False
+87.5355 	EXP 	blank_image: autoDraw = False
+87.5355 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+87.5355 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+87.5355 	EXP 	v_block_trial_image: autoDraw = True
+88.3265 	EXP 	v_block_trial_image: autoDraw = False
+88.3265 	EXP 	blank_image: autoDraw = True
+88.5104 	EXP 	New trial (rep=0, index=5): {'word': 0, 'location': 3, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 54, 'condition': u'R'}
+88.5377 	EXP 	v_block_trial_image: autoDraw = False
+88.5377 	EXP 	blank_image: autoDraw = False
+88.5377 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+88.5377 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+88.5377 	EXP 	v_block_trial_image: autoDraw = True
+89.3278 	EXP 	v_block_trial_image: autoDraw = False
+89.3278 	EXP 	blank_image: autoDraw = True
+89.5121 	EXP 	New trial (rep=0, index=6): {'word': 0, 'location': 1, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 55, 'condition': u'R'}
+89.5446 	EXP 	v_block_trial_image: autoDraw = False
+89.5446 	EXP 	blank_image: autoDraw = False
+89.5446 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+89.5446 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+89.5446 	EXP 	v_block_trial_image: autoDraw = True
+90.3294 	EXP 	v_block_trial_image: autoDraw = False
+90.3294 	EXP 	blank_image: autoDraw = True
+90.5140 	EXP 	New trial (rep=0, index=7): {'word': 0, 'location': 2, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 56, 'condition': u'R'}
+90.5382 	EXP 	v_block_trial_image: autoDraw = False
+90.5382 	EXP 	blank_image: autoDraw = False
+90.5382 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+90.5382 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+90.5382 	EXP 	v_block_trial_image: autoDraw = True
+91.3312 	EXP 	v_block_trial_image: autoDraw = False
+91.3312 	EXP 	blank_image: autoDraw = True
+91.5154 	EXP 	New trial (rep=0, index=8): {'word': 0, 'location': 3, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 57, 'condition': u'R'}
+91.5409 	EXP 	v_block_trial_image: autoDraw = False
+91.5409 	EXP 	blank_image: autoDraw = False
+91.5409 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+91.5409 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+91.5409 	EXP 	v_block_trial_image: autoDraw = True
+92.3325 	EXP 	v_block_trial_image: autoDraw = False
+92.3325 	EXP 	blank_image: autoDraw = True
+92.5171 	EXP 	New trial (rep=0, index=9): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 58, 'condition': u'R'}
+92.5339 	EXP 	v_block_trial_image: autoDraw = False
+92.5339 	EXP 	blank_image: autoDraw = False
+92.5339 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+92.5339 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+92.5339 	EXP 	v_block_trial_image: autoDraw = True
+93.3346 	EXP 	v_block_trial_image: autoDraw = False
+93.3346 	EXP 	blank_image: autoDraw = True
+93.5183 	EXP 	New trial (rep=0, index=10): {'word': 0, 'location': 2, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 59, 'condition': u'R'}
+93.6227 	EXP 	v_block_trial_image: autoDraw = False
+93.6227 	EXP 	blank_image: autoDraw = False
+93.6227 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+93.6227 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+93.6227 	EXP 	v_block_trial_image: autoDraw = True
+94.3361 	EXP 	v_block_trial_image: autoDraw = False
+94.3361 	EXP 	blank_image: autoDraw = True
+94.5034 	EXP 	New trial (rep=0, index=11): {'word': 0, 'location': 3, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 60, 'condition': u'R'}
+94.5245 	EXP 	v_block_trial_image: autoDraw = False
+94.5245 	EXP 	blank_image: autoDraw = False
+94.5245 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+94.5245 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+94.5245 	EXP 	v_block_trial_image: autoDraw = True
+95.3205 	EXP 	v_block_trial_image: autoDraw = False
+95.3205 	EXP 	blank_image: autoDraw = True
+95.5048 	EXP 	New trial (rep=0, index=12): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 61, 'condition': u'R'}
+95.5296 	EXP 	v_block_trial_image: autoDraw = False
+95.5296 	EXP 	blank_image: autoDraw = False
+95.5296 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+95.5296 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+95.5296 	EXP 	v_block_trial_image: autoDraw = True
+96.3221 	EXP 	v_block_trial_image: autoDraw = False
+96.3221 	EXP 	blank_image: autoDraw = True
+96.5064 	EXP 	New trial (rep=0, index=13): {'word': 0, 'location': 2, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 62, 'condition': u'R'}
+96.5320 	EXP 	v_block_trial_image: autoDraw = False
+96.5320 	EXP 	blank_image: autoDraw = False
+96.5320 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+96.5320 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+96.5320 	EXP 	v_block_trial_image: autoDraw = True
+97.3240 	EXP 	v_block_trial_image: autoDraw = False
+97.3240 	EXP 	blank_image: autoDraw = True
+97.5077 	EXP 	New trial (rep=0, index=14): {'word': 0, 'location': 3, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 63, 'condition': u'R'}
+97.5239 	EXP 	v_block_trial_image: autoDraw = False
+97.5239 	EXP 	blank_image: autoDraw = False
+97.5239 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+97.5239 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+97.5239 	EXP 	v_block_trial_image: autoDraw = True
+98.3254 	EXP 	v_block_trial_image: autoDraw = False
+98.3254 	EXP 	blank_image: autoDraw = True
+98.5094 	EXP 	New trial (rep=0, index=15): {'word': 0, 'location': 1, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 64, 'condition': u'R'}
+98.5257 	EXP 	v_block_trial_image: autoDraw = False
+98.5257 	EXP 	blank_image: autoDraw = False
+98.5257 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+98.5257 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+98.5257 	EXP 	v_block_trial_image: autoDraw = True
+99.3280 	EXP 	v_block_trial_image: autoDraw = False
+99.3280 	EXP 	blank_image: autoDraw = True
+99.5117 	EXP 	New trial (rep=0, index=16): {'word': 0, 'location': 2, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 65, 'condition': u'R'}
+99.5427 	EXP 	v_block_trial_image: autoDraw = False
+99.5427 	EXP 	blank_image: autoDraw = False
+99.5427 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+99.5427 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+99.5427 	EXP 	v_block_trial_image: autoDraw = True
+100.3283 	EXP 	v_block_trial_image: autoDraw = False
+100.3453 	EXP 	blank_image: autoDraw = True
+100.5125 	EXP 	New trial (rep=0, index=17): {'word': 0, 'location': 3, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 66, 'condition': u'R'}
+100.5370 	EXP 	v_block_trial_image: autoDraw = False
+100.5370 	EXP 	blank_image: autoDraw = False
+100.5370 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+100.5370 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+100.5370 	EXP 	v_block_trial_image: autoDraw = True
+101.3301 	EXP 	v_block_trial_image: autoDraw = False
+101.3301 	EXP 	blank_image: autoDraw = True
+101.5143 	EXP 	New trial (rep=0, index=18): {'word': 0, 'location': 1, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 67, 'condition': u'R'}
+101.5406 	EXP 	v_block_trial_image: autoDraw = False
+101.5406 	EXP 	blank_image: autoDraw = False
+101.5406 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+101.5406 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+101.5406 	EXP 	v_block_trial_image: autoDraw = True
+102.3317 	EXP 	v_block_trial_image: autoDraw = False
+102.3317 	EXP 	blank_image: autoDraw = True
+102.5155 	EXP 	New trial (rep=0, index=19): {'word': 0, 'location': 2, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 68, 'condition': u'R'}
+102.5430 	EXP 	v_block_trial_image: autoDraw = False
+102.5430 	EXP 	blank_image: autoDraw = False
+102.5430 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+102.5430 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+102.5430 	EXP 	v_block_trial_image: autoDraw = True
+103.3331 	EXP 	v_block_trial_image: autoDraw = False
+103.3331 	EXP 	blank_image: autoDraw = True
+103.5175 	EXP 	New trial (rep=0, index=20): {'word': 0, 'location': 3, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 69, 'condition': u'R'}
+103.5416 	EXP 	v_block_trial_image: autoDraw = False
+103.5416 	EXP 	blank_image: autoDraw = False
+103.5416 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+103.5416 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+103.5416 	EXP 	v_block_trial_image: autoDraw = True
+104.3346 	EXP 	v_block_trial_image: autoDraw = False
+104.3346 	EXP 	blank_image: autoDraw = True
+104.5187 	EXP 	New trial (rep=0, index=21): {'word': 0, 'location': 1, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 70, 'condition': u'R'}
+104.5434 	EXP 	v_block_trial_image: autoDraw = False
+104.5434 	EXP 	blank_image: autoDraw = False
+104.5434 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+104.5434 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+104.5434 	EXP 	v_block_trial_image: autoDraw = True
+105.3365 	EXP 	v_block_trial_image: autoDraw = False
+105.3365 	EXP 	blank_image: autoDraw = True
+105.5044 	EXP 	New trial (rep=0, index=22): {'word': 0, 'location': 2, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 71, 'condition': u'R'}
+105.5297 	EXP 	v_block_trial_image: autoDraw = False
+105.5297 	EXP 	blank_image: autoDraw = False
+105.5297 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+105.5297 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+105.5297 	EXP 	v_block_trial_image: autoDraw = True
+106.3212 	EXP 	v_block_trial_image: autoDraw = False
+106.3212 	EXP 	blank_image: autoDraw = True
+106.5056 	EXP 	New trial (rep=0, index=23): {'word': 0, 'location': 3, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 72, 'condition': u'R'}
+106.5215 	EXP 	v_block_trial_image: autoDraw = False
+106.5215 	EXP 	blank_image: autoDraw = False
+106.5215 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+106.5215 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+106.5215 	EXP 	v_block_trial_image: autoDraw = True
+107.3227 	EXP 	v_block_trial_image: autoDraw = False
+107.3227 	EXP 	blank_image: autoDraw = True
+107.5070 	EXP 	New trial (rep=0, index=24): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 73, 'condition': u'R'}
+107.5312 	EXP 	v_block_trial_image: autoDraw = False
+107.5312 	EXP 	blank_image: autoDraw = False
+107.5312 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+107.5312 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+107.5312 	EXP 	v_block_trial_image: autoDraw = True
+108.3248 	EXP 	v_block_trial_image: autoDraw = False
+108.3248 	EXP 	blank_image: autoDraw = True
+108.5087 	EXP 	New trial (rep=0, index=25): {'word': 0, 'location': 2, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 74, 'condition': u'R'}
+108.5248 	EXP 	v_block_trial_image: autoDraw = False
+108.5248 	EXP 	blank_image: autoDraw = False
+108.5248 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+108.5248 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+108.5248 	EXP 	v_block_trial_image: autoDraw = True
+109.3262 	EXP 	v_block_trial_image: autoDraw = False
+109.3262 	EXP 	blank_image: autoDraw = True
+109.5100 	EXP 	New trial (rep=0, index=26): {'word': 0, 'location': 3, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 75, 'condition': u'R'}
+109.5264 	EXP 	v_block_trial_image: autoDraw = False
+109.5264 	EXP 	blank_image: autoDraw = False
+109.5264 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+109.5264 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+109.5264 	EXP 	v_block_trial_image: autoDraw = True
+110.3273 	EXP 	v_block_trial_image: autoDraw = False
+110.3273 	EXP 	blank_image: autoDraw = True
+110.5113 	EXP 	New trial (rep=0, index=27): {'word': 0, 'location': 1, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 76, 'condition': u'R'}
+110.5362 	EXP 	v_block_trial_image: autoDraw = False
+110.5362 	EXP 	blank_image: autoDraw = False
+110.5362 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+110.5362 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+110.5362 	EXP 	v_block_trial_image: autoDraw = True
+111.3292 	EXP 	v_block_trial_image: autoDraw = False
+111.3292 	EXP 	blank_image: autoDraw = True
+111.5135 	EXP 	New trial (rep=0, index=28): {'word': 0, 'location': 2, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 77, 'condition': u'R'}
+111.5290 	EXP 	v_block_trial_image: autoDraw = False
+111.5290 	EXP 	blank_image: autoDraw = False
+111.5290 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+111.5290 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+111.5290 	EXP 	v_block_trial_image: autoDraw = True
+112.3307 	EXP 	v_block_trial_image: autoDraw = False
+112.3307 	EXP 	blank_image: autoDraw = True
+112.5151 	EXP 	New trial (rep=0, index=29): {'word': 0, 'location': 3, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 78, 'condition': u'R'}
+112.5309 	EXP 	v_block_trial_image: autoDraw = False
+112.5309 	EXP 	blank_image: autoDraw = False
+112.5309 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+112.5309 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+112.5309 	EXP 	v_block_trial_image: autoDraw = True
+113.3319 	EXP 	v_block_trial_image: autoDraw = False
+113.3319 	EXP 	blank_image: autoDraw = True
+113.5169 	EXP 	New trial (rep=0, index=30): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 79, 'condition': u'R'}
+113.5412 	EXP 	v_block_trial_image: autoDraw = False
+113.5412 	EXP 	blank_image: autoDraw = False
+113.5412 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+113.5412 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+113.5412 	EXP 	v_block_trial_image: autoDraw = True
+114.3335 	EXP 	v_block_trial_image: autoDraw = False
+114.3501 	EXP 	blank_image: autoDraw = True
+114.5176 	EXP 	New trial (rep=0, index=31): {'word': 0, 'location': 2, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 80, 'condition': u'R'}
+114.5424 	EXP 	v_block_trial_image: autoDraw = False
+114.5424 	EXP 	blank_image: autoDraw = False
+114.5424 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+114.5424 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+114.5424 	EXP 	v_block_trial_image: autoDraw = True
+115.3354 	EXP 	v_block_trial_image: autoDraw = False
+115.3354 	EXP 	blank_image: autoDraw = True
+115.5193 	EXP 	New trial (rep=0, index=32): {'word': 0, 'location': 3, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 81, 'condition': u'R'}
+115.5355 	EXP 	v_block_trial_image: autoDraw = False
+115.5355 	EXP 	blank_image: autoDraw = False
+115.5355 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+115.5355 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+115.5355 	EXP 	v_block_trial_image: autoDraw = True
+116.3368 	EXP 	v_block_trial_image: autoDraw = False
+116.3368 	EXP 	blank_image: autoDraw = True
+116.5044 	EXP 	New trial (rep=0, index=33): {'word': 0, 'location': 1, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 82, 'condition': u'R'}
+116.5210 	EXP 	v_block_trial_image: autoDraw = False
+116.5210 	EXP 	blank_image: autoDraw = False
+116.5210 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+116.5210 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+116.5210 	EXP 	v_block_trial_image: autoDraw = True
+117.3215 	EXP 	v_block_trial_image: autoDraw = False
+117.3215 	EXP 	blank_image: autoDraw = True
+117.5058 	EXP 	New trial (rep=0, index=34): {'word': 0, 'location': 2, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 83, 'condition': u'R'}
+117.5342 	EXP 	v_block_trial_image: autoDraw = False
+117.5342 	EXP 	blank_image: autoDraw = False
+117.5342 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+117.5342 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+117.5342 	EXP 	v_block_trial_image: autoDraw = True
+118.3231 	EXP 	v_block_trial_image: autoDraw = False
+118.3231 	EXP 	blank_image: autoDraw = True
+118.5074 	EXP 	New trial (rep=0, index=35): {'word': 0, 'location': 3, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 84, 'condition': u'R'}
+118.5328 	EXP 	v_block_trial_image: autoDraw = False
+118.5328 	EXP 	blank_image: autoDraw = False
+118.5328 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+118.5328 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+118.5328 	EXP 	v_block_trial_image: autoDraw = True
+119.3247 	EXP 	v_block_trial_image: autoDraw = False
+119.3247 	EXP 	blank_image: autoDraw = True
+119.5090 	EXP 	New trial (rep=0, index=36): {'word': 0, 'location': 1, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 85, 'condition': u'R'}
+119.5249 	EXP 	v_block_trial_image: autoDraw = False
+119.5249 	EXP 	blank_image: autoDraw = False
+119.5249 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+119.5249 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+119.5249 	EXP 	v_block_trial_image: autoDraw = True
+120.3262 	EXP 	v_block_trial_image: autoDraw = False
+120.3262 	EXP 	blank_image: autoDraw = True
+120.5103 	EXP 	New trial (rep=0, index=37): {'word': 0, 'location': 2, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 86, 'condition': u'R'}
+120.5317 	EXP 	v_block_trial_image: autoDraw = False
+120.5317 	EXP 	blank_image: autoDraw = False
+120.5317 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+120.5317 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+120.5317 	EXP 	v_block_trial_image: autoDraw = True
+121.3278 	EXP 	v_block_trial_image: autoDraw = False
+121.3278 	EXP 	blank_image: autoDraw = True
+121.5119 	EXP 	New trial (rep=0, index=38): {'word': 0, 'location': 3, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 87, 'condition': u'R'}
+121.5280 	EXP 	v_block_trial_image: autoDraw = False
+121.5280 	EXP 	blank_image: autoDraw = False
+121.5280 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+121.5280 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+121.5280 	EXP 	v_block_trial_image: autoDraw = True
+122.3292 	EXP 	v_block_trial_image: autoDraw = False
+122.3292 	EXP 	blank_image: autoDraw = True
+122.5135 	EXP 	New trial (rep=0, index=39): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 88, 'condition': u'R'}
+122.5297 	EXP 	v_block_trial_image: autoDraw = False
+122.5297 	EXP 	blank_image: autoDraw = False
+122.5297 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+122.5297 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+122.5297 	EXP 	v_block_trial_image: autoDraw = True
+123.3309 	EXP 	v_block_trial_image: autoDraw = False
+123.3309 	EXP 	blank_image: autoDraw = True
+123.5154 	EXP 	New trial (rep=0, index=40): {'word': 0, 'location': 2, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 89, 'condition': u'R'}
+123.5411 	EXP 	v_block_trial_image: autoDraw = False
+123.5411 	EXP 	blank_image: autoDraw = False
+123.5411 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+123.5411 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+123.5411 	EXP 	v_block_trial_image: autoDraw = True
+124.3325 	EXP 	v_block_trial_image: autoDraw = False
+124.3325 	EXP 	blank_image: autoDraw = True
+124.5168 	EXP 	New trial (rep=0, index=41): {'word': 0, 'location': 3, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 90, 'condition': u'R'}
+124.5387 	EXP 	v_block_trial_image: autoDraw = False
+124.5387 	EXP 	blank_image: autoDraw = False
+124.5387 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+124.5387 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+124.5387 	EXP 	v_block_trial_image: autoDraw = True
+125.3340 	EXP 	v_block_trial_image: autoDraw = False
+125.3340 	EXP 	blank_image: autoDraw = True
+125.5181 	EXP 	New trial (rep=0, index=42): {'word': 0, 'location': 1, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 91, 'condition': u'R'}
+125.5343 	EXP 	v_block_trial_image: autoDraw = False
+125.5343 	EXP 	blank_image: autoDraw = False
+125.5343 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+125.5343 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+125.5343 	EXP 	v_block_trial_image: autoDraw = True
+126.3359 	EXP 	v_block_trial_image: autoDraw = False
+126.3359 	EXP 	blank_image: autoDraw = True
+126.5196 	EXP 	New trial (rep=0, index=43): {'word': 0, 'location': 2, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 92, 'condition': u'R'}
+126.5358 	EXP 	v_block_trial_image: autoDraw = False
+126.5358 	EXP 	blank_image: autoDraw = False
+126.5358 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+126.5358 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+126.5358 	EXP 	v_block_trial_image: autoDraw = True
+127.3374 	EXP 	v_block_trial_image: autoDraw = False
+127.3374 	EXP 	blank_image: autoDraw = True
+127.5045 	EXP 	New trial (rep=0, index=44): {'word': 0, 'location': 3, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 93, 'condition': u'R'}
+127.5207 	EXP 	v_block_trial_image: autoDraw = False
+127.5207 	EXP 	blank_image: autoDraw = False
+127.5207 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+127.5207 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+127.5207 	EXP 	v_block_trial_image: autoDraw = True
+128.3219 	EXP 	v_block_trial_image: autoDraw = False
+128.3219 	EXP 	blank_image: autoDraw = True
+128.5064 	EXP 	New trial (rep=0, index=45): {'word': 0, 'location': 1, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 94, 'condition': u'R'}
+128.5295 	EXP 	v_block_trial_image: autoDraw = False
+128.5295 	EXP 	blank_image: autoDraw = False
+128.5295 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+128.5295 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+128.5295 	EXP 	v_block_trial_image: autoDraw = True
+129.3236 	EXP 	v_block_trial_image: autoDraw = False
+129.3236 	EXP 	blank_image: autoDraw = True
+129.5076 	EXP 	New trial (rep=0, index=46): {'word': 0, 'location': 2, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 95, 'condition': u'R'}
+129.5238 	EXP 	v_block_trial_image: autoDraw = False
+129.5238 	EXP 	blank_image: autoDraw = False
+129.5238 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+129.5238 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+129.5238 	EXP 	v_block_trial_image: autoDraw = True
+130.3254 	EXP 	v_block_trial_image: autoDraw = False
+130.3254 	EXP 	blank_image: autoDraw = True
+130.5092 	EXP 	New trial (rep=0, index=47): {'word': 0, 'location': 3, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 96, 'condition': u'R'}
+130.5256 	EXP 	v_block_trial_image: autoDraw = False
+130.5256 	EXP 	blank_image: autoDraw = False
+130.5256 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+130.5256 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+130.5256 	EXP 	v_block_trial_image: autoDraw = True
+131.3270 	EXP 	v_block_trial_image: autoDraw = False
+131.3270 	EXP 	blank_image: autoDraw = True
+131.5107 	EXP 	New trial (rep=0, index=48): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+131.5333 	EXP 	v_block_trial_image: autoDraw = False
+131.5333 	EXP 	blank_image: autoDraw = False
+131.5333 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+131.5333 	EXP 	v_block_trial_image: image = u'blank.png'
+131.5333 	EXP 	v_block_trial_image: autoDraw = True
+132.3285 	EXP 	v_block_trial_image: autoDraw = False
+132.3285 	EXP 	blank_image: autoDraw = True
+132.5123 	EXP 	New trial (rep=0, index=49): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+132.5284 	EXP 	v_block_trial_image: autoDraw = False
+132.5284 	EXP 	blank_image: autoDraw = False
+132.5284 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+132.5284 	EXP 	v_block_trial_image: image = u'blank.png'
+132.5284 	EXP 	v_block_trial_image: autoDraw = True
+133.3298 	EXP 	v_block_trial_image: autoDraw = False
+133.3298 	EXP 	blank_image: autoDraw = True
+133.5141 	EXP 	New trial (rep=0, index=50): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+133.5300 	EXP 	v_block_trial_image: autoDraw = False
+133.5300 	EXP 	blank_image: autoDraw = False
+133.5300 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+133.5300 	EXP 	v_block_trial_image: image = u'blank.png'
+133.5300 	EXP 	v_block_trial_image: autoDraw = True
+134.3313 	EXP 	v_block_trial_image: autoDraw = False
+134.3313 	EXP 	blank_image: autoDraw = True
+134.5169 	EXP 	New trial (rep=0, index=51): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+134.5333 	EXP 	v_block_trial_image: autoDraw = False
+134.5333 	EXP 	blank_image: autoDraw = False
+134.5333 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+134.5333 	EXP 	v_block_trial_image: image = u'blank.png'
+134.5333 	EXP 	v_block_trial_image: autoDraw = True
+135.3330 	EXP 	v_block_trial_image: autoDraw = False
+135.3502 	EXP 	blank_image: autoDraw = True
+135.5176 	EXP 	New trial (rep=0, index=52): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+135.5333 	EXP 	v_block_trial_image: autoDraw = False
+135.5333 	EXP 	blank_image: autoDraw = False
+135.5333 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+135.5333 	EXP 	v_block_trial_image: image = u'blank.png'
+135.5333 	EXP 	v_block_trial_image: autoDraw = True
+136.3352 	EXP 	v_block_trial_image: autoDraw = False
+136.3352 	EXP 	blank_image: autoDraw = True
+136.5200 	EXP 	New trial (rep=0, index=53): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+136.5355 	EXP 	v_block_trial_image: autoDraw = False
+136.5355 	EXP 	blank_image: autoDraw = False
+136.5355 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+136.5355 	EXP 	v_block_trial_image: image = u'blank.png'
+136.5355 	EXP 	v_block_trial_image: autoDraw = True
+137.3364 	EXP 	v_block_trial_image: autoDraw = False
+137.3527 	EXP 	blank_image: autoDraw = True
+137.5038 	EXP 	New trial (rep=0, index=54): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+137.5196 	EXP 	v_block_trial_image: autoDraw = False
+137.5196 	EXP 	blank_image: autoDraw = False
+137.5196 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+137.5196 	EXP 	v_block_trial_image: image = u'blank.png'
+137.5196 	EXP 	v_block_trial_image: autoDraw = True
+138.3209 	EXP 	v_block_trial_image: autoDraw = False
+138.3209 	EXP 	blank_image: autoDraw = True
+138.5051 	EXP 	New trial (rep=0, index=55): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+138.5212 	EXP 	v_block_trial_image: autoDraw = False
+138.5212 	EXP 	blank_image: autoDraw = False
+138.5212 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+138.5212 	EXP 	v_block_trial_image: image = u'blank.png'
+138.5212 	EXP 	v_block_trial_image: autoDraw = True
+139.3227 	EXP 	v_block_trial_image: autoDraw = False
+139.3227 	EXP 	blank_image: autoDraw = True
+139.5072 	EXP 	New trial (rep=0, index=56): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+139.5231 	EXP 	v_block_trial_image: autoDraw = False
+139.5231 	EXP 	blank_image: autoDraw = False
+139.5231 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+139.5231 	EXP 	v_block_trial_image: image = u'blank.png'
+139.5231 	EXP 	v_block_trial_image: autoDraw = True
+140.3241 	EXP 	v_block_trial_image: autoDraw = False
+140.3406 	EXP 	blank_image: autoDraw = True
+140.5081 	EXP 	New trial (rep=0, index=57): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+140.5243 	EXP 	v_block_trial_image: autoDraw = False
+140.5243 	EXP 	blank_image: autoDraw = False
+140.5243 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+140.5243 	EXP 	v_block_trial_image: image = u'blank.png'
+140.5243 	EXP 	v_block_trial_image: autoDraw = True
+141.3258 	EXP 	v_block_trial_image: autoDraw = False
+141.3258 	EXP 	blank_image: autoDraw = True
+141.5098 	EXP 	New trial (rep=0, index=58): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+141.5260 	EXP 	v_block_trial_image: autoDraw = False
+141.5260 	EXP 	blank_image: autoDraw = False
+141.5260 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+141.5260 	EXP 	v_block_trial_image: image = u'blank.png'
+141.5260 	EXP 	v_block_trial_image: autoDraw = True
+142.3271 	EXP 	v_block_trial_image: autoDraw = False
+142.3271 	EXP 	blank_image: autoDraw = True
+142.5112 	EXP 	New trial (rep=0, index=59): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+142.5274 	EXP 	v_block_trial_image: autoDraw = False
+142.5274 	EXP 	blank_image: autoDraw = False
+142.5274 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+142.5274 	EXP 	v_block_trial_image: image = u'blank.png'
+142.5274 	EXP 	v_block_trial_image: autoDraw = True
+143.3287 	EXP 	v_block_trial_image: autoDraw = False
+143.3287 	EXP 	blank_image: autoDraw = True
+143.5135 	EXP 	window1: blendMode = 'avg'
+143.5157 	EXP 	Sound  started
+143.5290 	EXP 	v_block_trial_image: autoDraw = False
+143.5290 	EXP 	blank_image: autoDraw = False
+143.5294 	EXP 	window1: blendMode = 'avg'
+143.5465 	EXP 	window1: blendMode = 'avg'
+143.5628 	EXP 	window1: blendMode = 'avg'
+143.5795 	EXP 	window1: blendMode = 'avg'
+143.5966 	EXP 	window1: blendMode = 'avg'
+143.6130 	EXP 	window1: blendMode = 'avg'
+143.6296 	EXP 	window1: blendMode = 'avg'
+143.6466 	EXP 	window1: blendMode = 'avg'
+143.6633 	EXP 	window1: blendMode = 'avg'
+143.6800 	EXP 	window1: blendMode = 'avg'
+143.6966 	EXP 	window1: blendMode = 'avg'
+143.7132 	EXP 	window1: blendMode = 'avg'
+143.7297 	EXP 	window1: blendMode = 'avg'
+143.7468 	EXP 	window1: blendMode = 'avg'
+143.7633 	EXP 	window1: blendMode = 'avg'
+143.7801 	EXP 	window1: blendMode = 'avg'
+143.7966 	EXP 	window1: blendMode = 'avg'
+143.8135 	EXP 	window1: blendMode = 'avg'
+143.8300 	EXP 	window1: blendMode = 'avg'
+143.8467 	EXP 	window1: blendMode = 'avg'
+143.8635 	EXP 	window1: blendMode = 'avg'
+143.8801 	EXP 	window1: blendMode = 'avg'
+143.8972 	EXP 	window1: blendMode = 'avg'
+143.9136 	EXP 	window1: blendMode = 'avg'
+143.9305 	EXP 	window1: blendMode = 'avg'
+143.9472 	EXP 	window1: blendMode = 'avg'
+143.9634 	EXP 	window1: blendMode = 'avg'
+143.9802 	EXP 	window1: blendMode = 'avg'
+143.9973 	EXP 	window1: blendMode = 'avg'
+144.0141 	EXP 	window1: blendMode = 'avg'
+144.0303 	EXP 	window1: blendMode = 'avg'
+144.0473 	EXP 	window1: blendMode = 'avg'
+144.0640 	EXP 	window1: blendMode = 'avg'
+144.0805 	EXP 	window1: blendMode = 'avg'
+144.0973 	EXP 	window1: blendMode = 'avg'
+144.1140 	EXP 	window1: blendMode = 'avg'
+144.1302 	EXP 	window1: blendMode = 'avg'
+144.1474 	EXP 	window1: blendMode = 'avg'
+144.1639 	EXP 	window1: blendMode = 'avg'
+144.1804 	EXP 	window1: blendMode = 'avg'
+144.1975 	EXP 	window1: blendMode = 'avg'
+144.2142 	EXP 	window1: blendMode = 'avg'
+144.2305 	EXP 	window1: blendMode = 'avg'
+144.2474 	EXP 	window1: blendMode = 'avg'
+144.2642 	EXP 	window1: blendMode = 'avg'
+144.2807 	EXP 	window1: blendMode = 'avg'
+144.2976 	EXP 	window1: blendMode = 'avg'
+144.3144 	EXP 	window1: blendMode = 'avg'
+144.3309 	EXP 	window1: blendMode = 'avg'
+144.3474 	EXP 	window1: blendMode = 'avg'
+144.3643 	EXP 	window1: blendMode = 'avg'
+144.3807 	EXP 	window1: blendMode = 'avg'
+144.3975 	EXP 	window1: blendMode = 'avg'
+144.4144 	EXP 	window1: blendMode = 'avg'
+144.4309 	EXP 	window1: blendMode = 'avg'
+144.4478 	EXP 	window1: blendMode = 'avg'
+144.4651 	EXP 	window1: blendMode = 'avg'
+144.4810 	EXP 	window1: blendMode = 'avg'
+144.4977 	EXP 	window1: blendMode = 'avg'
+144.5148 	EXP 	window1: blendMode = 'avg'
+144.5311 	EXP 	window1: blendMode = 'avg'
+144.5482 	EXP 	window1: blendMode = 'avg'
+144.5644 	EXP 	window1: blendMode = 'avg'
+144.5810 	EXP 	window1: blendMode = 'avg'
+144.5977 	EXP 	window1: blendMode = 'avg'
+144.6147 	EXP 	window1: blendMode = 'avg'
+144.6311 	EXP 	window1: blendMode = 'avg'
+144.6478 	EXP 	window1: blendMode = 'avg'
+144.6648 	EXP 	window1: blendMode = 'avg'
+144.6813 	EXP 	window1: blendMode = 'avg'
+144.6979 	EXP 	window1: blendMode = 'avg'
+144.7146 	EXP 	window1: blendMode = 'avg'
+144.7318 	EXP 	window1: blendMode = 'avg'
+144.7480 	EXP 	window1: blendMode = 'avg'
+144.7650 	EXP 	window1: blendMode = 'avg'
+144.7813 	EXP 	window1: blendMode = 'avg'
+144.7983 	EXP 	window1: blendMode = 'avg'
+144.8148 	EXP 	window1: blendMode = 'avg'
+144.8314 	EXP 	window1: blendMode = 'avg'
+144.8482 	EXP 	window1: blendMode = 'avg'
+144.8649 	EXP 	window1: blendMode = 'avg'
+144.8815 	EXP 	window1: blendMode = 'avg'
+144.8984 	EXP 	window1: blendMode = 'avg'
+144.9151 	EXP 	window1: blendMode = 'avg'
+144.9315 	EXP 	window1: blendMode = 'avg'
+144.9484 	EXP 	window1: blendMode = 'avg'
+144.9658 	EXP 	window1: blendMode = 'avg'
+144.9819 	EXP 	window1: blendMode = 'avg'
+144.9987 	EXP 	window1: blendMode = 'avg'
+145.0153 	EXP 	window1: blendMode = 'avg'
+145.0319 	EXP 	window1: blendMode = 'avg'
+145.0487 	EXP 	window1: blendMode = 'avg'
+145.0655 	EXP 	window1: blendMode = 'avg'
+145.0818 	EXP 	window1: blendMode = 'avg'
+145.0987 	EXP 	window1: blendMode = 'avg'
+145.1155 	EXP 	window1: blendMode = 'avg'
+145.1319 	EXP 	window1: blendMode = 'avg'
+145.1487 	EXP 	window1: blendMode = 'avg'
+145.1653 	EXP 	window1: blendMode = 'avg'
+145.1823 	EXP 	window1: blendMode = 'avg'
+145.1987 	EXP 	window1: blendMode = 'avg'
+145.2157 	EXP 	window1: blendMode = 'avg'
+145.2320 	EXP 	window1: blendMode = 'avg'
+145.2488 	EXP 	window1: blendMode = 'avg'
+145.2657 	EXP 	window1: blendMode = 'avg'
+145.2826 	EXP 	window1: blendMode = 'avg'
+145.2827 	EXP 	Sound  stopped
+145.3218 	EXP 	Imported visual_run1_3.xlsx as conditions, 48 conditions, 6 params
+145.3221 	EXP 	Created sequence: sequential, trialTypes=48, nReps=1, seed=None
+145.3225 	EXP 	New trial (rep=0, index=0): {'word': 2, 'location': 1, 'image': u'A.png', 'repetition': 4, 'trialnum': 49, 'condition': u'S'}
+145.4385 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+145.4385 	EXP 	l_block_trial_image: image = u'A.png'
+145.4385 	EXP 	l_block_trial_image: autoDraw = True
+146.1330 	EXP 	l_block_trial_image: autoDraw = False
+146.1330 	EXP 	l_block_trial_blank: autoDraw = True
+146.2842 	EXP 	New trial (rep=0, index=1): {'word': 2, 'location': 2, 'image': u'J.png', 'repetition': 4, 'trialnum': 50, 'condition': u'S'}
+146.3120 	EXP 	l_block_trial_image: autoDraw = False
+146.3120 	EXP 	l_block_trial_blank: autoDraw = False
+146.3120 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+146.3120 	EXP 	l_block_trial_image: image = u'J.png'
+146.3120 	EXP 	l_block_trial_image: autoDraw = True
+147.1012 	EXP 	l_block_trial_image: autoDraw = False
+147.1012 	EXP 	l_block_trial_blank: autoDraw = True
+147.2856 	EXP 	New trial (rep=0, index=2): {'word': 2, 'location': 3, 'image': u'F.png', 'repetition': 4, 'trialnum': 51, 'condition': u'S'}
+147.3149 	EXP 	l_block_trial_image: autoDraw = False
+147.3149 	EXP 	l_block_trial_blank: autoDraw = False
+147.3149 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+147.3149 	EXP 	l_block_trial_image: image = u'F.png'
+147.3149 	EXP 	l_block_trial_image: autoDraw = True
+148.1029 	EXP 	l_block_trial_image: autoDraw = False
+148.1029 	EXP 	l_block_trial_blank: autoDraw = True
+148.2871 	EXP 	New trial (rep=0, index=3): {'word': 3, 'location': 1, 'image': u'D.png', 'repetition': 5, 'trialnum': 52, 'condition': u'S'}
+148.3204 	EXP 	l_block_trial_image: autoDraw = False
+148.3204 	EXP 	l_block_trial_blank: autoDraw = False
+148.3204 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+148.3204 	EXP 	l_block_trial_image: image = u'D.png'
+148.3204 	EXP 	l_block_trial_image: autoDraw = True
+149.1042 	EXP 	l_block_trial_image: autoDraw = False
+149.1042 	EXP 	l_block_trial_blank: autoDraw = True
+149.2884 	EXP 	New trial (rep=0, index=4): {'word': 3, 'location': 2, 'image': u'G.png', 'repetition': 5, 'trialnum': 53, 'condition': u'S'}
+149.3174 	EXP 	l_block_trial_image: autoDraw = False
+149.3174 	EXP 	l_block_trial_blank: autoDraw = False
+149.3174 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+149.3174 	EXP 	l_block_trial_image: image = u'G.png'
+149.3174 	EXP 	l_block_trial_image: autoDraw = True
+150.1060 	EXP 	l_block_trial_image: autoDraw = False
+150.1060 	EXP 	l_block_trial_blank: autoDraw = True
+150.2904 	EXP 	New trial (rep=0, index=5): {'word': 3, 'location': 3, 'image': u'C.png', 'repetition': 5, 'trialnum': 54, 'condition': u'S'}
+150.3184 	EXP 	l_block_trial_image: autoDraw = False
+150.3184 	EXP 	l_block_trial_blank: autoDraw = False
+150.3184 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+150.3184 	EXP 	l_block_trial_image: image = u'C.png'
+150.3184 	EXP 	l_block_trial_image: autoDraw = True
+151.1074 	EXP 	l_block_trial_image: autoDraw = False
+151.1074 	EXP 	l_block_trial_blank: autoDraw = True
+151.2918 	EXP 	New trial (rep=0, index=6): {'word': 1, 'location': 1, 'image': u'M.png', 'repetition': 6, 'trialnum': 55, 'condition': u'S'}
+151.3218 	EXP 	l_block_trial_image: autoDraw = False
+151.3218 	EXP 	l_block_trial_blank: autoDraw = False
+151.3218 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+151.3218 	EXP 	l_block_trial_image: image = u'M.png'
+151.3218 	EXP 	l_block_trial_image: autoDraw = True
+152.1090 	EXP 	l_block_trial_image: autoDraw = False
+152.1090 	EXP 	l_block_trial_blank: autoDraw = True
+152.2932 	EXP 	New trial (rep=0, index=7): {'word': 1, 'location': 2, 'image': u'K.png', 'repetition': 6, 'trialnum': 56, 'condition': u'S'}
+152.3219 	EXP 	l_block_trial_image: autoDraw = False
+152.3219 	EXP 	l_block_trial_blank: autoDraw = False
+152.3219 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+152.3219 	EXP 	l_block_trial_image: image = u'K.png'
+152.3219 	EXP 	l_block_trial_image: autoDraw = True
+153.1105 	EXP 	l_block_trial_image: autoDraw = False
+153.1105 	EXP 	l_block_trial_blank: autoDraw = True
+153.2946 	EXP 	New trial (rep=0, index=8): {'word': 1, 'location': 3, 'image': u'B.png', 'repetition': 6, 'trialnum': 57, 'condition': u'S'}
+153.3221 	EXP 	l_block_trial_image: autoDraw = False
+153.3221 	EXP 	l_block_trial_blank: autoDraw = False
+153.3221 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+153.3221 	EXP 	l_block_trial_image: image = u'B.png'
+153.3221 	EXP 	l_block_trial_image: autoDraw = True
+154.1122 	EXP 	l_block_trial_image: autoDraw = False
+154.1122 	EXP 	l_block_trial_blank: autoDraw = True
+154.2963 	EXP 	New trial (rep=0, index=9): {'word': 4, 'location': 1, 'image': u'E.png', 'repetition': 5, 'trialnum': 58, 'condition': u'S'}
+154.3215 	EXP 	l_block_trial_image: autoDraw = False
+154.3215 	EXP 	l_block_trial_blank: autoDraw = False
+154.3215 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+154.3215 	EXP 	l_block_trial_image: image = u'E.png'
+154.3215 	EXP 	l_block_trial_image: autoDraw = True
+155.1138 	EXP 	l_block_trial_image: autoDraw = False
+155.1138 	EXP 	l_block_trial_blank: autoDraw = True
+155.2978 	EXP 	New trial (rep=0, index=10): {'word': 4, 'location': 2, 'image': u'L.png', 'repetition': 5, 'trialnum': 59, 'condition': u'S'}
+155.3271 	EXP 	l_block_trial_image: autoDraw = False
+155.3271 	EXP 	l_block_trial_blank: autoDraw = False
+155.3271 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+155.3271 	EXP 	l_block_trial_image: image = u'L.png'
+155.3271 	EXP 	l_block_trial_image: autoDraw = True
+156.1153 	EXP 	l_block_trial_image: autoDraw = False
+156.1153 	EXP 	l_block_trial_blank: autoDraw = True
+156.2996 	EXP 	New trial (rep=0, index=11): {'word': 4, 'location': 3, 'image': u'H.png', 'repetition': 5, 'trialnum': 60, 'condition': u'S'}
+156.3301 	EXP 	l_block_trial_image: autoDraw = False
+156.3301 	EXP 	l_block_trial_blank: autoDraw = False
+156.3301 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+156.3301 	EXP 	l_block_trial_image: image = u'H.png'
+156.3301 	EXP 	l_block_trial_image: autoDraw = True
+157.1169 	EXP 	l_block_trial_image: autoDraw = False
+157.1169 	EXP 	l_block_trial_blank: autoDraw = True
+157.2844 	EXP 	New trial (rep=0, index=12): {'word': 2, 'location': 1, 'image': u'A.png', 'repetition': 5, 'trialnum': 61, 'condition': u'S'}
+157.3146 	EXP 	l_block_trial_image: autoDraw = False
+157.3146 	EXP 	l_block_trial_blank: autoDraw = False
+157.3146 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+157.3146 	EXP 	l_block_trial_image: image = u'A.png'
+157.3146 	EXP 	l_block_trial_image: autoDraw = True
+158.1016 	EXP 	l_block_trial_image: autoDraw = False
+158.1016 	EXP 	l_block_trial_blank: autoDraw = True
+158.2866 	EXP 	New trial (rep=0, index=13): {'word': 2, 'location': 2, 'image': u'J.png', 'repetition': 5, 'trialnum': 62, 'condition': u'S'}
+158.3243 	EXP 	l_block_trial_image: autoDraw = False
+158.3243 	EXP 	l_block_trial_blank: autoDraw = False
+158.3243 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+158.3243 	EXP 	l_block_trial_image: image = u'J.png'
+158.3243 	EXP 	l_block_trial_image: autoDraw = True
+159.1033 	EXP 	l_block_trial_image: autoDraw = False
+159.1033 	EXP 	l_block_trial_blank: autoDraw = True
+159.2875 	EXP 	New trial (rep=0, index=14): {'word': 2, 'location': 3, 'image': u'F.png', 'repetition': 5, 'trialnum': 63, 'condition': u'S'}
+159.3097 	EXP 	l_block_trial_image: autoDraw = False
+159.3097 	EXP 	l_block_trial_blank: autoDraw = False
+159.3097 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+159.3097 	EXP 	l_block_trial_image: image = u'F.png'
+159.3097 	EXP 	l_block_trial_image: autoDraw = True
+160.1048 	EXP 	l_block_trial_image: autoDraw = False
+160.1048 	EXP 	l_block_trial_blank: autoDraw = True
+160.2889 	EXP 	New trial (rep=0, index=15): {'word': 4, 'location': 1, 'image': u'E.png', 'repetition': 6, 'trialnum': 64, 'condition': u'S'}
+160.3161 	EXP 	l_block_trial_image: autoDraw = False
+160.3161 	EXP 	l_block_trial_blank: autoDraw = False
+160.3161 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+160.3161 	EXP 	l_block_trial_image: image = u'E.png'
+160.3161 	EXP 	l_block_trial_image: autoDraw = True
+161.1064 	EXP 	l_block_trial_image: autoDraw = False
+161.1064 	EXP 	l_block_trial_blank: autoDraw = True
+161.2905 	EXP 	New trial (rep=0, index=16): {'word': 4, 'location': 2, 'image': u'L.png', 'repetition': 6, 'trialnum': 65, 'condition': u'S'}
+161.3172 	EXP 	l_block_trial_image: autoDraw = False
+161.3172 	EXP 	l_block_trial_blank: autoDraw = False
+161.3172 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+161.3172 	EXP 	l_block_trial_image: image = u'L.png'
+161.3172 	EXP 	l_block_trial_image: autoDraw = True
+162.1079 	EXP 	l_block_trial_image: autoDraw = False
+162.1079 	EXP 	l_block_trial_blank: autoDraw = True
+162.2919 	EXP 	New trial (rep=0, index=17): {'word': 4, 'location': 3, 'image': u'H.png', 'repetition': 6, 'trialnum': 66, 'condition': u'S'}
+162.3102 	EXP 	l_block_trial_image: autoDraw = False
+162.3102 	EXP 	l_block_trial_blank: autoDraw = False
+162.3102 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+162.3102 	EXP 	l_block_trial_image: image = u'H.png'
+162.3102 	EXP 	l_block_trial_image: autoDraw = True
+163.1094 	EXP 	l_block_trial_image: autoDraw = False
+163.1094 	EXP 	l_block_trial_blank: autoDraw = True
+163.2938 	EXP 	New trial (rep=0, index=18): {'word': 1, 'location': 1, 'image': u'M.png', 'repetition': 7, 'trialnum': 67, 'condition': u'S'}
+163.3156 	EXP 	l_block_trial_image: autoDraw = False
+163.3156 	EXP 	l_block_trial_blank: autoDraw = False
+163.3156 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+163.3156 	EXP 	l_block_trial_image: image = u'M.png'
+163.3156 	EXP 	l_block_trial_image: autoDraw = True
+164.1111 	EXP 	l_block_trial_image: autoDraw = False
+164.1111 	EXP 	l_block_trial_blank: autoDraw = True
+164.2956 	EXP 	New trial (rep=0, index=19): {'word': 1, 'location': 2, 'image': u'K.png', 'repetition': 7, 'trialnum': 68, 'condition': u'S'}
+164.3251 	EXP 	l_block_trial_image: autoDraw = False
+164.3251 	EXP 	l_block_trial_blank: autoDraw = False
+164.3251 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+164.3251 	EXP 	l_block_trial_image: image = u'K.png'
+164.3251 	EXP 	l_block_trial_image: autoDraw = True
+165.1127 	EXP 	l_block_trial_image: autoDraw = False
+165.1127 	EXP 	l_block_trial_blank: autoDraw = True
+165.2968 	EXP 	New trial (rep=0, index=20): {'word': 1, 'location': 3, 'image': u'B.png', 'repetition': 7, 'trialnum': 69, 'condition': u'S'}
+165.3252 	EXP 	l_block_trial_image: autoDraw = False
+165.3252 	EXP 	l_block_trial_blank: autoDraw = False
+165.3252 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+165.3252 	EXP 	l_block_trial_image: image = u'B.png'
+165.3252 	EXP 	l_block_trial_image: autoDraw = True
+166.1141 	EXP 	l_block_trial_image: autoDraw = False
+166.1141 	EXP 	l_block_trial_blank: autoDraw = True
+166.2982 	EXP 	New trial (rep=0, index=21): {'word': 3, 'location': 1, 'image': u'D.png', 'repetition': 6, 'trialnum': 70, 'condition': u'S'}
+166.3244 	EXP 	l_block_trial_image: autoDraw = False
+166.3244 	EXP 	l_block_trial_blank: autoDraw = False
+166.3244 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+166.3244 	EXP 	l_block_trial_image: image = u'D.png'
+166.3244 	EXP 	l_block_trial_image: autoDraw = True
+167.1160 	EXP 	l_block_trial_image: autoDraw = False
+167.1160 	EXP 	l_block_trial_blank: autoDraw = True
+167.2831 	EXP 	New trial (rep=0, index=22): {'word': 3, 'location': 2, 'image': u'G.png', 'repetition': 6, 'trialnum': 71, 'condition': u'S'}
+167.3191 	EXP 	l_block_trial_image: autoDraw = False
+167.3191 	EXP 	l_block_trial_blank: autoDraw = False
+167.3191 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+167.3191 	EXP 	l_block_trial_image: image = u'G.png'
+167.3191 	EXP 	l_block_trial_image: autoDraw = True
+168.1007 	EXP 	l_block_trial_image: autoDraw = False
+168.1007 	EXP 	l_block_trial_blank: autoDraw = True
+168.2849 	EXP 	New trial (rep=0, index=23): {'word': 3, 'location': 3, 'image': u'C.png', 'repetition': 6, 'trialnum': 72, 'condition': u'S'}
+168.3102 	EXP 	l_block_trial_image: autoDraw = False
+168.3102 	EXP 	l_block_trial_blank: autoDraw = False
+168.3102 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+168.3102 	EXP 	l_block_trial_image: image = u'C.png'
+168.3102 	EXP 	l_block_trial_image: autoDraw = True
+169.1021 	EXP 	l_block_trial_image: autoDraw = False
+169.1021 	EXP 	l_block_trial_blank: autoDraw = True
+169.2865 	EXP 	New trial (rep=0, index=24): {'word': 2, 'location': 1, 'image': u'A.png', 'repetition': 6, 'trialnum': 73, 'condition': u'S'}
+169.3078 	EXP 	l_block_trial_image: autoDraw = False
+169.3078 	EXP 	l_block_trial_blank: autoDraw = False
+169.3078 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+169.3078 	EXP 	l_block_trial_image: image = u'A.png'
+169.3078 	EXP 	l_block_trial_image: autoDraw = True
+170.1037 	EXP 	l_block_trial_image: autoDraw = False
+170.1037 	EXP 	l_block_trial_blank: autoDraw = True
+170.2879 	EXP 	New trial (rep=0, index=25): {'word': 2, 'location': 2, 'image': u'J.png', 'repetition': 6, 'trialnum': 74, 'condition': u'S'}
+170.3157 	EXP 	l_block_trial_image: autoDraw = False
+170.3157 	EXP 	l_block_trial_blank: autoDraw = False
+170.3157 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+170.3157 	EXP 	l_block_trial_image: image = u'J.png'
+170.3157 	EXP 	l_block_trial_image: autoDraw = True
+171.1054 	EXP 	l_block_trial_image: autoDraw = False
+171.1054 	EXP 	l_block_trial_blank: autoDraw = True
+171.2904 	EXP 	New trial (rep=0, index=26): {'word': 2, 'location': 3, 'image': u'F.png', 'repetition': 6, 'trialnum': 75, 'condition': u'S'}
+171.3192 	EXP 	l_block_trial_image: autoDraw = False
+171.3192 	EXP 	l_block_trial_blank: autoDraw = False
+171.3192 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+171.3192 	EXP 	l_block_trial_image: image = u'F.png'
+171.3192 	EXP 	l_block_trial_image: autoDraw = True
+172.1071 	EXP 	l_block_trial_image: autoDraw = False
+172.1071 	EXP 	l_block_trial_blank: autoDraw = True
+172.2909 	EXP 	New trial (rep=0, index=27): {'word': 1, 'location': 1, 'image': u'M.png', 'repetition': 8, 'trialnum': 76, 'condition': u'S'}
+172.3105 	EXP 	l_block_trial_image: autoDraw = False
+172.3105 	EXP 	l_block_trial_blank: autoDraw = False
+172.3105 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+172.3105 	EXP 	l_block_trial_image: image = u'M.png'
+172.3105 	EXP 	l_block_trial_image: autoDraw = True
+173.1083 	EXP 	l_block_trial_image: autoDraw = False
+173.1083 	EXP 	l_block_trial_blank: autoDraw = True
+173.2925 	EXP 	New trial (rep=0, index=28): {'word': 1, 'location': 2, 'image': u'K.png', 'repetition': 8, 'trialnum': 77, 'condition': u'S'}
+173.3110 	EXP 	l_block_trial_image: autoDraw = False
+173.3110 	EXP 	l_block_trial_blank: autoDraw = False
+173.3110 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+173.3110 	EXP 	l_block_trial_image: image = u'K.png'
+173.3110 	EXP 	l_block_trial_image: autoDraw = True
+174.1099 	EXP 	l_block_trial_image: autoDraw = False
+174.1099 	EXP 	l_block_trial_blank: autoDraw = True
+174.2942 	EXP 	New trial (rep=0, index=29): {'word': 1, 'location': 3, 'image': u'B.png', 'repetition': 8, 'trialnum': 78, 'condition': u'S'}
+174.3141 	EXP 	l_block_trial_image: autoDraw = False
+174.3141 	EXP 	l_block_trial_blank: autoDraw = False
+174.3141 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+174.3141 	EXP 	l_block_trial_image: image = u'B.png'
+174.3141 	EXP 	l_block_trial_image: autoDraw = True
+175.1115 	EXP 	l_block_trial_image: autoDraw = False
+175.1115 	EXP 	l_block_trial_blank: autoDraw = True
+175.2960 	EXP 	New trial (rep=0, index=30): {'word': 4, 'location': 1, 'image': u'E.png', 'repetition': 7, 'trialnum': 79, 'condition': u'S'}
+175.3217 	EXP 	l_block_trial_image: autoDraw = False
+175.3217 	EXP 	l_block_trial_blank: autoDraw = False
+175.3217 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+175.3217 	EXP 	l_block_trial_image: image = u'E.png'
+175.3217 	EXP 	l_block_trial_image: autoDraw = True
+176.1134 	EXP 	l_block_trial_image: autoDraw = False
+176.1134 	EXP 	l_block_trial_blank: autoDraw = True
+176.2993 	EXP 	New trial (rep=0, index=31): {'word': 4, 'location': 2, 'image': u'L.png', 'repetition': 7, 'trialnum': 80, 'condition': u'S'}
+176.3431 	EXP 	l_block_trial_image: autoDraw = False
+176.3431 	EXP 	l_block_trial_blank: autoDraw = False
+176.3431 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+176.3431 	EXP 	l_block_trial_image: image = u'L.png'
+176.3431 	EXP 	l_block_trial_image: autoDraw = True
+177.1146 	EXP 	l_block_trial_image: autoDraw = False
+177.1146 	EXP 	l_block_trial_blank: autoDraw = True
+177.2986 	EXP 	New trial (rep=0, index=32): {'word': 4, 'location': 3, 'image': u'H.png', 'repetition': 7, 'trialnum': 81, 'condition': u'S'}
+177.3338 	EXP 	l_block_trial_image: autoDraw = False
+177.3338 	EXP 	l_block_trial_blank: autoDraw = False
+177.3338 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+177.3338 	EXP 	l_block_trial_image: image = u'H.png'
+177.3338 	EXP 	l_block_trial_image: autoDraw = True
+178.1164 	EXP 	l_block_trial_image: autoDraw = False
+178.1164 	EXP 	l_block_trial_blank: autoDraw = True
+178.2837 	EXP 	New trial (rep=0, index=33): {'word': 3, 'location': 1, 'image': u'D.png', 'repetition': 7, 'trialnum': 82, 'condition': u'S'}
+178.3051 	EXP 	l_block_trial_image: autoDraw = False
+178.3051 	EXP 	l_block_trial_blank: autoDraw = False
+178.3051 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+178.3051 	EXP 	l_block_trial_image: image = u'D.png'
+178.3051 	EXP 	l_block_trial_image: autoDraw = True
+179.1010 	EXP 	l_block_trial_image: autoDraw = False
+179.1010 	EXP 	l_block_trial_blank: autoDraw = True
+179.2856 	EXP 	New trial (rep=0, index=34): {'word': 3, 'location': 2, 'image': u'G.png', 'repetition': 7, 'trialnum': 83, 'condition': u'S'}
+179.3075 	EXP 	l_block_trial_image: autoDraw = False
+179.3075 	EXP 	l_block_trial_blank: autoDraw = False
+179.3075 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+179.3075 	EXP 	l_block_trial_image: image = u'G.png'
+179.3075 	EXP 	l_block_trial_image: autoDraw = True
+180.1027 	EXP 	l_block_trial_image: autoDraw = False
+180.1027 	EXP 	l_block_trial_blank: autoDraw = True
+180.2869 	EXP 	New trial (rep=0, index=35): {'word': 3, 'location': 3, 'image': u'C.png', 'repetition': 7, 'trialnum': 84, 'condition': u'S'}
+180.3088 	EXP 	l_block_trial_image: autoDraw = False
+180.3088 	EXP 	l_block_trial_blank: autoDraw = False
+180.3088 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+180.3088 	EXP 	l_block_trial_image: image = u'C.png'
+180.3088 	EXP 	l_block_trial_image: autoDraw = True
+181.1042 	EXP 	l_block_trial_image: autoDraw = False
+181.1042 	EXP 	l_block_trial_blank: autoDraw = True
+181.2884 	EXP 	New trial (rep=0, index=36): {'word': 2, 'location': 1, 'image': u'A.png', 'repetition': 7, 'trialnum': 85, 'condition': u'S'}
+181.3108 	EXP 	l_block_trial_image: autoDraw = False
+181.3108 	EXP 	l_block_trial_blank: autoDraw = False
+181.3108 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+181.3108 	EXP 	l_block_trial_image: image = u'A.png'
+181.3108 	EXP 	l_block_trial_image: autoDraw = True
+182.1060 	EXP 	l_block_trial_image: autoDraw = False
+182.1060 	EXP 	l_block_trial_blank: autoDraw = True
+182.2898 	EXP 	New trial (rep=0, index=37): {'word': 2, 'location': 2, 'image': u'J.png', 'repetition': 7, 'trialnum': 86, 'condition': u'S'}
+182.3148 	EXP 	l_block_trial_image: autoDraw = False
+182.3148 	EXP 	l_block_trial_blank: autoDraw = False
+182.3148 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+182.3148 	EXP 	l_block_trial_image: image = u'J.png'
+182.3148 	EXP 	l_block_trial_image: autoDraw = True
+183.1073 	EXP 	l_block_trial_image: autoDraw = False
+183.1073 	EXP 	l_block_trial_blank: autoDraw = True
+183.2913 	EXP 	New trial (rep=0, index=38): {'word': 2, 'location': 3, 'image': u'F.png', 'repetition': 7, 'trialnum': 87, 'condition': u'S'}
+183.3171 	EXP 	l_block_trial_image: autoDraw = False
+183.3171 	EXP 	l_block_trial_blank: autoDraw = False
+183.3171 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+183.3171 	EXP 	l_block_trial_image: image = u'F.png'
+183.3171 	EXP 	l_block_trial_image: autoDraw = True
+184.1088 	EXP 	l_block_trial_image: autoDraw = False
+184.1088 	EXP 	l_block_trial_blank: autoDraw = True
+184.2929 	EXP 	New trial (rep=0, index=39): {'word': 4, 'location': 1, 'image': u'E.png', 'repetition': 8, 'trialnum': 88, 'condition': u'S'}
+184.3112 	EXP 	l_block_trial_image: autoDraw = False
+184.3112 	EXP 	l_block_trial_blank: autoDraw = False
+184.3112 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+184.3112 	EXP 	l_block_trial_image: image = u'E.png'
+184.3112 	EXP 	l_block_trial_image: autoDraw = True
+185.1105 	EXP 	l_block_trial_image: autoDraw = False
+185.1105 	EXP 	l_block_trial_blank: autoDraw = True
+185.2946 	EXP 	New trial (rep=0, index=40): {'word': 4, 'location': 2, 'image': u'L.png', 'repetition': 8, 'trialnum': 89, 'condition': u'S'}
+185.3137 	EXP 	l_block_trial_image: autoDraw = False
+185.3137 	EXP 	l_block_trial_blank: autoDraw = False
+185.3137 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+185.3137 	EXP 	l_block_trial_image: image = u'L.png'
+185.3137 	EXP 	l_block_trial_image: autoDraw = True
+186.1120 	EXP 	l_block_trial_image: autoDraw = False
+186.1120 	EXP 	l_block_trial_blank: autoDraw = True
+186.2963 	EXP 	New trial (rep=0, index=41): {'word': 4, 'location': 3, 'image': u'H.png', 'repetition': 8, 'trialnum': 90, 'condition': u'S'}
+186.3183 	EXP 	l_block_trial_image: autoDraw = False
+186.3183 	EXP 	l_block_trial_blank: autoDraw = False
+186.3183 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+186.3183 	EXP 	l_block_trial_image: image = u'H.png'
+186.3183 	EXP 	l_block_trial_image: autoDraw = True
+187.1137 	EXP 	l_block_trial_image: autoDraw = False
+187.1137 	EXP 	l_block_trial_blank: autoDraw = True
+187.2976 	EXP 	New trial (rep=0, index=42): {'word': 1, 'location': 1, 'image': u'M.png', 'repetition': 9, 'trialnum': 91, 'condition': u'S'}
+187.3225 	EXP 	l_block_trial_image: autoDraw = False
+187.3225 	EXP 	l_block_trial_blank: autoDraw = False
+187.3225 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+187.3225 	EXP 	l_block_trial_image: image = u'M.png'
+187.3225 	EXP 	l_block_trial_image: autoDraw = True
+188.1157 	EXP 	l_block_trial_image: autoDraw = False
+188.1157 	EXP 	l_block_trial_blank: autoDraw = True
+188.2992 	EXP 	New trial (rep=0, index=43): {'word': 1, 'location': 2, 'image': u'K.png', 'repetition': 9, 'trialnum': 92, 'condition': u'S'}
+188.3248 	EXP 	l_block_trial_image: autoDraw = False
+188.3248 	EXP 	l_block_trial_blank: autoDraw = False
+188.3248 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+188.3248 	EXP 	l_block_trial_image: image = u'K.png'
+188.3248 	EXP 	l_block_trial_image: autoDraw = True
+189.1167 	EXP 	l_block_trial_image: autoDraw = False
+189.1167 	EXP 	l_block_trial_blank: autoDraw = True
+189.2843 	EXP 	New trial (rep=0, index=44): {'word': 1, 'location': 3, 'image': u'B.png', 'repetition': 9, 'trialnum': 93, 'condition': u'S'}
+189.3099 	EXP 	l_block_trial_image: autoDraw = False
+189.3099 	EXP 	l_block_trial_blank: autoDraw = False
+189.3099 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+189.3099 	EXP 	l_block_trial_image: image = u'B.png'
+189.3099 	EXP 	l_block_trial_image: autoDraw = True
+190.1016 	EXP 	l_block_trial_image: autoDraw = False
+190.1016 	EXP 	l_block_trial_blank: autoDraw = True
+190.2857 	EXP 	New trial (rep=0, index=45): {'word': 3, 'location': 1, 'image': u'D.png', 'repetition': 8, 'trialnum': 94, 'condition': u'S'}
+190.3078 	EXP 	l_block_trial_image: autoDraw = False
+190.3078 	EXP 	l_block_trial_blank: autoDraw = False
+190.3078 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+190.3078 	EXP 	l_block_trial_image: image = u'D.png'
+190.3078 	EXP 	l_block_trial_image: autoDraw = True
+191.1031 	EXP 	l_block_trial_image: autoDraw = False
+191.1031 	EXP 	l_block_trial_blank: autoDraw = True
+191.2875 	EXP 	New trial (rep=0, index=46): {'word': 3, 'location': 2, 'image': u'G.png', 'repetition': 8, 'trialnum': 95, 'condition': u'S'}
+191.3089 	EXP 	l_block_trial_image: autoDraw = False
+191.3089 	EXP 	l_block_trial_blank: autoDraw = False
+191.3089 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+191.3089 	EXP 	l_block_trial_image: image = u'G.png'
+191.3089 	EXP 	l_block_trial_image: autoDraw = True
+192.1051 	EXP 	l_block_trial_image: autoDraw = False
+192.1051 	EXP 	l_block_trial_blank: autoDraw = True
+192.2887 	EXP 	New trial (rep=0, index=47): {'word': 3, 'location': 3, 'image': u'C.png', 'repetition': 8, 'trialnum': 96, 'condition': u'S'}
+192.3157 	EXP 	l_block_trial_image: autoDraw = False
+192.3157 	EXP 	l_block_trial_blank: autoDraw = False
+192.3157 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+192.3157 	EXP 	l_block_trial_image: image = u'C.png'
+192.3157 	EXP 	l_block_trial_image: autoDraw = True
+193.1063 	EXP 	l_block_trial_image: autoDraw = False
+193.1063 	EXP 	l_block_trial_blank: autoDraw = True
+193.3120 	EXP 	Imported blank1.xlsx as conditions, 12 conditions, 6 params
+193.3122 	EXP 	Created sequence: sequential, trialTypes=12, nReps=1, seed=None
+193.3125 	EXP 	New trial (rep=0, index=0): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+193.3273 	EXP 	l_block_trial_image: autoDraw = False
+193.3273 	EXP 	l_block_trial_blank: autoDraw = False
+193.3273 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+193.3273 	EXP 	blank_block_trial_image: image = u'blank.png'
+193.3273 	EXP 	blank_block_trial_image: autoDraw = True
+194.1244 	EXP 	blank_block_trial_image: autoDraw = False
+194.2920 	EXP 	New trial (rep=0, index=1): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+194.3080 	EXP 	blank_block_trial_image: autoDraw = False
+194.3080 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+194.3080 	EXP 	blank_block_trial_image: image = u'blank.png'
+194.3080 	EXP 	blank_block_trial_image: autoDraw = True
+195.1093 	EXP 	blank_block_trial_image: autoDraw = False
+195.2935 	EXP 	New trial (rep=0, index=2): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+195.3095 	EXP 	blank_block_trial_image: autoDraw = False
+195.3095 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+195.3095 	EXP 	blank_block_trial_image: image = u'blank.png'
+195.3095 	EXP 	blank_block_trial_image: autoDraw = True
+196.1108 	EXP 	blank_block_trial_image: autoDraw = False
+196.2962 	EXP 	New trial (rep=0, index=3): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+196.3133 	EXP 	blank_block_trial_image: autoDraw = False
+196.3133 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+196.3133 	EXP 	blank_block_trial_image: image = u'blank.png'
+196.3133 	EXP 	blank_block_trial_image: autoDraw = True
+197.1125 	EXP 	blank_block_trial_image: autoDraw = False
+197.2967 	EXP 	New trial (rep=0, index=4): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+197.3127 	EXP 	blank_block_trial_image: autoDraw = False
+197.3127 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+197.3127 	EXP 	blank_block_trial_image: image = u'blank.png'
+197.3127 	EXP 	blank_block_trial_image: autoDraw = True
+198.1140 	EXP 	blank_block_trial_image: autoDraw = False
+198.2981 	EXP 	New trial (rep=0, index=5): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+198.3144 	EXP 	blank_block_trial_image: autoDraw = False
+198.3144 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+198.3144 	EXP 	blank_block_trial_image: image = u'blank.png'
+198.3144 	EXP 	blank_block_trial_image: autoDraw = True
+199.1156 	EXP 	blank_block_trial_image: autoDraw = False
+199.3000 	EXP 	New trial (rep=0, index=6): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+199.3163 	EXP 	blank_block_trial_image: autoDraw = False
+199.3163 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+199.3163 	EXP 	blank_block_trial_image: image = u'blank.png'
+199.3163 	EXP 	blank_block_trial_image: autoDraw = True
+200.1171 	EXP 	blank_block_trial_image: autoDraw = False
+200.2849 	EXP 	New trial (rep=0, index=7): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+200.3008 	EXP 	blank_block_trial_image: autoDraw = False
+200.3008 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+200.3008 	EXP 	blank_block_trial_image: image = u'blank.png'
+200.3008 	EXP 	blank_block_trial_image: autoDraw = True
+201.1020 	EXP 	blank_block_trial_image: autoDraw = False
+201.2862 	EXP 	New trial (rep=0, index=8): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+201.3023 	EXP 	blank_block_trial_image: autoDraw = False
+201.3023 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+201.3023 	EXP 	blank_block_trial_image: image = u'blank.png'
+201.3023 	EXP 	blank_block_trial_image: autoDraw = True
+202.1036 	EXP 	blank_block_trial_image: autoDraw = False
+202.2876 	EXP 	New trial (rep=0, index=9): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+202.3038 	EXP 	blank_block_trial_image: autoDraw = False
+202.3038 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+202.3038 	EXP 	blank_block_trial_image: image = u'blank.png'
+202.3038 	EXP 	blank_block_trial_image: autoDraw = True
+203.1054 	EXP 	blank_block_trial_image: autoDraw = False
+203.2892 	EXP 	New trial (rep=0, index=10): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+203.3055 	EXP 	blank_block_trial_image: autoDraw = False
+203.3055 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+203.3055 	EXP 	blank_block_trial_image: image = u'blank.png'
+203.3055 	EXP 	blank_block_trial_image: autoDraw = True
+204.1066 	EXP 	blank_block_trial_image: autoDraw = False
+204.2908 	EXP 	New trial (rep=0, index=11): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+204.3070 	EXP 	blank_block_trial_image: autoDraw = False
+204.3070 	EXP 	blank_block_trial_image: size = array([ 0.3       ,  0.26666667])
+204.3070 	EXP 	blank_block_trial_image: image = u'blank.png'
+204.3070 	EXP 	blank_block_trial_image: autoDraw = True
+205.1082 	EXP 	blank_block_trial_image: autoDraw = False
+205.2928 	EXP 	window1: blendMode = 'avg'
+205.2945 	EXP 	Sound  started
+205.3093 	EXP 	blank_block_trial_image: autoDraw = False
+205.3112 	EXP 	window1: blendMode = 'avg'
+205.3270 	EXP 	window1: blendMode = 'avg'
+205.3433 	EXP 	window1: blendMode = 'avg'
+205.3600 	EXP 	window1: blendMode = 'avg'
+205.3768 	EXP 	window1: blendMode = 'avg'
+205.3930 	EXP 	window1: blendMode = 'avg'
+205.4096 	EXP 	window1: blendMode = 'avg'
+205.4265 	EXP 	window1: blendMode = 'avg'
+205.4430 	EXP 	window1: blendMode = 'avg'
+205.4597 	EXP 	window1: blendMode = 'avg'
+205.4764 	EXP 	window1: blendMode = 'avg'
+205.4931 	EXP 	window1: blendMode = 'avg'
+205.5098 	EXP 	window1: blendMode = 'avg'
+205.5265 	EXP 	window1: blendMode = 'avg'
+205.5432 	EXP 	window1: blendMode = 'avg'
+205.5599 	EXP 	window1: blendMode = 'avg'
+205.5767 	EXP 	window1: blendMode = 'avg'
+205.5933 	EXP 	window1: blendMode = 'avg'
+205.6101 	EXP 	window1: blendMode = 'avg'
+205.6267 	EXP 	window1: blendMode = 'avg'
+205.6435 	EXP 	window1: blendMode = 'avg'
+205.6600 	EXP 	window1: blendMode = 'avg'
+205.6770 	EXP 	window1: blendMode = 'avg'
+205.6933 	EXP 	window1: blendMode = 'avg'
+205.7101 	EXP 	window1: blendMode = 'avg'
+205.7268 	EXP 	window1: blendMode = 'avg'
+205.7433 	EXP 	window1: blendMode = 'avg'
+205.7598 	EXP 	window1: blendMode = 'avg'
+205.7772 	EXP 	window1: blendMode = 'avg'
+205.7931 	EXP 	window1: blendMode = 'avg'
+205.8097 	EXP 	window1: blendMode = 'avg'
+205.8266 	EXP 	window1: blendMode = 'avg'
+205.8434 	EXP 	window1: blendMode = 'avg'
+205.8599 	EXP 	window1: blendMode = 'avg'
+205.8767 	EXP 	window1: blendMode = 'avg'
+205.8933 	EXP 	window1: blendMode = 'avg'
+205.9099 	EXP 	window1: blendMode = 'avg'
+205.9269 	EXP 	window1: blendMode = 'avg'
+205.9444 	EXP 	window1: blendMode = 'avg'
+205.9602 	EXP 	window1: blendMode = 'avg'
+205.9771 	EXP 	window1: blendMode = 'avg'
+205.9938 	EXP 	window1: blendMode = 'avg'
+206.0101 	EXP 	window1: blendMode = 'avg'
+206.0272 	EXP 	window1: blendMode = 'avg'
+206.0436 	EXP 	window1: blendMode = 'avg'
+206.0601 	EXP 	window1: blendMode = 'avg'
+206.0771 	EXP 	window1: blendMode = 'avg'
+206.0936 	EXP 	window1: blendMode = 'avg'
+206.1103 	EXP 	window1: blendMode = 'avg'
+206.1271 	EXP 	window1: blendMode = 'avg'
+206.1440 	EXP 	window1: blendMode = 'avg'
+206.1604 	EXP 	window1: blendMode = 'avg'
+206.1772 	EXP 	window1: blendMode = 'avg'
+206.1940 	EXP 	window1: blendMode = 'avg'
+206.2103 	EXP 	window1: blendMode = 'avg'
+206.2273 	EXP 	window1: blendMode = 'avg'
+206.2439 	EXP 	window1: blendMode = 'avg'
+206.2606 	EXP 	window1: blendMode = 'avg'
+206.2774 	EXP 	window1: blendMode = 'avg'
+206.2941 	EXP 	window1: blendMode = 'avg'
+206.3105 	EXP 	window1: blendMode = 'avg'
+206.3273 	EXP 	window1: blendMode = 'avg'
+206.3441 	EXP 	window1: blendMode = 'avg'
+206.3607 	EXP 	window1: blendMode = 'avg'
+206.3775 	EXP 	window1: blendMode = 'avg'
+206.3942 	EXP 	window1: blendMode = 'avg'
+206.4107 	EXP 	window1: blendMode = 'avg'
+206.4274 	EXP 	window1: blendMode = 'avg'
+206.4443 	EXP 	window1: blendMode = 'avg'
+206.4609 	EXP 	window1: blendMode = 'avg'
+206.4774 	EXP 	window1: blendMode = 'avg'
+206.4943 	EXP 	window1: blendMode = 'avg'
+206.5109 	EXP 	window1: blendMode = 'avg'
+206.5276 	EXP 	window1: blendMode = 'avg'
+206.5443 	EXP 	window1: blendMode = 'avg'
+206.5610 	EXP 	window1: blendMode = 'avg'
+206.5777 	EXP 	window1: blendMode = 'avg'
+206.5944 	EXP 	window1: blendMode = 'avg'
+206.6111 	EXP 	window1: blendMode = 'avg'
+206.6277 	EXP 	window1: blendMode = 'avg'
+206.6446 	EXP 	window1: blendMode = 'avg'
+206.6611 	EXP 	window1: blendMode = 'avg'
+206.6778 	EXP 	window1: blendMode = 'avg'
+206.6946 	EXP 	window1: blendMode = 'avg'
+206.7112 	EXP 	window1: blendMode = 'avg'
+206.7279 	EXP 	window1: blendMode = 'avg'
+206.7447 	EXP 	window1: blendMode = 'avg'
+206.7612 	EXP 	window1: blendMode = 'avg'
+206.7779 	EXP 	window1: blendMode = 'avg'
+206.7947 	EXP 	window1: blendMode = 'avg'
+206.8114 	EXP 	window1: blendMode = 'avg'
+206.8280 	EXP 	window1: blendMode = 'avg'
+206.8448 	EXP 	window1: blendMode = 'avg'
+206.8615 	EXP 	window1: blendMode = 'avg'
+206.8781 	EXP 	window1: blendMode = 'avg'
+206.8949 	EXP 	window1: blendMode = 'avg'
+206.9116 	EXP 	window1: blendMode = 'avg'
+206.9283 	EXP 	window1: blendMode = 'avg'
+206.9450 	EXP 	window1: blendMode = 'avg'
+206.9617 	EXP 	window1: blendMode = 'avg'
+206.9782 	EXP 	window1: blendMode = 'avg'
+206.9954 	EXP 	window1: blendMode = 'avg'
+207.0119 	EXP 	window1: blendMode = 'avg'
+207.0287 	EXP 	window1: blendMode = 'avg'
+207.0456 	EXP 	window1: blendMode = 'avg'
+207.0618 	EXP 	window1: blendMode = 'avg'
+207.0619 	EXP 	Sound  stopped
+207.1133 	EXP 	Imported visual_run1_2.xlsx as conditions, 60 conditions, 6 params
+207.1139 	EXP 	Created sequence: sequential, trialTypes=60, nReps=1, seed=None
+207.1143 	EXP 	New trial (rep=0, index=0): {'word': 0, 'location': 1, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 1, 'condition': u'R'}
+207.1402 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+207.1402 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+207.1402 	EXP 	v_block_trial_image: autoDraw = True
+207.9292 	EXP 	v_block_trial_image: autoDraw = False
+207.9461 	EXP 	blank_image: autoDraw = True
+208.0644 	EXP 	New trial (rep=0, index=1): {'word': 0, 'location': 2, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 2, 'condition': u'R'}
+208.0899 	EXP 	v_block_trial_image: autoDraw = False
+208.0899 	EXP 	blank_image: autoDraw = False
+208.0899 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+208.0899 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+208.0899 	EXP 	v_block_trial_image: autoDraw = True
+208.8807 	EXP 	v_block_trial_image: autoDraw = False
+208.8974 	EXP 	blank_image: autoDraw = True
+209.0649 	EXP 	New trial (rep=0, index=2): {'word': 0, 'location': 3, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 3, 'condition': u'R'}
+209.0946 	EXP 	v_block_trial_image: autoDraw = False
+209.0946 	EXP 	blank_image: autoDraw = False
+209.0946 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+209.0946 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+209.0946 	EXP 	v_block_trial_image: autoDraw = True
+209.8823 	EXP 	v_block_trial_image: autoDraw = False
+209.8823 	EXP 	blank_image: autoDraw = True
+210.0669 	EXP 	New trial (rep=0, index=3): {'word': 0, 'location': 1, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 4, 'condition': u'R'}
+210.0944 	EXP 	v_block_trial_image: autoDraw = False
+210.0944 	EXP 	blank_image: autoDraw = False
+210.0944 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+210.0944 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+210.0944 	EXP 	v_block_trial_image: autoDraw = True
+210.3178 	DATA 	Keypress: escape
+1.7845 	ERROR 	avbin.dll failed to load. Try importing psychopy.visual
+  as the first library (before anything that uses scipy)
+  and make sure that avbin is installed.
+8.7508 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color=u'grey', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x120E6790>, multiSample=False, name='window1', numSamples=2, pos=[0, 0], screen=0, size=array([1920, 1080]), stereo=False, units=u'norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+8.7509 	EXP 	window1: recordFrameIntervals = False
+8.9180 	EXP 	window1: recordFrameIntervals = True
+9.1022 	EXP 	window1: recordFrameIntervals = False
+9.2510 	EXP 	Created start_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color=u'black', colorSpace='named', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font=u'Arial', fontFiles=[], height=0.1, italic=False, name='start_text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 0.,  0.,  0.]), text=u"Are you ready? Let's get started!", units=u'norm', win=Window(...), wrapWidth=1)
+9.2712 	EXP 	Created vreminder_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image=u'Alien1.BMP', interpolate=True, mask=None, maskParams=None, name='vreminder_image', opacity=1.0, ori=0.0, pos=array([ 0. , -0.3]), size=array([ 0.3       ,  0.46851852]), texRes=128, units=u'norm', win=Window(...))
+9.2922 	EXP 	Created vreminder_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='vreminder_text', opacity=1.0, ori=0, pos=array([ 0. ,  0.4]), rgb=array([ 0.,  0.,  0.]), text=u'Press the button when you see this!', units=u'norm', win=Window(...), wrapWidth=1)
+11.3435 	EXP 	Set  sound=C
+11.3622 	EXP 	Set  sound=reminder.wav
+11.3623 	EXP 	Sound  set volume 1.000
+11.4030 	EXP 	Created lreminder_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='a.png', interpolate=True, mask=None, maskParams=None, name='lreminder_image', opacity=1.0, ori=0.0, pos=array([ 0. , -0.3]), size=array([ 0.5       ,  1.07407407]), texRes=128, units=u'norm', win=Window(...))
+11.4205 	EXP 	Created lreminder_text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='lreminder_text', opacity=1.0, ori=0, pos=array([-0. ,  0.4]), rgb=array([ 0.,  0.,  0.]), text=u'Press the button when you see this!', units=u'norm', win=Window(...), wrapWidth=1)
+11.4241 	EXP 	Set  sound=reminder.wav
+11.4242 	EXP 	Sound  set volume 1.000
+11.4264 	EXP 	Created l_block_trial_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='l_block_trial_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.5,  0.5]), texRes=128, units=u'norm', win=Window(...))
+11.4649 	EXP 	Created l_block_trial_blank = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, image=u'blanka.png', interpolate=True, mask=None, maskParams=None, name='l_block_trial_blank', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.5       ,  1.07407407]), texRes=128, units=u'norm', win=Window(...))
+11.4672 	EXP 	Created v_block_trial_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='v_block_trial_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.5,  0.5]), texRes=128, units=u'norm', win=Window(...))
+11.4759 	EXP 	Created blank_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, image=u'blank.PNG', interpolate=True, mask=None, maskParams=None, name='blank_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.3       ,  0.26666667]), texRes=128, units=u'norm', win=Window(...))
+11.4778 	EXP 	Created blank_block_trial_image = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='blank_block_trial_image', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([ 0.5,  0.5]), texRes=128, units=u'norm', win=Window(...))
+11.4785 	EXP 	window1: blendMode = 'avg'
+11.4889 	EXP 	start_text: autoDraw = True
+11.4896 	EXP 	window1: blendMode = 'avg'
+11.5051 	EXP 	window1: blendMode = 'avg'
+11.5217 	EXP 	window1: blendMode = 'avg'
+11.5384 	EXP 	window1: blendMode = 'avg'
+11.5551 	EXP 	window1: blendMode = 'avg'
+11.5719 	EXP 	window1: blendMode = 'avg'
+11.5886 	EXP 	window1: blendMode = 'avg'
+11.6055 	EXP 	window1: blendMode = 'avg'
+11.6218 	EXP 	window1: blendMode = 'avg'
+11.6385 	EXP 	window1: blendMode = 'avg'
+11.6552 	EXP 	window1: blendMode = 'avg'
+11.6719 	EXP 	window1: blendMode = 'avg'
+11.6888 	EXP 	window1: blendMode = 'avg'
+11.7055 	EXP 	window1: blendMode = 'avg'
+11.7220 	EXP 	window1: blendMode = 'avg'
+11.7389 	EXP 	window1: blendMode = 'avg'
+11.7555 	EXP 	window1: blendMode = 'avg'
+11.7725 	EXP 	window1: blendMode = 'avg'
+11.7893 	EXP 	window1: blendMode = 'avg'
+11.8061 	EXP 	window1: blendMode = 'avg'
+11.8221 	EXP 	window1: blendMode = 'avg'
+11.8389 	EXP 	window1: blendMode = 'avg'
+11.8555 	EXP 	window1: blendMode = 'avg'
+11.8722 	EXP 	window1: blendMode = 'avg'
+11.8891 	EXP 	window1: blendMode = 'avg'
+11.9060 	EXP 	window1: blendMode = 'avg'
+11.9222 	EXP 	window1: blendMode = 'avg'
+11.9395 	EXP 	window1: blendMode = 'avg'
+11.9557 	EXP 	window1: blendMode = 'avg'
+11.9724 	EXP 	window1: blendMode = 'avg'
+11.9892 	EXP 	window1: blendMode = 'avg'
+12.0058 	EXP 	window1: blendMode = 'avg'
+12.0224 	EXP 	window1: blendMode = 'avg'
+12.0392 	EXP 	window1: blendMode = 'avg'
+12.0561 	EXP 	window1: blendMode = 'avg'
+12.0727 	EXP 	window1: blendMode = 'avg'
+12.0895 	EXP 	window1: blendMode = 'avg'
+12.1060 	EXP 	window1: blendMode = 'avg'
+12.1226 	EXP 	window1: blendMode = 'avg'
+12.1395 	EXP 	window1: blendMode = 'avg'
+12.1562 	EXP 	window1: blendMode = 'avg'
+12.1725 	EXP 	window1: blendMode = 'avg'
+12.1899 	EXP 	window1: blendMode = 'avg'
+12.2064 	EXP 	window1: blendMode = 'avg'
+12.2226 	EXP 	window1: blendMode = 'avg'
+12.2396 	EXP 	window1: blendMode = 'avg'
+12.2572 	EXP 	window1: blendMode = 'avg'
+12.2729 	EXP 	window1: blendMode = 'avg'
+12.2898 	EXP 	window1: blendMode = 'avg'
+12.3065 	EXP 	window1: blendMode = 'avg'
+12.3230 	EXP 	window1: blendMode = 'avg'
+12.3398 	EXP 	window1: blendMode = 'avg'
+12.3568 	EXP 	window1: blendMode = 'avg'
+12.3730 	EXP 	window1: blendMode = 'avg'
+12.3899 	EXP 	window1: blendMode = 'avg'
+12.4073 	EXP 	window1: blendMode = 'avg'
+12.4234 	EXP 	window1: blendMode = 'avg'
+12.4401 	EXP 	window1: blendMode = 'avg'
+12.4567 	EXP 	window1: blendMode = 'avg'
+12.4731 	EXP 	window1: blendMode = 'avg'
+12.4900 	EXP 	window1: blendMode = 'avg'
+12.5067 	DATA 	Keypress: num_5
+12.5076 	EXP 	window1: blendMode = 'avg'
+12.5096 	EXP 	Sound  started
+12.5227 	EXP 	start_text: autoDraw = False
+12.5231 	EXP 	window1: blendMode = 'avg'
+12.5403 	EXP 	window1: blendMode = 'avg'
+12.5570 	EXP 	window1: blendMode = 'avg'
+12.5733 	EXP 	window1: blendMode = 'avg'
+12.5902 	EXP 	window1: blendMode = 'avg'
+12.6068 	EXP 	window1: blendMode = 'avg'
+12.6233 	EXP 	window1: blendMode = 'avg'
+12.6403 	EXP 	window1: blendMode = 'avg'
+12.6569 	EXP 	window1: blendMode = 'avg'
+12.6736 	EXP 	window1: blendMode = 'avg'
+12.6901 	EXP 	window1: blendMode = 'avg'
+12.7068 	EXP 	window1: blendMode = 'avg'
+12.7236 	EXP 	window1: blendMode = 'avg'
+12.7401 	EXP 	window1: blendMode = 'avg'
+12.7569 	EXP 	window1: blendMode = 'avg'
+12.7735 	EXP 	window1: blendMode = 'avg'
+12.7902 	EXP 	window1: blendMode = 'avg'
+12.8070 	EXP 	window1: blendMode = 'avg'
+12.8239 	EXP 	window1: blendMode = 'avg'
+12.8408 	EXP 	window1: blendMode = 'avg'
+12.8577 	EXP 	window1: blendMode = 'avg'
+12.8740 	EXP 	window1: blendMode = 'avg'
+12.8906 	EXP 	window1: blendMode = 'avg'
+12.9071 	EXP 	window1: blendMode = 'avg'
+12.9238 	EXP 	window1: blendMode = 'avg'
+12.9406 	EXP 	window1: blendMode = 'avg'
+12.9573 	EXP 	window1: blendMode = 'avg'
+12.9741 	EXP 	window1: blendMode = 'avg'
+12.9907 	EXP 	window1: blendMode = 'avg'
+13.0073 	EXP 	window1: blendMode = 'avg'
+13.0240 	EXP 	window1: blendMode = 'avg'
+13.0408 	EXP 	window1: blendMode = 'avg'
+13.0575 	EXP 	window1: blendMode = 'avg'
+13.0743 	EXP 	window1: blendMode = 'avg'
+13.0908 	EXP 	window1: blendMode = 'avg'
+13.1074 	EXP 	window1: blendMode = 'avg'
+13.1243 	EXP 	window1: blendMode = 'avg'
+13.1410 	EXP 	window1: blendMode = 'avg'
+13.1576 	EXP 	window1: blendMode = 'avg'
+13.1743 	EXP 	window1: blendMode = 'avg'
+13.1909 	EXP 	window1: blendMode = 'avg'
+13.2077 	EXP 	window1: blendMode = 'avg'
+13.2243 	EXP 	window1: blendMode = 'avg'
+13.2411 	EXP 	window1: blendMode = 'avg'
+13.2577 	EXP 	window1: blendMode = 'avg'
+13.2744 	EXP 	window1: blendMode = 'avg'
+13.2912 	EXP 	window1: blendMode = 'avg'
+13.3078 	EXP 	window1: blendMode = 'avg'
+13.3247 	EXP 	window1: blendMode = 'avg'
+13.3413 	EXP 	window1: blendMode = 'avg'
+13.3578 	EXP 	window1: blendMode = 'avg'
+13.3748 	EXP 	window1: blendMode = 'avg'
+13.3912 	EXP 	window1: blendMode = 'avg'
+13.4079 	EXP 	window1: blendMode = 'avg'
+13.4246 	EXP 	window1: blendMode = 'avg'
+13.4414 	EXP 	window1: blendMode = 'avg'
+13.4582 	EXP 	window1: blendMode = 'avg'
+13.4747 	EXP 	window1: blendMode = 'avg'
+13.4913 	EXP 	window1: blendMode = 'avg'
+13.5081 	EXP 	window1: blendMode = 'avg'
+13.5249 	EXP 	window1: blendMode = 'avg'
+13.5415 	EXP 	window1: blendMode = 'avg'
+13.5583 	EXP 	window1: blendMode = 'avg'
+13.5749 	EXP 	window1: blendMode = 'avg'
+13.5917 	EXP 	window1: blendMode = 'avg'
+13.6084 	EXP 	window1: blendMode = 'avg'
+13.6251 	EXP 	window1: blendMode = 'avg'
+13.6417 	EXP 	window1: blendMode = 'avg'
+13.6586 	EXP 	window1: blendMode = 'avg'
+13.6751 	EXP 	window1: blendMode = 'avg'
+13.6918 	EXP 	window1: blendMode = 'avg'
+13.7084 	EXP 	window1: blendMode = 'avg'
+13.7249 	EXP 	window1: blendMode = 'avg'
+13.7418 	EXP 	window1: blendMode = 'avg'
+13.7586 	EXP 	window1: blendMode = 'avg'
+13.7752 	EXP 	window1: blendMode = 'avg'
+13.7919 	EXP 	window1: blendMode = 'avg'
+13.8086 	EXP 	window1: blendMode = 'avg'
+13.8252 	EXP 	window1: blendMode = 'avg'
+13.8420 	EXP 	window1: blendMode = 'avg'
+13.8587 	EXP 	window1: blendMode = 'avg'
+13.8755 	EXP 	window1: blendMode = 'avg'
+13.8922 	EXP 	window1: blendMode = 'avg'
+13.9094 	EXP 	window1: blendMode = 'avg'
+13.9258 	EXP 	window1: blendMode = 'avg'
+13.9421 	EXP 	window1: blendMode = 'avg'
+13.9590 	EXP 	window1: blendMode = 'avg'
+13.9756 	EXP 	window1: blendMode = 'avg'
+13.9922 	EXP 	window1: blendMode = 'avg'
+14.0090 	EXP 	window1: blendMode = 'avg'
+14.0257 	EXP 	window1: blendMode = 'avg'
+14.0422 	EXP 	window1: blendMode = 'avg'
+14.0592 	EXP 	window1: blendMode = 'avg'
+14.0759 	EXP 	window1: blendMode = 'avg'
+14.0923 	EXP 	window1: blendMode = 'avg'
+14.1092 	EXP 	window1: blendMode = 'avg'
+14.1258 	EXP 	window1: blendMode = 'avg'
+14.1424 	EXP 	window1: blendMode = 'avg'
+14.1593 	EXP 	window1: blendMode = 'avg'
+14.1759 	EXP 	window1: blendMode = 'avg'
+14.1925 	EXP 	window1: blendMode = 'avg'
+14.2094 	EXP 	window1: blendMode = 'avg'
+14.2259 	EXP 	window1: blendMode = 'avg'
+14.2427 	EXP 	window1: blendMode = 'avg'
+14.2594 	EXP 	window1: blendMode = 'avg'
+14.2760 	EXP 	window1: blendMode = 'avg'
+14.2762 	EXP 	Sound  stopped
+14.3127 	EXP 	Imported visual_run1_4.xlsx as conditions, 60 conditions, 6 params
+14.3131 	EXP 	Created sequence: sequential, trialTypes=60, nReps=1, seed=None
+14.3134 	EXP 	New trial (rep=0, index=0): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 49, 'condition': u'R'}
+14.3383 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+14.3383 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+14.3383 	EXP 	v_block_trial_image: autoDraw = True
+15.1268 	EXP 	v_block_trial_image: autoDraw = False
+15.1436 	EXP 	blank_image: autoDraw = True
+15.2776 	EXP 	New trial (rep=0, index=1): {'word': 0, 'location': 2, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 50, 'condition': u'R'}
+15.2990 	EXP 	v_block_trial_image: autoDraw = False
+15.2990 	EXP 	blank_image: autoDraw = False
+15.2990 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+15.2990 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+15.2990 	EXP 	v_block_trial_image: autoDraw = True
+16.0949 	EXP 	v_block_trial_image: autoDraw = False
+16.0949 	EXP 	blank_image: autoDraw = True
+16.2795 	EXP 	New trial (rep=0, index=2): {'word': 0, 'location': 3, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 51, 'condition': u'R'}
+16.3036 	EXP 	v_block_trial_image: autoDraw = False
+16.3036 	EXP 	blank_image: autoDraw = False
+16.3036 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+16.3036 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+16.3036 	EXP 	v_block_trial_image: autoDraw = True
+17.0966 	EXP 	v_block_trial_image: autoDraw = False
+17.0966 	EXP 	blank_image: autoDraw = True
+17.2807 	EXP 	New trial (rep=0, index=3): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 52, 'condition': u'R'}
+17.3013 	EXP 	v_block_trial_image: autoDraw = False
+17.3013 	EXP 	blank_image: autoDraw = False
+17.3013 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+17.3013 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+17.3013 	EXP 	v_block_trial_image: autoDraw = True
+18.0984 	EXP 	v_block_trial_image: autoDraw = False
+18.0984 	EXP 	blank_image: autoDraw = True
+18.2828 	EXP 	New trial (rep=0, index=4): {'word': 0, 'location': 2, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 53, 'condition': u'R'}
+18.3141 	EXP 	v_block_trial_image: autoDraw = False
+18.3141 	EXP 	blank_image: autoDraw = False
+18.3141 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+18.3141 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+18.3141 	EXP 	v_block_trial_image: autoDraw = True
+19.0999 	EXP 	v_block_trial_image: autoDraw = False
+19.0999 	EXP 	blank_image: autoDraw = True
+19.2838 	EXP 	New trial (rep=0, index=5): {'word': 0, 'location': 3, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 54, 'condition': u'R'}
+19.3129 	EXP 	v_block_trial_image: autoDraw = False
+19.3129 	EXP 	blank_image: autoDraw = False
+19.3129 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+19.3129 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+19.3129 	EXP 	v_block_trial_image: autoDraw = True
+20.1012 	EXP 	v_block_trial_image: autoDraw = False
+20.1012 	EXP 	blank_image: autoDraw = True
+20.2854 	EXP 	New trial (rep=0, index=6): {'word': 0, 'location': 1, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 55, 'condition': u'R'}
+20.3167 	EXP 	v_block_trial_image: autoDraw = False
+20.3167 	EXP 	blank_image: autoDraw = False
+20.3167 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+20.3167 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+20.3167 	EXP 	v_block_trial_image: autoDraw = True
+21.1028 	EXP 	v_block_trial_image: autoDraw = False
+21.1028 	EXP 	blank_image: autoDraw = True
+21.2871 	EXP 	New trial (rep=0, index=7): {'word': 0, 'location': 2, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 56, 'condition': u'R'}
+21.3081 	EXP 	v_block_trial_image: autoDraw = False
+21.3081 	EXP 	blank_image: autoDraw = False
+21.3081 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+21.3081 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+21.3081 	EXP 	v_block_trial_image: autoDraw = True
+22.1045 	EXP 	v_block_trial_image: autoDraw = False
+22.1045 	EXP 	blank_image: autoDraw = True
+22.2887 	EXP 	New trial (rep=0, index=8): {'word': 0, 'location': 3, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 57, 'condition': u'R'}
+22.3087 	EXP 	v_block_trial_image: autoDraw = False
+22.3087 	EXP 	blank_image: autoDraw = False
+22.3087 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+22.3087 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+22.3087 	EXP 	v_block_trial_image: autoDraw = True
+23.1059 	EXP 	v_block_trial_image: autoDraw = False
+23.1059 	EXP 	blank_image: autoDraw = True
+23.2902 	EXP 	New trial (rep=0, index=9): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 58, 'condition': u'R'}
+23.3063 	EXP 	v_block_trial_image: autoDraw = False
+23.3063 	EXP 	blank_image: autoDraw = False
+23.3063 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+23.3063 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+23.3063 	EXP 	v_block_trial_image: autoDraw = True
+24.1075 	EXP 	v_block_trial_image: autoDraw = False
+24.1075 	EXP 	blank_image: autoDraw = True
+24.2917 	EXP 	New trial (rep=0, index=10): {'word': 0, 'location': 2, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 59, 'condition': u'R'}
+24.3128 	EXP 	v_block_trial_image: autoDraw = False
+24.3128 	EXP 	blank_image: autoDraw = False
+24.3128 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+24.3128 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+24.3128 	EXP 	v_block_trial_image: autoDraw = True
+25.1093 	EXP 	v_block_trial_image: autoDraw = False
+25.1093 	EXP 	blank_image: autoDraw = True
+25.2932 	EXP 	New trial (rep=0, index=11): {'word': 0, 'location': 3, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 60, 'condition': u'R'}
+25.3154 	EXP 	v_block_trial_image: autoDraw = False
+25.3154 	EXP 	blank_image: autoDraw = False
+25.3154 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+25.3154 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+25.3154 	EXP 	v_block_trial_image: autoDraw = True
+26.1106 	EXP 	v_block_trial_image: autoDraw = False
+26.1106 	EXP 	blank_image: autoDraw = True
+26.2784 	EXP 	New trial (rep=0, index=12): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 61, 'condition': u'R'}
+26.2944 	EXP 	v_block_trial_image: autoDraw = False
+26.2944 	EXP 	blank_image: autoDraw = False
+26.2944 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+26.2944 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+26.2944 	EXP 	v_block_trial_image: autoDraw = True
+27.0954 	EXP 	v_block_trial_image: autoDraw = False
+27.0954 	EXP 	blank_image: autoDraw = True
+27.2797 	EXP 	New trial (rep=0, index=13): {'word': 0, 'location': 2, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 62, 'condition': u'R'}
+27.2959 	EXP 	v_block_trial_image: autoDraw = False
+27.2959 	EXP 	blank_image: autoDraw = False
+27.2959 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+27.2959 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+27.2959 	EXP 	v_block_trial_image: autoDraw = True
+28.0970 	EXP 	v_block_trial_image: autoDraw = False
+28.0970 	EXP 	blank_image: autoDraw = True
+28.2812 	EXP 	New trial (rep=0, index=14): {'word': 0, 'location': 3, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 63, 'condition': u'R'}
+28.2972 	EXP 	v_block_trial_image: autoDraw = False
+28.2972 	EXP 	blank_image: autoDraw = False
+28.2972 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+28.2972 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+28.2972 	EXP 	v_block_trial_image: autoDraw = True
+29.0989 	EXP 	v_block_trial_image: autoDraw = False
+29.0989 	EXP 	blank_image: autoDraw = True
+29.2825 	EXP 	New trial (rep=0, index=15): {'word': 0, 'location': 1, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 64, 'condition': u'R'}
+29.2994 	EXP 	v_block_trial_image: autoDraw = False
+29.2994 	EXP 	blank_image: autoDraw = False
+29.2994 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+29.2994 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+29.2994 	EXP 	v_block_trial_image: autoDraw = True
+30.1003 	EXP 	v_block_trial_image: autoDraw = False
+30.1003 	EXP 	blank_image: autoDraw = True
+30.2844 	EXP 	New trial (rep=0, index=16): {'word': 0, 'location': 2, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 65, 'condition': u'R'}
+30.3068 	EXP 	v_block_trial_image: autoDraw = False
+30.3068 	EXP 	blank_image: autoDraw = False
+30.3068 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+30.3068 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+30.3068 	EXP 	v_block_trial_image: autoDraw = True
+31.1017 	EXP 	v_block_trial_image: autoDraw = False
+31.1017 	EXP 	blank_image: autoDraw = True
+31.2858 	EXP 	New trial (rep=0, index=17): {'word': 0, 'location': 3, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 66, 'condition': u'R'}
+31.3020 	EXP 	v_block_trial_image: autoDraw = False
+31.3020 	EXP 	blank_image: autoDraw = False
+31.3020 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+31.3020 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+31.3020 	EXP 	v_block_trial_image: autoDraw = True
+32.1034 	EXP 	v_block_trial_image: autoDraw = False
+32.1034 	EXP 	blank_image: autoDraw = True
+32.2874 	EXP 	New trial (rep=0, index=18): {'word': 0, 'location': 1, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 67, 'condition': u'R'}
+32.3037 	EXP 	v_block_trial_image: autoDraw = False
+32.3037 	EXP 	blank_image: autoDraw = False
+32.3037 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+32.3037 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+32.3037 	EXP 	v_block_trial_image: autoDraw = True
+33.1049 	EXP 	v_block_trial_image: autoDraw = False
+33.1049 	EXP 	blank_image: autoDraw = True
+33.2892 	EXP 	New trial (rep=0, index=19): {'word': 0, 'location': 2, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 68, 'condition': u'R'}
+33.3117 	EXP 	v_block_trial_image: autoDraw = False
+33.3117 	EXP 	blank_image: autoDraw = False
+33.3117 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+33.3117 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+33.3117 	EXP 	v_block_trial_image: autoDraw = True
+34.1063 	EXP 	v_block_trial_image: autoDraw = False
+34.1063 	EXP 	blank_image: autoDraw = True
+34.2907 	EXP 	New trial (rep=0, index=20): {'word': 0, 'location': 3, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 69, 'condition': u'R'}
+34.3094 	EXP 	v_block_trial_image: autoDraw = False
+34.3094 	EXP 	blank_image: autoDraw = False
+34.3094 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+34.3094 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+34.3094 	EXP 	v_block_trial_image: autoDraw = True
+35.1079 	EXP 	v_block_trial_image: autoDraw = False
+35.1079 	EXP 	blank_image: autoDraw = True
+35.2920 	EXP 	New trial (rep=0, index=21): {'word': 0, 'location': 1, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 70, 'condition': u'R'}
+35.3086 	EXP 	v_block_trial_image: autoDraw = False
+35.3086 	EXP 	blank_image: autoDraw = False
+35.3086 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+35.3086 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+35.3086 	EXP 	v_block_trial_image: autoDraw = True
+36.1096 	EXP 	v_block_trial_image: autoDraw = False
+36.1096 	EXP 	blank_image: autoDraw = True
+36.2771 	EXP 	New trial (rep=0, index=22): {'word': 0, 'location': 2, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 71, 'condition': u'R'}
+36.3013 	EXP 	v_block_trial_image: autoDraw = False
+36.3013 	EXP 	blank_image: autoDraw = False
+36.3013 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+36.3013 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+36.3013 	EXP 	v_block_trial_image: autoDraw = True
+37.0943 	EXP 	v_block_trial_image: autoDraw = False
+37.0943 	EXP 	blank_image: autoDraw = True
+37.2784 	EXP 	New trial (rep=0, index=23): {'word': 0, 'location': 3, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 72, 'condition': u'R'}
+37.2947 	EXP 	v_block_trial_image: autoDraw = False
+37.2947 	EXP 	blank_image: autoDraw = False
+37.2947 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+37.2947 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+37.2947 	EXP 	v_block_trial_image: autoDraw = True
+38.0961 	EXP 	v_block_trial_image: autoDraw = False
+38.0961 	EXP 	blank_image: autoDraw = True
+38.2803 	EXP 	New trial (rep=0, index=24): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 73, 'condition': u'R'}
+38.3020 	EXP 	v_block_trial_image: autoDraw = False
+38.3020 	EXP 	blank_image: autoDraw = False
+38.3020 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+38.3020 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+38.3020 	EXP 	v_block_trial_image: autoDraw = True
+39.0976 	EXP 	v_block_trial_image: autoDraw = False
+39.0976 	EXP 	blank_image: autoDraw = True
+39.2817 	EXP 	New trial (rep=0, index=25): {'word': 0, 'location': 2, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 74, 'condition': u'R'}
+39.2977 	EXP 	v_block_trial_image: autoDraw = False
+39.2977 	EXP 	blank_image: autoDraw = False
+39.2977 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+39.2977 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+39.2977 	EXP 	v_block_trial_image: autoDraw = True
+40.0991 	EXP 	v_block_trial_image: autoDraw = False
+40.0991 	EXP 	blank_image: autoDraw = True
+40.2849 	EXP 	New trial (rep=0, index=26): {'word': 0, 'location': 3, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 75, 'condition': u'R'}
+40.3059 	EXP 	v_block_trial_image: autoDraw = False
+40.3059 	EXP 	blank_image: autoDraw = False
+40.3059 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+40.3059 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+40.3059 	EXP 	v_block_trial_image: autoDraw = True
+41.1009 	EXP 	v_block_trial_image: autoDraw = False
+41.1174 	EXP 	blank_image: autoDraw = True
+41.2847 	EXP 	New trial (rep=0, index=27): {'word': 0, 'location': 1, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 76, 'condition': u'R'}
+41.3009 	EXP 	v_block_trial_image: autoDraw = False
+41.3009 	EXP 	blank_image: autoDraw = False
+41.3009 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+41.3009 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+41.3009 	EXP 	v_block_trial_image: autoDraw = True
+42.1021 	EXP 	v_block_trial_image: autoDraw = False
+42.1021 	EXP 	blank_image: autoDraw = True
+42.2869 	EXP 	New trial (rep=0, index=28): {'word': 0, 'location': 2, 'image': u'Alien8.bmp', 'repetition': 1, 'trialnum': 77, 'condition': u'R'}
+42.3026 	EXP 	v_block_trial_image: autoDraw = False
+42.3026 	EXP 	blank_image: autoDraw = False
+42.3026 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52592593])
+42.3026 	EXP 	v_block_trial_image: image = u'Alien8.bmp'
+42.3026 	EXP 	v_block_trial_image: autoDraw = True
+43.1038 	EXP 	v_block_trial_image: autoDraw = False
+43.1038 	EXP 	blank_image: autoDraw = True
+43.2878 	EXP 	New trial (rep=0, index=29): {'word': 0, 'location': 3, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 78, 'condition': u'R'}
+43.3047 	EXP 	v_block_trial_image: autoDraw = False
+43.3047 	EXP 	blank_image: autoDraw = False
+43.3047 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+43.3047 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+43.3047 	EXP 	v_block_trial_image: autoDraw = True
+44.1053 	EXP 	v_block_trial_image: autoDraw = False
+44.1053 	EXP 	blank_image: autoDraw = True
+44.2897 	EXP 	New trial (rep=0, index=30): {'word': 0, 'location': 1, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 79, 'condition': u'R'}
+44.3116 	EXP 	v_block_trial_image: autoDraw = False
+44.3116 	EXP 	blank_image: autoDraw = False
+44.3116 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+44.3116 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+44.3116 	EXP 	v_block_trial_image: autoDraw = True
+45.1068 	EXP 	v_block_trial_image: autoDraw = False
+45.1068 	EXP 	blank_image: autoDraw = True
+45.2912 	EXP 	New trial (rep=0, index=31): {'word': 0, 'location': 2, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 80, 'condition': u'R'}
+45.3134 	EXP 	v_block_trial_image: autoDraw = False
+45.3134 	EXP 	blank_image: autoDraw = False
+45.3134 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+45.3134 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+45.3134 	EXP 	v_block_trial_image: autoDraw = True
+46.1086 	EXP 	v_block_trial_image: autoDraw = False
+46.1086 	EXP 	blank_image: autoDraw = True
+46.2925 	EXP 	New trial (rep=0, index=32): {'word': 0, 'location': 3, 'image': u'Alien3.bmp', 'repetition': 1, 'trialnum': 81, 'condition': u'R'}
+46.3088 	EXP 	v_block_trial_image: autoDraw = False
+46.3088 	EXP 	blank_image: autoDraw = False
+46.3088 	EXP 	v_block_trial_image: size = array([ 0.20520833,  0.67407407])
+46.3088 	EXP 	v_block_trial_image: image = u'Alien3.bmp'
+46.3088 	EXP 	v_block_trial_image: autoDraw = True
+47.1099 	EXP 	v_block_trial_image: autoDraw = False
+47.1099 	EXP 	blank_image: autoDraw = True
+47.2773 	EXP 	New trial (rep=0, index=33): {'word': 0, 'location': 1, 'image': u'Alien2.bmp', 'repetition': 1, 'trialnum': 82, 'condition': u'R'}
+47.2939 	EXP 	v_block_trial_image: autoDraw = False
+47.2939 	EXP 	blank_image: autoDraw = False
+47.2939 	EXP 	v_block_trial_image: size = array([ 0.19583333,  0.54814815])
+47.2939 	EXP 	v_block_trial_image: image = u'Alien2.bmp'
+47.2939 	EXP 	v_block_trial_image: autoDraw = True
+48.0948 	EXP 	v_block_trial_image: autoDraw = False
+48.0948 	EXP 	blank_image: autoDraw = True
+48.2792 	EXP 	New trial (rep=0, index=34): {'word': 0, 'location': 2, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 83, 'condition': u'R'}
+48.3010 	EXP 	v_block_trial_image: autoDraw = False
+48.3010 	EXP 	blank_image: autoDraw = False
+48.3010 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+48.3010 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+48.3010 	EXP 	v_block_trial_image: autoDraw = True
+49.0965 	EXP 	v_block_trial_image: autoDraw = False
+49.0965 	EXP 	blank_image: autoDraw = True
+49.2804 	EXP 	New trial (rep=0, index=35): {'word': 0, 'location': 3, 'image': u'Alien6.bmp', 'repetition': 1, 'trialnum': 84, 'condition': u'R'}
+49.2968 	EXP 	v_block_trial_image: autoDraw = False
+49.2968 	EXP 	blank_image: autoDraw = False
+49.2968 	EXP 	v_block_trial_image: size = array([ 0.234375  ,  0.53518519])
+49.2968 	EXP 	v_block_trial_image: image = u'Alien6.bmp'
+49.2968 	EXP 	v_block_trial_image: autoDraw = True
+50.0979 	EXP 	v_block_trial_image: autoDraw = False
+50.0979 	EXP 	blank_image: autoDraw = True
+50.2820 	EXP 	New trial (rep=0, index=36): {'word': 0, 'location': 1, 'image': u'Alien11.bmp', 'repetition': 1, 'trialnum': 85, 'condition': u'R'}
+50.2986 	EXP 	v_block_trial_image: autoDraw = False
+50.2986 	EXP 	blank_image: autoDraw = False
+50.2986 	EXP 	v_block_trial_image: size = array([ 0.3375    ,  0.34814815])
+50.2986 	EXP 	v_block_trial_image: image = u'Alien11.bmp'
+50.2986 	EXP 	v_block_trial_image: autoDraw = True
+51.0994 	EXP 	v_block_trial_image: autoDraw = False
+51.0994 	EXP 	blank_image: autoDraw = True
+51.2836 	EXP 	New trial (rep=0, index=37): {'word': 0, 'location': 2, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 86, 'condition': u'R'}
+51.3057 	EXP 	v_block_trial_image: autoDraw = False
+51.3057 	EXP 	blank_image: autoDraw = False
+51.3057 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+51.3057 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+51.3057 	EXP 	v_block_trial_image: autoDraw = True
+52.1011 	EXP 	v_block_trial_image: autoDraw = False
+52.1011 	EXP 	blank_image: autoDraw = True
+52.2852 	EXP 	New trial (rep=0, index=38): {'word': 0, 'location': 3, 'image': u'Alien9.bmp', 'repetition': 1, 'trialnum': 87, 'condition': u'R'}
+52.3014 	EXP 	v_block_trial_image: autoDraw = False
+52.3014 	EXP 	blank_image: autoDraw = False
+52.3014 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.57407407])
+52.3014 	EXP 	v_block_trial_image: image = u'Alien9.bmp'
+52.3014 	EXP 	v_block_trial_image: autoDraw = True
+53.1027 	EXP 	v_block_trial_image: autoDraw = False
+53.1027 	EXP 	blank_image: autoDraw = True
+53.2871 	EXP 	New trial (rep=0, index=39): {'word': 0, 'location': 1, 'image': u'Alien7.bmp', 'repetition': 1, 'trialnum': 88, 'condition': u'R'}
+53.3110 	EXP 	v_block_trial_image: autoDraw = False
+53.3110 	EXP 	blank_image: autoDraw = False
+53.3110 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60555556])
+53.3110 	EXP 	v_block_trial_image: image = u'Alien7.bmp'
+53.3110 	EXP 	v_block_trial_image: autoDraw = True
+54.1042 	EXP 	v_block_trial_image: autoDraw = False
+54.1042 	EXP 	blank_image: autoDraw = True
+54.2883 	EXP 	New trial (rep=0, index=40): {'word': 0, 'location': 2, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 89, 'condition': u'R'}
+54.3109 	EXP 	v_block_trial_image: autoDraw = False
+54.3109 	EXP 	blank_image: autoDraw = False
+54.3109 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+54.3109 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+54.3109 	EXP 	v_block_trial_image: autoDraw = True
+55.1058 	EXP 	v_block_trial_image: autoDraw = False
+55.1058 	EXP 	blank_image: autoDraw = True
+55.2899 	EXP 	New trial (rep=0, index=41): {'word': 0, 'location': 3, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 90, 'condition': u'R'}
+55.3119 	EXP 	v_block_trial_image: autoDraw = False
+55.3119 	EXP 	blank_image: autoDraw = False
+55.3119 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+55.3119 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+55.3119 	EXP 	v_block_trial_image: autoDraw = True
+56.1072 	EXP 	v_block_trial_image: autoDraw = False
+56.1072 	EXP 	blank_image: autoDraw = True
+56.2915 	EXP 	New trial (rep=0, index=42): {'word': 0, 'location': 1, 'image': u'Alien4.bmp', 'repetition': 1, 'trialnum': 91, 'condition': u'R'}
+56.3076 	EXP 	v_block_trial_image: autoDraw = False
+56.3076 	EXP 	blank_image: autoDraw = False
+56.3076 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.60925926])
+56.3076 	EXP 	v_block_trial_image: image = u'Alien4.bmp'
+56.3076 	EXP 	v_block_trial_image: autoDraw = True
+57.1088 	EXP 	v_block_trial_image: autoDraw = False
+57.1088 	EXP 	blank_image: autoDraw = True
+57.2928 	EXP 	New trial (rep=0, index=43): {'word': 0, 'location': 2, 'image': u'Alien10.bmp', 'repetition': 1, 'trialnum': 92, 'condition': u'R'}
+57.3115 	EXP 	v_block_trial_image: autoDraw = False
+57.3115 	EXP 	blank_image: autoDraw = False
+57.3115 	EXP 	v_block_trial_image: size = array([ 0.225     ,  0.52037037])
+57.3115 	EXP 	v_block_trial_image: image = u'Alien10.bmp'
+57.3115 	EXP 	v_block_trial_image: autoDraw = True
+58.1105 	EXP 	v_block_trial_image: autoDraw = False
+58.1105 	EXP 	blank_image: autoDraw = True
+58.2780 	EXP 	New trial (rep=0, index=44): {'word': 0, 'location': 3, 'image': u'Alien12.bmp', 'repetition': 1, 'trialnum': 93, 'condition': u'R'}
+58.2944 	EXP 	v_block_trial_image: autoDraw = False
+58.2944 	EXP 	blank_image: autoDraw = False
+58.2944 	EXP 	v_block_trial_image: size = array([ 0.309375  ,  0.53333333])
+58.2944 	EXP 	v_block_trial_image: image = u'Alien12.bmp'
+58.2944 	EXP 	v_block_trial_image: autoDraw = True
+59.0954 	EXP 	v_block_trial_image: autoDraw = False
+59.0954 	EXP 	blank_image: autoDraw = True
+59.2796 	EXP 	New trial (rep=0, index=45): {'word': 0, 'location': 1, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 94, 'condition': u'R'}
+59.3022 	EXP 	v_block_trial_image: autoDraw = False
+59.3022 	EXP 	blank_image: autoDraw = False
+59.3022 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+59.3022 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+59.3022 	EXP 	v_block_trial_image: autoDraw = True
+60.0968 	EXP 	v_block_trial_image: autoDraw = False
+60.0968 	EXP 	blank_image: autoDraw = True
+60.2812 	EXP 	New trial (rep=0, index=46): {'word': 0, 'location': 2, 'image': u'Alien5.bmp', 'repetition': 1, 'trialnum': 95, 'condition': u'R'}
+60.2971 	EXP 	v_block_trial_image: autoDraw = False
+60.2971 	EXP 	blank_image: autoDraw = False
+60.2971 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.54444444])
+60.2971 	EXP 	v_block_trial_image: image = u'Alien5.bmp'
+60.2971 	EXP 	v_block_trial_image: autoDraw = True
+61.0986 	EXP 	v_block_trial_image: autoDraw = False
+61.0986 	EXP 	blank_image: autoDraw = True
+61.2833 	EXP 	New trial (rep=0, index=47): {'word': 0, 'location': 3, 'image': u'Alien1.bmp', 'repetition': 1, 'trialnum': 96, 'condition': u'R'}
+61.2991 	EXP 	v_block_trial_image: autoDraw = False
+61.2991 	EXP 	blank_image: autoDraw = False
+61.2991 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.46851852])
+61.2991 	EXP 	v_block_trial_image: image = u'Alien1.bmp'
+61.2991 	EXP 	v_block_trial_image: autoDraw = True
+62.1000 	EXP 	v_block_trial_image: autoDraw = False
+62.1000 	EXP 	blank_image: autoDraw = True
+62.2842 	EXP 	New trial (rep=0, index=48): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+62.3067 	EXP 	v_block_trial_image: autoDraw = False
+62.3067 	EXP 	blank_image: autoDraw = False
+62.3067 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+62.3067 	EXP 	v_block_trial_image: image = u'blank.png'
+62.3067 	EXP 	v_block_trial_image: autoDraw = True
+63.1015 	EXP 	v_block_trial_image: autoDraw = False
+63.1015 	EXP 	blank_image: autoDraw = True
+63.2860 	EXP 	New trial (rep=0, index=49): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+63.3020 	EXP 	v_block_trial_image: autoDraw = False
+63.3020 	EXP 	blank_image: autoDraw = False
+63.3020 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+63.3020 	EXP 	v_block_trial_image: image = u'blank.png'
+63.3020 	EXP 	v_block_trial_image: autoDraw = True
+64.1030 	EXP 	v_block_trial_image: autoDraw = False
+64.1030 	EXP 	blank_image: autoDraw = True
+64.2872 	EXP 	New trial (rep=0, index=50): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+64.3035 	EXP 	v_block_trial_image: autoDraw = False
+64.3035 	EXP 	blank_image: autoDraw = False
+64.3035 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+64.3035 	EXP 	v_block_trial_image: image = u'blank.png'
+64.3035 	EXP 	v_block_trial_image: autoDraw = True
+65.1047 	EXP 	v_block_trial_image: autoDraw = False
+65.1047 	EXP 	blank_image: autoDraw = True
+65.2889 	EXP 	New trial (rep=0, index=51): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+65.3051 	EXP 	v_block_trial_image: autoDraw = False
+65.3051 	EXP 	blank_image: autoDraw = False
+65.3051 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+65.3051 	EXP 	v_block_trial_image: image = u'blank.png'
+65.3051 	EXP 	v_block_trial_image: autoDraw = True
+66.1063 	EXP 	v_block_trial_image: autoDraw = False
+66.1063 	EXP 	blank_image: autoDraw = True
+66.2906 	EXP 	New trial (rep=0, index=52): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+66.3069 	EXP 	v_block_trial_image: autoDraw = False
+66.3069 	EXP 	blank_image: autoDraw = False
+66.3069 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+66.3069 	EXP 	v_block_trial_image: image = u'blank.png'
+66.3069 	EXP 	v_block_trial_image: autoDraw = True
+67.1079 	EXP 	v_block_trial_image: autoDraw = False
+67.1079 	EXP 	blank_image: autoDraw = True
+67.2920 	EXP 	New trial (rep=0, index=53): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+67.3082 	EXP 	v_block_trial_image: autoDraw = False
+67.3082 	EXP 	blank_image: autoDraw = False
+67.3082 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+67.3082 	EXP 	v_block_trial_image: image = u'blank.png'
+67.3082 	EXP 	v_block_trial_image: autoDraw = True
+68.1093 	EXP 	v_block_trial_image: autoDraw = False
+68.1093 	EXP 	blank_image: autoDraw = True
+68.2770 	EXP 	New trial (rep=0, index=54): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+68.2929 	EXP 	v_block_trial_image: autoDraw = False
+68.2929 	EXP 	blank_image: autoDraw = False
+68.2929 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+68.2929 	EXP 	v_block_trial_image: image = u'blank.png'
+68.2929 	EXP 	v_block_trial_image: autoDraw = True
+69.0944 	EXP 	v_block_trial_image: autoDraw = False
+69.0944 	EXP 	blank_image: autoDraw = True
+69.2783 	EXP 	New trial (rep=0, index=55): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+69.2946 	EXP 	v_block_trial_image: autoDraw = False
+69.2946 	EXP 	blank_image: autoDraw = False
+69.2946 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+69.2946 	EXP 	v_block_trial_image: image = u'blank.png'
+69.2946 	EXP 	v_block_trial_image: autoDraw = True
+70.0958 	EXP 	v_block_trial_image: autoDraw = False
+70.0958 	EXP 	blank_image: autoDraw = True
+70.2801 	EXP 	New trial (rep=0, index=56): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+70.2960 	EXP 	v_block_trial_image: autoDraw = False
+70.2960 	EXP 	blank_image: autoDraw = False
+70.2960 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+70.2960 	EXP 	v_block_trial_image: image = u'blank.png'
+70.2960 	EXP 	v_block_trial_image: autoDraw = True
+71.0972 	EXP 	v_block_trial_image: autoDraw = False
+71.0972 	EXP 	blank_image: autoDraw = True
+71.2816 	EXP 	New trial (rep=0, index=57): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+71.2978 	EXP 	v_block_trial_image: autoDraw = False
+71.2978 	EXP 	blank_image: autoDraw = False
+71.2978 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+71.2978 	EXP 	v_block_trial_image: image = u'blank.png'
+71.2978 	EXP 	v_block_trial_image: autoDraw = True
+72.0990 	EXP 	v_block_trial_image: autoDraw = False
+72.0990 	EXP 	blank_image: autoDraw = True
+72.2831 	EXP 	New trial (rep=0, index=58): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+72.2994 	EXP 	v_block_trial_image: autoDraw = False
+72.2994 	EXP 	blank_image: autoDraw = False
+72.2994 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+72.2994 	EXP 	v_block_trial_image: image = u'blank.png'
+72.2994 	EXP 	v_block_trial_image: autoDraw = True
+73.1004 	EXP 	v_block_trial_image: autoDraw = False
+73.1004 	EXP 	blank_image: autoDraw = True
+73.2846 	EXP 	New trial (rep=0, index=59): {'word': 0, 'location': 0, 'image': u'blank.png', 'repetition': 0, 'trialnum': 0, 'condition': u'B'}
+73.3009 	EXP 	v_block_trial_image: autoDraw = False
+73.3009 	EXP 	blank_image: autoDraw = False
+73.3009 	EXP 	v_block_trial_image: size = array([ 0.3       ,  0.26666667])
+73.3009 	EXP 	v_block_trial_image: image = u'blank.png'
+73.3009 	EXP 	v_block_trial_image: autoDraw = True
+74.1019 	EXP 	v_block_trial_image: autoDraw = False
+74.1019 	EXP 	blank_image: autoDraw = True
+74.2874 	EXP 	window1: blendMode = 'avg'
+74.2894 	EXP 	Sound  started
+74.3022 	EXP 	v_block_trial_image: autoDraw = False
+74.3022 	EXP 	blank_image: autoDraw = False
+74.3027 	EXP 	window1: blendMode = 'avg'
+74.3196 	EXP 	window1: blendMode = 'avg'
+74.3363 	EXP 	window1: blendMode = 'avg'
+74.3529 	EXP 	window1: blendMode = 'avg'
+74.3695 	EXP 	window1: blendMode = 'avg'
+74.3862 	EXP 	window1: blendMode = 'avg'
+74.4029 	EXP 	window1: blendMode = 'avg'
+74.4197 	EXP 	window1: blendMode = 'avg'
+74.4364 	EXP 	window1: blendMode = 'avg'
+74.4530 	EXP 	window1: blendMode = 'avg'
+74.4697 	EXP 	window1: blendMode = 'avg'
+74.4864 	EXP 	window1: blendMode = 'avg'
+74.5032 	EXP 	window1: blendMode = 'avg'
+74.5197 	EXP 	window1: blendMode = 'avg'
+74.5365 	EXP 	window1: blendMode = 'avg'
+74.5531 	EXP 	window1: blendMode = 'avg'
+74.5698 	EXP 	window1: blendMode = 'avg'
+74.5871 	EXP 	window1: blendMode = 'avg'
+74.6034 	EXP 	window1: blendMode = 'avg'
+74.6200 	EXP 	window1: blendMode = 'avg'
+74.6366 	EXP 	window1: blendMode = 'avg'
+74.6534 	EXP 	window1: blendMode = 'avg'
+74.6700 	EXP 	window1: blendMode = 'avg'
+74.6867 	EXP 	window1: blendMode = 'avg'
+74.7034 	EXP 	window1: blendMode = 'avg'
+74.7200 	EXP 	window1: blendMode = 'avg'
+74.7372 	EXP 	window1: blendMode = 'avg'
+74.7537 	EXP 	window1: blendMode = 'avg'
+74.7703 	EXP 	window1: blendMode = 'avg'
+74.7870 	EXP 	window1: blendMode = 'avg'
+74.8036 	EXP 	window1: blendMode = 'avg'
+74.8202 	EXP 	window1: blendMode = 'avg'
+74.8370 	EXP 	window1: blendMode = 'avg'
+74.8541 	EXP 	window1: blendMode = 'avg'
+74.8706 	EXP 	window1: blendMode = 'avg'
+74.8871 	EXP 	window1: blendMode = 'avg'
+74.9039 	EXP 	window1: blendMode = 'avg'
+74.9204 	EXP 	window1: blendMode = 'avg'
+74.9371 	EXP 	window1: blendMode = 'avg'
+74.9539 	EXP 	window1: blendMode = 'avg'
+74.9705 	EXP 	window1: blendMode = 'avg'
+74.9873 	EXP 	window1: blendMode = 'avg'
+75.0037 	EXP 	window1: blendMode = 'avg'
+75.0205 	EXP 	window1: blendMode = 'avg'
+75.0373 	EXP 	window1: blendMode = 'avg'
+75.0539 	EXP 	window1: blendMode = 'avg'
+75.0706 	EXP 	window1: blendMode = 'avg'
+75.0876 	EXP 	window1: blendMode = 'avg'
+75.1042 	EXP 	window1: blendMode = 'avg'
+75.1209 	EXP 	window1: blendMode = 'avg'
+75.1373 	EXP 	window1: blendMode = 'avg'
+75.1541 	EXP 	window1: blendMode = 'avg'
+75.1709 	EXP 	window1: blendMode = 'avg'
+75.1874 	EXP 	window1: blendMode = 'avg'
+75.2043 	EXP 	window1: blendMode = 'avg'
+75.2210 	EXP 	window1: blendMode = 'avg'
+75.2375 	EXP 	window1: blendMode = 'avg'
+75.2544 	EXP 	window1: blendMode = 'avg'
+75.2713 	EXP 	window1: blendMode = 'avg'
+75.2877 	EXP 	window1: blendMode = 'avg'
+75.3044 	EXP 	window1: blendMode = 'avg'
+75.3212 	EXP 	window1: blendMode = 'avg'
+75.3376 	EXP 	window1: blendMode = 'avg'
+75.3544 	EXP 	window1: blendMode = 'avg'
+75.3712 	EXP 	window1: blendMode = 'avg'
+75.3883 	EXP 	window1: blendMode = 'avg'
+75.4045 	EXP 	window1: blendMode = 'avg'
+75.4213 	EXP 	window1: blendMode = 'avg'
+75.4377 	EXP 	window1: blendMode = 'avg'
+75.4547 	EXP 	window1: blendMode = 'avg'
+75.4715 	EXP 	window1: blendMode = 'avg'
+75.4880 	EXP 	window1: blendMode = 'avg'
+75.5046 	EXP 	window1: blendMode = 'avg'
+75.5213 	EXP 	window1: blendMode = 'avg'
+75.5381 	EXP 	window1: blendMode = 'avg'
+75.5548 	EXP 	window1: blendMode = 'avg'
+75.5715 	EXP 	window1: blendMode = 'avg'
+75.5880 	EXP 	window1: blendMode = 'avg'
+75.6048 	EXP 	window1: blendMode = 'avg'
+75.6216 	EXP 	window1: blendMode = 'avg'
+75.6381 	EXP 	window1: blendMode = 'avg'
+75.6550 	EXP 	window1: blendMode = 'avg'
+75.6716 	EXP 	window1: blendMode = 'avg'
+75.6882 	EXP 	window1: blendMode = 'avg'
+75.7049 	EXP 	window1: blendMode = 'avg'
+75.7217 	EXP 	window1: blendMode = 'avg'
+75.7384 	EXP 	window1: blendMode = 'avg'
+75.7552 	EXP 	window1: blendMode = 'avg'
+75.7718 	EXP 	window1: blendMode = 'avg'
+75.7885 	EXP 	window1: blendMode = 'avg'
+75.8050 	EXP 	window1: blendMode = 'avg'
+75.8219 	EXP 	window1: blendMode = 'avg'
+75.8384 	EXP 	window1: blendMode = 'avg'
+75.8552 	EXP 	window1: blendMode = 'avg'
+75.8719 	EXP 	window1: blendMode = 'avg'
+75.8892 	EXP 	window1: blendMode = 'avg'
+75.9054 	EXP 	window1: blendMode = 'avg'
+75.9225 	EXP 	window1: blendMode = 'avg'
+75.9388 	EXP 	window1: blendMode = 'avg'
+75.9553 	EXP 	window1: blendMode = 'avg'
+75.9723 	EXP 	window1: blendMode = 'avg'
+75.9886 	EXP 	window1: blendMode = 'avg'
+76.0056 	EXP 	window1: blendMode = 'avg'
+76.0222 	EXP 	window1: blendMode = 'avg'
+76.0388 	EXP 	window1: blendMode = 'avg'
+76.0557 	EXP 	window1: blendMode = 'avg'
+76.0558 	EXP 	Sound  stopped
+76.0786 	EXP 	Imported visual_run1_5.xlsx as conditions, 48 conditions, 6 params
+76.0789 	EXP 	Created sequence: sequential, trialTypes=48, nReps=1, seed=None
+76.0793 	EXP 	New trial (rep=0, index=0): {'word': 1, 'location': 1, 'image': u'M.png', 'repetition': 10, 'trialnum': 97, 'condition': u'S'}
+76.1048 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+76.1048 	EXP 	l_block_trial_image: image = u'M.png'
+76.1048 	EXP 	l_block_trial_image: autoDraw = True
+76.8898 	EXP 	l_block_trial_image: autoDraw = False
+76.8898 	EXP 	l_block_trial_blank: autoDraw = True
+77.0573 	EXP 	New trial (rep=0, index=1): {'word': 1, 'location': 2, 'image': u'K.png', 'repetition': 10, 'trialnum': 98, 'condition': u'S'}
+77.0834 	EXP 	l_block_trial_image: autoDraw = False
+77.0834 	EXP 	l_block_trial_blank: autoDraw = False
+77.0834 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+77.0834 	EXP 	l_block_trial_image: image = u'K.png'
+77.0834 	EXP 	l_block_trial_image: autoDraw = True
+77.8745 	EXP 	l_block_trial_image: autoDraw = False
+77.8745 	EXP 	l_block_trial_blank: autoDraw = True
+78.0595 	EXP 	New trial (rep=0, index=2): {'word': 1, 'location': 3, 'image': u'B.png', 'repetition': 10, 'trialnum': 99, 'condition': u'S'}
+78.0846 	EXP 	l_block_trial_image: autoDraw = False
+78.0846 	EXP 	l_block_trial_blank: autoDraw = False
+78.0846 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+78.0846 	EXP 	l_block_trial_image: image = u'B.png'
+78.0846 	EXP 	l_block_trial_image: autoDraw = True
+78.8760 	EXP 	l_block_trial_image: autoDraw = False
+78.8760 	EXP 	l_block_trial_blank: autoDraw = True
+79.0606 	EXP 	New trial (rep=0, index=3): {'word': 2, 'location': 1, 'image': u'A.png', 'repetition': 8, 'trialnum': 100, 'condition': u'S'}
+79.0786 	DATA 	Keypress: escape
+79.0869 	EXP 	l_block_trial_image: autoDraw = False
+79.0869 	EXP 	l_block_trial_blank: autoDraw = False
+79.0869 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+79.0869 	EXP 	l_block_trial_image: image = u'A.png'
+79.0869 	EXP 	l_block_trial_image: autoDraw = True
+79.8779 	EXP 	l_block_trial_image: autoDraw = False
+79.8779 	EXP 	l_block_trial_blank: autoDraw = True
+80.0618 	EXP 	New trial (rep=0, index=4): {'word': 2, 'location': 2, 'image': u'J.png', 'repetition': 8, 'trialnum': 101, 'condition': u'S'}
+80.0874 	EXP 	l_block_trial_image: autoDraw = False
+80.0874 	EXP 	l_block_trial_blank: autoDraw = False
+80.0874 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+80.0874 	EXP 	l_block_trial_image: image = u'J.png'
+80.0874 	EXP 	l_block_trial_image: autoDraw = True
+80.8794 	EXP 	l_block_trial_image: autoDraw = False
+80.8794 	EXP 	l_block_trial_blank: autoDraw = True
+81.0633 	EXP 	New trial (rep=0, index=5): {'word': 2, 'location': 3, 'image': u'F.png', 'repetition': 8, 'trialnum': 102, 'condition': u'S'}
+81.0891 	EXP 	l_block_trial_image: autoDraw = False
+81.0891 	EXP 	l_block_trial_blank: autoDraw = False
+81.0891 	EXP 	l_block_trial_image: size = array([ 0.5       ,  1.07407407])
+81.0891 	EXP 	l_block_trial_image: image = u'F.png'
+81.0891 	EXP 	l_block_trial_image: autoDraw = True
+81.3970 	DATA 	Keypress: escape
