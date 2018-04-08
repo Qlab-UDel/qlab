@@ -1,0 +1,76 @@
+---
+title: "ABCD_other_data"
+author: "An Nguyen"
+date: "April 3, 2018"
+output: html_document
+---
+
+```{r, echo=FALSE,warning=FALSE,include=FALSE}
+library(readr)
+library(nortest)
+
+#This script works on the big data ABCD file with everyone's information on IQ, Language measurements etc.
+
+#calculate delta for rotary
+delta<-NULL
+for (i in seq(from=1,to=length(ABCD$Group),by=1)){delta <- append(delta, - mean(c(as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 1: Sec on; Sec off`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 2: Sec on; Sec off`[i],split=';')[[1]][[1]]))) + mean(c(as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 16: Sec on; Sec off`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 15: Sec on; Sec off`[i],split=';')[[1]][[1]]))))}
+
+#delta mirror on
+mirror <- NULL
+for (i in seq(from=1,to=length(ABCD$Group),by=1)){mirror <- append(mirror, - mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 2: Completion time; Errors`[i],split=';')[[1]][[1]]))) + mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 9: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 10: Completion time; Errors`[i],split=';')[[1]][[1]]))))}
+
+#delta mirror off
+mirror_off<-NULL
+for (i in seq(from=1,to=length(ABCD$Group),by=1)){
+  if(is.na(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i])){mirror_off<-append(mirror_off,0)}
+  else {mirror_off <- append(mirror_off, - mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[2]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 2: Completion time; Errors`[i],split=';')[[1]][[2]]))) + mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 9: Completion time; Errors`[i],split=';')[[1]][[2]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 10: Completion time; Errors`[i],split=';')[[1]][[2]]))))}}
+
+#Save this to a file: write.csv(ABCD, "ABCD1.csv")
+
+#then import the file ABCD <- read_csv("~/ABCD1.csv")
+
+```
+
+#Test for significant difference between the two groups on age, IQ, and gender ratio. There's no significant difference.
+```{r,echo=FALSE,warning=FALSE}
+
+wilcox.test(ABCD$`Age with month`[ABCD$Group=="DD"],ABCD$`Age with month`[ABCD$Group=="TYP"])
+wilcox.test(ABCD$`KBIT-2 Matrices: Standard Score`[ABCD$Group=="DD"],ABCD$`KBIT-2 Matrices: Standard Score`[ABCD$Group=="TYP"])
+ABCD$Sex <- as.factor(ABCD$Sex)
+wilcox.test(as.numeric(ABCD$Sex)[ABCD$Group=="DD"],as.numeric(ABCD$Sex)[ABCD$Group=="TYP"])
+
+```
+
+#Other measurements that are significantly different
+###Mirror_delta_completion_time, CTOPP, TOWRE, WRMT, GORT
+```{r,echo=FALSE,warning=FALSE}
+#ad.test(ABCD$Rotary_Delta)
+#ad.test(ABCD$CTOPP_TOTAL)
+#ad.test(ABCD$`WAIS-4 DS Total: Standard Score`)
+#ad.test(ABCD$`TOWRE-2 Total Word Reading Efficiency Index: Standard Score`)
+
+wilcox.test(ABCD$Mirror_delta_on[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"])
+wilcox.test(ABCD$CTOPP_TOTAL[ABCD$Group=="DD"],ABCD$CTOPP_TOTAL[ABCD$Group=="TYP"])
+wilcox.test(ABCD$`TOWRE-2 Total Word Reading Efficiency Index: Standard Score`[ABCD$Group=="DD"],ABCD$`TOWRE-2 Total Word Reading Efficiency Index: Standard Score`[ABCD$Group=="TYP"])
+wilcox.test(ABCD$`WRMT-3 Basic Skills: Standard Score`[ABCD$Group=="DD"],ABCD$`WRMT-3 Basic Skills: Standard Score`[ABCD$Group=="TYP"])
+wilcox.test(ABCD$`WRMT-3 Word Attack: Standard Score`[ABCD$Group=="DD"],ABCD$`WRMT-3 Word Attack: Standard Score`[ABCD$Group=="TYP"])
+wilcox.test(ABCD$`GORT-5 ORI: Standard Score`[ABCD$Group=="DD"],ABCD$`GORT-5 ORI: Standard Score`[ABCD$Group=="TYP"])
+
+```
+
+
+#Other measurements that are not significantly different 
+###Rotary_delta, Mirror_delta_error,WAIS
+```{r,echo=FALSE,warning=FALSE}
+wilcox.test(ABCD$Rotary_Delta[ABCD$Group=="DD"],ABCD$Rotary_Delta[ABCD$Group=="TYP"])
+wilcox.test(ABCD$Mirror_delta_off1[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"])
+wilcox.test(ABCD$`WAIS-4 DS Total: Standard Score`[ABCD$Group=="DD"],ABCD$`WAIS-4 DS Total: Standard Score`[ABCD$Group=="TYP"])
+```
+
+
+```{r, include=FALSE}
+#Run cor test on vsl acc, rt slope and mirror:
+#cor.test(ABCD1$VSL_RT_SLOPE[ABCD1$Group=="DD"],ABCD1$Mirror_delta_on[ABCD1$Group=="DD"],method="spearman")
+#cor.test(ABCD1$VSL_RT_SLOPE[ABCD1$Group=="DD"],ABCD1$Mirror_delta_off1[ABCD1$Group=="DD"],method="spearman")
+
+```

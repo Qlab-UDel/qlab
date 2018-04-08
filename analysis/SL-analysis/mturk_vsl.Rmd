@@ -1,0 +1,318 @@
+---
+title: "vsl_analysis"
+author: "An Nguyen"
+date: "November 9, 2017"
+output: html_document
+header-includes:
+  - \usepackage{color}
+---
+\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
+\definecolor{violet}{rgb}{0.19, 0.55, 0.91}
+```{r,echo=FALSE,warning=FALSE,include=FALSE}
+#Loading library
+library(ggplot2)
+library(knitr)
+library(readr)
+library(psych)
+library(ppcor)
+library(nortest)
+
+```
+
+
+```{r,echo=FALSE}
+#importing files
+total_vsl_trial <- 24
+language_1 = list(1,2,2,2,1,1,2,1,1,2,1,2,1,1,2,2,1,1,2,1,2,2,1,2,2,2,1,2,1,2,1,1)
+language_2 = list(1,1,2,1,1,1,2,2,2,2,1,1,1,2,2,1,2,2,1,1,2,1,2,1,2,1,2,1,1,2,2,2)
+
+vsl <- read_csv("Z:/projects/mturk/raw/cleaned_data/vsl2.csv")
+wj3 <- read.csv("C:/Users/Qlab/Downloads/mturk/mturk_data/wj3_score.csv")
+scf <-  read.csv("C:/Users/Qlab/Downloads/mturk/mturk_data/scf.csv")
+
+
+#Clean data
+
+vsl$stimulus<- gsub(".jpg","",vsl$stimulus)
+vsl$stimulus<- gsub("../../images/","",vsl$stimulus)
+
+```
+
+
+```{r,echo=FALSE}
+#analysis on RT
+
+fam_block <- vsl[which(vsl$trial_index<=300 & vsl$trial_index>=13),]
+fam_block <- fam_block[!(fam_block$stimulus=="../../vsl_audio/sound_instruct/vsl_instr7.wav" & fam_block$stimulus=="../../vsl_audio/vsl_instr_between.wav"),]
+fam_block$targ <- paste(fam_block$targ)
+fam_block$stimulus <- paste(fam_block$stimulus)
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+
+#Extract the row number in which the stimulus is the target
+row_number <- which(fam_block$targ==fam_block$stimulus)
+
+#Extract the response time and trial number when stimulus is the target
+for (i in row_number){
+        rt_col <- append(rt_col,fam_block[i,][,"rt"])
+        trial <- append(trial,fam_block[i,][,"trial_index"])
+        id <- append(id,paste(fam_block[i,]$par_id))
+    if (fam_block[i-1,][,"rt"]!=-1){
+        rt_col[(match(i,row_number))] <- -(1000-fam_block[i-1,][,"rt"])
+        
+    }}
+
+fam_trial <- data.frame(unlist(trial),unlist(rt_col),id)
+colnames(fam_trial) <- c("trial","rt_col","id")
+
+#Re-index the trial number of the response so that it ranges from 1-24 (because there are 24 stimuli in total)
+reindex <- rep(1:total_vsl_trial,length(fam_trial$trial)/24)
+fam_trial$reindex <- reindex
+
+hit_rate <- NULL
+miss_rate <- NULL
+correct_rejection <- NULL
+false_alarm <- NULL
+mean_rt <- NULL
+rt_slope <- NULL
+timeline <- c(rep("first half",total_vsl_trial/2),rep("second half",total_vsl_trial/2))
+timeline <- rep(timeline,length(fam_trial$trial)/24)
+fam_trial$timeline <- timeline
+mean_table <- fam_trial[which(fam_trial$rt_col!=-1 & fam_trial$rt_col<1000 & fam_trial$rt_col>-1000), ] #only accept answers in range of -1000 < x < 1000
+
+#exclude people who only have one rt point, so rtslope cannot be computed
+mean_table <- mean_table[mean_table$id!="mtslAG1213",]
+
+#vsl2
+#mean_table <- mean_table[mean_table$id!="A1FDP7EMSL9T9F",]
+#mean_table <- mean_table[mean_table$id!="mtslen0591",]
+#mean_table <- mean_table[mean_table$id!="mtslmd1085",]
+
+list_vsl_id <- unique(mean_table$id)
+
+#Extract the mean response time, rt slope, hit rate, miss rat, correct rejection, and false alarm for each participant
+for(id in list_vsl_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+ rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+  hit_rate<-append(hit_rate,round(sum(!is.na(mean_table$rt_col[mean_table$id==id]))/total_vsl_trial,digits =2))
+  miss_rate<-append(miss_rate,round(sum(fam_trial$rt_col[fam_trial$id==id]==-1)/total_vsl_trial,digits=2))
+  correct_rejection <- append(correct_rejection, round(sum(fam_block$rt[fam_block$par_id==id]==-1 & fam_block$targ[fam_block$par_id==id]!=fam_block$stimulus[fam_block$par_id==id])/264,digits=2)) #264 is the total number of stimuli in the familiarization block
+  false_alarm <- append(false_alarm, round(sum(fam_block$rt[fam_block$par_id==id]!=-1 & fam_block$targ[fam_block$par_id==id]!=fam_block$stimulus[fam_block$par_id==id])/264,digits=2))
+}
+
+subj_table <- data.frame(list_vsl_id,mean_rt, rt_slope,hit_rate, miss_rate,correct_rejection,false_alarm)
+dprime<-NULL
+for (i in seq(from=1,to=length(subj_table$list_vsl_id),by=1)){dprime<-append(dprime,qnorm(subj_table[i,]$hit_rate-0.00000001)-qnorm(subj_table[i,]$false_alarm+0.000000001))} #minus 0.000000001 to avoid perfect hit rate
+subj_table$dprime <- round(dprime,3)
+
+#Add Wj4 score into a column to look at SL performance and language skills
+wj3$ID<-gsub("_wj3.csv","",wj3$ID)
+for(id in wj3$ID){ subj_table$wj3_score[which(subj_table$list_vsl_id==id)]<-wj3$total[wj3$ID==id]}
+
+for(id in scf$ID){ subj_table$gender[which(subj_table$list_vsl_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in scf$ID){ subj_table$handedness[which(subj_table$list_vsl_id==id)]<-paste(scf$Hand[scf$ID==id])}
+for(id in scf$ID){ subj_table$Language[which(subj_table$list_vsl_id==id)]<-paste(scf$Language[scf$ID==id])}
+for(id in scf$ID){ subj_table$age[which(subj_table$list_vsl_id==id)]<-paste(scf$age[scf$ID==id])}
+subj_table$Language <- as.numeric(subj_table$Language)
+subj_table$age <- as.numeric(subj_table$age)
+
+lowerbound <- mean(subj_table$rt_slope) - 2.5*sd(subj_table$rt_slope)
+upperbound <- mean(subj_table$rt_slope) + 2.5*sd(subj_table$rt_slope)
+subj_table <- subj_table[subj_table$rt_slope>=lowerbound,]
+subj_table <- subj_table[subj_table$rt_slope<=upperbound,]
+
+subset2<- subj_table[subj_table$Language>=20,]
+subset1 <- subj_table[subj_table$gender!="Other",]
+```
+
+
+
+```{r,echo=FALSE}
+#Extract the testing phase
+#test block
+ test_block <- vsl[which(vsl$trial_index<=532 & vsl$trial_index>=308),]
+#test_block <- test_block[!(test_block$stimulus=="../../vsl_audio/sound_instruct/vsl_instr14.wav"),]
+test_block <- test_block[!(test_block$stimulus=="" & test_block$key_press==-1),]
+
+ans <- NULL
+keyv <- NULL
+subj <- NULL
+cond<- NULL
+#Extract rows in which the participant gives a response
+ row_numberv <- which(test_block$key_press != -1 & is.na(test_block$stimulus)) #In older version of R - it would be test_block$stimulus==""   so if this line doesn't run correctly, you can try changing the latter part
+  for (i in row_numberv){
+    ans<-append(ans,test_block[i,]$key_press)
+    subj <- append(subj,paste(test_block[i,]$par_id))
+    cond <- append(cond,paste(test_block[i,]$cond))
+  }
+  
+vsl_accuracy <- data.frame(ans,subj,cond)
+vsl_accuracy <- vsl_accuracy[!(vsl_accuracy$ans==32),]
+vsl_cond <- NULL
+for (i in seq(from=1,to=length(vsl_accuracy$cond),by=32)){vsl_cond<-append(vsl_cond,as.character(vsl_accuracy[i,]$cond))}
+
+keyv<- NULL
+
+#Match the language condition with the correct answer key
+
+for(cond in vsl_cond){
+    if (cond=="lang1"){keyv<-append(keyv,language_1)}
+    else if (cond=="lang2"){keyv<-append(keyv,language_2)}}
+
+
+
+acc_id <- unique(vsl_accuracy$subj)
+
+vsl_accuracy$key <- keyv
+
+#Substitute the key press (49,50) with the answer (1,2)
+vsl_accuracy$ans <- gsub(50,2,vsl_accuracy$ans)
+vsl_accuracy$ans <- gsub(49,1,vsl_accuracy$ans)
+
+#Loop through and count the correct answer
+corr <- NULL
+for (i in seq(from=1,to=length(vsl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(vsl_accuracy[i,]$ans==vsl_accuracy[i,]$key))}
+vsl_accuracy$corr <- corr
+subj_corr <- NULL
+for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(vsl_accuracy$corr[vsl_accuracy$subj==id])/32,digits=3))}
+vsl_acc_table <- data.frame(acc_id,subj_corr,vsl_cond)
+
+ for(id in scf$ID){ vsl_acc_table$age[which(vsl_acc_table$acc_id==id)]<-paste(scf$age[scf$ID==id])}
+
+for(id in scf$ID){ vsl_acc_table$gender[which(vsl_acc_table$acc_id==id)]<-paste(scf$Gender[scf$ID==id])}
+for(id in wj3$ID){ vsl_acc_table$wj3_score[which(vsl_acc_table$acc_id==id)]<-wj3$total[wj3$ID==id]}
+for(id in scf$ID){ vsl_acc_table$hand[which(vsl_acc_table$acc_id==id)]<-paste(scf$Hand[scf$ID==id])}
+
+ for(id in scf$ID){ vsl_acc_table$Language[which(vsl_acc_table$acc_id==id)]<-paste(scf$Language[scf$ID==id])}
+vsl_acc_table$Language <- as.numeric(vsl_acc_table$Language)
+vsl_acc_table$age <- as.numeric(vsl_acc_table$age)
+
+```
+
+
+### Cronbach's alpha score for the consistency of the vsl Accuracy task is 0.89. The consistency of the questions in this task is good.
+```{r,echo=FALSE,warning=FALSE}
+#d <- matrix(nrow=145,ncol=32)
+#for(i in seq(from=1,to=145,by=1)){d[i,] <- rbind(vsl_accuracy$corr[((i-1)*32+1):(i*32)])}
+#psych::alpha(d,check.keys = TRUE)$total$std.alpha
+
+#Calculate cronbach's alpha for language 1
+vsl_lang1 <- vsl_accuracy[vsl_accuracy$cond=='lang1',]
+d1 <- matrix(nrow=74,ncol=32)
+for(i in seq(from=1,to=74,by=1)){d1[i,] <- rbind(vsl_lang1$corr[((i-1)*32+1):(i*32)])}
+a1 <- psych::alpha(d1,check.keys = TRUE)$total$std.alpha
+
+#Calculate cronbach's alpha for language 2
+vsl_lang2 <- vsl_accuracy[vsl_accuracy$cond=='lang2',]
+d2 <- matrix(nrow=71,ncol=32)
+for(i in seq(from=1,to=71,by=1)){d2[i,] <- rbind(vsl_lang2$corr[((i-1)*32+1):(i*32)])}
+a2 <- psych::alpha(d2,check.keys = TRUE)$total$std.alpha
+
+#Calculate the mean cronbach's alpha 
+alpha <- mean(a1,a2)
+print(alpha)
+
+#ad.test(subj_table$rt_slope)
+#ad.test(vsl_acc_table$subj_corr)
+#ad.test(subj_table$wj3_score)
+#ad.test(subj_table$age)
+
+
+```
+
+
+#Testing SL ability through the task:
+###Looking at RT 
+
+```{r,echo=FALSE,warning=FALSE}
+t.test(subj_table$rt_slope,mu=0,alternative="less")
+
+ggplot(mean_table,aes(y=rt_col,x=reindex))+geom_point(color='deepskyblue3') + geom_smooth(method='lm') + labs(x="Trial Index", y="Response time (ms)",title="Resposne time by trial index in VSL")
+
+```
+
+###Looking at Accuracy: the mean accuracy of this task is above chance (50%)
+```{r,echo=FALSE}
+t.test(vsl_acc_table$subj_corr,mu=0.5,alternative="greater")
+```
+
+```{r,echo=FALSE,warning=FALSE,include=FALSE}
+#RT by WJ4 score
+ggplot(subj_table[subj_table$wj3_score>25,],aes(y=mean_rt,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by WJ4 score in vsl") + ylim(c(100,700))
+
+#RT Slope by WJ4
+ggplot(subj_table[subj_table$wj3_score>25,],aes(y=rt_slope,x=wj3_score))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time slope",title="Resposne time slope by WJ4 score in VSL")  + ylim(c(-15,15))
+
+#RT slope  vs WJ4 score by gender
+qplot(wj3_score,rt_slope,data=subset1[subset1$wj3_score>25,],facets=(. ~ gender),color= gender, main="vsl RT slope vs WJ4 scpre by gender", ylab="RT Slope", xlab="WJ4 score", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Gender")
+
+
+#Mean rt vs WJ4 score by Handedness
+qplot(wj3_score,mean_rt,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="vsl RT by Handedness", ylab="Response time", xlab="Trial index", ylim=c(100,600)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+#RT Slope vs WJ4 score by Handedness
+qplot(wj3_score,rt_slope,data=subj_table[subj_table$wj3_score>25,],facets=(. ~ handedness),color= handedness, main="vsl RT slope by Handedness", ylab="Response time", xlab="Trial index", ylim=c(-15,15)) + geom_smooth(method='lm') + scale_color_discrete(name="Handedness")
+
+
+
+#RT by Language
+ggplot(subset2,aes(y=mean_rt,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time by Language score in vsl") + ylim(c(100,700))
+#RT Slope by Language
+ggplot(subset2,aes(y=rt_slope,x=Language))+geom_point(color='sienna') + geom_smooth(method='lm',color="sienna1") + labs(x="WJ4 Score", y="Response time (ms)",title="Resposne time slope by Language score in vsl") + ylim(c(-15,15))
+
+
+
+
+
+```
+
+
+## A simple correlation test between WJ4 score and RT Slope, controlling for age
+```{r,echo=FALSE}
+
+#correlation test between rt slope and wj4 score
+pcor.test(subj_table$rt_slope, subj_table$wj3_score,subj_table$age,method="spearman")
+```
+
+## A simple correlation test between WJ4 score and Accuracy, controlling for age
+```{r,echo=FALSE}
+
+#correlation test between rt slope and wj4 score
+pcor.test(vsl_acc_table$subj_cor,vsl_acc_table$wj3_score,vsl_acc_table$age,method="spearman")
+```
+
+##RT slope and other factors
+```{r,echo=FALSE}
+a<-lm(formula = subj_corr ~ wj3_score * age + as.factor(hand) + as.factor(gender), data = vsl_acc_table)
+summary(a)
+```
+##Accuracy and other factors
+```{r,echo=FALSE}
+a1<-lm(formula = rt_slope ~ wj3_score * age + as.factor(handedness) + as.factor(gender), data = subj_table)
+summary(a1)
+```
+
+
+
+
+```{r,echo=FALSE}
+#table_output <- subj_table[,c("list_vsl_id","mean_rt","rt_slope","dprime")]
+#a <- seq(1,141,1)
+#new_id <- sprintf("mtsl_%03d", a)
+#table_output$list_vsl_id<-new_id
+#colnames(table_output) <- c("ID","Mean RT","RT Slope","D'")
+#kable(table_output)
+```
+
+
+```{r,echo=FALSE}
+#table_output2 <- vsl_acc_table[,c("acc_id","subj_corr","vsl_cond")]
+#a <- seq(1,145,1)
+#new_id <- sprintf("mtsl_%03d", a)
+#table_output2$acc_id<-new_id
+#colnames(table_output2) <- c("ID","accuracy(%)","condition")
+#kable(table_output2)
+```
+
