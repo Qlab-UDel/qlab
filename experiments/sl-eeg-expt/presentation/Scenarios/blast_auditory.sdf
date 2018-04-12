@@ -1,0 +1,12 @@
+# MMN
+
+all_stim: event_type != "Response"
+snd_stim: event_name == "Stim"
+event_table all_events( event_name, time, time_uncertainty )
+event_table my_table( trial_number, stim_number, stim_type, p_code, ISI_duration, time, time_uncertainty )
+
+#print "Event Type\tEvent Code\tOnset Time\tUncertainty(ms)"
+#print all_events( all_stim, "\t", "\n", no_header_row )
+
+print "Trial Number\tStimulus Number\tStimulus Type\tPort Code\tISI Duration\tOnset Time\tUncertainty(ms)"
+print my_table( snd_stim, "\t", "\n", no_header_row )
