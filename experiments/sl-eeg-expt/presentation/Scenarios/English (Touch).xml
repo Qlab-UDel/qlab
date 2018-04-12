@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<experiment_text language="English">
+  <map name="default">
+    <item key="Instructions">In this experiment, you will hear some noises over the headphones. You do not need to pay attention to those noises, and there is no task required of you.
+
+Touch the screen when you are ready to begin!</item>
+    <item key="No Video Instructions">In this experiment, you will hear some noises over the headphones. You do not need to pay attention to those noises, and there is no task required of you.
+
+Touch the screen when you are ready to begin!</item>
+    <item key="Ready Caption">Ready</item>
+    <item key="Set Caption">Set</item>
+    <item key="Go Caption">Go</item>
+    <item key="Completion Screen Caption">You have completed the experiment. Thank you for participating. Touch the screen to exit the program.</item>
+    <item key="Word Wrap Mode">Word</item>
+  </map>
+</experiment_text>

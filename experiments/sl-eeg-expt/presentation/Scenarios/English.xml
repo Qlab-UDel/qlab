@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<experiment_text language="English">
+  <map name="default">
+    <item key="Instructions">Press the green button whenever you see one of these two robots appears!
+</item>
+
+<item key="Ready Caption">Ready</item>
+    <item key="Set Caption">Set</item>
+    <item key="Go Caption">Go</item>
+       <item key="Completion Screen Caption">You have completed the experiment. Thank you for participating. Press the SPACE BAR to exit the program.</item>
+    <item key="Word Wrap Mode">Word</item>
+  </map>
+</experiment_text>
