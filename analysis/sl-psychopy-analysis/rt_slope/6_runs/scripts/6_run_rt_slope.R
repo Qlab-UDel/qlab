@@ -19,7 +19,7 @@
 # Prepare workspace ------------------------------------------------------------------------------------------------------
 
 #Set correct working directory
-setwd("/Users/jasinskagroup/Desktop/QLAB/psychopy_sl_beh-master/rt_slope/6_runs/scripts")
+setwd("Documents/qlab/analysis/sl-psychopy-analysis/rt_slope/6_runs/scripts/")
 
 
 # Remove objects in environment
@@ -585,6 +585,10 @@ for (i in structure_lsl_targets) {
   else if (!is.na(trials_1_3[i+1,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
     rt_col[(match(i, structure_lsl_targets))] <- 1+trials_1_3[i+1, ][,"l_block_trial_key_resp.rt"]}
+  # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
+  else if (i>0){ 
+    # Count their response time from the target stimulus (NA)
+    rt_col <- append (rt_col, trials_1_3[i,][,"l_block_trial_key_resp.rt"])}  
   # If the participant responded during the stimulus preceding the target
   else if (!is.na(trials_1_3[i-1,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time as how much sooner they responded than when the stimulus was presented
@@ -687,6 +691,10 @@ for (i in structured_vsl_targets) {
   else if (!is.na(trials_4_6[i+1,] [,"v_block_trial_key_resp.rt"])){
     # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
     rt_col[(match(i, structured_vsl_targets))] <- 1+trials_4_6[i+1, ][,"v_block_trial_key_resp.rt"]}
+  # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
+  else if (i>0){ 
+    # Count their response time from the target stimulus (NA)
+    rt_col <- append (rt_col, trials_1_3[i,][,"v_block_trial_key_resp.rt"])}    
   # If the participant responded during the stimulus preceding the target
   else if (!is.na(trials_4_6[i-1,] [,"v_block_trial_key_resp.rt"])){
     # Count their response time as how much sooner they responded than when the stimulus was presented
@@ -793,6 +801,10 @@ for (i in random_lsl_targets) {
   else if (!is.na(trials_4_6[i+1,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
     rt_col[(match(i, random_lsl_targets))] <- 1+trials_4_6[i+1, ][,"l_block_trial_key_resp.rt"]}
+  # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
+  else if (i>0){ 
+    # Count their response time from the target stimulus (NA)
+    rt_col <- append (rt_col, trials_1_3[i,][,"v_block_trial_key_resp.rt"])}    
   # If the participant responded during the stimulus preceding the target
   else if (!is.na(trials_4_6[i-1,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time as how much sooner they responded than when the stimulus was presented
@@ -979,14 +991,56 @@ visual_rt<- rbind(RLSL, RVSL, SLSL, SVSL)
 # Bind auditory conditions
 auditory_rt<- rbind(RTSL, RSSL, STSL, SSSL)
 # Bind all conditions
-all_rt <- rbind(RLSL, RSSL, RTSL, RVSL, SLSL, SSSL, STSL, SVSL)
+indiv_rt <- rbind(RLSL, RSSL, RTSL, RVSL, SLSL, SSSL, STSL, SVSL)
 
 setwd("../output_files/")
 
-write.csv(all_rt, "6_runs_rt_slope_indiv.csv")
+write.csv(indiv_rt, "6_runs_rt_slope_indiv.csv")
 
 
 # For internal checking only:
 #targets_per_task<-rbind(slsl_test,sssl_test, stsl_test, svsl_test)
 #write.csv(targets_per_task, "nov_pilot_targets.csv")
+
+
+# Find group-level mean accuracy accross tasks------------------------------------------------------------------------------------
+
+group_rt_slope <- NULL
+mean_struct_rt_slope <- NULL
+mean_rand_rt_slope <- NULL
+task <- NULL
+
+# Find mean LSL accuracy across participants
+task <- append (task, paste ("lsl"))
+mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="structured" 
+                                                                                & indiv_rt$task== "LSL"), ]$rt_slope), digits =3))
+mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="random" 
+                                                                            & indiv_rt$task== "LSL"), ]$rt_slope), digits =3))
+
+# Find mean SSL accuracy across participants
+task <- append (task, paste ("ssl"))
+mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="structured" 
+                                                                                & indiv_rt$task== "SSL"), ]$rt_slope), digits =3))
+mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="random" 
+                                                                            & indiv_rt$task== "SSL"), ]$rt_slope), digits =3))
+
+# Find mean TSL accuracy across participants
+task <- append (task, paste ("tsl"))
+mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="structured" 
+                                                                                & indiv_rt$task== "TSL"), ]$rt_slope), digits =3))
+mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="random" 
+                                                                            & indiv_rt$task== "TSL"), ]$rt_slope), digits =3))
+
+# Find mean VSL accuracy across participants
+task <- append (task, paste ("vsl"))
+mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="structured" 
+                                                                                & indiv_rt$task== "VSL"), ]$rt_slope), digits =3))
+mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="random" 
+                                                                            & indiv_rt$task== "VSL"), ]$rt_slope), digits =3))
+
+# Combine group accuracies into one data frame
+group_accuracy <- data.frame(cbind(task, mean_rand_rt_slope, mean_struct_rt_slope))
+
+setwd("../output_files/")
+write.csv(group_accuracy, "6_runs_rt_slope_group.csv")
 

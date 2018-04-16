@@ -20,7 +20,7 @@
 # Prepare workspace ------------------------------------------------------------------------------------------------------
 
 #Set correct working directory
-setwd("/Users/jasinskagroup/Desktop/QLAB/psychopy_sl_beh-master/rt_slope/nov_pilot/scripts")
+setwd("Documents/qlab/analysis/sl-psychopy-analysis/rt_slope/nov_pilot/scripts/")
 
 # Remove objects in environment
 rm(list=ls())
@@ -976,11 +976,53 @@ visual_rt<- rbind(RLSL, RVSL, SLSL, SVSL)
 # Bind auditory conditions
 auditory_rt<- rbind(RTSL, RSSL, STSL, SSSL)
 # Bind all conditions
-all_rt <- rbind(RLSL, RSSL, RTSL, RVSL, SLSL, SSSL, STSL, SVSL)
+indiv_rt <- rbind(RLSL, RSSL, RTSL, RVSL, SLSL, SSSL, STSL, SVSL)
 
 setwd("../output_files/")
 
-write.csv(all_rt, "nov_pilot_rt_indiv.csv")
+write.csv(indiv_rt, "nov_pilot_rt_slope_indiv.csv")
+
+# Find group-level mean accuracy accross tasks------------------------------------------------------------------------------------
+
+group_rt_slope <- NULL
+mean_struct_rt_slope <- NULL
+mean_rand_rt_slope <- NULL
+task <- NULL
+
+# Find mean LSL accuracy across participants
+task <- append (task, paste ("lsl"))
+mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="structured" 
+                                                                                & indiv_rt$task== "LSL"), ]$rt_slope), digits =3))
+mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="random" 
+                                                                            & indiv_rt$task== "LSL"), ]$rt_slope), digits =3))
+
+# Find mean SSL accuracy across participants
+task <- append (task, paste ("ssl"))
+mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="structured" 
+                                                                                & indiv_rt$task== "SSL"), ]$rt_slope), digits =3))
+mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="random" 
+                                                                            & indiv_rt$task== "SSL"), ]$rt_slope), digits =3))
+
+# Find mean TSL accuracy across participants
+task <- append (task, paste ("tsl"))
+mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="structured" 
+                                                                                & indiv_rt$task== "TSL"), ]$rt_slope), digits =3))
+mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="random" 
+                                                                            & indiv_rt$task== "TSL"), ]$rt_slope), digits =3))
+
+# Find mean VSL accuracy across participants
+task <- append (task, paste ("vsl"))
+mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="structured" 
+                                                                                & indiv_rt$task== "VSL"), ]$rt_slope), digits =3))
+mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt[ which(indiv_rt$type=="random" 
+                                                                            & indiv_rt$task== "VSL"), ]$rt_slope), digits =3))
+
+# Combine group accuracies into one data frame
+group_accuracy <- data.frame(cbind(task, mean_rand_rt_slope, mean_struct_rt_slope))
+
+setwd("../output_files/")
+write.csv(group_accuracy, "nov_pilot_rt_slope_group.csv")
+
 
 
 # For internal checking only:
@@ -998,21 +1040,21 @@ write.csv(all_rt, "nov_pilot_rt_indiv.csv")
 # library(reshape)
 # 
 # # use cast to summarize mean, sd, range of each task.
-# rt_sum <- cast(all_rt,domain~modality+type,value="rt_slope",range)
+# rt_sum <- cast(indiv_rt,domain~modality+type,value="rt_slope",range)
 # rt_sum
 # 
-# all_rt <- data.frame(matrix(ncol = 2, nrow = 0))
-# all_rt_names <- c("category", "rt_p_value")
-# colnames(all_rt) <- all_rt_names
+# indiv_rt <- data.frame(matrix(ncol = 2, nrow = 0))
+# indiv_rt_names <- c("category", "rt_p_value")
+# colnames(indiv_rt) <- indiv_rt_names
 # 
 # # Run t-tests for random/structured combined------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # 
-# rt_slope_t_test<-all_rt
+# rt_slope_t_test<-indiv_rt
 # 
 # # t-test on all lsl
 # all_lsl<-subset(rt_slope_t_test, task=="LSL")
-# all_rt$category <- append(all_rt$category, paste("LSL"))
-# all_rt$rt_p_value <- append(all_rt$rt_p_value, paste((t.test (all_lsl$rt_slope, mu =0, alternative= "less"))$p.value))
+# indiv_rt$category <- append(indiv_rt$category, paste("LSL"))
+# indiv_rt$rt_p_value <- append(indiv_rt$rt_p_value, paste((t.test (all_lsl$rt_slope, mu =0, alternative= "less"))$p.value))
 # 
 # # t-test on all ssl
 # all_ssl<-subset(rt_slope_t_test, task=="SSL")
@@ -1143,4 +1185,4 @@ write.csv(all_rt, "nov_pilot_rt_indiv.csv")
 # rt_p_value <- append(rt_p_value, paste((t.test (r_visual$rt_slope, mu =0, alternative= "less"))$p.value))
 # 
 # # Combine into one data frame
-# all_rt_p_values<- data.frame(category, rt_p_value)
+# indiv_rt_p_values<- data.frame(category, rt_p_value)
