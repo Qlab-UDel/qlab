@@ -555,7 +555,7 @@ trials_1_3 <- visual_data_frame[ which(visual_data_frame$Run < 4), ]
 trials_4_6 <- visual_data_frame[ which(visual_data_frame$Run > 3), ]
 
 
-# ******************** CONDITION 1: STRUCTURE_LSL*******************
+# ******************** CONDITION 1: STRUCTURED_LSL*******************
 
 
 # Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding/ following stimulus ---------------------------------------------
@@ -578,11 +578,7 @@ for (i in structure_lsl_targets) {
   if (!is.na(trials_1_3[i,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time from the target stimulus
     rt_col <- append (rt_col, trials_1_3[i,][,"l_block_trial_key_resp.rt"])}
-  # If the participant responded during the stimulus following the target
-  else if (!is.na(trials_1_3[i+1,] [,"l_block_trial_key_resp.rt"])){
-    # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
-    rt_col[(match(i, structure_lsl_targets))] <- 1+trials_1_3[i+1, ][,"l_block_trial_key_resp.rt"]}
-  # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
+    # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
   else if (i>0){ 
     # Count their response time from the target stimulus (NA)
     rt_col <- append (rt_col, trials_1_3[i,][,"l_block_trial_key_resp.rt"])}    
@@ -684,10 +680,6 @@ for (i in structured_vsl_targets) {
   if (!is.na(trials_4_6[i,] [,"v_block_trial_key_resp.rt"])){
     # Count their response time from the target stimulus
     rt_col <- append (rt_col, trials_4_6[i,][,"v_block_trial_key_resp.rt"])}
-  # If the participant responded during the stimulus following the target
-  else if (!is.na(trials_4_6[i+1,] [,"v_block_trial_key_resp.rt"])){
-    # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
-    rt_col[(match(i, structured_vsl_targets))] <- 1+trials_4_6[i+1, ][,"v_block_trial_key_resp.rt"]}
   # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
   else if (i>0){ 
     # Count their response time from the target stimulus (NA)
@@ -794,10 +786,6 @@ for (i in random_lsl_targets) {
   if (!is.na(trials_4_6[i,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time from the target stimulus
     rt_col <- append (rt_col, trials_4_6[i,][,"l_block_trial_key_resp.rt"])}
-  # If the participant responded during the stimulus following the target
-  else if (!is.na(trials_4_6[i+1,] [,"l_block_trial_key_resp.rt"])){
-    # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
-    rt_col[(match(i, random_lsl_targets))] <- 1+trials_4_6[i+1, ][,"l_block_trial_key_resp.rt"]}
   # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
   else if (i>0){ 
     # Count their response time from the target stimulus (NA)
@@ -904,10 +892,6 @@ for (i in random_vsl_targets) {
   if (!is.na(trials_1_3[i,] [,"v_block_trial_key_resp.rt"])){
     # Count their response time from the target stimulus
     rt_col <- append (rt_col, trials_1_3[i,][,"v_block_trial_key_resp.rt"])}
-  # If the participant responded during the stimulus following the target
-  else if (!is.na(trials_1_3[i+1,] [,"v_block_trial_key_resp.rt"])){
-    # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
-    rt_col[(match(i, random_vsl_targets))] <- 1+trials_1_3[i+1, ][,"v_block_trial_key_resp.rt"]}
   # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
   else if (i>0){ 
     # Count their response time from the target stimulus (NA)
