@@ -8,7 +8,7 @@
 #  ****************************************************************************
 
 #for test purposes only
-setwd("/Users/jasinskagroup/Desktop/QLAB/psychopy_sl_beh-master/rt_slope/nov_pilot/scripts")
+#setwd("/Users/jasinskagroup/Desktop/QLAB/psychopy_sl_beh-master/rt_slope/nov_pilot/scripts")
 
 # Remove objects in environment
 rm(list=ls())

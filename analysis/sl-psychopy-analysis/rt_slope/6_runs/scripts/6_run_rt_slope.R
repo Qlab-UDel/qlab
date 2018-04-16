@@ -585,10 +585,6 @@ for (i in structure_lsl_targets) {
   else if (!is.na(trials_1_3[i+1,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
     rt_col[(match(i, structure_lsl_targets))] <- 1+trials_1_3[i+1, ][,"l_block_trial_key_resp.rt"]}
-  # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
-  else if (i>0){ 
-    # Count their response time from the target stimulus (NA)
-    rt_col <- append (rt_col, trials_1_3[i,][,"l_block_trial_key_resp.rt"])}    
   # If the participant responded during the stimulus preceding the target
   else if (!is.na(trials_1_3[i-1,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time as how much sooner they responded than when the stimulus was presented
@@ -691,10 +687,6 @@ for (i in structured_vsl_targets) {
   else if (!is.na(trials_4_6[i+1,] [,"v_block_trial_key_resp.rt"])){
     # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
     rt_col[(match(i, structured_vsl_targets))] <- 1+trials_4_6[i+1, ][,"v_block_trial_key_resp.rt"]}
-  # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
-  else if (i>0){ 
-    # Count their response time from the target stimulus (NA)
-    rt_col <- append (rt_col, trials_4_6[i,][,"v_block_trial_key_resp.rt"])}    
   # If the participant responded during the stimulus preceding the target
   else if (!is.na(trials_4_6[i-1,] [,"v_block_trial_key_resp.rt"])){
     # Count their response time as how much sooner they responded than when the stimulus was presented
@@ -801,10 +793,6 @@ for (i in random_lsl_targets) {
   else if (!is.na(trials_4_6[i+1,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time as the duration that the target was presented (1000 ms) plus the response time to the following stimulus 
     rt_col[(match(i, random_lsl_targets))] <- 1+trials_4_6[i+1, ][,"l_block_trial_key_resp.rt"]}
-  # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
-  else if (i>0){ 
-    # Count their response time from the target stimulus (NA)
-    rt_col <- append (rt_col, trials_4_6[i,][,"l_block_trial_key_resp.rt"])}    
   # If the participant responded during the stimulus preceding the target
   else if (!is.na(trials_4_6[i-1,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time as how much sooner they responded than when the stimulus was presented
@@ -915,10 +903,6 @@ for (i in random_vsl_targets) {
   else if (i>0){ 
     # Count their response time from the target stimulus (NA)
     rt_col <- append (rt_col, trials_1_3[i,][,"v_block_trial_key_resp.rt"])}    
-  # If the participant responded during the stimulus preceding the target
-  else if (!is.na(trials_1_3[i-1,] [,"v_block_trial_key_resp.rt"])){
-    # Count their response time as how much sooner they responded than when the stimulus was presented
-    rt_col[match(i, random_vsl_targets)] <- 0-trials_1_3[i-1,][,"v_block_trial_key_resp.rt"]}
   # If the participant did not respond to the target within the correct time frame
   else if (is.na(trials_1_3[i,] [,"v_block_trial_key_resp.rt"])){
     # Count their response time from the target stimulus (NA)
