@@ -10,14 +10,14 @@
 rm(list=ls())
 
 # Set working directory
-setwd("Documents/qlab/analysis/sit-analysis/")
+setwd("Documents/qlab/analysis/sit-beh-analysis/")
 
 # Set up file paths
 ll_input <- ("../../../sit_data/original/ll_original/")
 lv_input <- ("../../../sit_data/original/lv_original/")
 vl_input <- ("../../../sit_data/original/vl_original/")
 vv_input <- ("../../../sit_data/original/vv_original/")
-ll_output <- ("../../../sit_data/clean/ll_original/")
+ll_output <- ("../../../sit_data/clean/ll_clean/")
 lv_output <- ("../../../sit_data/clean/lv_clean/")
 vl_output <- ("../../../sit_data/clean/vl_clean/")
 vv_output <- ("../../../sit_data/clean/vv_clean/")
@@ -37,6 +37,8 @@ ll_clean <- function(file) {
   newdata <- current_file[value]
   # Put all data in lowercase
   names(newdata) <- tolower(names(newdata))
+  # Standardize "corr_resp" column across runs
+  names(newdata)[names(newdata) == 'lsl_question_key_resp.corr'] <- 'corr_resp'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
@@ -132,3 +134,4 @@ for (file in vv_files)
 #newdata <- newdata[ which(!is.na(newdata$key_resp.corr)), ]
 # TO DO: Add modality (ling/ non-ling)
 # TO DO: Currently excludes sit_a_010_vv, which is missing the rt column?
+
