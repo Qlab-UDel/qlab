@@ -1,0 +1,631 @@
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="../dropbox/jspsych-6.0.1/jspsych.js"></script>
+    <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-audio-button-response.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-html-button-response.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-image-keyboard-response.js"></script>
+    <script src="../LSL_Exp/jspsych-5.0.3/plugins/jspsych-survey-text.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-instructions.js"></script>
+
+    <link rel="stylesheet" href="../dropbox/jspsych-6.0.1/css/jspsych.css"></link>
+  </head>
+  <body></body>
+  <script>
+  
+var id = JSON.parse(window.sessionStorage.getItem("id"));
+
+
+var instr1 = {
+	type: 'image-keyboard-response',
+	stimulus: 'alien.jpg',
+	prompt: "<p><br><b>Welcome to the alien game!</b> <br><br> In this game you will hear an alien song. Listen carefully so you can help another alien remember the order of the sounds in the song.<br> <br> Press space bar when you are ready to begin. </p>",
+	choices: ['space'],
+};
+
+  
+var sounds = ['sound/msl/bird.wav', 'sound/msl/boing.wav', 'sound/msl/Water.wav', 'sound/msl/cat.wav', 'sound/msl/cow.wav', 'sound/msl/clock.wav', 'sound/msl/ding.wav', 'sound/msl/door.wav','sound/msl/slide_whistle.wav','sound/msl/goat.wav','sound/msl/dog.wav', 'sound/msl/door_bell.wav','sound/msl/duck.wav','sound/msl/frog.wav','sound/msl/organ.wav']
+
+var shuffled = jsPsych.randomization.repeat(sounds, 1);
+console.log(shuffled);
+var seq1 = [4,8,12,1,5,9,7,11,15,10,14,3,1,5,9,4,8,12,13,2,6,10,14,3,7,11,15,4,8,12,1,5,9,13,2,6,7,11,15,10,14,3,13,2,6,1,5,9,7,11,15,4,8,12,1,5,9,7,11,15,10,14,3,13,2,6,1,5,9,4,8,12,7,11,15,10,14,3,7,11,15,13,2,6,4,8,12,1,5,9,13,2,6,10,14,3,7,11,15,1,5,9,13,2,6,4,8,12,1,5,9,10,14,3,13,2,6,7,11,15,4,8,12,1,5,9,13,2,6,10,14,3,1,5,9,7,11,15,10,14,3,4,8,12,13,2,6,7,11,15,4,8,12,1,5,9,10,14,3,13,2,6,1,5,9,10,14,3,4,8,12,7,11,15,13,2,6,1,5,9,7,11,15,10,14,3,4,8,12,13,2,6,1,5,9,7,11,15,4,8,12,10,14,3,13,2,6,1,5,9,4,8,12,13,2,6,7,11,15,10,14,3,1,5,9,7,11,15,13,2,6,7,11,15,1,5,9,10,14,3,4,8,12,13,2,6,1,5,9,10,14,3,4,8,12,7,11,15,13,2,6,4,8,12,10,14,3,7,11,15,1,5,9,13,2,6,4,8,12,10,14,3,1,5,9,7,11,15,13,2,6,10,14,3,4,8,12,13,2,6,1,5,9,10,14,3,7,11,15,4,8,12,13,2,6,1,5,9,10,14,3,4,8,12,1,5,9,7,11,15,13,2,6,10,14,3,7,11,15,4,8,12,10,14,3,4,8,12,7,11,15,13,2,6,10,14,3,4,8,12];
+
+console.log(seq1.length);
+var tone_block_1 = [];
+for (i=0; i<360; i++) {
+    tone_block_1.push({'stimulus': shuffled[seq1[i]-1]});
+}
+
+var struct_block = {
+     type: 'audio-keyboard-response',
+     choices: jsPsych.NO_KEYS,
+     timeline: tone_block_1,
+     prompt: '<p><center><h1>+</h1></center></p>',
+     trial_ends_after_audio: true
+    }
+
+
+var instr2 = {
+    type: 'image-keyboard-response',
+    stimulus: 'Instructions2-eng.png',
+    choices: ['space'],
+    
+};
+
+var test1 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[0], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[0], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test2 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[0], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS,},
+        {stimulus: shuffled[4], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[6], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test3 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[0], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[3], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test4 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[12], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[0], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test5 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[9], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[0], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test6 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[9], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[6], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test7 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[0], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[6], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test8 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[6], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[6], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test9 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[6], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[3], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test10 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[6], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[12], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+   var test11 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[9], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[12], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+   var test12 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[9], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[9], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+   var test13 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[6], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[9], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test14 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[3], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[9], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test15 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[0], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[9], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test16 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[6], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[3], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test17 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[0], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[3], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test18 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[3], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[3], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test19 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[3], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[12], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+   var test20 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[3], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[9], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+   var test21 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[12], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[12], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[7], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[8], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+   
+    var test22 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[12], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[9], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[11], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test23 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[12], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[0], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[10], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[2], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test24 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[6], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[13], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[12], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test25 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: shuffled[3], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[4], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[14], prompt: "<img src='one.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', trial_duration:500},
+        {stimulus: shuffled[12], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[1], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: shuffled[5], prompt: "<img src='two.png'>", trial_ends_after_audio: true, choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+  String.prototype.format = function () {
+    var i = 0, args = arguments;
+    return this.replace(/{}/g, function () {
+        return typeof args[i] != 'undefined' ? args[i++] : '';
+    });
+    };
+    
+ var myArray = [test1,test2,test3,test4,test5,test6,test7,test8,test9,test10,test11,test12,test13,test14,test15,test16,test17,test18,test19,test20,test21,test22,test23,test24,test25];
+ 
+
+var shuffledArray = jsPsych.randomization.repeat(myArray, 1);
+
+var next = {
+    type: 'instructions',
+    pages: ['Click to advance to the next part of the study.'],
+    show_clickable_nav: true
+}  
+
+var timeline = [];
+
+timeline = shuffledArray;
+timeline.unshift(instr2)
+timeline.unshift(struct_block);
+timeline.unshift(instr1);
+timeline.push(next);
+
+function save_Data(filename, filedata){
+   $.ajax({
+      type:'post',
+      cache: false,
+      url: '../expf/deep/local_data_save.php', // this is the path to the above PHP script
+      data: {filename: filename, filedata: filedata}
+   });
+}
+
+console.log(id);
+   
+     /* start the experiment */
+    jsPsych.init({
+      timeline: timeline,
+        on_finish: 
+function(){
+     var all = jsPsych.data.get();
+save_Data("{}_heb_msl.csv".format(id),all.csv());
+setTimeout(function() {
+     arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+     console.log(arraylist);
+     
+        var pick_exp = function(expType) {
+                    return expType[Math.floor(Math.random()*expType.length)];
+                 };
+       var exp = pick_exp(arraylist);
+      
+      if (exp === 'a'){      
+ 	arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("v");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+     return window.location.replace('heb_asl.html');}
+     
+     else {return window.location.replace('questionnaire.html');}
+
+	
+		
+        
+         }, 500);
+       }
+     
+      });
+ </script>
+ </html>
+

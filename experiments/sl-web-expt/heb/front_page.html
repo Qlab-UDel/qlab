@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Front Page</title>
+    <link href="../expf/deep/front_page.css" rel="stylesheet">
+    <script src="../dropbox/jspsych-6.0.1/jspsych.js"></script>
+
+</head>
+
+<body>
+
+
+    <h1><center>Cognitive Science Games</center></h1>
+    <p>Welcome! Today we're going to play two games with our alien friends. During these games, we will be playing some sounds. Please make sure you have the following: </p>
+    <p>1. A set of headphones or earphones</p>
+    <p>2. A quiet room with few or no distractions</p>
+    <p>3. About 20 minutes of uninterrupted time to play all games</p>
+    <p>To test your volume to make sure it is at a good level, please press the play button on the audio clip below (you should hear the "Happy Birthday" song!)</p>
+
+    <audio controls>
+    <source src="../../toneSLjspsych/happy_birthday.wav"
+            type='audio/mp4'>
+    </audio>
+    
+ <br><center>
+    <b> <br> Please don't reload the page once you have started the experiment <br> <br><br> </b>   </center>
+    <script>
+  
+   
+    var arraylist = ['a', 'm'];
+    window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+
+    var qq = function () {
+        var rand_exp = ['a', 'm'];
+        var pick_exp = function(expType) {
+                    return expType[Math.floor(Math.random()*expType.length)];
+                 };
+       var exp = pick_exp(rand_exp);
+      
+      if (exp === 'a'){
+       
+ 	arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("a");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('heb_asl.html');
+
+	}
+	
+	
+        if (exp === 'm'){
+       arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("m");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+	        return window.location.replace('heb_msl.html');
+
+	 }
+  }
+var storedArray = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+
+console.log(storedArray);
+
+ window.sessionStorage.setItem("id",  JSON.stringify(jsPsych.data.getURLVariable('subject')));
+
+   
+ </script>    
+
+   <center> <div id="parent">
+
+        <div id="wide">
+            <div class="button1">
+            <a href="javascript:qq()" ><h2><center><b>Start our experiment</b></h2></center></a> 
+            </div>
+
+            
+
+            
+
+    </div> </center>
+
+    <footer id="foot01"></footer>
+
+
+<!-- <script src="front_page.js"></script> -->
+
+</body>
+</html>
