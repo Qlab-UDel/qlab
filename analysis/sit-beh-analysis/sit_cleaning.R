@@ -22,6 +22,7 @@ lv_output <- ("../../../sit_data/clean/lv_clean/")
 vl_output <- ("../../../sit_data/clean/vl_clean/")
 vv_output <- ("../../../sit_data/clean/vv_clean/")
 ll_files<- list.files(path = ll_input, pattern="*.csv")
+ll_output_files <- list.files(path = ll_output, pattern="*.csv")
 lv_files<- list.files(path = lv_input, pattern="*.csv")
 vl_files<- list.files(path = vl_input, pattern="*.csv")
 vv_files<- list.files(path = vv_input, pattern="*.csv")
@@ -35,6 +36,9 @@ ll_clean <- function(file) {
   # Select relevant columns
   value <- c("PartID", "expName", "condition", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","lsl_question_key_resp.corr")
   newdata <- current_file[value]
+  # Make sure that F is not marked as False
+  newdata$first_targ[newdata$first_targ == FALSE] <- 'f_not_false'
+  newdata$second_targ[newdata$first_targ == FALSE] <- 'f_not_false'
   # Put all data in lowercase
   names(newdata) <- tolower(names(newdata))
   # Standardize "corr_resp" column across runs
@@ -42,6 +46,7 @@ ll_clean <- function(file) {
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
+  View(newdata)
   # Write file
   this_path<-file.path(ll_output, basename(file))
   write.csv(newdata, file=(this_path))
@@ -53,12 +58,14 @@ for (file in ll_files)
   ll_clean(paste0(ll_input,file))
 }
 
-# create a new file containing only the relevant columns in the output folder
+warn# create a new file containing only the relevant columns in the output folder
 lv_clean <- function(file) {
   current_file <- read.csv(file)
   # Select relevant columns
   value <- c("PartID", "expName", "condition", "image","first_targ", "second_targ","l_block_trial_key_resp.rt", "v_block_trial_key_resp.rt","lsl_question_key_resp.corr")
   newdata <- current_file[value]
+  # Make sure that F is not marked as False
+  newdata$first_targ[newdata$first_targ == FALSE] <- 'f_not_false'
   # Put all data in lowercase
   names(newdata) <- tolower(names(newdata))
   # Standardize "corr_resp" column across runs
@@ -86,8 +93,12 @@ vl_clean <- function(file) {
   # Select relevant columns
   value <- c("PartID", "expName", "condition", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","v_block_trial_key_resp.rt", "vsl_question_key_resp.corr")
   newdata <- current_file[value]
+  # Make sure that F is not marked as False
+  newdata$second_targ[newdata$second_targ == FALSE] <- 'f_not_false'
   # Put all data in lowercase
   names(newdata) <- tolower(names(newdata))
+  # Standardize "corr_resp" column across runs
+  names(newdata)[names(newdata) == 'vsl_question_key_resp.corr'] <- 'corr_resp'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
@@ -109,6 +120,8 @@ vv_clean <- function(file) {
   # Select relevant columns
   value <- c("PartID", "expName", "condition", "image","first_targ", "second_targ","v_block_trial_key_resp.rt", "vsl_question_key_resp.corr")
   newdata <- current_file[value]
+  # Standardize "corr_resp" column across runs
+  names(newdata)[names(newdata) == 'vsl_question_key_resp.corr'] <- 'corr_resp'
   # Put all data in lowercase
   names(newdata) <- tolower(names(newdata))
   # Separate words by underscore
