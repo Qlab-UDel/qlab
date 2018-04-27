@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="../dropbox/jspsych-6.0.1/jspsych.js"></script>
+    <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-audio-button-response.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-html-button-response.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-survey-likert.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-instructions.js"></script>
+
+    <link rel="stylesheet" href="../dropbox/jspsych-6.0.1/css/jspsych.css"></link>
+  </head>
+  <body></body>
+  <script>
+
+    
+      var id = JSON.parse(window.sessionStorage.getItem("id"));
+  console.log(id);
+  
+var intro = {
+    type: 'instructions',
+    pages: ['Great job! You are done with the games! Now we have a few more questions for you.'],
+    show_clickable_nav: true
+}  
+
+ var scale = ["Very different", "Different", "Somewhat different", "Neutral", "Somewhat similar", "Similar", "Very similar"];
+  
+  var likert_trial1 = {
+      type: 'survey-likert',
+      questions: [{prompt: "1. How similar is this word to English?", labels: scale, required: true}],
+      preamble: '<audio controls> <source src="sound/asl/gedino.wav" type="audio/wav">'
+  };
+
+  var likert_trial2 = {
+      type: 'survey-likert',
+      questions: [{prompt: "2. How similar is this word to English?", labels: scale, required: true}],
+      preamble: '<audio controls> <source src="sound/asl/dukame.wav" type="audio/wav">'
+  };
+  
+    var likert_trial3 = {
+      type: 'survey-likert',
+      questions: [{prompt: "3. How similar is this word to English?", labels: scale, required: true}],
+      preamble: '<audio controls> <source src="sound/asl/kimuga.wav" type="audio/wav">'
+  };
+  
+    var likert_trial4 = {
+      type: 'survey-likert',
+      questions: [{prompt: "4. How similar is this word to English?", labels: scale, required: true}],
+      preamble: '<audio controls> <source src="sound/asl/nalobi.wav" type="audio/wav">'
+  };
+  
+    var likert_trial5 = {
+      type: 'survey-likert',
+      questions: [{prompt: "5. How similar is this word to English?", labels: scale, required: true}],
+      preamble: '<audio controls> <source src="sound/asl/tobelu.wav" type="audio/wav">'
+  };
+  
+    var likert_trial6 = {
+      type: 'survey-likert',
+      questions: [{prompt: "6. How similar was the whole alien language to English?", labels: scale, required: true}],
+  };
+  
+var end = {
+    type: 'instructions',
+    pages: ["Thank you for participating in our experiment. You are all done! <br><br><img src='backround.jpg'>"],
+   
+}  
+  
+
+var timeline = [intro, likert_trial1,likert_trial2,likert_trial3,likert_trial4,likert_trial5,likert_trial6,end];
+
+function save_Data(filename, filedata){
+   $.ajax({
+      type:'post',
+      cache: false,
+      url: '../expf/deep/local_data_save.php', // this is the path to the above PHP script
+      data: {filename: filename, filedata: filedata}
+   });
+}
+
+
+ String.prototype.format = function () {
+    var i = 0, args = arguments;
+    return this.replace(/{}/g, function () {
+        return typeof args[i] != 'undefined' ? args[i++] : '';
+    });
+    };
+    
+  /* start the experiment */
+    jsPsych.init({
+      timeline: timeline,
+        on_data_update: function(data){
+var all = jsPsych.data.get();
+save_Data("{}_heb_survey.csv".format(id),all.csv());}
+      });
+      
+      </script>
+      </html>

@@ -12,27 +12,32 @@ library(nortest)
 #This script works on the big data ABCD file with everyone's information on IQ, Language measurements etc.
 
 #calculate delta for rotary
-delta<-NULL
-for (i in seq(from=1,to=length(ABCD$Group),by=1)){delta <- append(delta, - mean(c(as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 1: Sec on; Sec off`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 2: Sec on; Sec off`[i],split=';')[[1]][[1]]))) + mean(c(as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 16: Sec on; Sec off`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 15: Sec on; Sec off`[i],split=';')[[1]][[1]]))))}
+
+#delta<-NULL
+#for (i in seq(from=1,to=length(ABCD$Group),by=1)){delta <- append(delta, - mean(c(as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 1: Sec on; Sec off`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 2: Sec on; Sec off`[i],split=';')[[1]][[1]]))) + mean(c(as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 16: Sec on; Sec off`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Rotary Pursuit Trial 15: Sec on; Sec off`[i],split=';')[[1]][[1]]))))}
 
 #delta mirror on
-mirror <- NULL
-for (i in seq(from=1,to=length(ABCD$Group),by=1)){mirror <- append(mirror, - mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 2: Completion time; Errors`[i],split=';')[[1]][[1]]))) + mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 9: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 10: Completion time; Errors`[i],split=';')[[1]][[1]]))))}
+
+#mirror <- NULL
+#for (i in seq(from=1,to=length(ABCD$Group),by=1)){mirror <- append(mirror, - mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 2: Completion time; Errors`[i],split=';')[[1]][[1]]))) + mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 9: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 10: Completion time; Errors`[i],split=';')[[1]][[1]]))))}
 
 #delta mirror off
-mirror_off<-NULL
-for (i in seq(from=1,to=length(ABCD$Group),by=1)){
-  if(is.na(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i])){mirror_off<-append(mirror_off,0)}
-  else {mirror_off <- append(mirror_off, - mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[2]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 2: Completion time; Errors`[i],split=';')[[1]][[2]]))) + mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 9: Completion time; Errors`[i],split=';')[[1]][[2]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 10: Completion time; Errors`[i],split=';')[[1]][[2]]))))}}
 
-#Save this to a file: write.csv(ABCD, "ABCD1.csv")
+#mirror_off<-NULL
+#for (i in seq(from=1,to=length(ABCD$Group),by=1)){
+#  if(is.na(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i])){mirror_off<-append(mirror_off,0)}
+#  else {mirror_off <- append(mirror_off, - mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[2]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 2: Completion time; Errors`[i],split=';')[[1]][[2]]))) + mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 9: Completion time; Errors`[i],split=';')[[1]][[2]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 10: Completion time; Errors`[i],split=';')[[1]][[2]]))))}}
 
-#then import the file ABCD <- read_csv("~/ABCD1.csv")
+#Save this to a file: write.csv(ABCD, "ABCD.csv")
+
+#then import the file ABCD <- read_csv("~/ABCD.csv")
 
 ```
 
 #Test for significant difference between the two groups on age, IQ, and gender ratio. There's no significant difference.
 ```{r,echo=FALSE,warning=FALSE}
+ABCD <- read_csv("Z:/projects/abcd/raw/summary/ABCD1.csv")
+ABCD <- ABCD[ABCD$`ABCD ID`!="ABCD_1754",]
 
 wilcox.test(ABCD$`Age with month`[ABCD$Group=="DD"],ABCD$`Age with month`[ABCD$Group=="TYP"])
 wilcox.test(ABCD$`KBIT-2 Matrices: Standard Score`[ABCD$Group=="DD"],ABCD$`KBIT-2 Matrices: Standard Score`[ABCD$Group=="TYP"])
@@ -68,9 +73,24 @@ wilcox.test(ABCD$`WAIS-4 DS Total: Standard Score`[ABCD$Group=="DD"],ABCD$`WAIS-
 ```
 
 
-```{r, include=FALSE}
+#Test for correlation
+```{r, echo=FALSE,warning=FALSE}
 #Run cor test on vsl acc, rt slope and mirror:
-#cor.test(ABCD1$VSL_RT_SLOPE[ABCD1$Group=="DD"],ABCD1$Mirror_delta_on[ABCD1$Group=="DD"],method="spearman")
-#cor.test(ABCD1$VSL_RT_SLOPE[ABCD1$Group=="DD"],ABCD1$Mirror_delta_off1[ABCD1$Group=="DD"],method="spearman")
+cor.test(ABCD$VSL_RT_SLOPE[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
+cor.test(ABCD$VSL_RT_SLOPE[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
 
+cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
+
+cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"],method="spearman", alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"],method="spearman", alternative = "less")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"],method="spearman", alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"],method="spearman", alternative = "less")
+
+#dd <- read_csv("~/dd.csv")
+#typ <- read_csv("~/typ.csv")
+chart.Correlation(typ,method="spearman")
+chart.Correlation(dd,method="spearman")
 ```

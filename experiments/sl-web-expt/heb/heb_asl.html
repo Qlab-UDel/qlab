@@ -1,0 +1,510 @@
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="../dropbox/jspsych-6.0.1/jspsych.js"></script>
+    <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-audio-button-response.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-html-button-response.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-image-keyboard-response.js"></script>
+        <script src="../dropbox/jspsych-6.0.1/plugins/jspsych-instructions.js"></script>
+
+    <link rel="stylesheet" href="../dropbox/jspsych-6.0.1/css/jspsych.css"></link>
+  </head>
+  <body></body>
+  <script>
+  
+  var id = JSON.parse(window.sessionStorage.getItem("id"));
+console.log(id);
+    var timeline = [];
+    
+var instr1 = {
+	type: 'image-keyboard-response',
+	stimulus: 'backround.jpg',
+	prompt: "<p><br><b>Welcome to the alien game!</b> <br><br> In this game you will hear an alien song. Listen carefully so you can help another alien remember the order of the sounds in the song.<br> <br> Press space bar when you are ready to begin. </p>",
+	choices: ['space'],
+};
+
+
+  var exposure = {
+	type: 'audio-keyboard-response',
+	stimulus: 'sound/asl/5words_lanaguage.mp3',
+	prompt: "+",
+	choices: ['space'],
+	response_ends_trial: false,
+	trial_ends_after_audio: true
+};
+
+var instr2 = {
+    type: 'image-keyboard-response',
+    stimulus: 'Instructions2-eng.png',
+    choices: ['space'],
+    
+};
+
+var test1 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/gedino.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/kibeno.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+var test2 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/gedino.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/gekalu.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+var test3 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/duloga.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/gedino.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+var test4 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/nadime.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/gedino.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+var test5 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/tomubi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/gedino.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+var test6 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/dukame.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/kibeno.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+
+var test7 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/dukame.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/gekalu.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+var test8 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/dukame.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/duloga.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test9 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/nadime.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/dukame.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test10 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/tomubi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/dukame.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+   var test11 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/kimuga.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/kibeno.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+    var test12 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/kimuga.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/gekalu.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test13 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/duloga.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/kimuga.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test14 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/nadime.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/kimuga.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ var test15 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/tomubi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/kimuga.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test16 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/tomubi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/nalobi.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+   var test17 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/nalobi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/nadime.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+    var test18 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/nalobi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/duloga.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+     var test19 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/nalobi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/gekalu.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+      var test20 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/nalobi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/kibeno.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+      var test21 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/tobelu.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/kibeno.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+  var test22 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/tobelu.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/gekalu.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '49'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+
+ 
+ 
+   var test23 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/duloga.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/tobelu.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+    var test24 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/nadime.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/tobelu.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+     var test25 = {
+    type: 'audio-keyboard-response',
+        timeline: [
+        {stimulus: 'sound/asl/tomubi.wav', prompt: "<img src='one.png'>", trial_duration: 1200,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/tobelu.wav', prompt: "<img src='two.png'>", trial_ends_after_audio: true,choices: jsPsych.NO_KEYS},
+        {stimulus: 'sound/asl/silence.wav', prompt: "<img src='question-eng.png'>", choices: ['1','2'],on_finish: function(data){
+    if(data.key_press == '50'){
+      data.correct = true; 
+    } else {
+      data.correct = false;
+    }
+  }}    
+    ],    
+ }
+ 
+ String.prototype.format = function () {
+    var i = 0, args = arguments;
+    return this.replace(/{}/g, function () {
+        return typeof args[i] != 'undefined' ? args[i++] : '';
+    });
+    };
+    
+ var myArray = [test1,test2,test3,test4,test5,test6,test7,test8,test9,test10,test11,test12,test13,test14,test15,test16,test17,test18,test19,test20,test21,test22,test23,test24,test25];
+ 
+
+var shuffledArray = jsPsych.randomization.repeat(myArray, 1);
+
+var next = {
+    type: 'instructions',
+    pages: ['Click to advance to the next part of the study.'],
+    show_clickable_nav: true
+}  
+
+
+
+
+console.log(shuffledArray);
+timeline = shuffledArray;
+timeline.unshift(instr2)
+timeline.unshift(exposure);
+timeline.unshift(instr1);
+timeline.push(next);
+
+function saveData(name, data){
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '../dropbox/savedata.php');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify({filename: name, filedata: data}));
+}
+
+function save_Data(filename, filedata){
+   $.ajax({
+      type:'post',
+      cache: false,
+      url: '../expf/deep/local_data_save.php', // this is the path to the above PHP script
+      data: {filename: filename, filedata: filedata}
+   });
+}
+
+
+
+
+var audio =  ['sound/asl/5words_lanaguage.mp3','sound/asl/mokuba.mp3','sound/asl/kagido.mp3'];
+
+    
+     /* start the experiment */
+    jsPsych.init({
+      timeline: timeline,
+       preload_audio: audio,
+        on_finish: 
+function(){ 
+var all = jsPsych.data.get();
+save_Data("{}_heb_asl.csv".format(id),all.csv());
+
+setTimeout(function() {
+     arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+     
+       var pick_exp = function(expType) {
+                    return expType[Math.floor(Math.random()*expType.length)];
+                 };
+       var exp = pick_exp(arraylist);
+      
+      if (exp === 'm'){      
+ 	arraylist = JSON.parse(window.sessionStorage.getItem("list_data_key"));
+ 	var i = arraylist.indexOf("v");
+	if(i != -1) {
+	arraylist.splice(i, 1);
+	}
+	 window.sessionStorage.setItem("list_data_key",  JSON.stringify(arraylist));
+     return window.location.replace('heb_msl.html');}
+     
+     else {return window.location.replace('questionnaire.html');}
+
+	
+		
+        
+         }, 500);
+       }
+             
+      });
+ </script>
+ </html>
+

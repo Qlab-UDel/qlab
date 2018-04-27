@@ -15,7 +15,7 @@ library(readr)
 
 ```{r,echo=FALSE}
 #Initialize variables
-total_participant <- 33
+total_participant <- 34
 total_vsl_trial <- 24 #number of trials in the familiarization block
 total_tsl_trial <- 48
 length_vsl <- 533 #number of rows in a vsl excel file
@@ -63,7 +63,7 @@ vsl$par_id <- vsl_par_id
 tsl$par_id <- tsl_par_id
 
 #Group set up
-DD <- list("ABCD_1711", "ABCD_1714", "ABCD_1727", "ABCD_1735", "ABCD_1751", "ABCD_1756", "ABCD_1764", "ABCD_1767", "ABCD_1768", "ABCD_1776","ABCD_1777","ABCD_1778")
+DD <- list("ABCD_1711", "ABCD_1714", "ABCD_1727", "ABCD_1735", "ABCD_1751", "ABCD_1756", "ABCD_1764", "ABCD_1767", "ABCD_1768", "ABCD_1776","ABCD_1777","ABCD_1778", "ABCD1781")
 
 TYP <- list("ABCD_1702", "ABCD_1703", "ABCD_1705", "ABCD_1708", "ABCD_1709", "ABCD_1710", "ABCD_1716", "ABCD_1720", "ABCD_1721", "ABCD_1724", "ABCD_1725", "ABCD_1728", "ABCD_1729", "ABCD_1730", "ABCD_1732", "ABCD_1734", "ABCD_1736", "ABCD_1739", "ABCD_1742", "ABCD_1747", "ABCD_1749", "ABCD_1754" )
 group <- NULL
@@ -253,7 +253,7 @@ list_tsl_id <- unique(mean_table$id)
 
 for(id in list_tsl_id){
   mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
-  rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$trial[mean_table$id==id]))$coefficient[2,1],digits=3))
+  rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
   hit_rate<-append(hit_rate,round(sum(mean_table$rt_col[mean_table$id==id]!=-1000)/total_tsl_trial,digits =2))
   miss_rate<-append(miss_rate,round(sum(fam_trial$rt_col[fam_trial$id==id]==-1000 | fam_trial$rt_col[fam_trial$id==id]<=-480 | fam_trial$rt_col[fam_trial$id==id]>960)/total_tsl_trial,digits=2))
   correct_rejection <- append(correct_rejection, round(sum(fam_block$rt[fam_block$par_id==id]==-1000 & fam_block$targ[fam_block$par_id==id]!=fam_block$stimulus[fam_block$par_id==id])/528,digits=2)) #528 is the total number of stimuli in the fam block
@@ -547,4 +547,16 @@ boxplot(TYP_vsl_point, main="Typical-VSL",col="deepskyblue4", pars=list(ylim=c(0
 boxplot(DD_tsl_point, main="Dylexia-TSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
 
 boxplot(TYP_vsl_point, main="Typical-TSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
+
+ggplot() +
+	geom_bar(aes(x = Task,y = Accuracy,fill = Group),data=acc,colour = '#000000',fun.data = mean_sdl,fun.args = list(mult = 1),stat = 'summary',position = position_dodge(width = 0.9)) +
+	ylab(label = 'Accuracy') +
+	#coord_cartesian(ylim = c(0.3,1)) +
+	geom_beeswarm(aes(x = factor(Task),y = Accuracy,colour = Group),data=acc,dodge.width=0.9,cex=2.5) +
+	scale_colour_grey(guide = guide_legend(),start = 0.0,end = 0.0) +
+scale_fill_manual(labels = c("Dylexia","Typical"),values = c("#b2182b", "#2166ac")) +	geom_hline(yintercept=0,linetype=2) +theme_classic(base_size = 20.0) + guides(color = FALSE) 
+
+ggplot(acc1, aes(x=Task, y = Accuracy, fill=Group)) + geom_bar(stat = "identity",position=position_dodge()) + geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),width=.1,size=.8,position=position_dodge(.9)) + ggtitle("Accuracy plot") + scale_fill_grey(guide = guide_legend(),start = 0.4,end = 0.8) + geom_beeswarm(aes(x = factor(Task),y = Accuracy,colour = Group),data=acc,dodge.width=1,cex=2.5) + theme_classic(base_size = 20.0) + scale_colour_grey(guide = guide_legend(),start = 0.0,end = 0.0) 
+
+
 ```
