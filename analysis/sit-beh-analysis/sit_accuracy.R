@@ -6,6 +6,9 @@
 #  It also runs an ANOVA to compare reaction time slope between tasks, modalities, and domains.
 # NOTE: Does not remove points outside 2.5 stdev of mean
 # NOTE: relevant columns pre-selected through this experiment's version of fmri_data_cleaning.Rmd
+
+
+# NEW LINE TO TEST COMMIT
 #  ****************************************************************************
 
 
