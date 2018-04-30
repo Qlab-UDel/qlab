@@ -38,7 +38,7 @@ ll_clean <- function(file) {
   newdata <- current_file[value]
   # Make sure that F is not marked as False
   newdata$first_targ[newdata$first_targ == FALSE] <- 'f_not_false'
-  newdata$second_targ[newdata$first_targ == FALSE] <- 'f_not_false'
+  newdata$second_targ[newdata$second_targ == FALSE] <- 'f_not_false'
   # Put all data in lowercase
   names(newdata) <- tolower(names(newdata))
   # Standardize "corr_resp" column across runs
@@ -46,7 +46,12 @@ ll_clean <- function(file) {
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
-  View(newdata)
+  # Define targets by condition
+  names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
+  names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
+  # Define targets by condition
+  names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
+  names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
   # Write file
   this_path<-file.path(ll_output, basename(file))
   write.csv(newdata, file=(this_path))
@@ -73,6 +78,9 @@ lv_clean <- function(file) {
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
+  # Define targets by condition
+  names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
+  names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
   # Write file
   this_path<-file.path(lv_output, basename(file))
   write.csv(newdata, file=(this_path))
@@ -102,6 +110,9 @@ vl_clean <- function(file) {
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
+  # Define targets by condition
+  names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
+  names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
   # Write file
   this_path<-file.path(vl_output, basename(file))
   write.csv(newdata, file=(this_path))
@@ -137,14 +148,4 @@ for (file in vv_files)
 {
   vv_clean(paste0(vv_input,file))
 }
-
-
-
-
-
-
-#TO DO: FOR ACCURACY: # Remove any lines prior to test phase
-#newdata <- newdata[ which(!is.na(newdata$key_resp.corr)), ]
-# TO DO: Add modality (ling/ non-ling)
-# TO DO: Currently excludes sit_a_010_vv, which is missing the rt column?
 
