@@ -34,7 +34,7 @@ vv_files<- list.files(path = vv_input, pattern="*.csv")
 ll_clean <- function(file) {
   current_file <- read.csv(file)
   # Select relevant columns
-  value <- c("PartID", "expName", "condition", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","lsl_question_key_resp.corr")
+  value <- c("PartID", "trialnum", "expName", "condition", "l_block_trial_loop.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","lsl_question_key_resp.corr")
   newdata <- current_file[value]
   # Make sure that F is not marked as False
   newdata$first_targ[newdata$first_targ == FALSE] <- 'f_not_false'
@@ -43,9 +43,12 @@ ll_clean <- function(file) {
   names(newdata) <- tolower(names(newdata))
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'lsl_question_key_resp.corr'] <- 'corr_resp'
+  # Simplify loop names
+  names(newdata)[names(newdata) == 'l_block_trial_loop.thisTrialN'] <- 'this_l_loop'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
+  names(newdata) <- gsub ("trialnum", "trial_num", names(newdata))
   # Define targets by condition
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
@@ -63,11 +66,11 @@ for (file in ll_files)
   ll_clean(paste0(ll_input,file))
 }
 
-warn# create a new file containing only the relevant columns in the output folder
+# create a new file containing only the relevant columns in the output folder
 lv_clean <- function(file) {
   current_file <- read.csv(file)
   # Select relevant columns
-  value <- c("PartID", "expName", "condition", "image","first_targ", "second_targ","l_block_trial_key_resp.rt", "v_block_trial_key_resp.rt","lsl_question_key_resp.corr")
+  value <- c("PartID", "expName", "trialnum", "condition", "l_block_trial_loop.thisTrialN", "v_block_trials.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt", "v_block_trials_key_resp.rt","lsl_question_key_resp.corr")
   newdata <- current_file[value]
   # Make sure that F is not marked as False
   newdata$first_targ[newdata$first_targ == FALSE] <- 'f_not_false'
@@ -75,9 +78,13 @@ lv_clean <- function(file) {
   names(newdata) <- tolower(names(newdata))
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'lsl_question_key_resp.corr'] <- 'corr_resp'
+  # Simplify loop names
+  names(newdata)[names(newdata) == 'l_block_trial_loop.thisTrialN'] <- 'this_l_loop'
+  names(newdata)[names(newdata) == 'v_block_trials.thisTrialN'] <- 'this_v_loop'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
+  names(newdata) <- gsub ("expname", "trial_name", names(newdata))
   # Define targets by condition
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
@@ -99,7 +106,7 @@ for (file in lv_files)
 vl_clean <- function(file) {
   current_file <- read.csv(file)
   # Select relevant columns
-  value <- c("PartID", "expName", "condition", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","v_block_trial_key_resp.rt", "vsl_question_key_resp.corr")
+  value <- c("PartID", "trialnum", "expName", "condition", "l_block_trial_loop.thisTrialN", "v_block_trials_loop.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","v_block_trials_key_resp.rt", "vsl_question_key_resp.corr")
   newdata <- current_file[value]
   # Make sure that F is not marked as False
   newdata$second_targ[newdata$second_targ == FALSE] <- 'f_not_false'
@@ -107,9 +114,13 @@ vl_clean <- function(file) {
   names(newdata) <- tolower(names(newdata))
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'vsl_question_key_resp.corr'] <- 'corr_resp'
+  # Simplify loop names
+  names(newdata)[names(newdata) == 'l_block_trial_loop.thisTrialN'] <- 'this_l_loop'
+  names(newdata)[names(newdata) == 'v_block_trials_loop.thisTrialN'] <- 'this_v_loop'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
+  names(newdata) <- gsub ("trialnum", "trial_num", names(newdata))
   # Define targets by condition
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
@@ -129,15 +140,18 @@ for (file in vl_files)
 vv_clean <- function(file) {
   current_file <- read.csv(file)
   # Select relevant columns
-  value <- c("PartID", "expName", "condition", "image","first_targ", "second_targ","v_block_trial_key_resp.rt", "vsl_question_key_resp.corr")
+  value <- c("PartID", "expName", "trialnum", "condition", "v_block_trials_loop.thisTrialN", "image", "first_targ", "second_targ","v_block_trials_key_resp.rt", "vsl_question_key_resp.corr")
   newdata <- current_file[value]
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'vsl_question_key_resp.corr'] <- 'corr_resp'
+  # Simplify loop names
+  names(newdata)[names(newdata) == 'v_block_trials_loop.thisTrialN'] <- 'this_v_loop'
   # Put all data in lowercase
   names(newdata) <- tolower(names(newdata))
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
+  names(newdata) <- gsub ("trialnum", "trial_num", names(newdata))
   # Write file
   this_path<-file.path(vv_output, basename(file))
   write.csv(newdata, file=(this_path))

@@ -3,10 +3,6 @@
 # TO DO: Image index in a way that accounts for different repetitions of S/R blocks. EG: participant A's two R blocks are merged.
 # he doesn't respond during the last target of an S block, which is the last stimulus, so we take his reaction time from the
 # following stimulus (which is actually the first stimulus of the next S block)
-# TO DO: Successfully replace "f_not_false" with "F"
-# TO DO: Why is id_test returning an odd, different list from the list of ids?
-# TO DO: Why is list_part_id of type integer?? 
-# TO DO: When, when I convert list_part_id to a string, are ids listed very oddly?
 # TO DO: What are all the weird warnings in line 212?
 # TO DO: What to do in line 247 if you're in the last line for that participant? Or the last line of that block?
 # TO DO: What is 239?
@@ -51,10 +47,8 @@ for (file in ll_files){ll_data_frame <- append(ll_data_frame, list(eval(parse(te
 ll_data_frame <- do.call(rbind.data.frame, ll_data_frame)
 
 # Read "f_not_false" as "F"
-levels(ll_data_frame$random_targ)[levels(ll_data_frame$structured_targ)=="f_not_false"] <- "F"
-
-ll_data_frame$random_targ[ll_data_frame$random_targ == "f_not_false"] <- "f"
-#ll_data_frame$structured_targ[ll_data_frame$structured_targ == "f_not_false"] <- "F"
+levels(ll_data_frame$structured_targ)[levels(ll_data_frame$structured_targ)=="f_not_false"] <- "F"
+levels(ll_data_frame$random_targ)[levels(ll_data_frame$random_targ)=="f_not_false"] <- "F"
 
 # Remove .png from image names
 ll_data_frame$image <- gsub (".png", "", ll_data_frame$image, ignore.case=TRUE)
@@ -197,10 +191,7 @@ structured_ll <- ll_data_frame[ which(ll_data_frame$condition== "S"),]
 # Index the images by random/ structured-----------------------------------------------
 
 # List unique participant IDs for this condition
-list_part_id <- unique(ll_data_frame$part_id)
-
-#test
-View(typeof(list_part_id))
+list_part_id <- as.character(unique(ll_data_frame$part_id))
 
 # Find the number of images shown to each participant
 random_images_per_participant <- NULL
