@@ -17,8 +17,7 @@
 # Prepare workspace ------------------------------------------------------------------------------------------------------
 
 #Set correct working directory
-setwd("/Users/jasinskagroup/Desktop/QLAB/psychopy_sl_beh-master/rt_slope/4_runs/scripts")
-
+setwd("Documents/qlab/analysis/sl-psychopy-analysis/rt_slope/4_runs/scripts/")
 
 # Remove objects in environment
 rm(list=ls())
@@ -27,9 +26,9 @@ rm(list=ls())
 # Prepare paths for files --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # NOTE: For use on Mac 
-old_auditory_path <- "/Users/jasinskagroup/Desktop/QLAB/psychopy_sl_beh-master/rt_slope/4_runs/cleaned_data/auditory/old_format/"
-new_auditory_path <- "/Users/jasinskagroup/Desktop/QLAB/psychopy_sl_beh-master/rt_slope/4_runs/cleaned_data/auditory/new_format/"
-visual_path <- "/Users/jasinskagroup/Desktop/QLAB/psychopy_sl_beh-master/rt_slope/4_runs/cleaned_data/visual/"
+old_auditory_path <- "/../original_data/auditory/old_format/"
+new_auditory_path <- "/../original_data/auditory/new_format/"
+visual_path <- "/../../cleaned_data/visual/"
 
 
 
