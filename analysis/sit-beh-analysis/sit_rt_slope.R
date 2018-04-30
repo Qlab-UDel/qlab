@@ -1,5 +1,3 @@
-
-# TO DO : Did participants see the first_targ during the structured condition and second_targ during the random condition?
 # TO DO: Also, are we including reaction times for responses during the stimuli preceding/ following for l and v trials?
 # TO DO: Remove points outside 2.5 Stdev of mean?
 # TO DO: Image index in a way that accounts for different repetitions of S/R blocks. EG: participant A's two R blocks are merged.
@@ -53,7 +51,9 @@ for (file in ll_files){ll_data_frame <- append(ll_data_frame, list(eval(parse(te
 ll_data_frame <- do.call(rbind.data.frame, ll_data_frame)
 
 # Read "f_not_false" as "F"
-#ll_data_frame$random_targ[ll_data_frame$random_targ == "f_not_false"] <- "F"
+levels(ll_data_frame$random_targ)[levels(ll_data_frame$structured_targ)=="f_not_false"] <- "F"
+
+ll_data_frame$random_targ[ll_data_frame$random_targ == "f_not_false"] <- "f"
 #ll_data_frame$structured_targ[ll_data_frame$structured_targ == "f_not_false"] <- "F"
 
 # Remove .png from image names
