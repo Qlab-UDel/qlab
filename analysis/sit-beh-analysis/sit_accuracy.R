@@ -6,6 +6,9 @@
 #  It also runs an ANOVA to compare reaction time slope between tasks, modalities, and domains.
 # NOTE: Does not remove points outside 2.5 stdev of mean
 # NOTE: relevant columns pre-selected through this experiment's version of fmri_data_cleaning.Rmd
+
+
+# NEW LINE TO TEST COMMIT
 #  ****************************************************************************
 
 
@@ -172,31 +175,6 @@ for(id in list_part_id){
 # Combine data for each participant
 indiv_ll_accuracies <- data.frame(part_id, task, accuracy)
 
-# ******************** IV. FIND vv ACCURACY *************************
-
-# Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
-
-# List unique participant IDs for this condition
-list_part_id <- unique(vv_data_frame$part_id)
-
-# Set up data frame to hold accuracies
-accuracy <- NULL
-part_id <- NULL
-task<- NULL
-
-# For each participant, extract id
-# Assign domain, type, and modality
-# Calculate and record mean_rt, rt_slope, upper bound, and lower bound
-for(id in list_part_id){
-  part_id <- append(part_id, id)
-  task <- append(task, "vv")
-  #accuracy <- append(accuracy, round(mean(vv_data_frame[ which(vv_data_frame$PartID==id), ]$corr_resp, na.rm=TRUE), digits =3),)
-  accuracy <- append(accuracy, round(mean(vv_data_frame[which(vv_data_frame$part_id==id),]$corr_resp, na.rm=TRUE), digits = 3))
-}
-
-# Combine data for each participant
-indiv_vv_accuracies <- data.frame(part_id, task, accuracy)
-
 
 # ******************** V. FIND vl ACCURACY *************************
 
@@ -223,10 +201,90 @@ for(id in list_part_id){
 # Combine data for each participant
 indiv_vl_accuracies <- data.frame(part_id, task, accuracy)
 
-View(indiv_ll_accuracies)
-View(indiv_lv_accuracies)
 
-# Write individual accuracies to output file
-#setwd("../output_files/")
-#write.csv(indiv_accuracies, "4_runs_pilot_accuracy_indiv.csv")
+# ******************** IV. FIND vv ACCURACY *************************
 
+# Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
+
+# List unique participant IDs for this condition
+list_part_id <- unique(vv_data_frame$part_id)
+
+# Set up data frame to hold accuracies
+accuracy <- NULL
+part_id <- NULL
+task<- NULL
+
+# For each participant, extract id
+# Assign domain, type, and modality
+# Calculate and record mean_rt, rt_slope, upper bound, and lower bound
+for(id in list_part_id){
+  part_id <- append(part_id, id)
+  task <- append(task, "vv")
+  #accuracy <- append(accuracy, round(mean(vv_data_frame[ which(vv_data_frame$PartID==id), ]$corr_resp, na.rm=TRUE), digits =3),)
+  accuracy <- append(accuracy, round(mean(vv_data_frame[which(vv_data_frame$part_id==id),]$corr_resp, na.rm=TRUE), digits = 3))
+}
+
+# Combine data for each participant
+indiv_vv_accuracies <- data.frame(part_id, task, accuracy)
+
+
+
+#Summarize individual accuracies--------
+indiv_accuracies <- rbind(indiv_ll_accuracies, indiv_lv_accuracies, indiv_vl_accuracies, indiv_vv_accuracies)
+View(indiv_accuracies)
+
+#Write individual accuracies to output file
+write.csv(indiv_accuracies, "sit_accuracy_indiv.csv")
+
+
+# Find group-level mean accuracy accross tasks------------------------------------------------------------------------------------
+
+group_accuracy <- NULL
+mean_accuracy <- NULL
+task <- NULL
+
+# Find mean ll accuracy across participants
+all_ll<-subset(indiv_accuracies, task=="ll")
+task <- append (task, paste ("ll"))
+mean_accuracy <- append (mean_accuracy, round(mean(all_ll$accuracy), digits = 3))
+
+# Find mean ssl accuracy across participants
+all_lv<-subset(indiv_accuracies, task=="lv")
+task <- append (task, paste ("lv"))
+mean_accuracy <- append (mean_accuracy, round(mean(all_lv$accuracy), digits = 3))
+
+# Find mean tsl accuracy across participants
+all_vl<-subset(indiv_accuracies, task=="vl")
+task <- append (task, paste ("vl"))
+mean_accuracy <- append (mean_accuracy, round(mean(all_vl$accuracy), digits = 3))
+
+# Find mean vsl accuracy across participants
+all_vv<-subset(indiv_accuracies, task=="vv")
+task <- append (task, paste ("vv"))
+mean_accuracy <- append (mean_accuracy, round(mean(all_vv$accuracy), digits = 3))
+
+# Find mean accuracy across all lsl tests
+all_lsl<-rbind(all_ll, all_lv)
+task <- append (task, paste ("lsl_test"))
+mean_accuracy <- append (mean_accuracy, round(mean(all_lsl$accuracy), digits = 3))
+
+# Find mean accuracy across all vsl tests
+all_vsl<-rbind(all_vl, all_vv)
+task <- append (task, paste ("vsl_test"))
+mean_accuracy <- append (mean_accuracy, round(mean(all_vsl$accuracy), digits = 3))
+
+# Find mean accuracy across all "same condition"
+all_same<-rbind(all_ll, all_vv)
+task <- append (task, paste ("same_condition"))
+mean_accuracy <- append (mean_accuracy, round(mean(all_same$accuracy), digits = 3))
+
+# Find mean accuracy across all "different condition"
+all_different<-rbind(all_lv, all_vl)
+task <- append (task, paste ("different_condition"))
+mean_accuracy <- append (mean_accuracy, round(mean(all_different$accuracy), digits = 3))
+
+
+# Combine group accuracies into one data frame
+group_accuracy <- data.frame(cbind(task, mean_accuracy))
+
+write.csv(group_accuracy, "sit_accuracy_group.csv")

@@ -5,49 +5,55 @@ date: "November 13, 2017"
 output: html_document
 ---
 
-```{r,echo=FALSE,warning=FALSE, message=FALSE}
+
+
+```{r.echo=FALSE}
+
+#This script section will create a correlation matrix to see the relationship between the tasks
 
 library(PerformanceAnalytics)
-library(readr)
 
 tslrt <- read.csv("C:/Users/Qlab/Downloads/mturk_data/tsl_RT.csv")
-vslrt <- read.csv("C:/Users/Qlab/Downloads/mturk_data/vsl_RT.csv")
+vslrt <- read.csv("C:/Users/Qlab/Downloads/tempmturk_data/vsl_RT.csv")
 sslrt <- read.csv("C:/Users/Qlab/Downloads/mturk_data/ssl_RT.csv")
 lslrt <- read.csv("C:/Users/Qlab/Downloads/mturk_data/lsl_RT.csv")
-
-vn <- mean(vslrt$rt_slope) - 2.5* sd(vslrt$rt_slope)
-tn <- mean(tslrt$rt_slope) - 2.5* sd(tslrt$rt_slope)
-sn <- mean(sslrt$rt_slope) - 2.5* sd(sslrt$rt_slope)
-ln <- mean(lslrt$rt_slope) - 2.5* sd(lslrt$rt_slope)
-
-vp <- mean(vslrt$rt_slope) + 2.5* sd(vslrt$rt_slope)
-tp <- mean(tslrt$rt_slope) + 2.5* sd(tslrt$rt_slope)
-sp <- mean(sslrt$rt_slope) + 2.5* sd(sslrt$rt_slope)
-lp <- mean(lslrt$rt_slope) + 2.5* sd(lslrt$rt_slope)
-
 
 tsla <- read.csv("C:/Users/Qlab/Downloads/mturk_data/tsl_acc.csv")
 vsla <- read.csv("C:/Users/Qlab/Downloads/mturk_data/vsl_acc.csv")
 ssla <- read.csv("C:/Users/Qlab/Downloads/mturk_data/ssl_acc.csv")
 lsla <- read.csv("C:/Users/Qlab/Downloads/mturk_data/lsl_acc.csv")
 
-
-van <- mean(vsla$subj_corr) - 2.5* sd(vsla$subj_corr)
-tan <- mean(tsla$subj_corr) - 2.5* sd(tsla$subj_corr)
-san <- mean(ssla$subj_corr) - 2.5* sd(ssla$subj_corr)
-lan <- mean(lsla$subj_corr) - 2.5* sd(lsla$subj_corr)
-
-vap <- mean(vsla$subj_corr) + 2.5* sd(vsla$subj_corr)
-tap <- mean(tsla$subj_corr) + 2.5* sd(tsla$subj_corr)
-sap <- mean(ssla$subj_corr) + 2.5* sd(ssla$subj_corr)
-lap <- mean(lsla$subj_corr) + 2.5* sd(lsla$subj_corr)
-
 scf <- read.csv("C:/Users/Qlab/Downloads/mturk_data/scf.csv")
-wj3 <- read.csv("C:/Users/Qlab/Downloads/mturk_data/wj3_score.csv")
+wj3 <- read.csv("C:/Users/Qlab/Downloads/mturk_data/wj3.csv")
 
-dataname <- read.csv("C:/Users/Qlab/Downloads/mturk_data/data.csv")
+tempt <- tslrt
+temps <- sslrt
+tempv <- vslrt
+templ <- lslrt
+
+colnames(tempt) <- c("X","id","meanrt","rtslope","hitrate","missrate","corr","false","dp","wj3","gender","hand","lang")
+colnames(temps) <- c("X","id","meanrt","rtslope","hitrate","missrate","corr","false","dp","wj3","gender","hand","lang")
+colnames(tempv) <- c("X","id","meanrt","rtslope","hitrate","missrate","corr","false","dp","wj3","gender","hand","lang")
+colnames(templ) <- c("X","id","meanrt","rtslope","hitrate","missrate","corr","false","dp","wj3","gender","hand","lang")
+
+dataname <- rbind(tempt,tempv,templ,temps)
 a<-NULL
-for (i in (unique(dataname$id))){if(sum(dataname$id==i)==9){a<-append(a,i)}}
+for (i in (unique(dataname$id))){if(sum(dataname$id==i)==4){a<-append(a,i)}}
+
+tempat <- tsla
+tempas <- ssla
+tempav <- vsla
+tempal <- lsla
+
+colnames(tempat) <- c("X","id","%_corr","cond","gender")
+colnames(tempas) <- c("X","id","%_corr","cond", "gender")
+colnames(tempav) <- c("X","id","%_corr","cond", "gender")
+colnames(tempal) <- c("X","id","%_corr","cond", "gender")
+
+dataname2 <- rbind(tempat,tempav,tempal,tempas)
+b<-NULL
+for (i in (unique(dataname2$id))){if(sum(dataname2$id==i)==4){b<-append(b,i)}}
+
 
 tsl_rt_slope <- NULL
 vsl_rt_slope  <- NULL
@@ -61,88 +67,38 @@ lsl_accuracy <- NULL
 
 wj31 <- NULL 
 age1 <- NULL
-
 for (id in a) {tsl_rt_slope <-append(tsl_rt_slope,tslrt$rt_slope[tslrt$list_tsl_id==id])
 vsl_rt_slope<-append(vsl_rt_slope,vslrt$rt_slope[vslrt$list_vsl_id==id])
 ssl_rt_slope<-append(ssl_rt_slope,sslrt$rt_slope[sslrt$list_ssl_id==id])
 lsl_rt_slope<-append(lsl_rt_slope,lslrt$rt_slope[lslrt$list_lsl_id==id])
 wj31 <- append(wj31, wj3$total[wj3$ID==id])
+age1 <- append(age1, scf$age[scf$ID==id])}
+
+
+for (id in b) {
 tsl_accuracy <- append(tsl_accuracy,tsla$subj_corr[tsla$acc_id==id])
 vsl_accuracy <- append(vsl_accuracy,vsla$subj_corr[vsla$acc_id==id])
 ssl_accuracy <- append(ssl_accuracy,ssla$subj_corr[ssla$acc_id==id])
 lsl_accuracy <- append(lsl_accuracy,lsla$subj_corr[lsla$acc_id==id])
-}
+wj32 <- append(wj31, wj3$total[wj3$ID==id])
+age2 <- append(age1, scf$age[scf$ID==id])}
 
 d1 <- data.frame(tsl_rt_slope,vsl_rt_slope,ssl_rt_slope,lsl_rt_slope)
 d2 <- data.frame(tsl_accuracy,ssl_accuracy,vsl_accuracy,lsl_accuracy)
-d3 <- data.frame(tsl_rt_slope,vsl_rt_slope,ssl_rt_slope,lsl_rt_slope,tsl_accuracy,vsl_accuracy,ssl_accuracy,lsl_accuracy,wj31)
 
-#chart.Correlation(d1, histogram=TRUE, pch=19)
-#chart.Correlation(d2, histogram=TRUE, pch=19)
+#If you just want to check the correlation, use the file already created (accuracy_ss1_ss2.csv)
+chart.Correlation(accuracy_ss1_ss2,method="spearman")
 
-#exclude people with rt_slope out of 2.5*std
-d3 <- d3[which(d3$ssl_rt_slope > sn & d3$ssl_rt_slope < sp),] 
-d3 <- d3[which(d3$lsl_rt_slope > ln & d3$lsl_rt_slope < lp),] 
-d3 <- d3[which(d3$vsl_rt_slope > vn & d3$vsl_rt_slope < vp),] 
-d3 <- d3[which(d3$tsl_rt_slope > tn & d3$tsl_rt_slope < tp),] 
-d3 <- d3[which(d3$ssl_accuracy > san & d3$ssl_accuracy < sap),] 
-d3 <- d3[which(d3$lsl_accuracy > lan & d3$lsl_accuracy < lap),] 
-d3 <- d3[which(d3$vsl_accuracy > van & d3$vsl_accuracy < vap),] 
-d3 <- d3[which(d3$tsl_accuracy > tan & d3$tsl_accuracy < tap),] 
+#accuracy plot
+acc_all <- read_csv("Z:/projects/mturk/raw/cleaned_data/acc_all.csv")
+ggplot(acc_all, aes(x=Task, y = Accuracy, fill=factor(Session))) + geom_bar(stat="summary",position=position_dodge(width=0.9))  + theme_classic(base_size = 20.0) + scale_fill_manual(name = "Session",labels = c("SS1","SS2"),values = c("#b2182b", "#2166ac")) + geom_hline(yintercept = 0.5, linetype=3) + ggtitle("Accuracy plot") #+ geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),data=acc1, position = position_dodge(width = 0.9),width=0.4)
+
+ ggplot(rt1, aes(x=Task, y = RT_Slope, fill=factor(Session))) + geom_bar(stat="summary",position=position_dodge(width=0.9))  + theme_classic(base_size = 20.0) + scale_fill_manual(name = "Session",labels = c("SS1","SS2"),values = c("snow3", "snow4")) + geom_hline(yintercept = 0, linetype=3) + ggtitle("Reaction Time Slope plot") #+ geom_errorbar(aes(ymin=RT_Slope-se,ymax=RT_Slope+se),data=rt1, position = position_dodge(width = 0.9),width=0.4)
+ 
+#To test for correlation between each task individually one-tailed. Note that the result remains the asme with the big correlation.
+x <- c("vsl_1","ssl_1")
+vs <- accuracy_ss1_ss2[x]
+vs <- na.omit(vs)
+cor.test(vs$vsl_1,vs$ssl_1,method="spearman",alternative="greater")
 ```
-
-```{r,fig.width=18, fig.height=18, echo=FALSE,warning=FALSE}
-chart.Correlation(d3, histogram=TRUE, pch=19)
-
-```
-
-
-#Anova analysis
-## RT Slope
-```{r,echo=FALSE,warning=FALSE}
-rts <- read.csv("C:/Users/Qlab/Downloads/mturk_data/anova_data.csv")
-rts_anova <- aov(Score~Modality*Domain + Error(ID/(Modality*Domain)),data=rts)
-summary(rts_anova)
-```
-
-##Accuracy
-```{r,echo=FALSE,warning=FALSE}
-acc <- read.csv("C:/Users/Qlab/Downloads/mturk_data/anova_acc_data.csv")
-acc_anova <- aov(Accuracy~Modality*Domain + Error(ID/(Modality*Domain)),data=acc)
-summary(acc_anova)
-```
-
-
-###LSL versus VSL, significant
-
-```{r,echo=FALSE}
-t.test(acc$Accuracy[acc$Domain=="Ling" & acc$Modality=="Visual"],acc$Accuracy[acc$Domain=="Non-ling" & acc$Modality=="Visual"])
-```
-
-###LSL versus SSL, not significant
-```{r,echo=FALSE}
-t.test(acc$Accuracy[acc$Domain=="Ling" & acc$Modality=="Visual"],acc$Accuracy[acc$Domain=="Ling" & acc$Modality=="Auditory"])
-```
-
-
-###LSL versus TSl, significant
-```{r,echo=FALSE}
-t.test(acc$Accuracy[acc$Domain=="Ling" & acc$Modality=="Visual"],acc$Accuracy[acc$Domain=="Non-ling" & acc$Modality=="Auditory"])
-```
-
-###VSL versus SSL, significant
-```{r,echo=FALSE}
-t.test(acc$Accuracy[acc$Domain=="Non-ling" & acc$Modality=="Visual"],acc$Accuracy[acc$Domain=="Ling" & acc$Modality=="Auditory"])
-```
-
-###VSL versus TSL, significant
-```{r,echo=FALSE}
-t.test(acc$Accuracy[acc$Domain=="Non-ling" & acc$Modality=="Visual"],acc$Accuracy[acc$Domain=="Non-ling" & acc$Modality=="Auditory"])
-```
-
-###TSL versus SSL, significant
-```{r,echo=FALSE}
-t.test(acc$Accuracy[acc$Domain=="Non-ling" & acc$Modality=="Auditory"],acc$Accuracy[acc$Domain=="Ling" & acc$Modality=="Auditory"])
-```
-
 
