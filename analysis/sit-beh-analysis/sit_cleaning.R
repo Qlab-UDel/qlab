@@ -9,9 +9,6 @@
 # Remove objects in environment
 rm(list=ls())
 
-# Set working directory
-setwd("Documents/qlab/analysis/sit-beh-analysis/")
-
 # Set up file paths
 ll_input <- ("../../../sit_data/original/ll_original/")
 lv_input <- ("../../../sit_data/original/lv_original/")
@@ -44,7 +41,7 @@ ll_clean <- function(file) {
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'lsl_question_key_resp.corr'] <- 'corr_resp'
   # Simplify loop names
-  names(newdata)[names(newdata) == 'l_block_trial_loop.thisTrialN'] <- 'this_l_loop'
+  names(newdata)[names(newdata) == 'l_block_trial_loop.thistrialn'] <- 'this_l_loop'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
@@ -70,7 +67,7 @@ for (file in ll_files)
 lv_clean <- function(file) {
   current_file <- read.csv(file)
   # Select relevant columns
-  value <- c("PartID", "expName", "trialnum", "condition", "l_block_trial_loop.thisTrialN", "v_block_trials.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt", "v_block_trials_key_resp.rt","lsl_question_key_resp.corr")
+  value <- c("PartID", "expName", "trialnum", "condition", "l_block_trial_loop.thisTrialN", "v_block_trials.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt", "v_block_trial_key_resp.rt","lsl_question_key_resp.corr")
   newdata <- current_file[value]
   # Make sure that F is not marked as False
   newdata$first_targ[newdata$first_targ == FALSE] <- 'f_not_false'
@@ -106,7 +103,7 @@ for (file in lv_files)
 vl_clean <- function(file) {
   current_file <- read.csv(file)
   # Select relevant columns
-  value <- c("PartID", "trialnum", "expName", "condition", "l_block_trial_loop.thisTrialN", "v_block_trials_loop.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","v_block_trials_key_resp.rt", "vsl_question_key_resp.corr")
+  value <- c("PartID", "trialnum", "expName", "condition", "l_block_trial_loop.thisTrialN", "v_block_trials.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","v_block_trial_key_resp.rt", "vsl_question_key_resp.corr")
   newdata <- current_file[value]
   # Make sure that F is not marked as False
   newdata$second_targ[newdata$second_targ == FALSE] <- 'f_not_false'
@@ -116,7 +113,7 @@ vl_clean <- function(file) {
   names(newdata)[names(newdata) == 'vsl_question_key_resp.corr'] <- 'corr_resp'
   # Simplify loop names
   names(newdata)[names(newdata) == 'l_block_trial_loop.thisTrialN'] <- 'this_l_loop'
-  names(newdata)[names(newdata) == 'v_block_trials_loop.thisTrialN'] <- 'this_v_loop'
+  names(newdata)[names(newdata) == 'v_block_trials.thisTrialN'] <- 'this_v_loop'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
@@ -140,7 +137,7 @@ for (file in vl_files)
 vv_clean <- function(file) {
   current_file <- read.csv(file)
   # Select relevant columns
-  value <- c("PartID", "expName", "trialnum", "condition", "v_block_trials_loop.thisTrialN", "image", "first_targ", "second_targ","v_block_trials_key_resp.rt", "vsl_question_key_resp.corr")
+  value <- c("PartID", "expName", "trialnum", "condition", "v_block_trials.thisTrialN", "image", "first_targ", "second_targ","v_block_trial_key_resp.rt", "vsl_question_key_resp.corr")
   newdata <- current_file[value]
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'vsl_question_key_resp.corr'] <- 'corr_resp'

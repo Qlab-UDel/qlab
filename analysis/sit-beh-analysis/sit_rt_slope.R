@@ -6,6 +6,7 @@
 # TO DO: What are all the weird warnings in line 212?
 # TO DO: What to do in line 247 if you're in the last line for that participant? Or the last line of that block?
 # TO DO: What is 239?
+# TO DO: Test 258 condition
 
 # ******************** I. PREPARE FILES *************************
 
@@ -188,24 +189,24 @@ vv_data_frame$image <- gsub (".png", "", vv_data_frame$image, ignore.case=TRUE)
 random_ll <- ll_data_frame[ which(ll_data_frame$condition== "R"),]
 structured_ll <- ll_data_frame[ which(ll_data_frame$condition== "S"),]
 
-# Index the images by random/ structured-----------------------------------------------
+## Index the images by random/ structured-----------------------------------------------
 
 # List unique participant IDs for this condition
-list_part_id <- as.character(unique(ll_data_frame$part_id))
+#list_part_id <- as.character(unique(ll_data_frame$part_id))
 
-# Find the number of images shown to each participant
-random_images_per_participant <- NULL
-for(i in list_part_id){random_images_per_participant <- append(random_images_per_participant,sum(random_ll$part_id==i))}
+# Find the number of images shown to each participant in the condition
+#random_images_per_participant <- NULL
+#for(i in list_part_id){random_images_per_participant <- append(random_images_per_participant,sum(random_ll$part_id==i))}
 
 #for testing purposes
-id_test <- cbind(random_images_per_participant, list_part_id)
+#id_test <- cbind(random_images_per_participant, list_part_id)
 
 # For each participant, index the images
-image_index <- NULL
-for (i in random_images_per_participant) {image_index <- append (image_index, rep(1:random_images_per_participant, 1))}
+#image_index <- NULL
+#for (i in random_images_per_participant) {image_index <- append (image_index, rep(1:random_images_per_participant, 1))}
 
 # Add the targets' indices
-random_ll$image_index <- image_index
+#random_ll$image_index <- image_index
 
 # Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding/ following stimulus ---------------------------------------------
 
@@ -214,36 +215,87 @@ rt_col <- NULL
 id <- NULL
 trial <-NULL
 target <- NULL
+this_id <- NULL
+this_trial_num <- NULL
+trial_after<- NULL
+this_loop <- NULL
+loop <- NULL
+following_row <- NULL
+row_after <- NULL
+following_loop <- NULL
+loop_after <- NULL
 
 # Identify the rows when this condition's target was presented
 random_ll_targets <- random_ll[which(random_ll$random_targ==random_ll$image),]
 structured_ll_targets <- structured_ll[which(structured_ll$structured_targ==structured_ll$image),]
 
+# TO TEST
+part_2 <- random_ll[which(random_ll$part_id=="sit_a_002"),]
+random_ll_targets <- random_ll_targets[1:30,]
+
 # Isolate participants' response times.
 # Include rows when the participant responded to stimuli adjacent to the target (i.e. any time that the participant pressed the button within one stimulus before or after the target)
-for (i in random_ll_targets) {
-  # Isolate the image index
-  this_image_index <- random_ll_targets[i,]$image_index
+for(i in 1:nrow(random_ll_targets)) 
+{
   # Isolate the ID number
-  this_id <- random_ll_targets[i]$part_id
-  # Append the id number
-  id <- append(id, paste(random_ll_targets[i,]$part_id))
+  this_id <- random_ll_targets[i,]$part_id
+  id <- append(id, paste(this_id))
+  # Isolate the trial number
+  this_trial_num <- random_ll_targets[i,]$trial_num
+  trial <- append(trial, paste(this_trial_num))
+  # Isolate the loop value
+  this_loop <- random_ll_targets[i,]$this_l_loop
+  loop <- append (loop, this_loop)
+  # Isolate the row with the following trial for that participant
+  following_trial <- random_ll[which(random_ll$trial_num==this_trial_num+1 & random_ll$part_id==this_id), ]
+  # Isolate the following row's this_l_loop value.
+  following_loop <- following_trial$this_l_loop
+  loop_after <- append(loop_after, following_loop) 
   # If the participant responded while the target was presented
   if (!is.na(random_ll_targets[i,] [,"l_block_trial_key_resp.rt"])){
     # Count their response time from the target stimulus
     rt_col <- append (rt_col, random_ll_targets[i,][,"l_block_trial_key_resp.rt"])}
-  # If the participant responded during the stimulus following the target
-  else if (!is.na(random_ll[i+1,] [,"l_block_trial_key_resp.rt"])){
+  # If the participant responded during the stimulus following the target (implies that we are not in the last row, which would not have a following row)
+  else if (!is.na(following_trial["l_block_trial_key_resp.rt"])){
+    # And the following line is from the same block
+      if (following_loop==this_loop+1){
+        # Take the rt from the following line
+        rt_col <- append (rt_col, following_trial$l_block_trial_key_resp.rt)}
+      }
+  }
+
+  
+  
+  
+    # Compare the two this_l_loop values. If there is a value from the following row (ie we are not on the last row) and the value from the following row is higher (ie. it is within the same block)
+    if (!na(following_loop) & following_loop == this_loop+1)
+      # Then take the rt from that row.
+      rt_col <- append (rt_col, following_trial$l_block_trial_key_resp.rt)}
+}
+
+    
+    
     # Count their response time as the duration that the target was presented (1000 ms)
     # plus the response time to the following stimulus in random_ll
-        # First, find the subset of lines related to this participant
-        this_id_rts <- random_ll[which(random_ll$part_id == this_id)]
-        # Second, identify the image indexed after this one
-        following_stim <- this_id_rts [which( this_id_rts$image_index == this_image_index+1)]
-        # Third, add this line's reaction time to the duration that the target was presented
-        target_rt <- .1+ following_stim$l_block_trial_key_resp.rt
-        rt_col <- append [rt_col, target_rt]
-  # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
+    # First, find the subset of lines related to this participant
+    this_id_rts <- random_ll[which(random_ll$part_id == this_id)]
+    # Second, identify the image indexed after this one
+    following_stim <- this_id_rts [which( this_id_rts$trial_num == this_trial_num+1)]
+    # Third, add this line's reaction time to the duration that the target was presented
+    target_rt <- .1+ following_stim$l_block_trial_key_resp.rt[1]
+    rt_col <- append [rt_col, target_rt]}
+  
+}
+  
+
+  
+}
+ 
+
+
+
+
+ # Check if you are looking at the first target, which is always the first stimulus. If so, it does not have a preceeding target
   else if (i>0){ 
     # Count their response time from the target stimulus (NA)
     rt_col <- append (rt_col, trials_1_3[i,][,"random_block_key_resp.rt"])}    
