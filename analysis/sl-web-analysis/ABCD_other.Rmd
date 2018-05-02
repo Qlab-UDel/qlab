@@ -89,8 +89,8 @@ cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP
 cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"],method="spearman", alternative = "greater")
 cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"],method="spearman", alternative = "less")
 
-#dd <- read_csv("~/dd.csv")
-#typ <- read_csv("~/typ.csv")
+dd <- read_csv("~/dd.csv")
+typ <- read_csv("~/typ.csv")
 chart.Correlation(typ,method="spearman")
 chart.Correlation(dd,method="spearman")
 ```
