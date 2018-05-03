@@ -8,6 +8,7 @@ output: html_document
 ```{r, echo=FALSE,warning=FALSE,include=FALSE}
 library(readr)
 library(nortest)
+library(PerformanceAnalytics)
 
 #This script works on the big data ABCD file with everyone's information on IQ, Language measurements etc.
 
@@ -19,7 +20,7 @@ library(nortest)
 #delta mirror on
 
 #mirror <- NULL
-#for (i in seq(from=1,to=length(ABCD$Group),by=1)){mirror <- append(mirror, - mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 2: Completion time; Errors`[i],split=';')[[1]][[1]]))) + mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 9: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 10: Completion time; Errors`[i],split=';')[[1]][[1]]))))}
+#for (i in seq(from=1,to=length(ABCD$Group),by=1)){mirror <- append(mirror, (- mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 2: Completion time; Errors`[i],split=';')[[1]][[1]]))) + mean(c(as.numeric(strsplit(ABCD$`Mirror Tracing Trial 9: Completion time; Errors`[i],split=';')[[1]][[1]]),as.numeric(strsplit(ABCD$`Mirror Tracing Trial 10: Completion time; Errors`[i],split=';')[[1]][[1]]))))/ as.numeric(strsplit(ABCD$`Mirror Tracing Trial 1: Completion time; Errors`[i],split=';')[[1]][[1]]))}
 
 #delta mirror off
 
@@ -89,8 +90,8 @@ cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP
 cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"],method="spearman", alternative = "greater")
 cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"],method="spearman", alternative = "less")
 
-#dd <- read_csv("~/dd.csv")
-#typ <- read_csv("~/typ.csv")
+dd <- read_csv("~/dd.csv")
+typ <- read_csv("~/typ.csv")
 chart.Correlation(typ,method="spearman")
 chart.Correlation(dd,method="spearman")
 ```
