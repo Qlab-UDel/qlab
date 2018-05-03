@@ -4,6 +4,8 @@
 #  This script cleans the auditory and visual files from the 4-run pilot for reaction time slope analysis
 #  ****************************************************************************
 
+
+
 # Prepare files ------------------------------------------------------------
 
 # Remove objects in environment
