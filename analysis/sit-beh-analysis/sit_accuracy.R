@@ -2,13 +2,9 @@
 #  Violet Kozloff
 #  April 17, 2018
 #  This script analyzes structured and random blocks across two visual tasks, letters and images.
-#  It measures the mean reaction time and the slope of the reaction time for each participant for each condition.
-#  It also runs an ANOVA to compare reaction time slope between tasks, modalities, and domains.
+# TO DO: Add scatterplot
 # NOTE: Does not remove points outside 2.5 stdev of mean
 # NOTE: relevant columns pre-selected through this experiment's version of fmri_data_cleaning.Rmd
-
-
-# NEW LINE TO TEST COMMIT
 #  ****************************************************************************
 
 
@@ -135,20 +131,24 @@ list_part_id <- unique(lv_data_frame$part_id)
 # Set up data frame to hold accuracies
 accuracy <- NULL
 part_id <- NULL
-task<- NULL
+task <- NULL
+same_or_diff <-NULL
+test_phase <- NULL
 
 # For each participant, extract id
-# Assign domain, type, and modality
+# Assign domain, same_or_diff, and modality
 # Calculate and record mean_rt, rt_slope, upper bound, and lower bound
 for(id in list_part_id){
   part_id <- append(part_id, id)
   task <- append(task, "lv")
+  same_or_diff <- append(same_or_diff, "different")
+  test_phase <- append (test_phase, "lsl")
   #accuracy <- append(accuracy, round(mean(lv_data_frame[ which(lv_data_frame$PartID==id), ]$corr_resp, na.rm=TRUE), digits =3),)
   accuracy <- append(accuracy, round(mean(lv_data_frame[which(lv_data_frame$part_id==id),]$corr_resp, na.rm=TRUE), digits = 3))
   }
   
 # Combine data for each participant
-indiv_lv_accuracies <- data.frame(part_id, task, accuracy)
+indiv_lv_accuracies <- data.frame(part_id, task, same_or_diff, test_phase, accuracy)
 
 # ******************** III. FIND ll ACCURACY *************************
 
@@ -160,20 +160,23 @@ list_part_id <- unique(ll_data_frame$part_id)
 # Set up data frame to hold accuracies
 accuracy <- NULL
 part_id <- NULL
-task<- NULL
+task <- NULL
+same_or_diff <-NULL
+test_phase <- NULL
 
 # For each participant, extract id
-# Assign domain, type, and modality
+# Assign domain, same_or_diff, and modality
 # Calculate and record mean_rt, rt_slope, upper bound, and lower bound
 for(id in list_part_id){
   part_id <- append(part_id, id)
   task <- append(task, "ll")
-  #accuracy <- append(accuracy, round(mean(ll_data_frame[ which(ll_data_frame$PartID==id), ]$corr_resp, na.rm=TRUE), digits =3),)
+  same_or_diff <- append(same_or_diff, "same")
+  test_phase <- append (test_phase, "lsl")
   accuracy <- append(accuracy, round(mean(ll_data_frame[which(ll_data_frame$part_id==id),]$corr_resp, na.rm=TRUE), digits = 3))
 }
 
 # Combine data for each participant
-indiv_ll_accuracies <- data.frame(part_id, task, accuracy)
+indiv_ll_accuracies <- data.frame(part_id, task, same_or_diff, test_phase, accuracy)
 
 
 # ******************** V. FIND vl ACCURACY *************************
@@ -187,19 +190,23 @@ list_part_id <- unique(vl_data_frame$part_id)
 accuracy <- NULL
 part_id <- NULL
 task<- NULL
+same_or_diff <-NULL
+test_phase <- NULL
 
 # For each participant, extract id
-# Assign domain, type, and modality
+# Assign domain, same_or_diff, and modality
 # Calculate and record mean_rt, rt_slope, upper bound, and lower bound
 for(id in list_part_id){
   part_id <- append(part_id, id)
   task <- append(task, "vl")
+  same_or_diff <- append(same_or_diff, "different")
+  test_phase <- append (test_phase, "vsl")
   #accuracy <- append(accuracy, round(mean(vl_data_frame[ which(vl_data_frame$PartID==id), ]$corr_resp, na.rm=TRUE), digits =3),)
   accuracy <- append(accuracy, round(mean(vl_data_frame[which(vl_data_frame$part_id==id),]$corr_resp, na.rm=TRUE), digits = 3))
 }
 
 # Combine data for each participant
-indiv_vl_accuracies <- data.frame(part_id, task, accuracy)
+indiv_vl_accuracies <- data.frame(part_id, task, same_or_diff, test_phase, accuracy)
 
 
 # ******************** IV. FIND vv ACCURACY *************************
@@ -213,19 +220,23 @@ list_part_id <- unique(vv_data_frame$part_id)
 accuracy <- NULL
 part_id <- NULL
 task<- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 
 # For each participant, extract id
-# Assign domain, type, and modality
+# Assign domain, same_or_diff, and modality
 # Calculate and record mean_rt, rt_slope, upper bound, and lower bound
 for(id in list_part_id){
   part_id <- append(part_id, id)
   task <- append(task, "vv")
+  same_or_diff <- append(same_or_diff, "same")
+  test_phase <- append(test_phase, "vsl")
   #accuracy <- append(accuracy, round(mean(vv_data_frame[ which(vv_data_frame$PartID==id), ]$corr_resp, na.rm=TRUE), digits =3),)
   accuracy <- append(accuracy, round(mean(vv_data_frame[which(vv_data_frame$part_id==id),]$corr_resp, na.rm=TRUE), digits = 3))
 }
 
 # Combine data for each participant
-indiv_vv_accuracies <- data.frame(part_id, task, accuracy)
+indiv_vv_accuracies <- data.frame(part_id, task, same_or_diff, test_phase, accuracy)
 
 
 
@@ -235,6 +246,10 @@ View(indiv_accuracies)
 
 #Write individual accuracies to output file
 write.csv(indiv_accuracies, "sit_accuracy_indiv.csv")
+
+
+m1=aov(accuracy~test_phase*same_or_diff+Error(part_id), data=indiv_accuracies)
+summary(m1)
 
 
 # Find group-level mean accuracy accross tasks------------------------------------------------------------------------------------

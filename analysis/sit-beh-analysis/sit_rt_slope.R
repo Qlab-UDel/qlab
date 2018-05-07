@@ -1,19 +1,9 @@
-table_data <- read.csv(file='sit_mean_rt_df.csv',sep=',',header=T)
-test_table <- table(table_data$task, table_data$condition, table_data$mean_rt)
-means <- table(mtcars$vs, mtcars$gear)
-barplot(counts, main="Car Distribution by Gears and VS",
-        xlab="Number of Gears", col=c("darkblue","red"),
-        legend = rownames(counts), beside=TRUE)
-# TO DO: Also, are we including reaction times for responses during the stimuli preceding/ following for l and v trials?
 # TO DO: Remove points outside 2.5 Stdev of mean?
-# TO DO: Image index in a way that accounts for different repetitions of S/R blocks. EG: participant A's two R blocks are merged.
-# he doesn't respond during the last target of an S block, which is the last stimulus, so we take his reaction time from the
-# following stimulus (which is actually the first stimulus of the next S block)
-# TO DO: What are all the weird warnings in line 212?
-# TO DO: What to do in line 247 if you're in the last line for that participant? Or the last line of that block?
+# TO DO: What are all the weird warnings?
+# TO DO: Add in last couple of data points (from last sit participants/ repeat heb participant)
 # TO DO: What is 239?
 # TO DO: Test 258 condition
-# WHAT IS GOING ON IN THIS ROW? WHY IS IT TAKING RT 4 ROWS DOWN??? (id: sit_a_002, trial: 145)
+# WHAT IS GOING ON IN THIS ROW? WHY IS IT TAKING RT 4 ROWS DOWN??? (id: sit_a_002, trial: 145); go trhough and make sure that the number coming from the preceding line is correct and what it should be
 # Why is random_ll taking two rows with this information?? id: sit_a_018 trial: 2
 # TO DO: Somewhere this is reading in participant 18's ll data 4 times. Why?
 # TO DO: Currently excludes sit_a_010_vv, which is missing the rt column?
@@ -26,8 +16,16 @@ barplot(counts, main="Car Distribution by Gears and VS",
 
 # Prepare workspace ------------------------------------------------------------------------------------------------------
 
+# Install packages
+install.packages("reshape")
+install.packages("dplyr")
+install.packages("corrplot")
+
 # Remove objects in environment
 rm(list=ls())
+library("reshape")
+library("dplyr")
+library("corrplot")
 
 # Prepare paths for files --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -38,6 +36,9 @@ ll_input <- ("../../../sit_data/clean/ll_clean/")
 lv_input <- ("../../../sit_data/clean/lv_clean/")
 vl_input <- ("../../../sit_data/clean/vl_clean/")
 vv_input <- ("../../../sit_data/clean/vv_clean/")
+vocab_input <- ("../../../sit_data/clean/vocab_clean/vocab_clean.csv")
+
+picture_vocab <- read.csv(vocab_input)
 
 # Read in ll files and combine them into one data frame -----------------------------------------------------------------------------------------------------------------------------------
 
@@ -321,6 +322,8 @@ range <- NULL
 upper_bound <- NULL
 lower_bound <- NULL
 this_range <- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -330,6 +333,8 @@ for(id in extracted_part_id){
   domain <- append(domain, "linguistic")
   task <- append(task, "ll")
   type <- append (type, "random")
+  same_or_diff <- append (same_or_diff, "same")
+  test_phase <- append (test_phase, "lsl")
   mean_rt <- append(mean_rt, round(mean(random_ll_extracted$rt_col[random_ll_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(random_ll_extracted$rt_col[random_ll_extracted$id==id]~random_ll_extracted$targ_index[random_ll_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (random_ll_extracted[ which(random_ll_extracted$id==id),])
@@ -340,7 +345,7 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-rll <- data.frame(part_id, task, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+rll <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
 # for internal checking only: find mean rt_slope
 mean_rll_rt_slope <- mean (rll$rt_slope)
@@ -471,6 +476,8 @@ range <- NULL
 upper_bound <- NULL
 lower_bound <- NULL
 this_range <- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -480,6 +487,8 @@ for(id in extracted_part_id){
   domain <- append(domain, "linguistic")
   task <- append(task, "lv")
   type <- append (type, "random")
+  same_or_diff <- append (same_or_diff, "different")
+  test_phase <- append (test_phase, "lsl")
   mean_rt <- append(mean_rt, round(mean(random_lv_extracted$rt_col[random_lv_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(random_lv_extracted$rt_col[random_lv_extracted$id==id]~random_lv_extracted$targ_index[random_lv_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (random_lv_extracted[ which(random_lv_extracted$id==id),])
@@ -490,7 +499,7 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-rlv <- data.frame(part_id, task, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+rlv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
 # for internal checking only: find mean rt_slope
 mean_rlv_rt_slope <- mean (rlv$rt_slope)
@@ -501,7 +510,6 @@ mean_rlv_rt_slope <- mean (rlv$rt_slope)
 
 # Separate random and structured conditions
 random_vl <- vl_data_frame[ which(vl_data_frame$condition== "R"),]
-structured_vl <- vl_data_frame[ which(vl_data_frame$condition== "S"),]
 
 ## Index the images by random/ structured-----------------------------------------------
 
@@ -529,7 +537,6 @@ trial_num_before <- NULL
 
 # Identify the rows when this condition's target was presented
 random_vl_targets <- random_vl[which(random_vl$random_targ==random_vl$image),]
-structured_vl_targets <- structured_vl[which(structured_vl$structured_targ==structured_vl$image),]
 
 # Isolate participants' response times.
 # Include rows when the participant responded to stimuli adjacent to the target (i.e. any time that the participant pressed the button within one stimulus before or after the target)
@@ -616,6 +623,8 @@ rt_slope <- NULL
 part_id <- NULL
 type <- NULL
 task<- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 rvl<- NULL
 domain <- NULL
 range <- NULL
@@ -631,6 +640,8 @@ for(id in extracted_part_id){
   domain <- append(domain, "linguistic")
   task <- append(task, "vl")
   type <- append (type, "random")
+  same_or_diff <- append (same_or_diff, "different")
+  test_phase <- append (test_phase, "vsl")
   mean_rt <- append(mean_rt, round(mean(random_vl_extracted$rt_col[random_vl_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(random_vl_extracted$rt_col[random_vl_extracted$id==id]~random_vl_extracted$targ_index[random_vl_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (random_vl_extracted[ which(random_vl_extracted$id==id),])
@@ -641,7 +652,7 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-rvl <- data.frame(part_id, task, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+rvl <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
 # for internal checking only: find mean rt_slope
 mean_rvl_rt_slope <- mean (rvl$rt_slope)
@@ -765,6 +776,8 @@ mean_rt <- NULL
 rt_slope <- NULL
 part_id <- NULL
 type <- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 task<- NULL
 rvv<- NULL
 domain <- NULL
@@ -784,6 +797,8 @@ for(id in extracted_part_id){
   domain <- append(domain, "linguistic")
   task <- append(task, "vv")
   type <- append (type, "random")
+  same_or_diff <- append (same_or_diff, "same")
+  test_phase <- append (test_phase, "vsl")
   mean_rt <- append(mean_rt, round(mean(random_vv_extracted$rt_col[random_vv_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(random_vv_extracted$rt_col[random_vv_extracted$id==id]~random_vv_extracted$targ_index[random_vv_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (random_vv_extracted[ which(random_vv_extracted$id==id),])
@@ -794,29 +809,13 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-rvv <- data.frame(part_id, task, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+rvv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
 # for internal checking only: find mean rt_slope
 mean_rvv_rt_slope <- mean (rvv$rt_slope)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ******************** CONDITION 1: structured LL*******************
+# ******************** CONDITION 5: structured LL*******************
 
 # Separate structured and structured conditions
 structured_ll <- ll_data_frame[ which(ll_data_frame$condition== "S"),]
@@ -836,13 +835,10 @@ this_id <- NULL
 this_trial_num <- NULL
 this_loop <- NULL
 loop <- NULL
-#following_loop <- NULL
 preceding_loop <- NULL
-#loop_after <- NULL
 loop_before <- NULL
 this_targ_rt <- NULL
 rt_before <- NULL
-#rt_after <- NULL
 case <- NULL
 this_trial_before <- NULL
 this_trial_num_before <- NULL
@@ -851,10 +847,6 @@ trial_num_before <- NULL
 
 # Identify the rows when this condition's target was presented
 structured_ll_targets <- structured_ll[which(structured_ll$structured_targ==structured_ll$image),]
-
-# TO TEST
-#part_2 <- structured_ll[which(structured_ll$part_id=="sit_a_002"),]
-#structured_ll_targets <- structured_ll_targets[1:250,]
 
 # Isolate participants' response times.
 # Include rows when the participant responded to stimuli adjacent to the target (i.e. any time that the participant pressed the button within one stimulus before or after the target)
@@ -927,10 +919,9 @@ for(i in 1:nrow(structured_ll_targets))
     case <- append (case, "case 5")}
 }
 
-
-
 # Match id and response times
 structured_ll_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
 
@@ -960,6 +951,8 @@ rt_slope <- NULL
 part_id <- NULL
 type <- NULL
 task<- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 sll<- NULL
 domain <- NULL
 range <- NULL
@@ -975,6 +968,8 @@ for(id in extracted_part_id){
   domain <- append(domain, "linguistic")
   task <- append(task, "ll")
   type <- append (type, "structured")
+  same_or_diff <- append (same_or_diff, "same")
+  test_phase <- append (test_phase, "lsl")
   mean_rt <- append(mean_rt, round(mean(structured_ll_extracted$rt_col[structured_ll_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(structured_ll_extracted$rt_col[structured_ll_extracted$id==id]~structured_ll_extracted$targ_index[structured_ll_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (structured_ll_extracted[ which(structured_ll_extracted$id==id),])
@@ -985,13 +980,13 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-sll <- data.frame(part_id, task, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+sll <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
 # for internal checking only: find mean rt_slope
 mean_sll_rt_slope <- mean (sll$rt_slope)
 
 
-# ******************** CONDITION 2: lv structured*******************
+# ******************** CONDITION 6: lv structured*******************
 
 # Separate structured and structured conditions
 structured_lv <- lv_data_frame[ which(lv_data_frame$condition== "S"),]
@@ -1080,6 +1075,7 @@ for(i in 1:nrow(structured_lv_targets))
 # Match id and response times
 structured_lv_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
+
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
 
 # List unique participant IDs for this condition
@@ -1108,6 +1104,8 @@ rt_slope <- NULL
 part_id <- NULL
 type <- NULL
 task<- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 slv<- NULL
 domain <- NULL
 range <- NULL
@@ -1123,6 +1121,8 @@ for(id in extracted_part_id){
   domain <- append(domain, "linguistic")
   task <- append(task, "lv")
   type <- append (type, "structured")
+  same_or_diff <- append (same_or_diff, "different")
+  test_phase <- append (test_phase, "lsl")
   mean_rt <- append(mean_rt, round(mean(structured_lv_extracted$rt_col[structured_lv_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(structured_lv_extracted$rt_col[structured_lv_extracted$id==id]~structured_lv_extracted$targ_index[structured_lv_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (structured_lv_extracted[ which(structured_lv_extracted$id==id),])
@@ -1133,17 +1133,18 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-slv <- data.frame(part_id, task, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+slv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
 # for internal checking only: find mean rt_slope
 mean_slv_rt_slope <- mean (slv$rt_slope)
 
 
 
-# ******************** CONDITION 3: vl structured*******************
+# ******************** CONDITION 7: vl structured*******************
 
 # Separate structured and structured conditions
 structured_vl <- vl_data_frame[ which(vl_data_frame$condition== "S"),]
+
 
 ## Index the images by structured/ structured-----------------------------------------------
 
@@ -1229,6 +1230,7 @@ for(i in 1:nrow(structured_vl_targets))
 # Match id and response times
 structured_vl_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
+
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
 
 # List unique participant IDs for this condition
@@ -1257,6 +1259,8 @@ rt_slope <- NULL
 part_id <- NULL
 type <- NULL
 task<- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 svl<- NULL
 domain <- NULL
 range <- NULL
@@ -1272,6 +1276,8 @@ for(id in extracted_part_id){
   domain <- append(domain, "linguistic")
   task <- append(task, "vl")
   type <- append (type, "structured")
+  same_or_diff <- append (same_or_diff, "different")
+  test_phase <- append (test_phase, "vsl")
   mean_rt <- append(mean_rt, round(mean(structured_vl_extracted$rt_col[structured_vl_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(structured_vl_extracted$rt_col[structured_vl_extracted$id==id]~structured_vl_extracted$targ_index[structured_vl_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (structured_vl_extracted[ which(structured_vl_extracted$id==id),])
@@ -1282,13 +1288,13 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-svl <- data.frame(part_id, task, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+svl <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
 # for internal checking only: find mean rt_slope
 mean_svl_rt_slope <- mean (slv$rt_slope)
 
 
-# ******************** CONDITION 4: vv structured*******************
+# ******************** CONDITION 8: vv structured*******************
 
 # Separate structured and structured conditions
 structured_vv <- vv_data_frame[ which(vv_data_frame$condition== "S"),]
@@ -1409,6 +1415,8 @@ rt_slope <- NULL
 part_id <- NULL
 type <- NULL
 task<- NULL
+same_or_diff <- NULL
+test_phase <- NULL
 svv<- NULL
 domain <- NULL
 range <- NULL
@@ -1424,6 +1432,8 @@ for(id in extracted_part_id){
   domain <- append(domain, "linguistic")
   task <- append(task, "vv")
   type <- append (type, "structured")
+  same_or_diff <- append (same_or_diff, "same")
+  test_phase <- append (test_phase, "vsl")
   mean_rt <- append(mean_rt, round(mean(structured_vv_extracted$rt_col[structured_vv_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(structured_vv_extracted$rt_col[structured_vv_extracted$id==id]~structured_vv_extracted$targ_index[structured_vv_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (structured_vv_extracted[ which(structured_vv_extracted$id==id),])
@@ -1434,28 +1444,45 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-svv <- data.frame(part_id, task, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+svv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
 # for internal checking only: find mean rt_slope
 mean_svv_rt_slope <- mean (rvv$rt_slope)
 
-
-
-
-
-
-
-
-
-
-
-
 # Bind conditions together--------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Bind visual cconditions
+# Bind conditions
 indiv_rt<- data.frame(rbind(rll, rlv, rvl, rvv, sll, slv, svl, svv))
 
 write.csv(indiv_rt, "sit_rt_slope_indiv.csv")
+
+
+m2 = aov(rt_slope~test_phase*same_or_diff*type+Error(part_id), data = indiv_rt)
+summary(m2)
+
+
+# Correlation matrices-------------------------------------------------------------------------------------------------------------------------------------
+
+corr_data <- cast(indiv_rt, part_id ~ task, mean, value = 'rt_slope')
+corr_data <- merge(corr_data, picture_vocab, by = "part_id", all=TRUE)
+
+same_corr <- corr_data[ which(!is.na(corr_data$ll)), ]
+same_corr <- same_corr[, c(2, 5, 6)]
+diff_corr <- corr_data[ which(!is.na(corr_data$lv)), ]
+diff_corr <- diff_corr[, c(3, 4, 6)]
+same_corr[is.na(same_corr)] <- "0"
+diff_corr[is.na(diff_corr)] <- "0"
+diff_corr$picture_vocab<-as.numeric(diff_corr$picture_vocab)
+same_corr$picture_vocab<-as.numeric(same_corr$picture_vocab)
+same_corr$vv<-as.numeric(same_corr$vv)
+
+
+
+diff <- cor(diff_corr, method = c("pearson"))
+same <- cor(same_corr, method = c("pearson"))
+same_plot <- corrplot(same, method="circle")
+diff_plot <- corrplot(diff, method="circle")
+
 
 
 # Find group-level mean accuracy accross tasks------------------------------------------------------------------------------------
