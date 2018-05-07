@@ -2,9 +2,9 @@
 #  Violet Kozloff
 #  April 17, 2018
 #  This script analyzes structured and random blocks across two visual tasks, letters and images.
-# TO DO: Add scatterplot
-# NOTE: Does not remove points outside 2.5 stdev of mean
-# NOTE: relevant columns pre-selected through this experiment's version of fmri_data_cleaning.Rmd
+#  TO DO: Add scatterplot
+#  TO DO: Remove points outside 2.5 stdev of mean?
+#  NOTE: relevant columns pre-selected through this experiment's version of fmri_data_cleaning.Rmd
 #  ****************************************************************************
 
 

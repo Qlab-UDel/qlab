@@ -1,14 +1,11 @@
 # TO DO: Remove points outside 2.5 Stdev of mean?
 # TO DO: What are all the weird warnings?
 # TO DO: Add in last couple of data points (from last sit participants/ repeat heb participant)
-# TO DO: What is 239?
-# TO DO: Test 258 condition
 # WHAT IS GOING ON IN THIS ROW? WHY IS IT TAKING RT 4 ROWS DOWN??? (id: sit_a_002, trial: 145); go trhough and make sure that the number coming from the preceding line is correct and what it should be
 # Why is random_ll taking two rows with this information?? id: sit_a_018 trial: 2
+# Why is 18 read in so many times?
 # TO DO: Somewhere this is reading in participant 18's ll data 4 times. Why?
 # TO DO: Currently excludes sit_a_010_vv, which is missing the rt column?
-# Read "f_not_false" as "F" for everything other than ll, which it already works for
-
 
 
 
@@ -27,7 +24,6 @@ library("reshape")
 library("dplyr")
 library("corrplot")
 
-# Prepare paths for files --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Prepare paths for files --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -176,6 +172,7 @@ vv_data_frame$image <- gsub (".png", "", vv_data_frame$image, ignore.case=TRUE)
 random_ll <- ll_data_frame[ which(ll_data_frame$condition== "R"),]
 structured_ll <- ll_data_frame[ which(ll_data_frame$condition== "S"),]
 
+
 ## Index the images by random/ structured-----------------------------------------------
 
 # Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding/ following stimulus ---------------------------------------------
@@ -183,7 +180,6 @@ structured_ll <- ll_data_frame[ which(ll_data_frame$condition== "S"),]
 # Set up variables to loop through participants by trials and track the target
 rt_col <- NULL
 target_rt <- NULL
-#following_rt <- NULL
 preceding_rt <- NULL
 id <- NULL
 trial <-NULL
@@ -191,13 +187,10 @@ this_id <- NULL
 this_trial_num <- NULL
 this_loop <- NULL
 loop <- NULL
-#following_loop <- NULL
 preceding_loop <- NULL
-#loop_after <- NULL
 loop_before <- NULL
 this_targ_rt <- NULL
 rt_before <- NULL
-#rt_after <- NULL
 case <- NULL
 this_trial_before <- NULL
 this_trial_num_before <- NULL
@@ -208,9 +201,7 @@ trial_num_before <- NULL
 random_ll_targets <- random_ll[which(random_ll$random_targ==random_ll$image),]
 structured_ll_targets <- structured_ll[which(structured_ll$structured_targ==structured_ll$image),]
 
-# TO TEST
-#part_2 <- random_ll[which(random_ll$part_id=="sit_a_002"),]
-#random_ll_targets <- random_ll_targets[1:250,]
+# TO DO: Check number of targets per participant (and also compare to random_ll_extracted)
 
 # Isolate participants' response times.
 # Include rows when the participant responded to stimuli adjacent to the target (i.e. any time that the participant pressed the button within one stimulus before or after the target)
@@ -282,8 +273,6 @@ for(i in 1:nrow(random_ll_targets))
     rt_col <- append (rt_col, "anomaly, this shouldn't happen")
     case <- append (case, "case 5")}
 }
-
-
 
 # Match id and response times
 random_ll_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
