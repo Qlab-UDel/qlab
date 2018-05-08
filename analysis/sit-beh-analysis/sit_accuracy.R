@@ -21,6 +21,9 @@ rm(list=ls())
 
 # Prepare paths for files --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+# TO DO: Add geom_point
+
 #For use on Mac 
 ll_input <- ("../../../sit_data/clean/ll_clean/")
 lv_input <- ("../../../sit_data/clean/lv_clean/")
@@ -248,7 +251,7 @@ View(indiv_accuracies)
 write.csv(indiv_accuracies, "sit_accuracy_indiv.csv")
 
 
-m1=aov(accuracy~test_phase*same_or_diff+Error(part_id), data=indiv_accuracies)
+m1=aov(accuracy~test_phase*same_or_diff+Error(part_id/test_phase), data=indiv_accuracies)
 summary(m1)
 
 
@@ -262,6 +265,32 @@ task <- NULL
 all_ll<-subset(indiv_accuracies, task=="ll")
 task <- append (task, paste ("ll"))
 mean_accuracy <- append (mean_accuracy, round(mean(all_ll$accuracy), digits = 3))
+
+# Test whether group performed significantly above chance (marginal for ll and vv, sig for lv and vl)
+t.test(indiv_ll_accuracies$accuracy,mu=0.5)
+#t(19)=1.80, p = 0.088
+t.test(indiv_vv_accuracies$accuracy,mu=0.5)
+#t(20)=1.98, p = 0.062
+t.test(indiv_vl_accuracies$accuracy,mu=0.5)
+#t(23)=3.63, p = 0.001
+t.test(indiv_lv_accuracies$accuracy,mu=0.5)
+#t(23)=3.37, p = 0.003
+# From AOV we see no difference between same/diff, but we see that diff conditions are significantly above chance
+# (same are only marginal)
+
+# TO DO : add to vocab df the age and gender.
+
+# TO DO: Make sure that same and diff groups are matched on age, gender, vocab score. 
+# t.test(vocab~group,data=subj); t.test(age~group,data=subj);
+# gendertable = cast(subj,gender~group,value = "gender",length)
+# chisq.test(gendertable)
+# DO THIS FIRST, THEN RERUN ANALYSES
+
+
+# If contrained by diff neural substrates, expect interference from cross-domain random sequences will be smaller than interference from same domain
+# Mean rt will be larger, accuracy will be lower, and rt_slope will be shallower in same conditions
+# Cite multi-modal SL: different Sl skills across domains
+# TO DO: If not matched, remove highest or lowest vocab people to make them match
 
 # Find mean ssl accuracy across participants
 all_lv<-subset(indiv_accuracies, task=="lv")

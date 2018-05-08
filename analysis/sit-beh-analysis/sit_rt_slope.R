@@ -1445,13 +1445,35 @@ indiv_rt<- data.frame(rbind(rll, rlv, rvl, rvv, sll, slv, svl, svv))
 
 write.csv(indiv_rt, "sit_rt_slope_indiv.csv")
 
+# TO DO: Repeat after duplicates are removed!
+# test whether in each condition rt slope was significantly different from zero.
+t.test(sll$rt_slope,mu=0) # n.s.
+t.test(slv$rt_slope,mu=0) # n.s.
+t.test(svl$rt_slope,mu=0) # n.s.
+t.test(svv$rt_slope,mu=0) # marginal t
+#t(20)=1.98, p = 0.062
+t.test(indiv_vl_accuracies$accuracy,mu=0.5)
+#t(23)=3.63, p = 0.001
+t.test(indiv_lv_accuracies$accuracy,mu=0.5)
+#t(23)=3.37, p = 0.003
+# From AOV we see no difference between same/diff, but we see that diff conditions are significantly above chance
+# (same are only marginal)
 
-m2 = aov(rt_slope~test_phase*same_or_diff*type+Error(part_id), data = indiv_rt)
+# TO DO: Repeat for Mean RT
+# TO DO: Remove any participants without both vsl/lsl test and both types
+# TO DO: Remove repeated lines
+# TO DO : Makes sure that all cells show 1
+cast(indiv_rt,part_id~test_phase+type,value="rt_slope",length)
+m2 = aov(rt_slope~test_phase*same_or_diff*type+Error(part_id/(test_phase*type)), data = indiv_rt)
 summary(m2)
+# F(1,41) = 5.20, p = 0.028
 
 
 # Correlation matrices-------------------------------------------------------------------------------------------------------------------------------------
 
+#TO DO : Remove participants with no vocab scores
+
+# TO DO: Repeat for mean RT and accuracy
 corr_data <- cast(indiv_rt, part_id ~ task, mean, value = 'rt_slope')
 corr_data <- merge(corr_data, picture_vocab, by = "part_id", all=TRUE)
 
@@ -1459,16 +1481,41 @@ same_corr <- corr_data[ which(!is.na(corr_data$ll)), ]
 same_corr <- same_corr[, c(2, 5, 6)]
 diff_corr <- corr_data[ which(!is.na(corr_data$lv)), ]
 diff_corr <- diff_corr[, c(3, 4, 6)]
-same_corr[is.na(same_corr)] <- "0"
-diff_corr[is.na(diff_corr)] <- "0"
-diff_corr$picture_vocab<-as.numeric(diff_corr$picture_vocab)
-same_corr$picture_vocab<-as.numeric(same_corr$picture_vocab)
 same_corr$vv<-as.numeric(same_corr$vv)
 
+# TO DO: Double check diff_corr
 
+diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
+cor.test(diff_corr$lv,diff_corr$score)
+# lv          vl       score
+# lv     1.0000000 -0.19246082 -0.49248148
+# vl    -0.1924608  1.00000000  0.02885029
+# score -0.4924815  0.02885029  1.00000000
 
-diff <- cor(diff_corr, method = c("pearson"))
-same <- cor(same_corr, method = c("pearson"))
+# Interpretation: for people who show sharpest rt_slope during online learning of ling sl info 
+# Embedded in random nonling info show highest vocab score
+
+# Pearson's product-moment correlation
+# 
+# data:  diff_corr$lv and diff_corr$score
+# t = -2.1916, df = 15, p-value = 0.04461
+# alternative hypothesis: true correlation is not equal to 0
+# 95 percent confidence interval:
+# -0.78686783 -0.01550746
+# sample estimates:
+# cor 
+# -0.4924815 
+
+plot(diff_corr$lv,diff_corr$score)
+
+same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
+# ll        vv      score
+# ll     1.0000000 0.3660493 -0.1269438
+# vv     0.3660493 1.0000000  0.2274042
+# score -0.1269438 0.2274042  1.0000000
+# n.s.
+
+#For future: only include significant (some documentation of corrplot)
 same_plot <- corrplot(same, method="circle")
 diff_plot <- corrplot(diff, method="circle")
 
