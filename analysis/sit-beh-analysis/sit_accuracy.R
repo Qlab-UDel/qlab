@@ -364,7 +364,9 @@ subj_data <- chi_square_data[which(!is.na(chi_square_data$age) & !is.na(chi_squa
 # Chi-square test for gender
 gender_table <- cast(subj_data,sex~same_or_diff,value = "score",length)
 chisq.test(gender_table)
-# ATTN ZQ: Warning here. Can you confirm that these are the correct execution/ results?
+# RESULTS: X2 (1)= 0.56, p=0.45 (can just say p-values > 0.4), 48 original experiment, 36 completed vocab task
+
+# TO DO: Include everyone here in this test (and for age)
 
 
 # T-test for vocab score by group

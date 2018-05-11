@@ -1686,6 +1686,13 @@ cast(indiv_rt_slope,part_id~test_phase+type,value="rt_slope",length)
 m2 = aov(rt_slope~test_phase*same_or_diff*type+Error(part_id/(test_phase*type)), data = indiv_rt_slope)
 summary(m2)
 
+# TO DO: Recode to show domain by type (for rt slope and mean rt)
+# TO DO: Redo plots this way, see notebook (An can do plots)
+# PRIORITIES: 
+# 1. Look at ll. re-copy and -paste analysis? double-check 
+# 2. Correlation
+# 3. ANOVA
+
 # RESULT: test_phase  F(1,45) = 3.034, p = 0.088 Marginally significant?
 # RESULT: test_phase:type F(1, 45) = 10.001, p = 0.0028 Significant
 
@@ -1739,6 +1746,9 @@ diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
 # Test p-values of correlation matrices for different condition
 lv_corr<-cor.test(diff_corr$lv,diff_corr$score) # n.s.: p-value = 0.6891
 vl_corr<-cor.test(diff_corr$vl,diff_corr$score) # n.s.: p-value = 0.4741 
+# TO DO: Use ggplot point
+
+
 
 # Create correlation matrices for same condition
 same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
