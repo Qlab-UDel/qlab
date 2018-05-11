@@ -1593,9 +1593,9 @@ indiv_rt_slope_wide <- cast(indiv_rt_slope, part_id ~ task, mean, value = 'rt_sl
 indiv_rt_slope_wide<- merge(indiv_rt_slope_wide, picture_vocab, by = "part_id", all=TRUE)
 indiv_rt_slope_wide <- cbind(indiv_rt_slope_wide, "same_or_diff")
 colnames(indiv_rt_slope_wide)[9] <- "same_or_diff"
-all_same <- indiv_rt_slope_wide[ which(indiv_rt_slope_wide$ll>0), ]
+all_same <- indiv_rt_slope_wide[ which(!is.nan(indiv_rt_slope_wide$ll)), ]
 all_same$same_or_diff <- ("same")
-all_diff <- indiv_rt_slope_wide[ which(indiv_rt_slope_wide$lv>0), ]
+all_diff <- indiv_rt_slope_wide[ which(!is.nan(indiv_rt_slope_wide$lv)), ]
 all_diff$same_or_diff <- ("different")
 indiv_rt_slope_wide <- rbind(all_same, all_diff)
 
@@ -1607,9 +1607,9 @@ indiv_rt_wide <- cast(indiv_rt_slope, part_id ~ task, mean, value = 'mean_rt')
 indiv_rt_wide<- merge(indiv_rt_wide, picture_vocab, by = "part_id", all=TRUE)
 indiv_rt_wide <- cbind(indiv_rt_wide, "same_or_diff")
 colnames(indiv_rt_wide)[9] <- "same_or_diff"
-all_same <- indiv_rt_wide[ which(indiv_rt_wide$ll>0), ]
+all_same <- indiv_rt_wide[ which(!is.nan(indiv_rt_wide$ll)), ]
 all_same$same_or_diff <- ("same")
-all_diff <- indiv_rt_wide[ which(indiv_rt_wide$lv>0), ]
+all_diff <- indiv_rt_wide[ which(!is.nan(indiv_rt_wide$lv)), ]
 all_diff$same_or_diff <- ("different")
 indiv_rt_wide <- rbind(all_same, all_diff)
 
@@ -1689,64 +1689,61 @@ write.csv(group_rt_slope, "sit_rt_slope_group.csv")
 # TEST: Make sure that all cells show 1
 cast(indiv_rt_slope,part_id~test_phase+type,value="rt_slope",length)
 # They don't, because sit_a_010 is missing vv data. Remove this participant.
-indiv_rt_slope <- indiv_rt_slope[which(indiv_rt_slope$part_id!="sit_a_010"),]
+indiv_rt_slope_no_19 <- indiv_rt_slope[which(indiv_rt_slope$part_id!="sit_a_010"),]
+# 019 is also removed because his rt actually got slower
+indiv_rt_slope_no_19 <- indiv_rt_slope[which(indiv_rt_slope$part_id!="sit_a_010"),]
 # TEST: Make sure that all cells show 1 now that we have removed this participant
 cast(indiv_rt_slope,part_id~test_phase+type,value="rt_slope",length)
 # Now they do
 
 # Test the effects of domain
-m2 = aov(rt_slope~domain*type*same_or_diff+Error(part_id/domain*type),data =indiv_rt_slope)
+m2 = aov(rt_slope~domain*type*same_or_diff+Error(part_id/(domain*type)),data =indiv_rt_slope_no_19)
 summary(m2)
+# ATTN ZQ: Is this correct?
+
 ## interpretation: people show sharper decrease of response time in linguistic than in non-linguistic conditions. (or the other way around)
-# 
 # Error: part_id
 # Df Sum Sq Mean Sq F value Pr(>F)
-# domain        1    0.4    0.43   0.011  0.916
 # same_or_diff  1  105.3  105.33   2.788  0.102
 # Residuals    45 1700.3   37.78               
-# 
-# Error: type
-# Df Sum Sq Mean Sq
-# type  1  403.7   403.7
 # 
 # Error: part_id:domain
 # Df Sum Sq Mean Sq F value Pr(>F)  
 # domain               1  131.1  131.05   6.754 0.0126 *
-# domain:same_or_diff  1   36.7   36.67   1.890 0.1760  
+#   domain:same_or_diff  1   36.7   36.67   1.890 0.1760  
 # Residuals           45  873.2   19.40                 
 # ---
 #   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 # 
 # Error: part_id:type
-# Df Sum Sq Mean Sq F value Pr(>F)
-# domain:type        1    5.2    5.24   0.134  0.716
-# type:same_or_diff  1   21.5   21.48   0.551  0.462
-# Residuals         45 1755.6   39.01               
+# Df Sum Sq Mean Sq F value Pr(>F)   
+# type               1  390.2   390.2  10.001 0.0028 **
+#   type:same_or_diff  1   21.5    21.5   0.551 0.4619   
+# Residuals         45 1755.6    39.0                  
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 # 
 # Error: part_id:domain:type
 # Df Sum Sq Mean Sq F value Pr(>F)
 # domain:type               1   33.9   33.94   0.858  0.359
 # domain:type:same_or_diff  1    1.2    1.24   0.031  0.860
-# Residuals                45 1781.0   39.58 
-
+# Residuals                45 1781.0   39.58    
 # ANOVA to test effects of type (random/ structured), test phase and group (same/ different) on mean RT----------------------
 
 # TEST: Make sure that all cells show 1
 cast(indiv_rt_slope,part_id~test_phase+type,value="mean_rt",length)
 
+
 # Test the effects of domain
-m4 = aov(mean_rt~domain*type*same_or_diff+Error(part_id/domain*type),data =indiv_rt_slope)
+m4 = aov(mean_rt~domain*type*same_or_diff+Error(part_id/(domain*type)),data =indiv_rt_slope_no_19)
 summary(m4)
+# ATTN ZQ: Is this correct?
+
 # Interpretation: marginally larger difference between linguistic and non-linguistic in the different than the same condition (or the other way around).
 # Error: part_id
 # Df  Sum Sq Mean Sq F value Pr(>F)
-# domain        1     649     649   0.016  0.899
 # same_or_diff  1     975     975   0.025  0.876
 # Residuals    45 1781591   39591               
-# 
-# Error: type
-# Df Sum Sq Mean Sq
-# type  1  40639   40639
 # 
 # Error: part_id:domain
 # Df Sum Sq Mean Sq F value Pr(>F)  
@@ -1757,20 +1754,18 @@ summary(m4)
 #   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 # 
 # Error: part_id:type
-# Df Sum Sq Mean Sq F value Pr(>F)
-# domain:type        1    580     580   0.063  0.802
-# type:same_or_diff  1  18152   18152   1.981  0.166
-# Residuals         45 412391    9164               
+# Df Sum Sq Mean Sq F value Pr(>F)  
+# type               1  39226   39226   4.280 0.0443 *
+#   type:same_or_diff  1  18152   18152   1.981 0.1662  
+# Residuals         45 412391    9164                 
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 # 
 # Error: part_id:domain:type
 # Df Sum Sq Mean Sq F value Pr(>F)
 # domain:type               1  11969   11969   1.751  0.192
 # domain:type:same_or_diff  1   8617    8617   1.261  0.267
-# Residuals                45 307551    6834  
-
-# No longer testing the effects of test_phase
-# m5 = aov(mean_rt~test_phase*same_or_diff*type+Error(part_id/(test_phase*type)), data = indiv_rt_slope)
-
+# Residuals                45 307551    6834 
 
 # *************************** ANALYSIS 2: CORRELATION MATRICES **********************************
 
@@ -1927,3 +1922,20 @@ t.test(slv$rt_slope, alternative="less", mu=0) # n.s. p-value = 0.1149
 t.test(svl$rt_slope, alternative="less", mu=0) # RESULT: p-value = 0.045
 t.test(svv$rt_slope, alternative="less", mu=0) # n.s. p-value = 0.099
 
+ 
+# # Write rt_slope summary into a file
+# write.csv(indiv_rt_slope_wide, "sit_rt_slope_indiv.csv")
+# 
+# # Summarize mean_rt
+# indiv_rt_wide <- cast(indiv_rt_slope, part_id ~ task, mean, value = 'mean_rt')
+# indiv_rt_wide<- merge(indiv_rt_wide, picture_vocab, by = "part_id", all=TRUE)
+# indiv_rt_wide <- cbind(indiv_rt_wide, "same_or_diff")
+# colnames(indiv_rt_wide)[9] <- "same_or_diff"
+# all_same <- indiv_rt_wide[ which(indiv_rt_wide$ll>0), ]
+# all_same$same_or_diff <- ("same")
+# all_diff <- indiv_rt_wide[ which(indiv_rt_wide$lv>0), ]
+# all_diff$same_or_diff <- ("different")
+# indiv_rt_wide <- rbind(all_same, all_diff)
+# 
+# # Write mean_rt summary into a file
+# write.csv(indiv_rt_wide, "sit_mean_rt_indiv.csv")
