@@ -20,9 +20,11 @@ library("reshape")
 library("dplyr")
 library("corrplot")
 
+# Set working directory
+setwd("Documents/qlab/analysis/sit-beh-analysis")
+
 # Remove objects in environment
 rm(list=ls())
-
 
 # Prepare paths for files --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -358,27 +360,23 @@ chi_square_data <- rbind(all_same, all_diff)
 chi_square_vars <- c("part_id", "age", "sex", "score", "same_or_diff")
 chi_square_data <- chi_square_data[chi_square_vars]
 
+matched_data <- chi_square_data
+
 # Subset only complete entries
-subj_data <- chi_square_data[which(!is.na(chi_square_data$age) & !is.na(chi_square_data$score)),]
+# subj_data <- chi_square_data[which(!is.na(chi_square_data$age) & !is.na(chi_square_data$score)),]
 
 # Chi-square test for gender
-gender_table <- cast(subj_data,sex~same_or_diff,value = "score",length)
+gender_table <- cast(matched_data,sex~same_or_diff,value = "score",length)
 chisq.test(gender_table)
-# RESULTS: X2 (1)= 0.56, p=0.45 (can just say p-values > 0.4), 48 original experiment, 36 completed vocab task
-
-# TO DO: Include everyone here in this test (and for age)
-
+# RESULTS: X2 (1)= 2.55, p=0.28 (can just say p-values > 0.25)
 
 # T-test for vocab score by group
-t.test(score~same_or_diff, data=subj_data) 
+t.test(score~same_or_diff, data=matched_data) 
 # RESULTS: Matched (p-value = 0.865)
-# ATTN ZQ: Can you confirm that these are the correct execution/ results?
 
 # T-test for age by group 
-t.test(age~same_or_diff, data=subj_data)
-# RESULTS: Matched (p-value = 0.8229)
-# ATTN ZQ: Can you confirm that these are the correct execution/ results?
-
+t.test(age~same_or_diff, data=matched_data)
+# RESULTS: Matched (p-value = 0.72)
 
 
 # *************************** ANALYSIS 2: TEST EFFECTS OF GROUP AND TEST PHASE ON ACCURACY *******************

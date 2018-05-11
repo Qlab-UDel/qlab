@@ -7,6 +7,17 @@
 #  NOTE: Excludes sit_a_010 from analysis from line 1679 on, because they do not have any rt data for one of the files
 
 
+# PRIORITIES: 
+# 1. Look at ll. re-copy and -paste analysis? double-check 
+# 2. Correlation
+# 3. Report the significant correlation between SL and vocab in separate scatter plots
+# 4. Add a trend line? I remember seeing lv slope negatively correlated with vocab. 
+# 5. confirm whether using the RT slope and mean RT from the structured condition for correlational analysis
+# 6. Use the difference score between the structured and random condition for the correlational analyses (structured - random)
+# 7. One-tailed Pearson correlation analyses
+# 8. Add domain to indiv_rt.csv
+# 9. Redo plots, see notebook (An can do plots)
+
 # ******************** I. PREPARE FILES *************************
 
 
@@ -139,7 +150,6 @@ vl_data_frame$v_block_trial_key_resp.rt <- vl_data_frame$v_block_trial_key_resp.
 # Remove extensions from image names
 vl_data_frame$image <- gsub (".png", "", vl_data_frame$image, ignore.case=TRUE)
 vl_data_frame$image <- gsub (".bmp", "", vl_data_frame$image, ignore.case=TRUE)
-
 
 
 # Read in vv files and combine them into one data frame -----------------------------------------------------------------------------------------------------------------------------------
@@ -494,7 +504,7 @@ test_phase <- NULL
 # Calculate and record mean_rt, rt_slope, upper bound, and lower bound
 for(id in extracted_part_id){
   part_id <- append(part_id, id)
-  domain <- append(domain, "linguistic")
+  domain <- append(domain, "non-linguistic")
   task <- append(task, "lv")
   type <- append (type, "random")
   same_or_diff <- append (same_or_diff, "different")
@@ -846,7 +856,7 @@ this_range <- NULL
 # Calculate and record mean_rt, rt_slope, upper bound, and lower bound
 for(id in extracted_part_id){
   part_id <- append(part_id, id)
-  domain <- append(domain, "linguistic")
+  domain <- append(domain, "non-linguistic")
   task <- append(task, "vv")
   type <- append (type, "random")
   same_or_diff <- append (same_or_diff, "same")
@@ -1374,7 +1384,7 @@ this_range <- NULL
 # Calculate and record mean_rt, rt_slope, upper bound, and lower bound
 for(id in extracted_part_id){
   part_id <- append(part_id, id)
-  domain <- append(domain, "linguistic")
+  domain <- append(domain, "non-linguistic")
   task <- append(task, "vl")
   type <- append (type, "structured")
   same_or_diff <- append (same_or_diff, "different")
@@ -1398,6 +1408,8 @@ mean_svl_rt_slope <- mean (slv$rt_slope)
 mean_svl_rt_slope <- mean (svl$rt_slope)
 # It should be negative
 mean_svl_rt_slope
+
+
 
 # ******************** CONDITION 8: STRUCTURED VV *******************
 
@@ -1523,7 +1535,7 @@ structured_vv_extracted$targ_index <- targ_index
 # Remove any values of NA
 structured_vv_extracted <- structured_vv_extracted[!is.na(structured_vv_extracted$rt_col),]
 
-#TO DO: Where are 10's response times? In any case, here we remove participants with no rts at all
+# Where are 10's response times are missing; here we remove participants with no rts at all
 # List unique participant IDs for this condition
 extracted_part_id <- unique(structured_vv_extracted$id)
 
@@ -1549,7 +1561,7 @@ this_range <- NULL
 # Calculate and record mean_rt, rt_slope, upper bound, and lower bound
 for(id in extracted_part_id){
   part_id <- append(part_id, id)
-  domain <- append(domain, "linguistic")
+  domain <- append(domain, "non-linguistic")
   task <- append(task, "vv")
   type <- append (type, "structured")
   same_or_diff <- append (same_or_diff, "same")
@@ -1617,48 +1629,48 @@ mean_rand_rt <- NULL
 # Find mean ll rt slope across participants
 task <- append (task, paste ("ll"))
 mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="structured" 
-                                                                                & indiv_rt_slope$task== "ll"), ]$rt_slope), digits =3))
+                                                                                      & indiv_rt_slope$task== "ll"), ]$rt_slope), digits =3))
 mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="random" 
-                                                                            & indiv_rt_slope$task== "ll"), ]$rt_slope), digits =3))
+                                                                                  & indiv_rt_slope$task== "ll"), ]$rt_slope), digits =3))
 mean_struct_rt <- append(mean_struct_rt, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="structured" 
-                                                                    & indiv_rt_slope$task== "ll"), ]$mean_rt), digits =3))
+                                                                          & indiv_rt_slope$task== "ll"), ]$mean_rt), digits =3))
 mean_rand_rt <- append(mean_rand_rt, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="random" 
-                                                                & indiv_rt_slope$task== "ll"), ]$mean_rt), digits =3))
+                                                                      & indiv_rt_slope$task== "ll"), ]$mean_rt), digits =3))
 
 # Find mean lv rt slope across participants
 task <- append (task, paste ("lv"))
 mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="structured" 
-                                                                                & indiv_rt_slope$task== "lv"), ]$rt_slope), digits =3))
+                                                                                      & indiv_rt_slope$task== "lv"), ]$rt_slope), digits =3))
 mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="random" 
-                                                                            & indiv_rt_slope$task== "lv"), ]$rt_slope), digits =3))
+                                                                                  & indiv_rt_slope$task== "lv"), ]$rt_slope), digits =3))
 mean_struct_rt <- append(mean_struct_rt, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="structured" 
-                                                                    & indiv_rt_slope$task== "lv"), ]$mean_rt), digits =3))
+                                                                          & indiv_rt_slope$task== "lv"), ]$mean_rt), digits =3))
 mean_rand_rt <- append(mean_rand_rt, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="random" 
-                                                                & indiv_rt_slope$task== "lv"), ]$mean_rt), digits =3))
+                                                                      & indiv_rt_slope$task== "lv"), ]$mean_rt), digits =3))
 
 
 # Find mean vl rt slope across participants
 task <- append (task, paste ("vl"))
 mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="structured" 
-                                                                                & indiv_rt_slope$task== "vl"), ]$rt_slope), digits =3))
+                                                                                      & indiv_rt_slope$task== "vl"), ]$rt_slope), digits =3))
 mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="random" 
-                                                                            & indiv_rt_slope$task== "vl"), ]$rt_slope), digits =3))
+                                                                                  & indiv_rt_slope$task== "vl"), ]$rt_slope), digits =3))
 mean_struct_rt <- append(mean_struct_rt, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="structured" 
-                                                                    & indiv_rt_slope$task== "vl"), ]$mean_rt), digits =3))
+                                                                          & indiv_rt_slope$task== "vl"), ]$mean_rt), digits =3))
 mean_rand_rt <- append(mean_rand_rt, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="random" 
-                                                                & indiv_rt_slope$task== "vl"), ]$mean_rt), digits =3))
+                                                                      & indiv_rt_slope$task== "vl"), ]$mean_rt), digits =3))
 
 
 # Find mean vv rt slope across participants
 task <- append (task, paste ("vv"))
 mean_struct_rt_slope <- append(mean_struct_rt_slope, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="structured" 
-                                                                                & indiv_rt_slope$task== "vv"), ]$rt_slope), digits =3))
+                                                                                      & indiv_rt_slope$task== "vv"), ]$rt_slope), digits =3))
 mean_rand_rt_slope <- append(mean_rand_rt_slope, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="random" 
-                                                                            & indiv_rt_slope$task== "vv"), ]$rt_slope), digits =3))
+                                                                                  & indiv_rt_slope$task== "vv"), ]$rt_slope), digits =3))
 mean_struct_rt <- append(mean_struct_rt, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="structured" 
-                                                                    & indiv_rt_slope$task== "vv"), ]$mean_rt), digits =3))
+                                                                          & indiv_rt_slope$task== "vv"), ]$mean_rt), digits =3))
 mean_rand_rt <- append(mean_rand_rt, round(mean(indiv_rt_slope[ which(indiv_rt_slope$type=="random" 
-                                                                & indiv_rt_slope$task== "vv"), ]$mean_rt), digits =3))
+                                                                      & indiv_rt_slope$task== "vv"), ]$mean_rt), digits =3))
 
 
 # Combine group accuracies into one data frame
@@ -1682,43 +1694,93 @@ indiv_rt_slope <- indiv_rt_slope[which(indiv_rt_slope$part_id!="sit_a_010"),]
 cast(indiv_rt_slope,part_id~test_phase+type,value="rt_slope",length)
 # Now they do
 
-# Test the effects of test phase, type, and group
-m2 = aov(rt_slope~test_phase*same_or_diff*type+Error(part_id/(test_phase*type)), data = indiv_rt_slope)
+# Test the effects of domain
+m2 = aov(rt_slope~domain*type*same_or_diff+Error(part_id/domain*type),data =indiv_rt_slope)
 summary(m2)
-
-# TO DO: Recode to show domain by type (for rt slope and mean rt)
-# TO DO: Redo plots this way, see notebook (An can do plots)
-# PRIORITIES: 
-# 1. Look at ll. re-copy and -paste analysis? double-check 
-# 2. Correlation
-# 3. ANOVA
-
-# RESULT: test_phase  F(1,45) = 3.034, p = 0.088 Marginally significant?
-# RESULT: test_phase:type F(1, 45) = 10.001, p = 0.0028 Significant
-
+## interpretation: people show sharper decrease of response time in linguistic than in non-linguistic conditions. (or the other way around)
+# 
+# Error: part_id
+# Df Sum Sq Mean Sq F value Pr(>F)
+# domain        1    0.4    0.43   0.011  0.916
+# same_or_diff  1  105.3  105.33   2.788  0.102
+# Residuals    45 1700.3   37.78               
+# 
+# Error: type
+# Df Sum Sq Mean Sq
+# type  1  403.7   403.7
+# 
+# Error: part_id:domain
+# Df Sum Sq Mean Sq F value Pr(>F)  
+# domain               1  131.1  131.05   6.754 0.0126 *
+# domain:same_or_diff  1   36.7   36.67   1.890 0.1760  
+# Residuals           45  873.2   19.40                 
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Error: part_id:type
+# Df Sum Sq Mean Sq F value Pr(>F)
+# domain:type        1    5.2    5.24   0.134  0.716
+# type:same_or_diff  1   21.5   21.48   0.551  0.462
+# Residuals         45 1755.6   39.01               
+# 
+# Error: part_id:domain:type
+# Df Sum Sq Mean Sq F value Pr(>F)
+# domain:type               1   33.9   33.94   0.858  0.359
+# domain:type:same_or_diff  1    1.2    1.24   0.031  0.860
+# Residuals                45 1781.0   39.58 
 
 # ANOVA to test effects of type (random/ structured), test phase and group (same/ different) on mean RT----------------------
 
 # TEST: Make sure that all cells show 1
 cast(indiv_rt_slope,part_id~test_phase+type,value="mean_rt",length)
 
-# Test the effects of test phase, type, and group on mean rt
-m3 = aov(mean_rt~test_phase*same_or_diff*type+Error(part_id/(test_phase*type)), data = indiv_rt_slope)
-summary(m3)
+# Test the effects of domain
+m4 = aov(mean_rt~domain*type*same_or_diff+Error(part_id/domain*type),data =indiv_rt_slope)
+summary(m4)
+# Interpretation: marginally larger difference between linguistic and non-linguistic in the different than the same condition (or the other way around).
+# Error: part_id
+# Df  Sum Sq Mean Sq F value Pr(>F)
+# domain        1     649     649   0.016  0.899
+# same_or_diff  1     975     975   0.025  0.876
+# Residuals    45 1781591   39591               
+# 
+# Error: type
+# Df Sum Sq Mean Sq
+# type  1  40639   40639
+# 
+# Error: part_id:domain
+# Df Sum Sq Mean Sq F value Pr(>F)  
+# domain               1  26455   26455   2.849 0.0983 .
+# domain:same_or_diff  1  26287   26287   2.831 0.0994 .
+# Residuals           45 417808    9285                 
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Error: part_id:type
+# Df Sum Sq Mean Sq F value Pr(>F)
+# domain:type        1    580     580   0.063  0.802
+# type:same_or_diff  1  18152   18152   1.981  0.166
+# Residuals         45 412391    9164               
+# 
+# Error: part_id:domain:type
+# Df Sum Sq Mean Sq F value Pr(>F)
+# domain:type               1  11969   11969   1.751  0.192
+# domain:type:same_or_diff  1   8617    8617   1.261  0.267
+# Residuals                45 307551    6834  
 
-# RESULT: test_phase:same_or_diff F(1,45) = 3.821, p = 0.0569 Marginally significant?
-# RESULT: type F(1,45) = 4.280, p = 0.0443
+# No longer testing the effects of test_phase
+# m5 = aov(mean_rt~test_phase*same_or_diff*type+Error(part_id/(test_phase*type)), data = indiv_rt_slope)
 
 
 # *************************** ANALYSIS 2: CORRELATION MATRICES **********************************
- 
+
 
 # RT Slope Correlation matrices-------------------------------------------------------------------------------------------------------------------------------------
- 
+
 # Extract relevant data from indiv_rt_slope and picture_vocab
 corr_data <- cast(indiv_rt_slope, part_id ~ task, mean, value = 'rt_slope')
 corr_data <- merge(corr_data, picture_vocab, by = "part_id", all=TRUE)
- 
+
 # Add corr_data's groups of same/ different
 corr_data <- cbind(corr_data, "same_or_diff")
 colnames(corr_data)[9] <- "same_or_diff"
@@ -1728,7 +1790,7 @@ all_diff <- corr_data[ which(corr_data$lv>0), ]
 all_diff$same_or_diff <- ("different")
 corr_data <- rbind(all_same, all_diff)
 corr_data <- corr_data[ which(corr_data$score>0), ]
- 
+
 # Separate corr_data into groups by same/ different
 same_corr <- corr_data[ which(!is.na(corr_data$ll)), ]
 same_corr <- same_corr[, c(2, 5, 6)]
@@ -1738,6 +1800,7 @@ diff_corr <- diff_corr[, c(3, 4, 6)]
 
 # Create correlation matrices for different condition
 diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
+diff
 #            lv         vl      score
 # lv     1.0000000  0.4688697 -0.1291501
 # vl     0.4688697  1.0000000 -0.2289698
@@ -1746,12 +1809,10 @@ diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
 # Test p-values of correlation matrices for different condition
 lv_corr<-cor.test(diff_corr$lv,diff_corr$score) # n.s.: p-value = 0.6891
 vl_corr<-cor.test(diff_corr$vl,diff_corr$score) # n.s.: p-value = 0.4741 
-# TO DO: Use ggplot point
-
-
 
 # Create correlation matrices for same condition
 same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
+same
 #            ll          vv       score
 # ll     1.0000000  0.39270625 -0.58501755
 # vv     0.3927063  1.00000000 -0.01956922
@@ -1759,8 +1820,27 @@ same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
 
 # Test p-values of correlation matrices for different condition
 ll_corr<-cor.test(same_corr$ll, same_corr$score) # n.s.: p-value = 0.05868
+ll_corr
 vv_corr<-cor.test(same_corr$vv, same_corr$score) # n.s.: p-value = 0.9545
+vv_corr
 
+# calculate the difference scores between structured condition and random condition within linguistic and non-linguistic domains.
+rt_slope_diff = cast(indiv_rt_slope,part_id+same_or_diff+domain~type,value = "rt_slope")
+rt_slope_diff$slope_diff = rt_slope_diff$structured-rt_slope_diff$random
+rt_slope_diff = merge(rt_slope_diff,vocab_clean,id=1)
+rt_slope_diff = cast(rt_slope_diff,part_id+score+same_or_diff~domain,value="slope_diff")
+colnames(rt_slope_diff)[5]="non_linguistic"
+rt_slope_diff_same = subset(rt_slope_diff,same_or_diff=="same")
+rt_slope_diff_same_complete = rt_slope_diff_same[complete.cases(rt_slope_diff_same),]
+cor.test(rt_slope_diff_same_complete$linguistic,rt_slope_diff_same_complete$score,method="pearson") # r = 0.50, one-tailed p = 0.48
+cor.test(rt_slope_diff_same_complete$non_linguistic,rt_slope_diff_same_complete$score,method="pearson") # r = 0.08, p = 0.78
+#lsl same slope_diff is significantly associated with vocabulary but in the wrong direction.
+rt_slope_diff_diff = subset(rt_slope_diff,same_or_diff=="different")
+cor.test(rt_slope_diff_diff$linguistic,rt_slope_diff_diff$score,method="pearson") # r = -0.54, one-tailed p = 0.007
+cor.test(rt_slope_diff_diff$non_linguistic,rt_slope_diff_diff$score,method="pearson") # r = -0.02, p = 0.46
+# lsl diff slope_diff is significantly associated with vocabulary
+
+plot(rt_slope_diff_diff$linguistic,rt_slope_diff_diff$score)
 
 # Mean RT Correlation matrices-------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1804,9 +1884,28 @@ same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
 
 # Test p-values of correlation matrices for different condition
 ll_corr<-cor.test(same_corr$ll, same_corr$score) # n.s.: p-value = 0.052
+ll_corr
 vv_corr<-cor.test(same_corr$vv, same_corr$score) # n.s.: p-value = 0.45
+vv_corr
 
 
+# calculate the difference scores between structured condition and random condition within linguistic and non-linguistic domains.
+# for individual difference analyses
+rt_diff = cast(indiv_rt_slope,part_id+same_or_diff+domain~type,value = "mean_rt")
+rt_diff$meanrt_diff = rt_diff$structured-rt_diff$random
+rt_diff = merge(rt_diff,vocab_clean,id=1)
+rt_diff = cast(rt_diff,part_id+score+same_or_diff~domain,value="meanrt_diff")
+colnames(rt_diff)[5]="non_linguistic"
+rt_diff_same = subset(rt_diff,same_or_diff=="same")
+rt_diff_same_complete = rt_diff_same[complete.cases(rt_diff_same),]
+cor.test(rt_diff_same_complete$linguistic,rt_diff_same_complete$score,method="pearson")# r = -0.35, one-tailed p = 0.10)
+cor.test(rt_diff_same_complete$non_linguistic,rt_diff_same_complete$score,method="pearson")# r = 0.07, one-tailed p = 0.40)
+
+rt_diff_diff = subset(rt_diff,same_or_diff=="different")
+cor.test(rt_diff_diff$linguistic,rt_diff_diff$score,method="pearson") # r = 0.03, one-tailed p = 0.45)
+cor.test(rt_diff_diff$non_linguistic,rt_diff_diff$score,method="pearson") # r = -0.40, one-tailed p = 0.04
+# vsl diff rt_diff is significantly associated with vocabulary 
+plot(rt_diff_diff$non_linguistic,rt_diff_diff$score)
 
 
 #  ************* SEE WHETHER PERFORMANCE WAS ABOVE CHANCE: T-TESTS *************
