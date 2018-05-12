@@ -51,13 +51,20 @@ git fetch upstream
 git merge upstream/master
 git push origin master
 ```
-2) If you are continue working on a branch
+2a) If you want to continue working on a branch on a computer where you have set up the qlab folder:
 ```
 git checkout your_working_branch
 git fetch origin
 git merge origin/your_working_branch
 ```
-3) If you are starting something new, create a branch in local clone: branch_name
+2b) If you want to continue working on a branch on a computer where you have NOT set up the qlab folder:
+```
+git clone https://github.com/YourGitHubAccount/qlab.git
+git branch -a
+git checkout origin/your_working_branch
+git checkout your_working_branch
+```
+3) If you are starting to do something new, create a new branch in local clone: branch_name
 ```
 git checkout -b branch_name
 ```
