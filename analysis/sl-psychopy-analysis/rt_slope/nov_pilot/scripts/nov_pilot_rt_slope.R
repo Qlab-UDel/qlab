@@ -20,7 +20,7 @@
 # Prepare workspace ------------------------------------------------------------------------------------------------------
 
 #Set correct working directory
-setwd("Documents/qlab/analysis/sl-psychopy-analysis/rt_slope/nov_pilot/scripts/")
+setwd("/Users/qlab_macbook/Documents/qlab/analysis/sl-psychopy-analysis/rt_slope/nov_pilot/scripts/")
 
 # Remove objects in environment
 rm(list=ls())
