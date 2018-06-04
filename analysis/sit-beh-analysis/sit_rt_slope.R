@@ -4,19 +4,7 @@
 #  This script analyzes mean reaction time and reaction time slope for statistical learning tasks involving structured and random triplets of letters and images
 #  NOTE: relevant columns have been pre-selected through sit_cleaning.R
 #  NOTE: Excludes any trials where participant did not respond at all to the target or responded to a different target
-#  NOTE: Excludes sit_a_010 from analysis from line 1679 on, because they do not have any rt data for one of the files
-
-
-# PRIORITIES: 
-# 1. Look at ll. re-copy and -paste analysis? double-check 
-# 2. Correlation
-# 3. Report the significant correlation between SL and vocab in separate scatter plots
-# 4. Add a trend line? I remember seeing lv slope negatively correlated with vocab. 
-# 5. confirm whether using the RT slope and mean RT from the structured condition for correlational analysis
-# 6. Use the difference score between the structured and random condition for the correlational analyses (structured - random)
-# 7. One-tailed Pearson correlation analyses
-# 8. Add domain to indiv_rt.csv
-# 9. Redo plots, see notebook (An can do plots)
+#  NOTE: Currently excludes sit_a_010 from analysis from line 1679 on, because they do not have any rt data for one of the files
 
 # ******************** I. PREPARE FILES *************************
 
@@ -75,7 +63,7 @@ levels(ll_data_frame$structured_targ)[levels(ll_data_frame$structured_targ)=="f_
 levels(ll_data_frame$random_targ)[levels(ll_data_frame$random_targ)=="f_not_false"] <- "F"
 
 # Convert reaction times from milliseconds to seconds
-ll_data_frame$l_block_trial_key_resp.rt<-ll_data_frame$l_block_trial_key_resp.rt*1000
+ll_data_frame$l_rt<-ll_data_frame$l_rt*1000
 
 # Remove extensions from image names
 ll_data_frame$image <- gsub (".png", "", ll_data_frame$image, ignore.case=TRUE)
@@ -109,8 +97,8 @@ levels(lv_data_frame$structured_targ)[levels(lv_data_frame$structured_targ)=="f_
 levels(lv_data_frame$random_targ)[levels(lv_data_frame$random_targ)=="f_not_false"] <- "F"
 
 # Convert reaction times from milliseconds to seconds
-lv_data_frame$l_block_trial_key_resp.rt <- lv_data_frame$l_block_trial_key_resp.rt*1000
-lv_data_frame$v_block_trial_key_resp.rt <- lv_data_frame$v_block_trial_key_resp.rt*1000
+lv_data_frame$l_rt <- lv_data_frame$l_rt*1000
+lv_data_frame$v_rt <- lv_data_frame$v_rt*1000
 
 # Remove extensions from image names
 lv_data_frame$image <- gsub (".png", "", lv_data_frame$image, ignore.case=TRUE)
@@ -144,8 +132,8 @@ levels(vl_data_frame$structured_targ)[levels(vl_data_frame$structured_targ)=="f_
 levels(vl_data_frame$random_targ)[levels(vl_data_frame$random_targ)=="f_not_false"] <- "F"
 
 # Convert reaction times from milliseconds to seconds
-vl_data_frame$l_block_trial_key_resp.rt <- vl_data_frame$l_block_trial_key_resp.rt*1000
-vl_data_frame$v_block_trial_key_resp.rt <- vl_data_frame$v_block_trial_key_resp.rt*1000
+vl_data_frame$l_rt <- vl_data_frame$l_rt*1000
+vl_data_frame$v_rt <- vl_data_frame$v_rt*1000
 
 # Remove extensions from image names
 vl_data_frame$image <- gsub (".png", "", vl_data_frame$image, ignore.case=TRUE)
@@ -175,7 +163,7 @@ for (file in vv_files){vv_data_frame <- append(vv_data_frame, list(eval(parse(te
 vv_data_frame <- do.call(rbind.data.frame, vv_data_frame)
 
 # Convert response times to milliseconds
-vv_data_frame$v_block_trial_key_resp.rt <- vv_data_frame$v_block_trial_key_resp.rt*1000
+vv_data_frame$v_rt <- vv_data_frame$v_rt*1000
 
 # Remove extensions from image names
 vv_data_frame$image <- gsub (".png", "", vv_data_frame$image, ignore.case=TRUE)
@@ -242,7 +230,7 @@ for(i in 1:nrow(random_ll_targets))
   this_trial_num <- random_ll_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
   # Isolate the target's rt
-  this_targ_rt <- random_ll_targets[i,]$l_block_trial_key_resp.rt
+  this_targ_rt <- random_ll_targets[i,]$l_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
   # Isolate the loop value
   this_loop <- random_ll_targets[i,]$this_l_loop
@@ -255,15 +243,15 @@ for(i in 1:nrow(random_ll_targets))
   # Isolate the preceding row's this_l_loop value.
   preceding_loop <- this_trial_before$this_l_loop
   loop_before <- append(loop_before, preceding_loop) 
-  preceding_rt <- this_trial_before$l_block_trial_key_resp.rt
+  preceding_rt <- this_trial_before$l_rt
   rt_before <- append (rt_before, preceding_rt)
   # If the participant responded while the target was presented
-  if (!is.na(random_ll_targets[i,] [,"l_block_trial_key_resp.rt"])){
+  if (!is.na(random_ll_targets[i,] [,"l_rt"])){
     # Count their response time from the target stimulus
-    rt_col <- append (rt_col, random_ll_targets[i,][,"l_block_trial_key_resp.rt"])
+    rt_col <- append (rt_col, random_ll_targets[i,][,"l_rt"])
   }
   # If the participant responded during the stimulus preceding the target (implies that we are not in the first row, which would not have a preceding row)
-  else if (!is.na(this_trial_before["l_block_trial_key_resp.rt"])){
+  else if (!is.na(this_trial_before["l_rt"])){
     # And the preceding line is from the same block
     if (preceding_loop==this_loop-1){
       # Take the rt from the preceding line and subtract it from 0, to determine how far in advance they responded
@@ -275,7 +263,7 @@ for(i in 1:nrow(random_ll_targets))
       case <- append (case, "case 3")}
   }
   # If the participant did not respond within 1 stimulus preceding the target, 
-  else if (is.na(random_ll_targets[i,] [,"l_block_trial_key_resp.rt"])){
+  else if (is.na(random_ll_targets[i,] [,"l_rt"])){
     # Copy their response time of NA
     rt_col <- append (rt_col, this_targ_rt)
     case <- append (case, "case 4")}
@@ -411,10 +399,10 @@ for(i in 1:nrow(random_lv_targets))
   this_trial_num <- random_lv_targets[i,]$trialnum
   trial <- append(trial, paste(this_trial_num))
   # Isolate the target's rt
-  this_targ_rt <- random_lv_targets[i,]$v_block_trial_key_resp.rt
+  this_targ_rt <- random_lv_targets[i,]$v_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
   # Isolate the loop value
-  this_loop <- random_lv_targets[i,]$v_block_trials.thistrialn
+  this_loop <- random_lv_targets[i,]$this_v_loop
   loop <- append (loop, this_loop)
   # Isolate the row with the preceding trial for that participant
   this_trial_before <- random_lv[which(random_lv$trialnum==this_trial_num-1 & random_lv$part_id==this_id), ][1,]
@@ -422,18 +410,18 @@ for(i in 1:nrow(random_lv_targets))
   this_trial_num_before <- this_trial_before$trialnum
   trial_num_before <- append (trial_num_before, this_trial_num_before)
   # Isolate the preceding row's this_l_loop value.
-  preceding_loop <- this_trial_before$v_block_trials.thistrialn
+  preceding_loop <- this_trial_before$this_v_loop
   loop_before <- append(loop_before, preceding_loop) 
   #loop_after <- append (loop_after, folvowing_loop)
-  preceding_rt <- this_trial_before$v_block_trial_key_resp.rt
+  preceding_rt <- this_trial_before$v_rt
   rt_before <- append (rt_before, preceding_rt)
   # If the participant responded while the target was presented
-  if (!is.na(random_lv_targets[i,] [,"v_block_trial_key_resp.rt"])){
+  if (!is.na(random_lv_targets[i,] [,"v_rt"])){
     # Count their response time from the target stimulus
-    rt_col <- append (rt_col, random_lv_targets[i,][,"v_block_trial_key_resp.rt"])
+    rt_col <- append (rt_col, random_lv_targets[i,][,"v_rt"])
   }
   # If the participant responded during the stimulus preceding the target (implies that we are not in the first row, which would not have a preceding row)
-  else if (!is.na(this_trial_before["v_block_trial_key_resp.rt"])){
+  else if (!is.na(this_trial_before["v_rt"])){
     # And the preceding line is from the same block
     if (preceding_loop==this_loop-1){
       # Take the rt from the preceding line and subtract it from 0, to determine how far in advance they responded
@@ -445,7 +433,7 @@ for(i in 1:nrow(random_lv_targets))
       case <- append (case, "case 3")}
   }
   # If the participant did not respond within 1 stimulus preceding the target, 
-  else if (is.na(random_lv_targets[i,] [,"v_block_trial_key_resp.rt"])){
+  else if (is.na(random_lv_targets[i,] [,"v_rt"])){
     # Copy their response time of NA
     rt_col <- append (rt_col, this_targ_rt)
     case <- append (case, "case 4")}
@@ -585,10 +573,10 @@ for(i in 1:nrow(random_vl_targets))
   this_trial_num <- random_vl_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
   # Isolate the target's rt
-  this_targ_rt <- random_vl_targets[i,]$l_block_trial_key_resp.rt
+  this_targ_rt <- random_vl_targets[i,]$l_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
   # Isolate the loop value
-  this_loop <- random_vl_targets[i,]$l_block_trial_loop.thistrialn
+  this_loop <- random_vl_targets[i,]$this_l_loop
   loop <- append (loop, this_loop)
   # Isolate the row with the preceding trial for that participant
   this_trial_before <- random_vl[which(random_vl$trial_num==this_trial_num-1 & random_vl$part_id==this_id), ][1,]
@@ -596,18 +584,18 @@ for(i in 1:nrow(random_vl_targets))
   this_trial_num_before <- this_trial_before$trial_num
   trial_num_before <- append (trial_num_before, this_trial_num_before)
   # Isolate the preceding row's this_l_loop value.
-  preceding_loop <- this_trial_before$l_block_trial_loop.thistrialn
+  preceding_loop <- this_trial_before$this_l_loop
   loop_before <- append(loop_before, preceding_loop) 
   #loop_after <- append (loop_after, fovlowing_loop)
-  preceding_rt <- this_trial_before$l_block_trial_key_resp.rt
+  preceding_rt <- this_trial_before$l_rt
   rt_before <- append (rt_before, preceding_rt)
   # If the participant responded while the target was presented
-  if (!is.na(random_vl_targets[i,] [,"l_block_trial_key_resp.rt"])){
+  if (!is.na(random_vl_targets[i,] [,"l_rt"])){
     # Count their response time from the target stimulus
-    rt_col <- append (rt_col, random_vl_targets[i,][,"l_block_trial_key_resp.rt"])
+    rt_col <- append (rt_col, random_vl_targets[i,][,"l_rt"])
   }
   # If the participant responded during the stimulus preceding the target (implies that we are not in the first row, which would not have a preceding row)
-  else if (!is.na(this_trial_before["l_block_trial_key_resp.rt"])){
+  else if (!is.na(this_trial_before["l_rt"])){
     # And the preceding line is from the same block
     if (preceding_loop==this_loop-1){
       # Take the rt from the preceding line and subtract it from 0, to determine how far in advance they responded
@@ -619,7 +607,7 @@ for(i in 1:nrow(random_vl_targets))
       case <- append (case, "case 3")}
   }
   # If the participant did not respond within 1 stimulus preceding the target, 
-  else if (is.na(random_vl_targets[i,] [,"l_block_trial_key_resp.rt"])){
+  else if (is.na(random_vl_targets[i,] [,"l_rt"])){
     # Copy their response time of NA
     rt_col <- append (rt_col, this_targ_rt)
     case <- append (case, "case 4")}
@@ -709,7 +697,7 @@ random_vv <- vv_data_frame[ which(vv_data_frame$condition== "R"),]
 # Index the targets -----------------------------------------------
 
 # Identify the rows when this condition's target was presented
-random_vv_targets <- random_vv[which(random_vv$second_targ==random_vv$image),]
+random_vv_targets <- random_vv[which(random_vv$random_targ==random_vv$image),]
 
 # TEST: Create a data frame to check the number of lines per participant
 list_part_id <- unique(random_vv_targets$part_id)
@@ -748,7 +736,7 @@ trial_before_df <- NULL
 trial_num_before <- NULL
 
 # Identify the rows when this condition's target was presented
-random_vv_targets <- random_vv[which(random_vv$second_targ==random_vv$image),]
+random_vv_targets <- random_vv[which(random_vv$random_targ==random_vv$image),]
 
 # Isolate participants' response times.
 # Include rows when the participant responded to the stimulus preceding the target (i.e. any time that the participant pressed the button within one stimulus before the target)
@@ -761,10 +749,10 @@ for(i in 1:nrow(random_vv_targets))
   this_trial_num <- random_vv_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
   # Isolate the target's rt
-  this_targ_rt <- random_vv_targets[i,]$v_block_trial_key_resp.rt
+  this_targ_rt <- random_vv_targets[i,]$v_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
   # Isolate the loop value
-  this_loop <- random_vv_targets[i,]$v_block_trials.thistrialn
+  this_loop <- random_vv_targets[i,]$this_v_loop
   loop <- append (loop, this_loop)
   # Isolate the row with the preceding trial for that participant
   this_trial_before <- random_vv[which(random_vv$trial_num==this_trial_num-1 & random_vv$part_id==this_id), ][1,]
@@ -772,18 +760,18 @@ for(i in 1:nrow(random_vv_targets))
   this_trial_num_before <- this_trial_before$trial_num
   trial_num_before <- append (trial_num_before, this_trial_num_before)
   # Isolate the preceding row's this_l_loop value.
-  preceding_loop <- this_trial_before$v_block_trials.thistrialn
+  preceding_loop <- this_trial_before$this_v_loop
   loop_before <- append(loop_before, preceding_loop) 
   #loop_after <- append (loop_after, fovvowing_loop)
-  preceding_rt <- this_trial_before$v_block_trial_key_resp.rt
+  preceding_rt <- this_trial_before$v_rt
   rt_before <- append (rt_before, preceding_rt)
   # If the participant responded while the target was presented
-  if (!is.na(random_vv_targets[i,] [,"v_block_trial_key_resp.rt"])){
+  if (!is.na(random_vv_targets[i,] [,"v_rt"])){
     # Count their response time from the target stimulus
-    rt_col <- append (rt_col, random_vv_targets[i,][,"v_block_trial_key_resp.rt"])
+    rt_col <- append (rt_col, random_vv_targets[i,][,"v_rt"])
   }
   # If the participant responded during the stimulus preceding the target (implies that we are not in the first row, which would not have a preceding row)
-  else if (!is.na(this_trial_before["v_block_trial_key_resp.rt"])){
+  else if (!is.na(this_trial_before["v_rt"])){
     # And the preceding line is from the same block
     if (preceding_loop==this_loop-1){
       # Take the rt from the preceding line and subtract it from 0, to determine how far in advance they responded
@@ -795,7 +783,7 @@ for(i in 1:nrow(random_vv_targets))
       case <- append (case, "case 3")}
   }
   # If the participant did not respond within 1 stimulus preceding the target, 
-  else if (is.na(random_vv_targets[i,] [,"v_block_trial_key_resp.rt"])){
+  else if (is.na(random_vv_targets[i,] [,"v_rt"])){
     # Copy their response time of NA
     rt_col <- append (rt_col, this_targ_rt)
     case <- append (case, "case 4")}
@@ -935,7 +923,7 @@ for(i in 1:nrow(structured_ll_targets))
   this_trial_num <- structured_ll_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
   # Isolate the target's rt
-  this_targ_rt <- structured_ll_targets[i,]$l_block_trial_key_resp.rt
+  this_targ_rt <- structured_ll_targets[i,]$l_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
   # Isolate the loop value
   this_loop <- structured_ll_targets[i,]$this_l_loop
@@ -948,15 +936,15 @@ for(i in 1:nrow(structured_ll_targets))
   # Isolate the preceding row's this_l_loop value.
   preceding_loop <- this_trial_before$this_l_loop
   loop_before <- append(loop_before, preceding_loop) 
-  preceding_rt <- this_trial_before$l_block_trial_key_resp.rt
+  preceding_rt <- this_trial_before$l_rt
   rt_before <- append (rt_before, preceding_rt)
   # If the participant responded while the target was presented
-  if (!is.na(structured_ll_targets[i,] [,"l_block_trial_key_resp.rt"])){
+  if (!is.na(structured_ll_targets[i,] [,"l_rt"])){
     # Count their response time from the target stimulus
-    rt_col <- append (rt_col, structured_ll_targets[i,][,"l_block_trial_key_resp.rt"])
+    rt_col <- append (rt_col, structured_ll_targets[i,][,"l_rt"])
   }
   # If the participant responded during the stimulus preceding the target (implies that we are not in the first row, which would not have a preceding row)
-  else if (!is.na(this_trial_before["l_block_trial_key_resp.rt"])){
+  else if (!is.na(this_trial_before["l_rt"])){
     # And the preceding line is from the same block
     if (preceding_loop==this_loop-1){
       # Take the rt from the preceding line and subtract it from 0, to determine how far in advance they responded
@@ -968,7 +956,7 @@ for(i in 1:nrow(structured_ll_targets))
       case <- append (case, "case 3")}
   }
   # If the participant did not respond within 1 stimulus preceding the target, 
-  else if (is.na(structured_ll_targets[i,] [,"l_block_trial_key_resp.rt"])){
+  else if (is.na(structured_ll_targets[i,] [,"l_rt"])){
     # Copy their response time of NA
     rt_col <- append (rt_col, this_targ_rt)
     case <- append (case, "case 4")}
@@ -1051,8 +1039,8 @@ sll <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, 
 mean_sll_rt_slope <- mean (sll$rt_slope)
 # This should be negative
 mean_sll_rt_slope
-# RESULT: Oddly, it's positive?
-# ATTN ZQ: Is this correct?
+
+
 
 # ******************** CONDITION 6: lv structured*******************
 
@@ -1110,10 +1098,10 @@ for(i in 1:nrow(structured_lv_targets))
   this_trial_num <- structured_lv_targets[i,]$trialnum
   trial <- append(trial, paste(this_trial_num))
   # Isolate the target's rt
-  this_targ_rt <- structured_lv_targets[i,]$l_block_trial_key_resp.rt
+  this_targ_rt <- structured_lv_targets[i,]$l_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
   # Isolate the loop value
-  this_loop <- structured_lv_targets[i,]$l_block_trial_loop.thistrialn
+  this_loop <- structured_lv_targets[i,]$this_l_loop
   loop <- append (loop, this_loop)
   # Isolate the row with the preceding trial for that participant
   this_trial_before <- structured_lv[which(structured_lv$trialnum==this_trial_num-1 & structured_lv$part_id==this_id), ][1,]
@@ -1121,18 +1109,18 @@ for(i in 1:nrow(structured_lv_targets))
   this_trial_num_before <- this_trial_before$trialnum
   trial_num_before <- append (trial_num_before, this_trial_num_before)
   # Isolate the preceding row's this_l_loop value.
-  preceding_loop <- this_trial_before$l_block_trial_loop.thistrialn
+  preceding_loop <- this_trial_before$this_l_loop
   loop_before <- append(loop_before, preceding_loop) 
   #loop_after <- append (loop_after, folvowing_loop)
-  preceding_rt <- this_trial_before$l_block_trial_key_resp.rt
+  preceding_rt <- this_trial_before$l_rt
   rt_before <- append (rt_before, preceding_rt)
   # If the participant responded while the target was presented
-  if (!is.na(structured_lv_targets[i,] [,"l_block_trial_key_resp.rt"])){
+  if (!is.na(structured_lv_targets[i,] [,"l_rt"])){
     # Count their response time from the target stimulus
-    rt_col <- append (rt_col, structured_lv_targets[i,][,"l_block_trial_key_resp.rt"])
+    rt_col <- append (rt_col, structured_lv_targets[i,][,"l_rt"])
   }
   # If the participant responded during the stimulus preceding the target (implies that we are not in the first row, which would not have a preceding row)
-  else if (!is.na(this_trial_before["l_block_trial_key_resp.rt"])){
+  else if (!is.na(this_trial_before["l_rt"])){
     # And the preceding line is from the same block
     if (preceding_loop==this_loop-1){
       # Take the rt from the preceding line and subtract it from 0, to determine how far in advance they responded
@@ -1144,7 +1132,7 @@ for(i in 1:nrow(structured_lv_targets))
       case <- append (case, "case 3")}
   }
   # If the participant did not respond within 1 stimulus preceding the target, 
-  else if (is.na(structured_lv_targets[i,] [,"l_block_trial_key_resp.rt"])){
+  else if (is.na(structured_lv_targets[i,] [,"l_rt"])){
     # Copy their response time of NA
     rt_col <- append (rt_col, this_targ_rt)
     case <- append (case, "case 4")}
@@ -1289,10 +1277,10 @@ for(i in 1:nrow(structured_vl_targets))
   this_trial_num <- structured_vl_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
   # Isolate the target's rt
-  this_targ_rt <- structured_vl_targets[i,]$v_block_trial_key_resp.rt
+  this_targ_rt <- structured_vl_targets[i,]$v_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
   # Isolate the loop value
-  this_loop <- structured_vl_targets[i,]$v_block_trials.thistrialn
+  this_loop <- structured_vl_targets[i,]$this_v_loop
   loop <- append (loop, this_loop)
   # Isolate the row with the preceding trial for that participant
   this_trial_before <- structured_vl[which(structured_vl$trial_num==this_trial_num-1 & structured_vl$part_id==this_id), ][1,]
@@ -1300,18 +1288,18 @@ for(i in 1:nrow(structured_vl_targets))
   this_trial_num_before <- this_trial_before$trial_num
   trial_num_before <- append (trial_num_before, this_trial_num_before)
   # Isolate the preceding row's this_v_loop value.
-  preceding_loop <- this_trial_before$v_block_trials.thistrialn
+  preceding_loop <- this_trial_before$this_v_loop
   loop_before <- append(loop_before, preceding_loop) 
   #loop_after <- append (loop_after, fovlowing_loop)
-  preceding_rt <- this_trial_before$v_block_trial_key_resp.rt
+  preceding_rt <- this_trial_before$v_rt
   rt_before <- append (rt_before, preceding_rt)
   # If the participant responded while the target was presented
-  if (!is.na(structured_vl_targets[i,] [,"v_block_trial_key_resp.rt"])){
+  if (!is.na(structured_vl_targets[i,] [,"v_rt"])){
     # Count their response time from the target stimulus
-    rt_col <- append (rt_col, structured_vl_targets[i,][,"v_block_trial_key_resp.rt"])
+    rt_col <- append (rt_col, structured_vl_targets[i,][,"v_rt"])
   }
   # If the participant responded during the stimulus preceding the target (implies that we are not in the first row, which would not have a preceding row)
-  else if (!is.na(this_trial_before["v_block_trial_key_resp.rt"])){
+  else if (!is.na(this_trial_before["v_rt"])){
     # And the preceding line is from the same block
     if (preceding_loop==this_loop-1){
       # Take the rt from the preceding line and subtract it from 0, to determine how far in advance they responded
@@ -1323,7 +1311,7 @@ for(i in 1:nrow(structured_vl_targets))
       case <- append (case, "case 3")}
   }
   # If the participant did not respond within 1 stimulus preceding the target, 
-  else if (is.na(structured_vl_targets[i,] [,"v_block_trial_key_resp.rt"])){
+  else if (is.na(structured_vl_targets[i,] [,"v_rt"])){
     # Copy their response time of NA
     rt_col <- append (rt_col, this_targ_rt)
     case <- append (case, "case 4")}
@@ -1417,7 +1405,7 @@ mean_svl_rt_slope
 structured_vv <- vv_data_frame[ which(vv_data_frame$condition== "S"),]
 
 # Identify the rows when this condition's target was presented
-structured_vv_targets <- structured_vv[which(structured_vv$first_targ==structured_vv$image),]
+structured_vv_targets <- structured_vv[which(structured_vv$structured_targ==structured_vv$image),]
 
 # TEST: Create a data frame to check the number of lines per participant
 list_part_id <- unique(structured_vv_targets$part_id)
@@ -1465,10 +1453,10 @@ for(i in 1:nrow(structured_vv_targets))
   this_trial_num <- structured_vv_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
   # Isolate the target's rt
-  this_targ_rt <- structured_vv_targets[i,]$v_block_trial_key_resp.rt
+  this_targ_rt <- structured_vv_targets[i,]$v_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
   # Isolate the loop value
-  this_loop <- structured_vv_targets[i,]$v_block_trials.thistrialn
+  this_loop <- structured_vv_targets[i,]$this_v_loop
   loop <- append (loop, this_loop)
   # Isolate the row with the preceding trial for that participant
   this_trial_before <- structured_vv[which(structured_vv$trial_num==this_trial_num-1 & structured_vv$part_id==this_id), ][1,]
@@ -1476,18 +1464,17 @@ for(i in 1:nrow(structured_vv_targets))
   this_trial_num_before <- this_trial_before$trial_num
   trial_num_before <- append (trial_num_before, this_trial_num_before)
   # Isolate the preceding row's this_l_loop value.
-  preceding_loop <- this_trial_before$v_block_trials.thistrialn
+  preceding_loop <- this_trial_before$this_v_loop
   loop_before <- append(loop_before, preceding_loop) 
-  #loop_after <- append (loop_after, fovvowing_loop)
-  preceding_rt <- this_trial_before$v_block_trial_key_resp.rt
+  preceding_rt <- this_trial_before$v_rt
   rt_before <- append (rt_before, preceding_rt)
   # If the participant responded while the target was presented
-  if (!is.na(structured_vv_targets[i,] [,"v_block_trial_key_resp.rt"])){
+  if (!is.na(structured_vv_targets[i,] [,"v_rt"])){
     # Count their response time from the target stimulus
-    rt_col <- append (rt_col, structured_vv_targets[i,][,"v_block_trial_key_resp.rt"])
+    rt_col <- append (rt_col, structured_vv_targets[i,][,"v_rt"])
   }
   # If the participant responded during the stimulus preceding the target (implies that we are not in the first row, which would not have a preceding row)
-  else if (!is.na(this_trial_before["v_block_trial_key_resp.rt"])){
+  else if (!is.na(this_trial_before["v_rt"])){
     # And the preceding line is from the same block
     if (preceding_loop==this_loop-1){
       # Take the rt from the preceding line and subtract it from 0, to determine how far in advance they responded
@@ -1499,7 +1486,7 @@ for(i in 1:nrow(structured_vv_targets))
       case <- append (case, "case 3")}
   }
   # If the participant did not respond within 1 stimulus preceding the target, 
-  else if (is.na(structured_vv_targets[i,] [,"v_block_trial_key_resp.rt"])){
+  else if (is.na(structured_vv_targets[i,] [,"v_rt"])){
     # Copy their response time of NA
     rt_col <- append (rt_col, this_targ_rt)
     case <- append (case, "case 4")}
@@ -1687,7 +1674,10 @@ write.csv(group_rt_slope, "sit_rt_slope_group.csv")
 # ANOVA to test effects of type (random/ structured), test phase and group (same/ different) on RT Slope----------------------
 
 # TEST: Make sure that all cells show 1
-cast(indiv_rt_slope,part_id~test_phase+type,value="rt_slope",length)
+test_cast <- cast(indiv_rt_slope,part_id~test_phase+type,value="rt_slope",length)
+
+# TO DO: Make this more automatic
+
 # They don't, because sit_a_010 is missing vv data. Remove this participant.
 indiv_rt_slope <- indiv_rt_slope[which(indiv_rt_slope$part_id!="sit_a_010"),]
 # TEST: Make sure that all cells show 1 now that we have removed this participant

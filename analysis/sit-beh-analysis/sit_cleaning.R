@@ -1,7 +1,8 @@
 #  SIT RT Slope Cleaning
 #  Violet Kozloff
 #  April 8th 2018 
-#  This script cleans the auditory and visual files from the 4-run pilot for reaction time slope analysis
+#  This script cleans files from the SIT experiment
+#  Note
 #  ****************************************************************************
 
 
@@ -44,6 +45,8 @@ ll_clean <- function(file) {
   names(newdata)[names(newdata) == 'lsl_question_key_resp.corr'] <- 'corr_resp'
   # Simplify loop names
   names(newdata)[names(newdata) == 'l_block_trial_loop.thistrialn'] <- 'this_l_loop'
+  # Simplify RT names
+  names(newdata)[names(newdata) == 'l_block_trial_key_resp.rt'] <- 'l_rt'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
@@ -78,12 +81,15 @@ lv_clean <- function(file) {
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'lsl_question_key_resp.corr'] <- 'corr_resp'
   # Simplify loop names
-  names(newdata)[names(newdata) == 'l_block_trial_loop.thisTrialN'] <- 'this_l_loop'
-  names(newdata)[names(newdata) == 'v_block_trials.thisTrialN'] <- 'this_v_loop'
+  names(newdata)[names(newdata) == 'l_block_trial_loop.thistrialn'] <- 'this_l_loop'
+  names(newdata)[names(newdata) == 'v_block_trials.thistrialn'] <- 'this_v_loop'
+  # Simplify RT names
+  names(newdata)[names(newdata) == 'l_block_trial_key_resp.rt'] <- 'l_rt'
+  names(newdata)[names(newdata) == 'v_block_trial_key_resp.rt'] <- 'v_rt'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
-  names(newdata) <- gsub ("expname", "trial_name", names(newdata))
+  names(newdata) <- gsub ("trailname", "trial_name", names(newdata))
   # Define targets by condition
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
@@ -114,8 +120,11 @@ vl_clean <- function(file) {
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'vsl_question_key_resp.corr'] <- 'corr_resp'
   # Simplify loop names
-  names(newdata)[names(newdata) == 'l_block_trial_loop.thisTrialN'] <- 'this_l_loop'
-  names(newdata)[names(newdata) == 'v_block_trials.thisTrialN'] <- 'this_v_loop'
+  names(newdata)[names(newdata) == 'l_block_trial_loop.thistrialn'] <- 'this_l_loop'
+  names(newdata)[names(newdata) == 'v_block_trials.thistrialn'] <- 'this_v_loop'
+  # Simplify RT names
+  names(newdata)[names(newdata) == 'l_block_trial_key_resp.rt'] <- 'l_rt'
+  names(newdata)[names(newdata) == 'v_block_trial_key_resp.rt'] <- 'v_rt'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
@@ -134,6 +143,7 @@ for (file in vl_files)
   vl_clean(paste0(vl_input,file))
 }
 
+newdata <- NULL
 
 # create a new file containing only the relevant columns in the output folder
 vv_clean <- function(file) {
@@ -143,14 +153,19 @@ vv_clean <- function(file) {
   newdata <- current_file[value]
   # Standardize "corr_resp" column across runs
   names(newdata)[names(newdata) == 'vsl_question_key_resp.corr'] <- 'corr_resp'
-  # Simplify loop names
-  names(newdata)[names(newdata) == 'v_block_trials_loop.thisTrialN'] <- 'this_v_loop'
   # Put all data in lowercase
   names(newdata) <- tolower(names(newdata))
+  # Simplify loop names
+  names(newdata)[names(newdata) == 'v_block_trials.thistrialn'] <- 'this_v_loop'
+  # Simplify RT names
+  names(newdata)[names(newdata) == 'v_block_trial_key_resp.rt'] <- 'v_rt'
   # Separate words by underscore
   names(newdata) <- gsub ("partid", "part_id", names(newdata))
   names(newdata) <- gsub ("expname", "exp_name", names(newdata))
   names(newdata) <- gsub ("trialnum", "trial_num", names(newdata))
+  # Rename target names
+  names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
+  names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
   # Write file
   this_path<-file.path(vv_output, basename(file))
   write.csv(newdata, file=(this_path))
@@ -161,3 +176,4 @@ for (file in vv_files)
 {
   vv_clean(paste0(vv_input,file))
 }
+

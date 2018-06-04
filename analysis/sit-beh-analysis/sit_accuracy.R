@@ -131,7 +131,7 @@ vv_data_frame <- do.call(rbind.data.frame, vv_data_frame)
 
 
 
-# ******************** II. FIND LV ACCURACY *************************
+# ******************** FIND ACCURACY FOR LL FILES *************************
 
 # Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
 
@@ -166,7 +166,9 @@ length(indiv_lv_accuracies$part_id)
 # View(indiv_lv_accuracies)
 
 
+
 # ******************** III. FIND ll ACCURACY *************************
+
 
 # Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
 
@@ -201,7 +203,9 @@ length(indiv_ll_accuracies$part_id)
 # View(indiv_ll_accuracies)
 
 
-# ******************** V. FIND vl ACCURACY *************************
+
+# ******************** V. FIND VL ACCURACY *************************
+
 
 # Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
 
@@ -235,7 +239,10 @@ length(indiv_vl_accuracies$part_id)
 # TEST: All entries should all have an accuracy value
 # View(indiv_vl_accuracies)
 
+
+
 # ******************** IV. FIND vv ACCURACY *************************
+
 
 # Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
 
@@ -272,9 +279,15 @@ length(indiv_vv_accuracies$part_id)
 
 
 #Summarize individual accuracies--------
+
+# Bind different accuracy data frames
 indiv_accuracies <- rbind(indiv_ll_accuracies, indiv_lv_accuracies, indiv_vl_accuracies, indiv_vv_accuracies)
+
+# Create a wide form version of the data
 indiv_accuracies_wide <- cast(indiv_accuracies, part_id ~ task, mean, value = 'accuracy')
 indiv_accuracies_wide<- merge(indiv_accuracies_wide, picture_vocab, by = "part_id", all=TRUE)
+
+# Mark by same or different group
 indiv_accuracies_wide <- cbind(indiv_accuracies_wide, "same_or_diff")
 colnames(indiv_accuracies_wide)[9] <- "same_or_diff"
 all_same <- indiv_accuracies_wide[ which(indiv_accuracies_wide$ll>0), ]
@@ -359,37 +372,29 @@ chi_square_data <- rbind(all_same, all_diff)
 # Subset only relevant data about the population
 chi_square_vars <- c("part_id", "age", "sex", "score", "same_or_diff")
 chi_square_data <- chi_square_data[chi_square_vars]
-
 matched_data <- chi_square_data
-
-# Subset only complete entries
-# subj_data <- chi_square_data[which(!is.na(chi_square_data$age) & !is.na(chi_square_data$score)),]
 
 # Chi-square test for gender
 gender_table <- cast(matched_data,sex~same_or_diff,value = "score",length)
 chisq.test(gender_table)
-# RESULTS: X2 (1)= 2.55, p=0.28 (can just say p-values > 0.25)
 
 # T-test for vocab score by group
 t.test(score~same_or_diff, data=matched_data) 
-# RESULTS: Matched (p-value = 0.865)
 
 # T-test for age by group 
 t.test(age~same_or_diff, data=matched_data)
-# RESULTS: Matched (p-value = 0.72)
 
 
-# *************************** ANALYSIS 2: TEST EFFECTS OF GROUP AND TEST PHASE ON ACCURACY *******************
 
+# *************************** TEST EFFECTS OF GROUP AND TEST PHASE ON ACCURACY *******************
 
 # ANOVA to test effects
 m1=aov(accuracy~test_phase*same_or_diff+Error(part_id/test_phase), data=indiv_accuracies)
 summary(m1)
-# RESULTS: No effect of either on accuracy
 
 
 
-# *************************** ANALYSIS 3: CORRELATIONS **********************************
+# *************************** CORRELATIONS **********************************
 
 
 # Correlation matrices-------------------------------------------------------------------------------------------------------------------------------------
@@ -417,39 +422,24 @@ same_corr$vv<-as.numeric(same_corr$vv)
 
 # Create correlation matrices for different condition
 diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
-#           lv        vl      score
-# lv    1.00000000 0.3215220 0.07938476
-# vl    0.32152200 1.0000000 0.45112656
-# score 0.07938476 0.4511266 1.00000000
 
 # Test p-values of correlation matrices for different condition
-lv_corr<-cor.test(diff_corr$lv,diff_corr$score) # n.s.: p-value = 0.7394
-vl_corr<-cor.test(diff_corr$vl,diff_corr$score) # p-value = 0.04588
-# RESULT: Significant positive correlation between vl and vocab score
-
-# ATTN ZQ: Is there a way to add p-values?
-diff_plot <- corrplot(diff, method="circle")
+lv_corr<-cor.test(diff_corr$lv,diff_corr$score)
+vl_corr<-cor.test(diff_corr$vl,diff_corr$score)
 
 # Create correlation matrices for same condition
 same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
-#           ll         vv      score
-# ll     1.0000000  0.3988979 -0.3025835
-# vv     0.3988979  1.0000000 -0.1115263
-# score -0.3025835 -0.1115263  1.0000000
 
 # Test p-values of correlation matrices for different condition
-ll_corr<-cor.test(same_corr$ll, same_corr$score) # n.s.: p-value = 0.2547
-vv_corr<-cor.test(same_corr$vv, same_corr$score) # n.s.: p-value = 0.6809
+ll_corr<-cor.test(same_corr$ll, same_corr$score) 
+vv_corr<-cor.test(same_corr$vv, same_corr$score) 
 
 
 
 #  ************* ANALYSIS 4: SEE WHETHER PERFORMANCE WAS ABOVE CHANCE WITH T-TESTS *************
 
 # Test whether group performed significantly above chance 
-# ATTN ZQ: These are now one-tailed, is this correct?
-t.test(indiv_ll_accuracies$accuracy, alternative= "greater", mu=0.5) #t(21)=2.027, p = 0.028
-t.test(indiv_vv_accuracies$accuracy, alternative= "greater", mu=0.5) #t(21)=1.80, p = 0.043
-t.test(indiv_vl_accuracies$accuracy, alternative= "greater", mu=0.5) #t(25)=4.19, p = 0.00015
-t.test(indiv_lv_accuracies$accuracy, alternative= "greater", mu=0.5) #t(25)=3.62, p = 0.00066
-
-# RESULTS: Performance significantly above chance for all conditions
+t.test(indiv_ll_accuracies$accuracy, alternative= "greater", mu=0.5)
+t.test(indiv_vv_accuracies$accuracy, alternative= "greater", mu=0.5)
+t.test(indiv_vl_accuracies$accuracy, alternative= "greater", mu=0.5)
+t.test(indiv_lv_accuracies$accuracy, alternative= "greater", mu=0.5)
