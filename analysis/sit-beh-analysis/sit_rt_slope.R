@@ -1673,93 +1673,36 @@ write.csv(group_rt_slope, "sit_rt_slope_group.csv")
 
 # ANOVA to test effects of type (random/ structured), test phase and group (same/ different) on RT Slope----------------------
 
-# TEST: Make sure that all cells show 1
-test_cast <- cast(indiv_rt_slope,part_id~test_phase+type,value="rt_slope",length)
+# Find all of the ids
+all_ids <- unique(indiv_rt_slope$part_id)
 
-# TO DO: Make this more automatic
+# You will remove participants with incomplete rt slope data
+incomplete_ids <- NULL
 
-# They don't, because sit_a_010 is missing vv data. Remove this participant.
-indiv_rt_slope <- indiv_rt_slope[which(indiv_rt_slope$part_id!="sit_a_010"),]
-# TEST: Make sure that all cells show 1 now that we have removed this participant
-cast(indiv_rt_slope,part_id~test_phase+type,value="rt_slope",length)
-# Now they do
+# Find the number of RT slopes for each person
+for (id in all_ids){
+  # Each participant should have 4 rt slopes: lingustic random, linguistic structured, non-linguistic structured, and non-linguistic random
+  if (sum(indiv_rt_slope$part_id==id)!=4){
+    incomplete_ids <- append (incomplete_ids, id)
+  }
+}
+
+# Remove data from any participants who have an incomplete number of RT slopes
+for (id in incomplete_ids){
+  indiv_rt_slope <- indiv_rt_slope[which(indiv_rt_slope$part_id!=id),]
+}
 
 # Test the effects of domain
 m2 = aov(rt_slope~domain*type*same_or_diff+Error(part_id/domain*type),data =indiv_rt_slope)
 summary(m2)
-## interpretation: people show sharper decrease of response time in linguistic than in non-linguistic conditions. (or the other way around)
-# 
-# Error: part_id
-# Df Sum Sq Mean Sq F value Pr(>F)
-# domain        1    0.4    0.43   0.011  0.916
-# same_or_diff  1  105.3  105.33   2.788  0.102
-# Residuals    45 1700.3   37.78               
-# 
-# Error: type
-# Df Sum Sq Mean Sq
-# type  1  403.7   403.7
-# 
-# Error: part_id:domain
-# Df Sum Sq Mean Sq F value Pr(>F)  
-# domain               1  131.1  131.05   6.754 0.0126 *
-# domain:same_or_diff  1   36.7   36.67   1.890 0.1760  
-# Residuals           45  873.2   19.40                 
-# ---
-#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-# 
-# Error: part_id:type
-# Df Sum Sq Mean Sq F value Pr(>F)
-# domain:type        1    5.2    5.24   0.134  0.716
-# type:same_or_diff  1   21.5   21.48   0.551  0.462
-# Residuals         45 1755.6   39.01               
-# 
-# Error: part_id:domain:type
-# Df Sum Sq Mean Sq F value Pr(>F)
-# domain:type               1   33.9   33.94   0.858  0.359
-# domain:type:same_or_diff  1    1.2    1.24   0.031  0.860
-# Residuals                45 1781.0   39.58 
+
 
 # ANOVA to test effects of type (random/ structured), test phase and group (same/ different) on mean RT----------------------
-
-# TEST: Make sure that all cells show 1
-cast(indiv_rt_slope,part_id~test_phase+type,value="mean_rt",length)
 
 # Test the effects of domain
 m4 = aov(mean_rt~domain*type*same_or_diff+Error(part_id/domain*type),data =indiv_rt_slope)
 summary(m4)
-# Interpretation: marginally larger difference between linguistic and non-linguistic in the different than the same condition (or the other way around).
-# Error: part_id
-# Df  Sum Sq Mean Sq F value Pr(>F)
-# domain        1     649     649   0.016  0.899
-# same_or_diff  1     975     975   0.025  0.876
-# Residuals    45 1781591   39591               
-# 
-# Error: type
-# Df Sum Sq Mean Sq
-# type  1  40639   40639
-# 
-# Error: part_id:domain
-# Df Sum Sq Mean Sq F value Pr(>F)  
-# domain               1  26455   26455   2.849 0.0983 .
-# domain:same_or_diff  1  26287   26287   2.831 0.0994 .
-# Residuals           45 417808    9285                 
-# ---
-#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-# 
-# Error: part_id:type
-# Df Sum Sq Mean Sq F value Pr(>F)
-# domain:type        1    580     580   0.063  0.802
-# type:same_or_diff  1  18152   18152   1.981  0.166
-# Residuals         45 412391    9164               
-# 
-# Error: part_id:domain:type
-# Df Sum Sq Mean Sq F value Pr(>F)
-# domain:type               1  11969   11969   1.751  0.192
-# domain:type:same_or_diff  1   8617    8617   1.261  0.267
-# Residuals                45 307551    6834  
 
-# No longer testing the effects of test_phase
-# m5 = aov(mean_rt~test_phase*same_or_diff*type+Error(part_id/(test_phase*type)), data = indiv_rt_slope)
 
 
 # *************************** ANALYSIS 2: CORRELATION MATRICES **********************************
@@ -1786,49 +1729,42 @@ same_corr <- corr_data[ which(!is.na(corr_data$ll)), ]
 same_corr <- same_corr[, c(2, 5, 6)]
 diff_corr <- corr_data[ which(!is.na(corr_data$lv)), ]
 diff_corr <- diff_corr[, c(3, 4, 6)]
-# same_corr$vv<-as.numeric(same_corr$vv)
 
 # Create correlation matrices for different condition
 diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
 diff
-#            lv         vl      score
-# lv     1.0000000  0.4688697 -0.1291501
-# vl     0.4688697  1.0000000 -0.2289698
-# score -0.1291501 -0.2289698  1.0000000
 
 # Test p-values of correlation matrices for different condition
-lv_corr<-cor.test(diff_corr$lv,diff_corr$score) # n.s.: p-value = 0.6891
-vl_corr<-cor.test(diff_corr$vl,diff_corr$score) # n.s.: p-value = 0.4741 
+lv_corr<-cor.test(diff_corr$lv,diff_corr$score)
+vl_corr<-cor.test(diff_corr$vl,diff_corr$score)
 
 # Create correlation matrices for same condition
 same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
 same
-#            ll          vv       score
-# ll     1.0000000  0.39270625 -0.58501755
-# vv     0.3927063  1.00000000 -0.01956922
-# score -0.5850176 -0.01956922  1.00000000
 
 # Test p-values of correlation matrices for different condition
-ll_corr<-cor.test(same_corr$ll, same_corr$score) # n.s.: p-value = 0.05868
+ll_corr<-cor.test(same_corr$ll, same_corr$score)
 ll_corr
-vv_corr<-cor.test(same_corr$vv, same_corr$score) # n.s.: p-value = 0.9545
+vv_corr<-cor.test(same_corr$vv, same_corr$score)
 vv_corr
 
 # calculate the difference scores between structured condition and random condition within linguistic and non-linguistic domains.
 rt_slope_diff = cast(indiv_rt_slope,part_id+same_or_diff+domain~type,value = "rt_slope")
 rt_slope_diff$slope_diff = rt_slope_diff$structured-rt_slope_diff$random
-rt_slope_diff = merge(rt_slope_diff,vocab_clean,id=1)
+rt_slope_diff = merge(rt_slope_diff,picture_vocab,id=1)
 rt_slope_diff = cast(rt_slope_diff,part_id+score+same_or_diff~domain,value="slope_diff")
 colnames(rt_slope_diff)[5]="non_linguistic"
 rt_slope_diff_same = subset(rt_slope_diff,same_or_diff=="same")
 rt_slope_diff_same_complete = rt_slope_diff_same[complete.cases(rt_slope_diff_same),]
-cor.test(rt_slope_diff_same_complete$linguistic,rt_slope_diff_same_complete$score,method="pearson") # r = 0.50, one-tailed p = 0.48
-cor.test(rt_slope_diff_same_complete$non_linguistic,rt_slope_diff_same_complete$score,method="pearson") # r = 0.08, p = 0.78
-#lsl same slope_diff is significantly associated with vocabulary but in the wrong direction.
+
+# Test the correlation between the Same condition's difference scores and vocabulary 
+cor.test(rt_slope_diff_same_complete$linguistic,rt_slope_diff_same_complete$score,method="pearson")
+cor.test(rt_slope_diff_same_complete$non_linguistic,rt_slope_diff_same_complete$score,method="pearson") 
+
+# Test the correlation between the Same condition's difference scores and vocabulary 
 rt_slope_diff_diff = subset(rt_slope_diff,same_or_diff=="different")
-cor.test(rt_slope_diff_diff$linguistic,rt_slope_diff_diff$score,method="pearson") # r = -0.54, one-tailed p = 0.007
-cor.test(rt_slope_diff_diff$non_linguistic,rt_slope_diff_diff$score,method="pearson") # r = -0.02, p = 0.46
-# lsl diff slope_diff is significantly associated with vocabulary
+cor.test(rt_slope_diff_diff$linguistic,rt_slope_diff_diff$score,method="pearson")
+cor.test(rt_slope_diff_diff$non_linguistic,rt_slope_diff_diff$score,method="pearson")
 
 plot(rt_slope_diff_diff$linguistic,rt_slope_diff_diff$score)
 
@@ -1856,64 +1792,50 @@ diff_corr <- diff_corr[, c(3, 4, 6)]
 
 # Create correlation matrices for different condition
 diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
-#           lv         vl      score
-# lv     1.0000000  0.9127378 -0.1289455
-# vl     0.9127378  1.0000000 -0.2700405
-# score -0.1289455 -0.2700405  1.0000000
 
 # Test p-values of correlation matrices for different condition
-lv_corr<-cor.test(diff_corr$lv,diff_corr$score) # n.s.: p-value = 0.59
-vl_corr<-cor.test(diff_corr$vl,diff_corr$score) # n.s.: p-value = 0.2495
+lv_corr<-cor.test(diff_corr$lv,diff_corr$score)
+vl_corr<-cor.test(diff_corr$vl,diff_corr$score)
 
 # Create correlation matrices for same condition
 same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
-#          ll         vv      score
-# ll     1.0000000  0.8029570 -0.1796982
-# vv     0.8029570  1.0000000 -0.2091292
-# score -0.1796982 -0.2091292  1.0000000
 
 # Test p-values of correlation matrices for different condition
-ll_corr<-cor.test(same_corr$ll, same_corr$score) # n.s.: p-value = 0.052
+ll_corr<-cor.test(same_corr$ll, same_corr$score)
 ll_corr
-vv_corr<-cor.test(same_corr$vv, same_corr$score) # n.s.: p-value = 0.45
+vv_corr<-cor.test(same_corr$vv, same_corr$score)
 vv_corr
-
 
 # calculate the difference scores between structured condition and random condition within linguistic and non-linguistic domains.
 # for individual difference analyses
 rt_diff = cast(indiv_rt_slope,part_id+same_or_diff+domain~type,value = "mean_rt")
 rt_diff$meanrt_diff = rt_diff$structured-rt_diff$random
-rt_diff = merge(rt_diff,vocab_clean,id=1)
+rt_diff = merge(rt_diff,picture_vocab,id=1)
 rt_diff = cast(rt_diff,part_id+score+same_or_diff~domain,value="meanrt_diff")
 colnames(rt_diff)[5]="non_linguistic"
 rt_diff_same = subset(rt_diff,same_or_diff=="same")
 rt_diff_same_complete = rt_diff_same[complete.cases(rt_diff_same),]
-cor.test(rt_diff_same_complete$linguistic,rt_diff_same_complete$score,method="pearson")# r = -0.35, one-tailed p = 0.10)
-cor.test(rt_diff_same_complete$non_linguistic,rt_diff_same_complete$score,method="pearson")# r = 0.07, one-tailed p = 0.40)
+cor.test(rt_diff_same_complete$linguistic,rt_diff_same_complete$score,method="pearson")
+cor.test(rt_diff_same_complete$non_linguistic,rt_diff_same_complete$score,method="pearson")
 
 rt_diff_diff = subset(rt_diff,same_or_diff=="different")
-cor.test(rt_diff_diff$linguistic,rt_diff_diff$score,method="pearson") # r = 0.03, one-tailed p = 0.45)
-cor.test(rt_diff_diff$non_linguistic,rt_diff_diff$score,method="pearson") # r = -0.40, one-tailed p = 0.04
-# vsl diff rt_diff is significantly associated with vocabulary 
+cor.test(rt_diff_diff$linguistic,rt_diff_diff$score,method="pearson")
+cor.test(rt_diff_diff$non_linguistic,rt_diff_diff$score,method="pearson")
+
 plot(rt_diff_diff$non_linguistic,rt_diff_diff$score)
 
 
 #  ************* SEE WHETHER PERFORMANCE WAS ABOVE CHANCE: T-TESTS *************
 
-# Here we remove participant 10 from SVV, because they did not respond in that condition
-svv <- indiv_rt_slope[which(svv$part_id!="sit_a_010"),]
-
-
 # test whether in each condition rt slope was different from zero.
-t.test(sll$rt_slope, mu=0) # n.s. p-value = 0.24
-t.test(slv$rt_slope, mu=0) # n.s. p-value = 0.23
-t.test(svl$rt_slope, mu=0) # n.s. p-value = 0.091
-t.test(svv$rt_slope, mu=0) # RESULT: p-value = 0.012
+t.test(sll$rt_slope, mu=0)
+t.test(slv$rt_slope, mu=0)
+t.test(svl$rt_slope, mu=0) 
+t.test(svv$rt_slope, mu=0)
 
 # test whether in each condition rt slope was significantly less than zero.
-# ATTN ZQ: Is it useful to include these one-tailed, since we want to see if they are significantly negative?
-t.test(sll$rt_slope, alternative="less", mu=0) # n.s. p-value = 0.88
-t.test(slv$rt_slope, alternative="less", mu=0) # n.s. p-value = 0.1149
-t.test(svl$rt_slope, alternative="less", mu=0) # RESULT: p-value = 0.045
-t.test(svv$rt_slope, alternative="less", mu=0) # n.s. p-value = 0.099
+t.test(sll$rt_slope, alternative="less", mu=0)
+t.test(slv$rt_slope, alternative="less", mu=0)
+t.test(svl$rt_slope, alternative="less", mu=0)
+t.test(svv$rt_slope, alternative="less", mu=0) 
 
