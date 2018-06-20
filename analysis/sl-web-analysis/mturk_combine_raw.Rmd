@@ -1,0 +1,58 @@
+---
+title: "Cleaning data"
+output: html_document
+---
+
+```{r}
+#Clean file, change the path and file name accordngly to run this on other tasks such as vsl and ssl
+
+
+path <- "C:/Users/Qlab/Downloads/mturk/mturk_data/tsl/"  
+files <- list.files(path=path, pattern="*.csv") 
+
+extract_data <- function(file) {
+  
+auditory <- read.csv(file)
+value <- c("rt","trial_index","cond","targ","value","key_press","stimulus")
+
+newdata <- auditory[value]
+par_id <- NULL
+if(auditory$value[2]!=""){par_id <- rep(paste(auditory$value[2]),length(auditory$value))
+} else {
+  par_id <- rep(paste(auditory$value[3]),length(auditory$value))
+  }
+newdata$par_id <- par_id
+
+write.csv(newdata,file=as.character(file))
+}
+
+for (file in files)
+{
+  extract_data(paste0(path,file))
+}
+
+tsl <- list()
+vsl_par_id <- NULL
+tsl_par_id <- NULL
+files <- list.files(path=path, pattern="*tsl.csv") 
+
+for(file in files)
+{
+   
+    assign(
+        gsub(" ","",file), 
+        read.csv(paste(path,file,sep="")))
+}
+for(file in files){tsl <- append(tsl,list(eval(parse(text=file))))}
+
+tsl <- do.call(rbind.data.frame, tsl)
+
+
+tsl$stimulus<- gsub(".wav","",tsl$stimulus)
+tsl$stimulus<- gsub("../../tones/","",tsl$stimulus)
+
+write.csv(tsl,"tsl.csv")
+  
+```
+
+

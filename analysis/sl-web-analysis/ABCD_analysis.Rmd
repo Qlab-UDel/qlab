@@ -11,16 +11,17 @@ output:
 library(ggplot2)
 library(knitr)
 library(readr)
+library(ggbeeswarm)
 ```
 
 ```{r,echo=FALSE}
-#Initialize variables
-total_participant <- 34
+#Initialize variables. Please update the total number of participants accordingly before running the script.
+total_participant <- 33
 total_vsl_trial <- 24 #number of trials in the familiarization block
 total_tsl_trial <- 48
 length_vsl <- 533 #number of rows in a vsl excel file
 length_tsl <- 832 #number of rows in a tsl excel file
-total_test_trial <- 32
+total_test_trial <- 32 #number of 2AFC questions
 ```
 
 
@@ -128,7 +129,7 @@ rt_df1 <- data.frame(trial,rt_col,id,group_cond)
 
 fam_block <- vsl[which(vsl$trial_index<=300 & vsl$trial_index>=12),] #the familiarization block starts with index number 13 and ends with index 300
 fam_trial <- rt_df1[which(rt_df1$trial<=300 & rt_df1$trial>=12), ]
-reindex <- rep(1:total_vsl_trial,total_participant)
+reindex <- rep(1:total_vsl_trial,length(fam_trial$trial)/24)
 fam_trial$reindex <- reindex
 fam_trial <- fam_trial[which(!is.na(fam_trial$group_cond)),]
 
@@ -237,7 +238,7 @@ rt_df1 <- data.frame(trial,rt_col,id,group_cond)
 fam_block <- tsl[which(tsl$trial_index<603 & tsl$trial_index>26),] #fam block in tsl starts at index 27 and ends at index 602
 fam_trial <- rt_df1[which(rt_df1$trial<603 & rt_df1$trial>26), ]
 
-reindex <- rep(1:total_tsl_trial,total_participant)
+reindex <- rep(1:total_tsl_trial,length(fam_trial$trial)/48)
 fam_trial$reindex <- reindex
 fam_trial <- fam_trial[which(!is.na(fam_trial$group_cond)),]
 
@@ -509,44 +510,21 @@ t.test(DD_acc_tsl,TYP_acc_tsl)
 t.test(DD_acc_vsl,TYP_acc_vsl)
 ```
 
-```{r,echo=FALSE}
-# A line plot to compare mean accuracy of each group accross 32 trials
-
- index <- rep(1:total_test_trial,total_participant)
-indx <- c(1:total_test_trial)
-vsl_accuracy$index <- index
-tsl_accuracy$index <- index
-DD_vsl_point <- NULL
-TYP_vsl_point <- NULL
-DD_tsl_point <- NULL
-TYP_tsl_point <- NULL
-for (i in indx){DD_vsl_point <- append(DD_vsl_point,mean(vsl_accuracy$corr[vsl_accuracy$index==i & vsl_accuracy$cond=="DD"]))
-DD_tsl_point <- append(DD_tsl_point,mean(tsl_accuracy$corr[tsl_accuracy$index==i & tsl_accuracy$cond=="DD"]))
-TYP_tsl_point <- append(TYP_tsl_point,mean(tsl_accuracy$corr[tsl_accuracy$index==i & tsl_accuracy$cond=="TYP"]))
-TYP_vsl_point <- append(TYP_vsl_point,mean(vsl_accuracy$corr[vsl_accuracy$index==i & vsl_accuracy$cond=="TYP"]))}
-DDi <- rep("DD",total_test_trial)
-Ti <- rep("TYP",total_test_trial)
-dv <- cbind(DD_vsl_point,indx,DDi)
-tv <- cbind(TYP_vsl_point,indx,Ti)
-dt <- cbind(DD_tsl_point,indx,DDi)
-tt <- cbind(TYP_tsl_point,indx,Ti)
-vtable <- data.frame(rbind(dv,tv))
-ttable <- data.frame(rbind(dt,tt))
-
-#ggplot(data=vtable,aes(x=as.numeric(indx),y=as.numeric(paste(DD_vsl_point)), color=DDi,group=DDi),ylim=c(0,1)) + geom_point() + geom_line() + ggtitle("Accuracy accross trials in VSL") + xlab("Trial index")+ylab("Accuracy (%)") + scale_color_discrete(name="Group",labels=c("Dylexia","Typical"))
-#ttable <- data.frame(rbind(dt,tt))
-#ggplot(data=ttable,aes(x=as.numeric(indx),y=as.numeric(paste(DD_tsl_point)), color=DDi,group=DDi),ylim=c(0,1)) + geom_point() + geom_line() + ggtitle("Accuracy accross trials in TSL") + xlab("Trial index")+ylab("Accuracy (%)") + scale_color_discrete(name="Group",labels=c("Dylexia","Typical"))
-```
-
-#A box plot to compare the average accuracy between each group
 ```{r,fig.width=10, fig.height=10, echo=FALSE}
-par(mfrow=c(2,2))
-boxplot(DD_vsl_point, main="Dylexia-VSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
-boxplot(TYP_vsl_point, main="Typical-VSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
 
-boxplot(DD_tsl_point, main="Dylexia-TSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
-
-boxplot(TYP_vsl_point, main="Typical-TSL",col="deepskyblue4", pars=list(ylim=c(0.2,1)))
+Accuracy <- NULL
+Accuracy <- tsl_acc_table$subj_corrt
+Accuracy <- append(Accuracy,vsl_acc_table$subj_corr)
+Task <- rep("TSL",total_participant)
+Task <- append(Task, rep("VSL",total_participant))
+ID <- paste(tsl_acc_table$list_tsl_id)
+ID <- append(ID,paste(vsl_acc_table$list_vsl_id))
+acc <- data.frame(ID,Accuracy,Task)
+Group <- NULL
+for (i in seq(from = 1, to=length(acc$ID), by=1)){Group <- append(Group,acc$ID[i] %in% DD)}
+Group <- gsub(TRUE,"DD",Group)
+Group <-  gsub(FALSE,"TYP",Group)
+acc$Group <- Group
 
 ggplot() +
 	geom_bar(aes(x = Task,y = Accuracy,fill = Group),data=acc,colour = '#000000',fun.data = mean_sdl,fun.args = list(mult = 1),stat = 'summary',position = position_dodge(width = 0.9)) +
@@ -556,7 +534,7 @@ ggplot() +
 	scale_colour_grey(guide = guide_legend(),start = 0.0,end = 0.0) +
 scale_fill_manual(labels = c("Dylexia","Typical"),values = c("#b2182b", "#2166ac")) +	geom_hline(yintercept=0,linetype=2) +theme_classic(base_size = 20.0) + guides(color = FALSE) 
 
-ggplot(acc1, aes(x=Task, y = Accuracy, fill=Group)) + geom_bar(stat = "identity",position=position_dodge()) + geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),width=.1,size=.8,position=position_dodge(.9)) + ggtitle("Accuracy plot") + scale_fill_grey(guide = guide_legend(),start = 0.4,end = 0.8) + geom_beeswarm(aes(x = factor(Task),y = Accuracy,colour = Group),data=acc,dodge.width=1,cex=2.5) + theme_classic(base_size = 20.0) + scale_colour_grey(guide = guide_legend(),start = 0.0,end = 0.0) 
+#ggplot(data=accuracy,aes(x=factor(Task), y=subj_corrt,fill=Group)) + geom_bar(position = position_dodge(),stat='summary') + 	ylab(label = 'Accuracy') + geom_beeswarm(aes(x=Task,y=subj_corrt,fill=Group), dodge.width=0.9, show.legend = FALSE) + theme_classic(base_size=20.0) + xlab(label='Task') + 	geom_hline(yintercept=0,linetype=2) + scale_fill_manual(labels = c("Dylexia","Typical"),values = c("tomato1", "#2166ac")) 
 
 
 ```

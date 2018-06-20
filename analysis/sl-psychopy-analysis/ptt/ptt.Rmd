@@ -1,0 +1,327 @@
+---
+title: "PTT"
+author: "An Nguyen"
+date: "May 14, 2018"
+output: html_document
+---
+
+```{r,echo=FALSE}
+library(ggplot2)
+# ACCURACY DATA
+test <- list()
+
+path <- "C:/Users/Qlab/Documents/ptt/"  
+files <- list.files(path=path, pattern="*test_session.csv") 
+
+for(file in files)
+{
+   
+    assign(
+        gsub(" ","",file), 
+        read.csv(paste(path,file,sep="")))
+}
+for(file in files){test <- append(test,list(eval(parse(text=file))))}
+
+
+test <- do.call(rbind.data.frame, test)
+
+tsl <- mean(test$tsl.corr,na.rm=TRUE)
+vsl <- mean(test$vsl_question_key_resp.corr,na.rm=TRUE)
+lsl <- mean(test$lsl_question_key_resp.corr,na.rm=TRUE)
+ssl <- mean(test$ssl_question_key_resp.corr,na.rm=TRUE)
+
+c1 <- round(c(tsl,vsl,lsl,ssl),2)
+c2 <- round(c(t.test(test$tsl.corr,mu=0.5,alternative='greater', na.rm=TRUE)$p.value,t.test(test$vsl_question_key_resp.corr,mu=0.5,alternative='greater', na.rm=TRUE)$p.value,t.test(test$lsl_question_key_resp.corr,mu=0.5,alternative='greater', na.rm=TRUE)$p.value,t.test(test$ssl_question_key_resp.corr,mu=0.5,alternative='greater', na.rm=TRUE)$p.value),3)
+test_result <- data.frame(c1,c2)
+colnames(test_result) <- c("Mean Accuracy","p-value")
+rownames(test_result) <- c("TSL","VSL","LSL","SSL")
+print(test_result)
+```
+
+```{r,echo=FALSE,warning=FALSE}
+# RT AUDITORY
+aud <- list()
+
+aud_path <- "C:/Users/Qlab/Documents/ptt/aud/"  
+auditory_files <- list.files(path=aud_path, pattern="*.csv") 
+
+for(file in auditory_files)
+{
+   
+    assign(
+        gsub(" ","",file), 
+        read.csv(paste(aud_path,file,sep="")))
+}
+for(file in auditory_files){aud <- append(aud,list(eval(parse(text=file))))}
+
+
+aud <- do.call(rbind.data.frame, aud)
+aud$tone_block_key_resp.rt <- aud$tone_block_key_resp.rt*1000
+aud$sound_block_key_resp.rt <- aud$sound_block_key_resp.rt*1000
+
+aud$soundFile <- gsub(".wav","",aud$soundFile)
+random_tone <- aud[which(aud$Run <=2 & aud$condition=="R"),]
+random_syllable <- aud[which(aud$Run >2 & aud$condition=="R"),]
+
+structured_tone <- aud[which(aud$Run >2 & aud$condition=="S"),]
+structured_syllable <- aud[which(aud$Run <=2 & aud$condition=="S"),]
+
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+row_number <- which(random_tone$ttarget==random_tone$soundFile)
+
+for (i in row_number){
+    if (!is.na(random_tone[i,]$tone_block_key_resp.rt)){rt_col <- append(rt_col,random_tone[i,][,"tone_block_key_resp.rt"])} 
+    trial <- append(trial,paste(random_tone[i,][,"trialnum"]))
+    id <- append(id,paste(random_tone[i,]$PartID))
+    if (!is.na(random_tone[i+1,][,"tone_block_key_resp.rt"])){
+        rt_col[(match(i,row_number))] <- 480+random_tone[i+1,][,"tone_block_key_resp.rt"]}
+    if (!is.na(random_tone[i-1,][,"tone_block_key_resp.rt"])){
+        rt_col[(match(i,row_number))] <- 0-random_tone[i-1,][,"tone_block_key_resp.rt"]
+        
+    }}
+fam_trial <- data.frame(trial,rt_col,id)
+reindex <- c(rep(1:48,5))
+reindex <- append(reindex,25:48)
+reindex <- append(reindex,rep(1:48,9))
+fam_trial$reindex <- reindex
+mean_table <- fam_trial[which(!is.na(fam_trial$rt_col) & fam_trial$rt_col<960 & fam_trial$rt_col>-480), ]
+mean_rt <- NULL
+rt_slope <- NULL
+list_id <- unique(mean_table$id)
+for(id in list_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+ rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+}
+subj_table <- data.frame(list_id,mean_rt,rt_slope)
+subj_table$condition <- "Random"
+subj_table$Type <- "Tone"
+
+########
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+row_number <- which(structured_tone$ttarget==structured_tone$soundFile)
+
+for (i in row_number){
+  if (!is.na(structured_tone[i,]$tone_block_key_resp.rt)){rt_col <- append(rt_col,structured_tone[i,][,"tone_block_key_resp.rt"])} 
+  trial <- append(trial,paste(structured_tone[i,][,"trialnum"]))
+  id <- append(id,paste(structured_tone[i,]$PartID))
+  if (!is.na(structured_tone[i+1,][,"tone_block_key_resp.rt"])){
+    rt_col[(match(i,row_number))] <- 480+structured_tone[i+1,][,"tone_block_key_resp.rt"]}
+  if (!is.na(structured_tone[i-1,][,"tone_block_key_resp.rt"])){
+    rt_col[(match(i,row_number))] <- 0-structured_tone[i-1,][,"tone_block_key_resp.rt"]
+    
+  }}
+fam_trial <- data.frame(trial,rt_col,id)
+reindex <- c(rep(1:48,15))
+fam_trial$reindex <- reindex
+mean_table <- fam_trial[which(!is.na(fam_trial$rt_col) & fam_trial$rt_col<960 & fam_trial$rt_col>-480), ]
+mean_rt <- NULL
+rt_slope <- NULL
+list_id <- unique(mean_table$id)
+for(id in list_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+  rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+}
+temp <- data.frame(list_id,mean_rt,rt_slope)
+temp$Condition <- "Structured"
+temp$Type <- "Tone"
+names(temp) <- names(subj_table)
+
+#######
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+row_number <- which(structured_syllable$starget==structured_syllable$soundFile)
+
+for (i in row_number){
+  if (!is.na(structured_syllable[i,]$sound_block_key_resp.rt)){rt_col <- append(rt_col,structured_syllable[i,][,"sound_block_key_resp.rt"])} 
+  trial <- append(trial,paste(structured_syllable[i,][,"trialnum"]))
+  id <- append(id,paste(structured_syllable[i,]$PartID))
+  if (!is.na(structured_syllable[i+1,][,"sound_block_key_resp.rt"])){
+    rt_col[(match(i,row_number))] <- 480+structured_syllable[i+1,][,"sound_block_key_resp.rt"]}
+  if (!is.na(structured_syllable[i-1,][,"sound_block_key_resp.rt"])){
+    rt_col[(match(i,row_number))] <- 0-structured_syllable[i-1,][,"sound_block_key_resp.rt"]
+    
+  }}
+fam_trial <- data.frame(trial,rt_col,id)
+reindex <- c(rep(1:48,5))
+reindex <- append(reindex,25:48)
+reindex <- append(reindex,rep(1:48,9))
+fam_trial$reindex <- reindex
+mean_table <- fam_trial[which(!is.na(fam_trial$rt_col) & fam_trial$rt_col<960 & fam_trial$rt_col>-480), ]
+mean_rt <- NULL
+rt_slope <- NULL
+list_id <- unique(mean_table$id)
+for(id in list_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+  rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+}
+temp2 <- data.frame(list_id,mean_rt,rt_slope)
+temp2$Condition <- "Structured"
+temp2$Type <- "Syllable"
+names(temp2) <- names(subj_table)
+
+########
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+row_number <- which(random_syllable$starget==random_syllable$soundFile)
+
+for (i in row_number){
+    if (!is.na(random_syllable[i,]$sound_block_key_resp.rt)){rt_col <- append(rt_col,random_syllable[i,][,"sound_block_key_resp.rt"])} 
+    trial <- append(trial,paste(random_syllable[i,][,"trialnum"]))
+    id <- append(id,paste(random_syllable[i,]$PartID))
+    if (!is.na(random_syllable[i+1,][,"sound_block_key_resp.rt"])){
+        rt_col[(match(i,row_number))] <- 480+random_syllable[i+1,][,"sound_block_key_resp.rt"]}
+    if (!is.na(random_syllable[i-1,][,"sound_block_key_resp.rt"])){
+        rt_col[(match(i,row_number))] <- 0-random_syllable[i-1,][,"sound_block_key_resp.rt"]
+        
+    }}
+fam_trial <- data.frame(trial,rt_col,id)
+reindex <- c(rep(1:48,15))
+fam_trial$reindex <- reindex
+mean_table <- fam_trial[which(!is.na(fam_trial$rt_col) & fam_trial$rt_col<960 & fam_trial$rt_col>-480), ]
+mean_rt <- NULL
+rt_slope <- NULL
+list_id <- unique(mean_table$id)
+for(id in list_id){
+    mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+    rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+}
+temp3 <- data.frame(list_id,mean_rt,rt_slope)
+temp3$Condition <- "Random"
+temp3$Type <- "Syllable"
+names(temp3) <- names(subj_table)
+
+subj_table <- rbind(subj_table,temp,temp2,temp3)
+
+lowerbound <- mean(subj_table$rt_slope) - 2.5*sd(subj_table$rt_slope)
+upperbound <- mean(subj_table$rt_slope) + 2.5*sd(subj_table$rt_slope)
+subj_table <- subj_table[subj_table$rt_slope>=lowerbound,]
+subj_table <- subj_table[subj_table$rt_slope<=upperbound,]
+
+ggplot(subj_table,aes(x=Type,y=rt_slope,fill=condition)) + geom_bar(stat='summary', position=position_dodge()) 
+
+t.test(subj_table$rt_slope[subj_table$condition=="Random"],subj_table$rt_slope[subj_table$condition=="Structured"],alternative="greater")
+
+t.test(subj_table$rt_slope[subj_table$condition=="Random" & subj_table$Type=="Tone"],subj_table$rt_slope[subj_table$condition=="Structured" & subj_table$Type=="Tone"],alternative="greater")
+
+t.test(subj_table$rt_slope[subj_table$condition=="Random" & subj_table$Type=="Syllable"],subj_table$rt_slope[subj_table$condition=="Structured" & subj_table$Type=="Syllable"],alternative="greater")
+
+t.test(subj_table$rt_slope[subj_table$condition=="Random"],mu=0.5,alternative = 'less')
+
+t.test(subj_table$rt_slope[subj_table$condition=="Structured"],mu=0.5,alternative = 'less')
+#print(subj_table)
+```
+
+```{r,echo=FALSE,warning=FALSE}
+#VISUAL
+visual <- list()
+
+visual_path <- "C:/Users/Qlab/Documents/ptt/visual/"  
+visual_files <- list.files(path=visual_path, pattern="*.csv") 
+
+for(file in visual_files)
+{
+  
+  assign(
+    gsub(" ","",file), 
+    read.csv(paste(visual_path,file,sep="")))
+}
+for(file in visual_files){visual <- append(visual,list(eval(parse(text=file))))}
+
+
+visual <- do.call(rbind.data.frame, visual)
+visual$v_block_trial_key_resp.rt <- visual$v_block_trial_key_resp.rt*1000
+visual$image <- gsub(".bmp","",visual$image)
+visual$image <- gsub("Alien","",visual$image)
+
+random_image <- visual[which(visual$Run <=2 & visual$condition=="R"),]
+structured_image <- visual[which(visual$Run >2 & visual$condition=="S"),]
+
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+row_number <- which(random_image$vtarget==random_image$image)
+
+for (i in row_number){
+  if (!is.na(random_image[i,]$v_block_trial_key_resp.rt)){rt_col <- append(rt_col,random_image[i,][,"v_block_trial_key_resp.rt"])} 
+  trial <- append(trial,paste(random_image[i,][,"trialnum"]))
+  id <- append(id,paste(random_image[i,]$PartID))
+  if (!is.na(random_image[i+1,][,"v_block_trial_key_resp.rt"])){
+    rt_col[(match(i,row_number))] <- 1000+random_image[i+1,][,"v_block_trial_key_resp.rt"]}
+  if (!is.na(random_image[i-1,][,"v_block_trial_key_resp.rt"])){
+    rt_col[(match(i,row_number))] <- 0-random_image[i-1,][,"v_block_trial_key_resp.rt"]
+    
+  }}
+fam_trial <- data.frame(trial,rt_col,id)
+reindex <- NULL
+le <- NULL
+for (i in unique(fam_trial$id)){le <- append(le,(sum(fam_trial$id==i)))}
+for (i in le){reindex <- append(reindex,c(1:i))}
+fam_trial$reindex <- reindex
+mean_table <- fam_trial[which(!is.na(fam_trial$rt_col) & fam_trial$rt_col<1000 & fam_trial$rt_col>-1000), ]
+mean_rt <- NULL
+rt_slope <- NULL
+list_id <- unique(mean_table$id)
+for(id in list_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+  rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+}
+subj_table <- data.frame(list_id,mean_rt,rt_slope)
+subj_table$condition <- "Random"
+subj_table$Type <- "Image"
+
+#####
+
+
+rt_col <- NULL
+id <- NULL
+trial <- NULL
+target <- NULL
+row_number <- which(structured_image$vtarget==structured_image$image)
+for (i in row_number){
+  if (!is.na(structured_image[i+1,][,"v_block_trial_key_resp.rt"])){
+    rt_col[(match(i,row_number))] <- 1000+structured_image[i+1,][,"v_block_trial_key_resp.rt"]}
+  if (!is.na(structured_image[i,]$v_block_trial_key_resp.rt)){rt_col <- append(rt_col,structured_image[i,][,"v_block_trial_key_resp.rt"])} 
+  trial <- append(trial,paste(structured_image[i,][,"trialnum"]))
+  id <- append(id,paste(structured_image[i,]$PartID))
+  if (is.na(structured_image[i,]$v_block_trial_key_resp.rt)){rt_col[(match(i,row_number))] <- "NA"}  
+  
+  if (!is.na(structured_image[i-1,][,"v_block_trial_key_resp.rt"])){
+    rt_col[(match(i,row_number))] <- 0-structured_image[i-1,][,"v_block_trial_key_resp.rt"]
+    
+  }}
+fam_trial <- data.frame(trial,rt_col,id)
+fam_trial$rt_col <- as.numeric(fam_trial$rt_col)
+reindex <- c(rep(1:24,15))
+fam_trial$reindex <- reindex
+mean_table <- fam_trial[which(!is.na(fam_trial$rt_col) & fam_trial$rt_col<1000 & fam_trial$rt_col>-1000), ]
+mean_rt <- NULL
+rt_slope <- NULL
+list_id <- unique(mean_table$id)
+for(id in list_id){
+  mean_rt<-append(mean_rt,round(mean(mean_table$rt_col[mean_table$id==id]),digits=3))
+  rt_slope <-append(rt_slope,round(summary(lm(mean_table$rt_col[mean_table$id==id]~mean_table$reindex[mean_table$id==id]))$coefficient[2,1],digits=3))
+}
+subj_table2 <- data.frame(list_id,mean_rt,rt_slope)
+subj_table2$condition <- "Structured"
+subj_table2$Type <- "Image"
+
+####
+subj_table_v <- rbind(subj_table,subj_table2)
+t.test(subj_table_v$rt_slope[subj_table_v$condition=="Random"],subj_table_v$rt_slope[subj_table_v$condition=="Structured"],alternative="greater")
+ggplot(subj_table_v,aes(x=factor(condition),y=rt_slope, fll=condition)) + geom_bar(stat='summary')
+#print(subj_table_v)

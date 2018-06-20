@@ -2,7 +2,9 @@
 title: "ABCD_other_data"
 author: "An Nguyen"
 date: "April 3, 2018"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r, echo=FALSE,warning=FALSE,include=FALSE}
@@ -11,7 +13,7 @@ library(nortest)
 library(PerformanceAnalytics)
 
 #This script works on the big data ABCD file with everyone's information on IQ, Language measurements etc.
-
+#Load the file: ABCD <- read_csv("~/ABCD.csv")
 #calculate delta for rotary
 
 #delta<-NULL
@@ -31,7 +33,7 @@ library(PerformanceAnalytics)
 
 #Save this to a file: write.csv(ABCD, "ABCD.csv")
 
-#then import the file ABCD <- read_csv("~/ABCD.csv")
+#then import the file again ABCD <- read_csv("~/ABCD.csv")
 
 ```
 

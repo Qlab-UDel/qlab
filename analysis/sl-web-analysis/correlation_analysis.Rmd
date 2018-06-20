@@ -89,9 +89,51 @@ d2 <- data.frame(tsl_accuracy,ssl_accuracy,vsl_accuracy,lsl_accuracy)
 #If you just want to check the correlation, use the file already created (accuracy_ss1_ss2.csv)
 chart.Correlation(accuracy_ss1_ss2,method="spearman")
 
+#Function to calculate error bar
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+    library(plyr)
+
+    # New version of length which can handle NA's: if na.rm==T, don't count them
+    length2 <- function (x, na.rm=FALSE) {
+        if (na.rm) sum(!is.na(x))
+        else       length(x)
+    }
+
+    # This does the summary. For each group's data frame, return a vector with
+    # N, mean, and sd
+    datac <- ddply(data, groupvars, .drop=.drop,
+      .fun = function(xx, col) {
+        c(N    = length2(xx[[col]], na.rm=na.rm),
+          mean = mean   (xx[[col]], na.rm=na.rm),
+          sd   = sd     (xx[[col]], na.rm=na.rm)
+        )
+      },
+      measurevar
+    )
+
+    # Rename the "mean" column    
+    datac <- rename(datac, c("mean" = measurevar))
+
+    datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+
+    # Confidence interval multiplier for standard error
+    # Calculate t-statistic for confidence interval: 
+    # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+    ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+    datac$ci <- datac$se * ciMult
+
+    return(datac)
+}
+
+
 #accuracy plot
 acc_all <- read_csv("Z:/projects/mturk/raw/cleaned_data/acc_all.csv")
+acc1 <- summarySE(acc,measurevar = "Accuracy",groupvars=c("Group","Task"))
+
 ggplot(acc_all, aes(x=Task, y = Accuracy, fill=factor(Session))) + geom_bar(stat="summary",position=position_dodge(width=0.9))  + theme_classic(base_size = 20.0) + scale_fill_manual(name = "Session",labels = c("SS1","SS2"),values = c("#b2182b", "#2166ac")) + geom_hline(yintercept = 0.5, linetype=3) + ggtitle("Accuracy plot") #+ geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),data=acc1, position = position_dodge(width = 0.9),width=0.4)
+
+#ggplot(acc1, aes(x=factor(Task,level=c("Letter","Speech","Image","Tone")), y = Accuracy, fill=factor(Session))) + geom_bar(stat="identity",position=position_dodge(width=0.9))  + theme_classic(base_size = 20.0) + scale_fill_manual(name = "Session",labels = c("SS1","SS2"),values = c("darkorange2", "lightskyblue2")) + geom_hline(yintercept = 0.5, linetype=3) + geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),data=acc1, position = position_dodge(width = 0.9),width=0.4) + ylab(label="Accuracy (%)") + geom_text(aes(y = Accuracy + se + 0.01, label=p), colour="red", vjust=0, size=5, position=position_dodge(.9))
 
  ggplot(rt1, aes(x=Task, y = RT_Slope, fill=factor(Session))) + geom_bar(stat="summary",position=position_dodge(width=0.9))  + theme_classic(base_size = 20.0) + scale_fill_manual(name = "Session",labels = c("SS1","SS2"),values = c("snow3", "snow4")) + geom_hline(yintercept = 0, linetype=3) + ggtitle("Reaction Time Slope plot") #+ geom_errorbar(aes(ymin=RT_Slope-se,ymax=RT_Slope+se),data=rt1, position = position_dodge(width = 0.9),width=0.4)
  
@@ -100,5 +142,20 @@ x <- c("vsl_1","ssl_1")
 vs <- accuracy_ss1_ss2[x]
 vs <- na.omit(vs)
 cor.test(vs$vsl_1,vs$ssl_1,method="spearman",alternative="greater")
+
+#ggplot(data=mt, aes(x=ACC,y=rt_slope,colour=factor(Task,level=c("Letter","Speech","Image","Tone")))) + geom_point() + geom_smooth(method=lm) + facet_grid(~Taskf) + ylab(label ="Reaction Time Slope (ms/trial)") + xlab(label="Accuracy (%)") + scale_colour_discrete((name="Task")) + theme(panel.border = element_rect(colour='black', fill=NA),  panel.background = element_blank()) 
+
+acc.full <- na.omit(accuracy_ss1_ss2)
+acc1.full <- acc.full[-c(5,6,7,8)]
+acc2.full <- acc.full[-c(1,2,3,4)] 
+fita.full1 <- principal(acc1.full,score=TRUE)
+fita.full2 <- principal(acc2.full,score=TRUE)
+cor.test(fita.full1$scores,fita.full2$scores)
+
+rt <- full_correlation[-c(1,10,11,12,13,14,15,16,17)]
+rt.1 <- rt[-c(2,4,6,8)]
+rt.2 <- rt[-c(1,3,5,7)]
+fitrt.1 <- principal(rt.1,score=TRUE)
+fitrt.2 <- principal(rt.2,score=TRUE)
 ```
 
