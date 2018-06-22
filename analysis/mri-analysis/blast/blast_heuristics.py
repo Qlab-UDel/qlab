@@ -27,12 +27,12 @@ def infotodict(seqinfo):
     fmap_langloc = create_key('fmap/sub-{subject}_acq-langloc{acq}_dir-{dir}_run-{item:02d}_epi')
     fmap_sl = create_key('fmap/sub-{subject}_acq-sl{acq}_dir-{dir}_run-{item:02d}_epi')
 
-    info = {t1:[], t2:[], rest:[], langloc:[], vsl:[], asl:[], dwi:[], fmap_rest:[], fmap_dwi:[]; fmap_langloc; fmap_sl}
+    info = {t1:[], t2:[], rest:[], langloc:[], vsl:[], asl:[], dwi:[], fmap_rest:[], fmap_dwi:[], fmap_langloc:[], fmap_sl:[]}
 
     for idx, s in enumerate(seqinfo):
-        if (s.dim3 == 160) and (s.dim4 == 1) and ('T1' in s.protocol_name):
+        if ((s.dim3 == 160) or (s.dim3 == 176)) and (s.dim4 == 1) and ('T1' in s.protocol_name):
             info[t1] = [s.series_id]
-        if (s.dim3 == 176) and ('T2w' in s.protocol_name) and ('0019' in s.dcm_dir_name):
+        if (s.dim3 == 176) and ('T2w' in s.protocol_name):
             info[t2] = [s.series_id]
         if (s.dim4 >= 99) and ('ep2d_diff_sms_abcd' in s.protocol_name):
             acq = s.protocol_name.split('ep2d_diff_')[1].split('_')[0]
