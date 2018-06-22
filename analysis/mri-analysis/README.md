@@ -1,7 +1,9 @@
 # General Guideline for MRI file processing
 * All the dicoms files should be saved at `/Users/qigroup/Documents/projects/{projectname}/dicoms/`
 * The EP2D_DIFF_SMS_ABCD_TENSOR_* series are not currently convertable by heudiconv. Please mv this folder to ./tensor/{subj}/.
-* All the nifti files should be saved at `/Users/qigroup/Documents/projects/{projectname}/output/`
+* All the nifti files should be saved at `/Users/qigroup/Documents/projects/{projectname}/niftis/`
+* Backup all the dicoms to our lab server: `/data/projects/{projectname}`
+
 ## To convert dicoms to BIDS formatted nifti
 ### Make sure docker is running on the imac
 ### On the terminal, type:
