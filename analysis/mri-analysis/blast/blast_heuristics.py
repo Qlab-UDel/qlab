@@ -55,9 +55,9 @@ def infotodict(seqinfo):
             info[fmap_langloc].append({'item': s.series_id, 'dir': '', 'acq': ''})
         if (s.dim4 == 1) and (s.dim3 == 45) and ('taskbold_field_mapping_3mm' in s.protocol_name):
             info[fmap_langloc].append({'item': s.series_id, 'dir': '', 'acq': ''})
-        if (s.dim4 == 465) and (s.is_motion_corrected == FALSE) and ('vsl' in s.protocol_name):
+        if (s.dim4 == 465) and (not s.is_motion_corrected) and ('vsl' in s.protocol_name):
             info[vsl].append({'item': s.series_id, 'acq': ''})
-        if (s.dim4 == 480) and (s.is_motion_corrected == FALSE) and ('asl' in s.protocol_name):
+        if (s.dim4 == 480) and (not s.is_motion_corrected) and ('asl' in s.protocol_name):
             info[asl].append({'item': s.series_id, 'acq': ''})
         if (s.dim4 == 1) and (s.dim3 == 110) and ('gre_field_mapping_2.5mm' in s.protocol_name):
             info[fmap_sl].append({'item': s.series_id, 'dir': '', 'acq': ''})
