@@ -27,7 +27,7 @@ example here: <http://nipy.org/heudiconv/#22>
 
 ### run the conversion
 ```
-rm -r -f /data/output/*
+rm -r -f /data/niftis/*
 heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f /data/projectname_heuristic.py -c dcm2niix -b -o /data/niftis
 ```
 
