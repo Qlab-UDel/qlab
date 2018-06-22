@@ -8,17 +8,17 @@
 ```
 cd /Users/qigroup/Documents/projects/{projectname}/
 docker pull nipy/heudiconv
-docker run --rm -it --entrypoint=bash -v $(pwd):/data nipy/neudiconv:latest
+docker run --rm -it --entrypoint=bash -v $(pwd):/data nipy/heudiconv:latest
 ```
 Now you will be inside of the container. Type:
 ```
 cd /data
-mkdir output
+mkdir niftis
 source activate neuro
 ```
 The first step is to run a dry pass (no conversion), which will stack and group the dicoms into series.
 ```
-heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f convertall -c none -o /data/output
+heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f convertall -c none -o /data/niftis
 ```
 Within /output/.heudiconv/subjectID/info, you will find a dicominfo.tsv. We will convert this file to specify bids format.
 
@@ -28,6 +28,6 @@ example here: <http://nipy.org/heudiconv/#22>
 ### run the conversion
 ```
 rm -r -f /data/output/*
-heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f /data/projectname_heuristic.py -c dcm2niix -b -o /output
+heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f /data/projectname_heuristic.py -c dcm2niix -b -o /data/niftis
 ```
 
