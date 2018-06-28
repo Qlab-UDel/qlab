@@ -3,6 +3,7 @@
 * The EP2D_DIFF_SMS_ABCD_TENSOR_* series are not currently convertable by heudiconv. Please mv this folder to ./tensor/{subj}/.
 * All the nifti files should be saved at `/Users/qigroup/Documents/projects/{projectname}/niftis/`
 * Backup all the dicoms to our lab server: `/data/projects/{projectname}`
+* Create a folder for freesurfer outputs at `/Users/qigroup/Documents/projects/{projectname}/surface`
 
 ## To convert dicoms to BIDS formatted nifti
 ### Make sure docker is running on the imac
@@ -31,5 +32,21 @@ example here: <http://nipy.org/heudiconv/#22>
 ```
 rm -r -f /data/niftis/*
 heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f /data/projectname_heuristic.py -c dcm2niix -b -o /data/niftis
+```
+
+## Run freesurfer
+### first define the FREESURFER directories
+```
+export FREESURFER_HOME=/Applications/freesurfer
+source $FREESURFER_HOME/SetUpFreeSurfer.sh
+export SUBJECTS_DIR=/Users/qigroup/Documents/project/blast/surfaces
+```
+### if the subject has T2w scans, type the following in the terminal (replace subjid with the real subject id)
+```
+recon-all -subject subjid -i /Users/qigroup/Documents/project/blast/niftis/bids_output/anat/subjid_T1w.nii.gz -T2 /Users/qigroup/Documents/project/blast/niftis/bids_output/anat/subjid_T2w.nii.gz -T2pial -all
+```
+### if the subject does not have T2 scan, type the following in the terminal
+```
+recon-all -autorecon-all -subject subjid -i /Users/qigroup/Documents/project/blast/niftis/bids_output/anat/subjid_T1w.nii.gz
 ```
 
