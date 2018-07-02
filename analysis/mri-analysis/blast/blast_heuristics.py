@@ -14,25 +14,25 @@ def infotodict(seqinfo):
     seqitem: run number during scanning
     subindex: sub index within group
     """
-    t1 = create_key('anat/sub-{subject}_T1w')
-    t2 = create_key('anat/sub-{subject}_T2w')
-    rest = create_key('func/sub-{subject}_dir-{acq}_task-rest_run-{item:02d}_bold')
-    langloc = create_key('func/sub-{subject}_task-langloc_run-{item:02d}_acq-{acq}_bold')
-    vsl = create_key('func/sub-{subject}_task-vsl_run-{item:02d}_acq-{acq}_bold')
-    asl = create_key('func/sub-{subject}_task-asl_run-{item:02d}_acq-{acq}_bold')
-    dwi = create_key('dwi/sub-{subject}_dir-{acq}_run-{item:02d}_dwi')
+    t1 = create_key('sub-{subject}/anat/sub-{subject}_T1w')
+    t2 = create_key('sub-{subject}/anat/sub-{subject}_T2w')
+    rest = create_key('sub-{subject}/func/sub-{subject}_dir-{acq}_task-rest_run-{item:02d}_bold')
+    langloc = create_key('sub-{subject}/func/sub-{subject}_task-langloc_run-{item:02d}_acq-{acq}_bold')
+    vsl = create_key('sub-{subject}/func/sub-{subject}_task-vsl_run-{item:02d}_acq-{acq}_bold')
+    asl = create_key('sub-{subject}/func/sub-{subject}_task-asl_run-{item:02d}_acq-{acq}_bold')
+    dwi = create_key('sub-{subject}/dwi/sub-{subject}_dir-{acq}_run-{item:02d}_dwi')
 
-    fmap_rest = create_key('fmap/sub-{subject}_acq-func{acq}_dir-{dir}_run-{item:02d}_epi')
-    fmap_dwi = create_key('fmap/sub-{subject}_acq-dwi{acq}_dir-{dir}_run-{item:02d}_epi')
-    fmap_langloc = create_key('fmap/sub-{subject}_acq-langloc{acq}_dir-{dir}_run-{item:02d}_epi')
-    fmap_sl = create_key('fmap/sub-{subject}_acq-sl{acq}_dir-{dir}_run-{item:02d}_epi')
+    fmap_rest = create_key('sub-{subject}/fmap/sub-{subject}_acq-func{acq}_dir-{dir}_run-{item:02d}_epi')
+    fmap_dwi = create_key('sub-{subject}/fmap/sub-{subject}_acq-dwi{acq}_dir-{dir}_run-{item:02d}_epi')
+    fmap_langloc = create_key('sub-{subject}/fmap/sub-{subject}_acq-langloc{acq}_dir-{dir}_run-{item:02d}_epi')
+    fmap_sl = create_key('sub-{subject}/fmap/sub-{subject}_acq-sl{acq}_dir-{dir}_run-{item:02d}_epi')
 
     info = {t1:[], t2:[], rest:[], langloc:[], vsl:[], asl:[], dwi:[], fmap_rest:[], fmap_dwi:[], fmap_langloc:[], fmap_sl:[]}
 
     for idx, s in enumerate(seqinfo):
         if ((s.dim3 == 160) or (s.dim3 == 176)) and (s.dim4 == 1) and ('T1' in s.protocol_name):
             info[t1] = [s.series_id]
-        if (s.dim3 == 176) and ('T2w' in s.protocol_name) and ('0019' in s.dcm_dir_name):
+        if (s.dim3 == 176) and ('T2w' in s.protocol_name):
             info[t2] = [s.series_id]
         if (s.dim4 >= 99) and ('ep2d_diff_sms_abcd' in s.protocol_name):
             acq = s.protocol_name.split('ep2d_diff_')[1].split('_')[0]
