@@ -4,7 +4,7 @@
 * All the nifti files should be saved at `/Users/qigroup/Documents/projects/{projectname}/bids/`
 * Backup all the dicoms to our lab server: `/data/projects/{projectname}`
 * Create a folder for freesurfer outputs at `/Users/qigroup/Documents/projects/{projectname}/surface`
-** Make a symbolic link for the surface folder at ./bids/derivatives/freesurfer:`ln -s`
+* Make a symbolic link for the surface folder at ./bids/derivatives/freesurfer:`ln -s`
 
 ## To convert dicoms to BIDS formatted nifti
 ### Make sure docker is running on the imac
@@ -49,10 +49,9 @@ recon-all -subject subjid -i /Users/qigroup/Documents/project/projectname/bids/s
 ### if the subject does not have T2 scan, type the following in the terminal
 ```
 recon-all -autorecon-all -subject subjid -i /Users/qigroup/Documents/project/projectname/bids/subjid/anat/subjid_T1w.nii.gz
-
+```
 ## Edit Freesurfer outputs
 ### Use the freesurfer editing GUI
 `python edit_freesurfer_surface.py`
 ### For more documentation and tips, see the lab wiki: <https://github.com/Qlab-UDel/qlab/wiki/FreeSurfer-Overview> and the official wiki: <http://ftp.nmr.mgh.harvard.edu/fswiki/FreeSurferWiki>
-```
 
