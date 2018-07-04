@@ -28,6 +28,7 @@ Within /output/.heudiconv/subjectID/info, you will find a dicominfo.tsv. We will
 
 ### create the heuristic file at /data/projectname_heuristic.py
 example here: <http://nipy.org/heudiconv/#22>
+for most updated bids specification: <http://bids.neuroimaging.io/bids_spec.pdf>
 
 ### run the conversion
 ```
