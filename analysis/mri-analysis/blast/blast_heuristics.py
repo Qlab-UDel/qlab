@@ -55,9 +55,9 @@ def infotodict(seqinfo):
             info[phasediff_langloc].append({'item': s.series_id})
         if (s.dim4 == 1) and (s.dim3 == 90) and ('taskbold_field_mapping_3mm' in s.protocol_name):
             info[mag_langloc].append({'item': s.series_id})
-        if (s.dim4 == 465) and (not s.is_motion_corrected) and ('vsl' in s.protocol_name):
+        if (s.dim4 >= 420) and (not s.is_motion_corrected) and ('vsl' in s.protocol_name):
             info[vsl].append({'item': s.series_id})
-        if (s.dim4 == 480) and (not s.is_motion_corrected) and ('asl' in s.protocol_name):
+        if (s.dim4 >= 230) and (not s.is_motion_corrected) and ('asl' in s.protocol_name):
             info[asl].append({'item': s.series_id})
         if (s.dim4 == 1) and (s.dim3 == 55) and ('gre_field_mapping_2.5mm' in s.protocol_name):
             info[phasediff_sl].append({'item': s.series_id})
