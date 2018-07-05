@@ -53,6 +53,6 @@ recon-all -autorecon-all -subject subjid -i /Users/qigroup/Documents/project/pro
 ```
 ## Edit Freesurfer outputs
 ### Use the freesurfer editing GUI
-`python edit_freesurfer_surface.py`
+`python /Users/qigroup/Documents/project/blast/scripts/edit_freesurfer_surface.py`
 ### For more documentation and tips, see the lab wiki: <https://github.com/Qlab-UDel/qlab/wiki/FreeSurfer-Overview> and the official wiki: <http://ftp.nmr.mgh.harvard.edu/fswiki/FreeSurferWiki>
 
