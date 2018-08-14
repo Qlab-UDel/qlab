@@ -122,13 +122,13 @@ class subject(HasTraits):
     def _run_wm_recon_fired(self):
         sp=os.path.join(self.project_surface_directory,self.subject_id)
         os.system('echo "wm reconstruction run on %s" >> %s'%(datetime.date.today().strftime("%c"),os.path.join(sp,'edit.log')))
-        os.system('echo "recon-all -autorecon2-wm -autorecon3 -subjid %s" | qsub -V -N %s_wm_edits -q recon'%(self.subject_id,self.subject_id))        
+        os.system('recon-all -autorecon2-wm -autorecon3 -subjid %s'%self.subject_id)        
     
     run_cp_recon = Button(action='run_cp_recon', label = 'Recon control point edits')
     def _run_cp_recon_fired(self):
         sp=os.path.join(self.project_surface_directory,self.subject_id)
         os.system('echo "cp reconstruction run on %s" >> %s'%(datetime.date.today().strftime("%c"),os.path.join(sp,'edit.log')))
-        os.system('echo "recon-all -autorecon2-cp -autorecon3 -subjid %s" | qsub -V -N %s_cp_edits -q recon'%(self.subject_id,self.subject_id))    
+        os.system('recon-all -autorecon2-cp -autorecon3 -subjid %s'%self.subject_id)   
         
     check_on_jobs = Button(action='check_qsub', label = 'Check on my current recon jobs')
     def _check_on_jobs_fired(self):
