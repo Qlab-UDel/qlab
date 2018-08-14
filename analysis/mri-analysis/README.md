@@ -1,16 +1,16 @@
 # General Guideline for MRI file processing
-* All the dicoms files should be saved at `/Users/qigroup/Documents/projects/{projectname}/dicoms/`
+* All the dicoms files should be saved at `/Users/qigroup/Documents/project/{projectname}/dicoms/`
 * The EP2D_DIFF_SMS_ABCD_TENSOR_* series are not currently convertable by heudiconv. Please mv this folder to ./tensor/{subj}/.
-* All the nifti files should be saved at `/Users/qigroup/Documents/projects/{projectname}/bids/`
-* Backup all the dicoms to our lab server: `/data/projects/{projectname}`
-* Create a folder for freesurfer outputs at `/Users/qigroup/Documents/projects/{projectname}/surface`
+* All the nifti files should be saved at `/Users/qigroup/Documents/project/{projectname}/bids/`
+* Backup all the dicoms to our lab server: `/data/project/{projectname}`
+* Create a folder for freesurfer outputs at `/Users/qigroup/Documents/project/{projectname}/surface`
 * Make a symbolic link for the surface folder at ./bids/derivatives/freesurfer:`ln -s`
 
 ## To convert dicoms to BIDS formatted nifti
 ### Make sure docker is running on the imac
 ### On the terminal, type:
 ```
-cd /Users/qigroup/Documents/projects/{projectname}/
+cd /Users/qigroup/Documents/project/{projectname}/
 docker pull nipy/heudiconv
 docker run --rm -it --entrypoint=bash -v $(pwd):/data nipy/heudiconv:latest
 ```
@@ -33,7 +33,7 @@ for most updated bids specification: <http://bids.neuroimaging.io/bids_spec.pdf>
 ### run the conversion
 ```
 rm -r -f /data/niftis/*
-heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f /data/projectname_heuristic.py -c dcm2niix -b -o /data/bids
+heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f /data/projectname_heuristics.py -c dcm2niix -b -o /data/bids
 ```
 
 ## Run freesurfer
@@ -56,3 +56,4 @@ recon-all -autorecon-all -subject subjid -i /Users/qigroup/Documents/project/pro
 `python /Users/qigroup/Documents/project/blast/scripts/edit_freesurfer_surface.py`
 ### For more documentation and tips, see the lab wiki: <https://github.com/Qlab-UDel/qlab/wiki/FreeSurfer-Overview> and the official wiki: <http://ftp.nmr.mgh.harvard.edu/fswiki/FreeSurferWiki>
 
+###To validate BIDS files, see the BIDS validator: <http://incf.github.io/bids-validator/>
