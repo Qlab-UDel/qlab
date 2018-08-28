@@ -1,18 +1,20 @@
 # Creating fMRI Event Files
 ## Locating and Organizing Behavioral Event Data
 
-Currently behavioral data is located in:\
-smb://qilab.ling.udel.edu//data/projects/blast/data/mri/in-scanner-behavior\
-\
-Create an organized copy following current format in:\
-Macintosh HD/Users/qigroup/Documents/project/blast/in-scanner\
--Copy the output_behavioral_template (main in-scanner folder) to the subject’s folder (change template to the subject ID)\
--Open the ASL folder\
- - Open the subject’s first auditory.csv file\
- - Column F identifies whether they began with random ‘R’, structured ‘S’, or blank 'B'\
- - Column A identifies whether they began with tone (e.g. 1A) or speech (e.g. pa)\
+Currently behavioral data is located in:
+smb://qilab.ling.udel.edu//data/projects/blast/data/mri/in-scanner-behavior
+
+Create an organized copy following current format in:
+Macintosh HD/Users/qigroup/Documents/project/blast/in-scanner
+-Copy the output_behavioral_template (main in-scanner folder) to the subject’s folder (change template to the subject ID)
+-Open the ASL folder
+ - Open the subject’s first auditory.csv file
+ - Column F identifies whether they began with random ‘R’, structured ‘S’, or blank 'B'
+ - Column A identifies whether they began with tone (e.g. 1A) or speech (e.g. pa)
+   - If random is paired with tone in a particular file, it will be with tone throughout that file
+   - silence is paired with blank 'B'
  
--In the subject’s new output_behavioral file you created, record this information into columns E and F\
+-In the subject’s new output_behavioral file you created, record this information into columns E and F
  - In column G input which file this came from (A1=auditory run 1; V2=visual run 2)
  - Do this for all the participant's 4 runs (auditory)
  
@@ -21,11 +23,14 @@ Macintosh HD/Users/qigroup/Documents/project/blast/in-scanner\
  - Open the subject’s first visual.csv file
  - Column F identifies whether they began with random ‘R’, structured ‘S’, or blank 'B'
  - Column A identifies whether they began with image (e.g. Alien9) or letter (e.g.D)
+ 
 **Important Note**: Be sure that spelling is consistent for trial_type. The following should always be used, should never be pluralized, and should be spelled correctly:
    - tone
    - speech
    - image
    - letter
+   - silence
+   
 The below image is an example of what this step completed should look like:
 ![alt text](https://github.com/juliagoolia28/qlabfmripipe/blob/first-level_analysis/event_data_image.png)
 
