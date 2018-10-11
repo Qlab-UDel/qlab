@@ -1,8 +1,10 @@
 # General Guideline for EEG File Processing
 
-All the raw EEG files are saved at Y:\projects\blast\data\eeg\rawdata
+All the raw EEG files are saved at Y:\projects\blast\data\eeg\rawdata.
 
-Before starting any processing, move the raw EEG files from  Y:\projects\blast\data\eeg\rawdata to Y:\projects\blast\data\eeg\Analysis\rawdata. In the Analysis\rawdata folder, each subject should have their own folder named with their subject ID. If there isn't one for a new subject, create one. Put the raw data for the three runs in the corresponding folder.
+Before starting any processing, move the raw EEG files from  Y:\projects\blast\data\eeg\rawdata to Y:\projects\blast\data\eeg\Analysis\rawdata. In the Analysis\rawdata folder, each subject should have their own folder named with their subject ID. 
+
+If there isn't one for a new subject, create one. Put the raw data for the three runs in the corresponding folder.
 
 All the processing Matlab scripts are saved in Y:\projects\blast\data\eeg\Analysis\Matlab_Scripts
 
