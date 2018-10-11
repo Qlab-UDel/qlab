@@ -42,7 +42,7 @@ for s = [1] %edit for subject of interest (can run multiple at once)
 
 After changing the subject number. Run the script. If the script is successfully run, you should see the file named as **'subjectID_run#_fl_rr.set'** in the corresponding subject folder in Y:\projects\blast\data\eeg\Analysis\wkdir
 
-## Manual Inspectation of the Preprocessed data 
+## Manual Inspectation of the Preprocessed Data 
 
 Manual inspectation and removal of bad block of the data should be done after preprocessing and before runinng ICA. Save file that is checked with the name: **'subject_run#_fl_rr_check.set'**.
 
