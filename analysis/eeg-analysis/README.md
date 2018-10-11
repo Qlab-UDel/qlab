@@ -47,7 +47,7 @@ Open  script
 
 Change the subject number in the line **below**: 
 
-```Matlab```
+```Matlab
 for s = [1]
 ```
 
@@ -61,7 +61,7 @@ Run the script. You should see *subjectID_ica.set* file in the corresponding sub
 
 Open *blast_merge_datasets_PC* script in Matlab. Change the subject number in **for s = [#]**. **This script will only be run on subjects that have **clean.set** files from all three runs**. 
 
-```Matlab```
+```Matlab
 for s = [1]
 ```
 
@@ -72,7 +72,7 @@ If the script is successfully run, you should see the file named as *subjectID_m
 Open *blast_eventlist_PC* script in Matlab. Change the subject number in **for s = [#]**.
 
 
-```Matlab```
+```Matlab
 % establish subject list
 for s = [2] %edit for subject of interest (can run multiple at once)
 ```
@@ -83,7 +83,7 @@ If the script is successfully run, you should see the files named as *subjectID_
 
 Open  script in Matlab. Change the subject number in **for s = [#]**.
 
-```Matlab```
+```Matlab
 % establish subject list
 for s = [1] %edit for subject of interest (can run multiple at once)
 ```
