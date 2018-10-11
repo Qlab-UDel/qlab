@@ -77,7 +77,7 @@ Open *blast_eventlist_PC* script in Matlab. Change the subject number in **for s
 for s = [2] %edit for subject of interest (can run multiple at once)
 ```
 
-If the script is successfully run, you should see the files named as *subjectID_epoch_ar.set* and *AR_summary_subjectID_epoch_ar.txt* in the corresponding subject folder in Y:\projects\blast\data\eeg\Analysis\wkdir
+If the script is successfully run, you should see the files named as **subjectID_epoch_ar.set** and **AR_summary_subjectID_epoch_ar.txt** in the corresponding subject folder in Y:\projects\blast\data\eeg\Analysis\wkdir
 
 ## Create ERP from erp.set file
 
