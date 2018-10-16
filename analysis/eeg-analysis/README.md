@@ -64,6 +64,7 @@ You should see *'subjectID_ica.set'* file in the corresponding subject folder in
 
 ## Manual Rejection of Components
 [Components, such as eyeblinks, are marked here and will later be rejected.]
+
 Save manually rejected file as: **'subject_run#_clean.set'**
 
 ## Epoching steps
