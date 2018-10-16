@@ -1,5 +1,5 @@
 # General Guideline for EEG File Processing
-[Give brief overview of what these files do and what the outcome should be from this analysis]
+[The scripts below first set up the subjects, raw data folders and cleaned data folders before you start processing the eeg data. Starting from the *Preprocessing steps*, EEG data first gets filtered, rereferenced, component-identified, component-removed, epoched and binned.Then ERP will be computed.]
 
 All the raw EEG files are saved at Y:\projects\blast\data\eeg\rawdata.
 
@@ -10,7 +10,7 @@ If there isn't one for a new subject, create one. Put the raw data of the three 
 All the processing Matlab scripts are saved in Y:\projects\blast\data\eeg\Analysis\Matlab_Scripts
 
 ## Subject Script
-[Give brief overview of the purpose of this script]
+[This script sets up all the subject numbers we have so far. The subject numbers need to be entered here so that all the scripts later can find the right files named with the relevant subject numbers.]
 
 Open *'blast_subject'* script.
 
@@ -29,11 +29,11 @@ elseif s == 25
 end
 ```
 ## Directory Script 
-[Describe purpose of directory script]
+[This sets up the folder/ directory from which we will input the raw data and to which we will output the processed data.]
 
 ## EEG Analysis Pipeline Scripts
 
-[Give brief overview of the purpose of this script]
+[This script starts the EEG data processing. It sets up the variables (e.g. run, epoch length, filter low pass and hight pass, etc.) that will be used later in the following sections of procesing.] 
 
 To start preprocessing, open the *'eeg_analysis_pipeline'* script. The same run of multiple subjects can be preprocessed at once in this script. 
 
@@ -47,10 +47,10 @@ Change the subject number in: **for s = [#]**. If you are running subject 1 to 3
 for s = [1] %edit for subject of interest (can run multiple at once)
 ```
 
-After changing the subject number. Run the script one section at a time. The following portion of this README file breaks down the purpose of each section:
+[After changing the subject number. Run the script one section at a time. The following portion of this README file breaks down the purpose of each section:]
 
 ## Preprocessing steps
-[Write brief purpose]
+[This script filters and references the raw data. Using the high pass and low pass varaibles above, it filters out the data that is outside of the low pass- high pass range. It also references the data to the M1 and M2 electrodes.] 
 
 If the script is successfully run, you should see the file named as 'subjectID_run#_fl_rr.set' in the corresponding subject folder in Y:\projects\blast\data\eeg\Analysis\wkdir
 
@@ -58,29 +58,30 @@ If the script is successfully run, you should see the file named as 'subjectID_r
 Manual inspectation and removal of bad block of the data should be done after preprocessing and before runinng ICA. Save file that is checked with the name: **'subject_run#_fl_rr_check.set'**.
 
 ## Run ICA
-[Write brief purpose]
+[ICA goes through the raw data and identifies and seperates the raw data into different components. It identifies things such as noises or activations.]
 
 You should see *'subjectID_ica.set'* file in the corresponding subject folder in Y:\projects\blast\data\eeg\Analysis\wkdir 
 
 ## Manual Rejection of Components
-[Write brief puprpose]
+[Components, such as eyeblinks, are marked here and will later be rejected.]
 Save manually rejected file as: **'subject_run#_clean.set'**
 
 ## Epoching steps
-[Write brief purpose]
+[This script marks stimulus-relavant chunks in the processed data so far. The variable epoch_length at the very beginning of this *EEG Analysis Pipeline Scripts* sets up where the marking should begin and end relative to the onset of a stimulus.]
 
 ## Merge component rejected files
 This script will only be run on subjects that have **'clean.set'** files from **all three runs**. If the script is successfully run, you should see the file named as *'subjectID_merged_clean.set'* in the corresponding subject folder in Y:\projects\blast\data\eeg\Analysis\wkdir
 
 ## Create eventlist, apply binlist, extract epochs, and artifact rejection
-[Write brief purpose]
+[This script puts the eventcodes for each stimulus into different bins and extracts the epoched data and finally rejects the components.]
 
 If the script is successfully run, you should see the files named as **'subjectID_epoch_ar.set'** and **'AR_summary_subjectID_epoch_ar.txt'** in the corresponding subject folder in Y:\projects\blast\data\eeg\Analysis\wkdir
 
-[Explain the distinction between each of these files, what do they mean?]
+[The file **'subjectID_epoch_ar.set'** contains the epoched, artifect-rejected, and bin-applied EEG data. 
+The **'AR_summary_subjectID_epoch_ar.txt'** is a summary about how much percentage of data is rejected.]
 
 ## Create ERP  
-This rejects all the epochs that have been marked as bad in the artifact rejection and averages the good, remaining trials together to create and averaged ERP on the individual level.
+This rejects all the epochs that have been marked as bad in the artifact rejection and averages the good, remaining trials together to create an averaged ERP on the individual level.
 
 If the script is successfully run, you should see the file named as **'subjectID_erp'** in the corresponding subject folder in Y:\projects\blast\data\eeg\Analysis\erpset folder. 
 
