@@ -39,14 +39,58 @@ library(PerformanceAnalytics)
 
 #Test for significant difference between the two groups on age, IQ, and gender ratio. There's no significant difference.
 ```{r,echo=FALSE,warning=FALSE}
-ABCD <- read_csv("Z:/projects/abcd/raw/summary/ABCD1.csv")
-ABCD <- ABCD[ABCD$`ABCD ID`!="ABCD_1754",]
+ABCD <- read_csv("/Users/zhenghanqi/Dropbox (MIT)/UDel/projects/collaboration/abcd/raw/summary/ABCD_102818.csv")
+#ABCD <- ABCD[ABCD$`ABCD ID`!="ABCD_1754",]
+#ABCD <- ABCD[ABCD$`ABCD ID`!="ABCD_1742",]# remove two participants who had the highest IQ from the TYP group.
+colnames(ABCD)[3]="subjid"
+colnames(ABCD)[5]="age_month"
+colnames(ABCD)[9]="kbit_nv"
+colnames(ABCD)[10]="towre_sw"
+colnames(ABCD)[11]="towre_pd"
+colnames(ABCD)[12]="towre_total"
+colnames(ABCD)[13]="wrmt_wi"
+colnames(ABCD)[14]="wrmt_wa"
+colnames(ABCD)[15]="wrmt_total"
+ABCD_dys = subset(ABCD,Group == "DD")[,9:26]
+ABCD_typ = subset(ABCD,Group =="TYP")[,9:26]
+write.csv(ABCD_typ,"/Users/zhenghanqi/Dropbox (MIT)/UDel/projects/collaboration/abcd/raw/summary/typ.csv",sep=",")
+write.csv(ABCD_dys,"/Users/zhenghanqi/Dropbox (MIT)/UDel/projects/collaboration/abcd/raw/summary/dd.csv",sep=",")
 
-wilcox.test(ABCD$`Age with month`[ABCD$Group=="DD"],ABCD$`Age with month`[ABCD$Group=="TYP"])
-wilcox.test(ABCD$`KBIT-2 Matrices: Standard Score`[ABCD$Group=="DD"],ABCD$`KBIT-2 Matrices: Standard Score`[ABCD$Group=="TYP"])
-ABCD$Sex <- as.factor(ABCD$Sex)
-wilcox.test(as.numeric(ABCD$Sex)[ABCD$Group=="DD"],as.numeric(ABCD$Sex)[ABCD$Group=="TYP"])
+library(dplyr)
+library(qwraps2)
+options(qwraps2_markup = "markdown")
+str(ABCD)
+abcd_summary<-
+  with(ABCD,
+       list("Age" = tab_summary(age_month)[c(1,4,3)],
+            "IQ" = tab_summary(kbit_nv)[c(1,4,3)],
+            "Gender" = tab_summary(as.character(Sex)),
+            "ASL_ACC"= tab_summary(TSL_ACC)[c(1,4,3)],
+            "ASL_RT_slope"= tab_summary(TSL_RT_SLOPE)[c(1,4,3)],
+            "VSL_ACC"= tab_summary(VSL_ACC)[c(1,4,3)],
+            "VSL_RT_slope"= tab_summary(VSL_RT_SLOPE)[c(1,4,3)],
+            "TOWRE_sw" = tab_summary(towre_sw)[c(1,4,3)],
+            "TOWRE_pd" = tab_summary(towre_pd)[c(1,4,3)],
+            "WRMT_wi" = tab_summary(wrmt_wi)[c(1,4,3)],
+            "WRMT_wa" = tab_summary(wrmt_wa)[c(1,4,3)]
+       ))
+whole <- summary_table(ABCD,abcd_summary)
+whole
+```
 
+### summarize the participant demographic info by groups
+```{r results='asis',echo=FALSE}
+grouped <- summary_table(dplyr::group_by(ABCD,Group),abcd_summary) 
+grouped
+```
+# test whether groups
+```{r results='asis',echo=FALSE}
+wilcox.test(ABCD$age_month[ABCD$Group=="DD"],ABCD$age_month[ABCD$Group=="TYP"])
+wilcox.test(ABCD$kbit_nv[ABCD$Group=="DD"],ABCD$kbit_nv[ABCD$Group=="TYP"])
+library(reshape)
+library(reshape2)
+gender_table = cast(ABCD,Group~Sex,value = "age_month",length)
+chisq.test(gender_table)
 ```
 
 #Other measurements that are significantly different
@@ -57,43 +101,66 @@ wilcox.test(as.numeric(ABCD$Sex)[ABCD$Group=="DD"],as.numeric(ABCD$Sex)[ABCD$Gro
 #ad.test(ABCD$`WAIS-4 DS Total: Standard Score`)
 #ad.test(ABCD$`TOWRE-2 Total Word Reading Efficiency Index: Standard Score`)
 
-wilcox.test(ABCD$Mirror_delta_on[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"])
+#wilcox.test(ABCD$Mirror_delta_on[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"])
 wilcox.test(ABCD$CTOPP_TOTAL[ABCD$Group=="DD"],ABCD$CTOPP_TOTAL[ABCD$Group=="TYP"])
-wilcox.test(ABCD$`TOWRE-2 Total Word Reading Efficiency Index: Standard Score`[ABCD$Group=="DD"],ABCD$`TOWRE-2 Total Word Reading Efficiency Index: Standard Score`[ABCD$Group=="TYP"])
-wilcox.test(ABCD$`WRMT-3 Basic Skills: Standard Score`[ABCD$Group=="DD"],ABCD$`WRMT-3 Basic Skills: Standard Score`[ABCD$Group=="TYP"])
-wilcox.test(ABCD$`WRMT-3 Word Attack: Standard Score`[ABCD$Group=="DD"],ABCD$`WRMT-3 Word Attack: Standard Score`[ABCD$Group=="TYP"])
-wilcox.test(ABCD$`GORT-5 ORI: Standard Score`[ABCD$Group=="DD"],ABCD$`GORT-5 ORI: Standard Score`[ABCD$Group=="TYP"])
-
+wilcox.test(ABCD$towre_total[ABCD$Group=="DD"],ABCD$towre_total[ABCD$Group=="TYP"])
+wilcox.test(ABCD$wrmt_total[ABCD$Group=="DD"],ABCD$wrmt_total[ABCD$Group=="TYP"])
+wilcox.test(ABCD$VSL_RT_SLOPE[ABCD$Group=="DD"],ABCD$VSL_RT_SLOPE[ABCD$Group=="TYP"])
+wilcox.test(ABCD$TSL_RT_SLOPE[ABCD$Group=="DD"],ABCD$TSL_RT_SLOPE[ABCD$Group=="TYP"])
+wilcox.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$VSL_ACC[ABCD$Group=="TYP"])
+wilcox.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$TSL_ACC[ABCD$Group=="TYP"])
 ```
 
 
 #Other measurements that are not significantly different 
 ###Rotary_delta, Mirror_delta_error,WAIS
 ```{r,echo=FALSE,warning=FALSE}
-wilcox.test(ABCD$Rotary_Delta[ABCD$Group=="DD"],ABCD$Rotary_Delta[ABCD$Group=="TYP"])
-wilcox.test(ABCD$Mirror_delta_off1[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"])
+#wilcox.test(ABCD$Rotary_Delta[ABCD$Group=="DD"],ABCD$Rotary_Delta[ABCD$Group=="TYP"])
+#wilcox.test(ABCD$Mirror_delta_off1[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"])
 wilcox.test(ABCD$`WAIS-4 DS Total: Standard Score`[ABCD$Group=="DD"],ABCD$`WAIS-4 DS Total: Standard Score`[ABCD$Group=="TYP"])
 ```
 
 
-#Test for correlation
+# #Test for correlation
 ```{r, echo=FALSE,warning=FALSE}
-#Run cor test on vsl acc, rt slope and mirror:
-cor.test(ABCD$VSL_RT_SLOPE[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
-cor.test(ABCD$VSL_RT_SLOPE[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
+# #Run cor test on vsl acc, rt slope and mirror:
+# cor.test(ABCD$VSL_RT_SLOPE[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
+# cor.test(ABCD$VSL_RT_SLOPE[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
+# 
+# cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
+# cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
+# cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
+# cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
+# 
+# cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"],method="spearman", alternative = "greater")
+# cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"],method="spearman", alternative = "less")
+# cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"],method="spearman", alternative = "greater")
+# cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"],method="spearman", alternative = "less")
+source("~/Dropbox (MIT)/how-to/stats/R-related/a.pcor.test.R")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$VSL_ACC[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$towre_sw[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$towre_pd[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$wrmt_wi[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$wrmt_wa[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$towre_sw[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$towre_pd[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$wrmt_wi[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$wrmt_wa[ABCD$Group=="TYP"],method="spearman",alternative = "greater")
 
-cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
-cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
-cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_on[ABCD$Group=="DD"],method="spearman", alternative = "greater")
-cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$Mirror_delta_off1[ABCD$Group=="DD"],method="spearman", alternative = "less")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$VSL_ACC[ABCD$Group=="DD"],method="spearman",alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$towre_sw[ABCD$Group=="DD"],method="spearman",alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$towre_pd[ABCD$Group=="DD"],method="spearman",alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$wrmt_wi[ABCD$Group=="DD"],method="spearman",alternative = "greater")
+cor.test(ABCD$TSL_ACC[ABCD$Group=="DD"],ABCD$wrmt_wa[ABCD$Group=="DD"],method="spearman",alternative = "greater")
 
-cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"],method="spearman", alternative = "greater")
-cor.test(ABCD$VSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"],method="spearman", alternative = "less")
-cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_on[ABCD$Group=="TYP"],method="spearman", alternative = "greater")
-cor.test(ABCD$TSL_ACC[ABCD$Group=="TYP"],ABCD$Mirror_delta_off1[ABCD$Group=="TYP"],method="spearman", alternative = "less")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$towre_sw[ABCD$Group=="DD"],method="spearman",alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$towre_pd[ABCD$Group=="DD"],method="spearman",alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$wrmt_wi[ABCD$Group=="DD"],method="spearman",alternative = "greater")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$wrmt_wa[ABCD$Group=="DD"],method="spearman",alternative = "greater")
 
-dd <- read_csv("~/dd.csv")
-typ <- read_csv("~/typ.csv")
-chart.Correlation(typ,method="spearman")
-chart.Correlation(dd,method="spearman")
+cor.test(ABCD$VSL_ACC[ABCD$Group=="DD"],ABCD$CTOPP_TOTAL[ABCD$Group=="DD"],method="spearman",alternative = "greater")
+
+
+chart.Correlation(ABCD_dys,method="pearson")
+chart.Correlation(ABCD_typ,method="pearson")
 ```
