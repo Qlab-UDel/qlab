@@ -16,7 +16,8 @@ library(ggbeeswarm)
 
 ```{r,echo=FALSE}
 #Initialize variables. Please update the total number of participants accordingly before running the script.
-total_participant <- 33
+# ABCD_1708 missing vsl and ABCD_1727 missing tsl. There are 41 participants in total as of 10/28/2018.
+total_participant <- 40
 total_vsl_trial <- 24 #number of trials in the familiarization block
 total_tsl_trial <- 48
 length_vsl <- 533 #number of rows in a vsl excel file
@@ -33,7 +34,7 @@ tsl <- list()
 vsl <- list()
 vsl_par_id <- NULL
 tsl_par_id <- NULL
-path <- "C:/Users/Qlab/Downloads/abcd/raw/"  
+path <- "/Users/zhenghanqi/Dropbox (MIT)/UDel/projects/collaboration/abcd/raw/"  
 files <- list.files(path=path, pattern="*tsl.csv") 
 vsl_files <- list.files(path=path, pattern="*vsl.csv")
 
@@ -64,9 +65,13 @@ vsl$par_id <- vsl_par_id
 tsl$par_id <- tsl_par_id
 
 #Group set up
-DD <- list("ABCD_1711", "ABCD_1714", "ABCD_1727", "ABCD_1735", "ABCD_1751", "ABCD_1756", "ABCD_1764", "ABCD_1767", "ABCD_1768", "ABCD_1776","ABCD_1777","ABCD_1778", "ABCD1781")
+DD <- list("ABCD_1711", "ABCD_1714", "ABCD_1727", "ABCD_1735", "ABCD_1751", "ABCD_1756", "ABCD_1764", "ABCD_1767", "ABCD_1768", "ABCD_1776","ABCD_1777","ABCD_1778", "ABCD_1781", "ABCD_1784", "ABCD_1787","ABCD_1792", "ABCD_1794")
 
-TYP <- list("ABCD_1702", "ABCD_1703", "ABCD_1705", "ABCD_1708", "ABCD_1709", "ABCD_1710", "ABCD_1716", "ABCD_1720", "ABCD_1721", "ABCD_1724", "ABCD_1725", "ABCD_1728", "ABCD_1729", "ABCD_1730", "ABCD_1732", "ABCD_1734", "ABCD_1736", "ABCD_1739", "ABCD_1742", "ABCD_1747", "ABCD_1749", "ABCD_1754" )
+TYP <- list("ABCD_1702", "ABCD_1703", "ABCD_1705", "ABCD_1708", "ABCD_1709", "ABCD_1710", "ABCD_1716", "ABCD_1720", "ABCD_1721", "ABCD_1724", "ABCD_1725", "ABCD_1727", "ABCD_1728", "ABCD_1729", "ABCD_1730", "ABCD_1732", "ABCD_1734", "ABCD_1736", "ABCD_1739", "ABCD_1742", "ABCD_1747", "ABCD_1749", "ABCD_1754", "ABCD_1783", "ABCD_1788" )
+
+TYP_vsl <- list("ABCD_1702", "ABCD_1703", "ABCD_1705", "ABCD_1709", "ABCD_1710", "ABCD_1716", "ABCD_1720", "ABCD_1721", "ABCD_1724", "ABCD_1725", "ABCD_1727", "ABCD_1728", "ABCD_1729", "ABCD_1730", "ABCD_1732", "ABCD_1734", "ABCD_1736", "ABCD_1739", "ABCD_1742", "ABCD_1747", "ABCD_1749", "ABCD_1754", "ABCD_1783", "ABCD_1788" )
+
+TYP_tsl <- list("ABCD_1702", "ABCD_1703", "ABCD_1705", "ABCD_1708", "ABCD_1709", "ABCD_1710", "ABCD_1716", "ABCD_1720", "ABCD_1721", "ABCD_1724", "ABCD_1725", "ABCD_1728", "ABCD_1729", "ABCD_1730", "ABCD_1732", "ABCD_1734", "ABCD_1736", "ABCD_1739", "ABCD_1742", "ABCD_1747", "ABCD_1749", "ABCD_1754", "ABCD_1783", "ABCD_1788" )
 group <- NULL
 for (i in seq(from=1,to=length(tsl$par_id),by=1))
     {if (tsl[i,]$par_id %in% TYP)
@@ -176,14 +181,16 @@ model3 <- wilcox.test(dprime)
 #print(model3)
 print(vrtdd)
 print(vrttyp)
-return(mean_table)
+vsl_rt_result <- list("vsl_rt_trial"=mean_table,"vsl_rt_subj"=subj_table)
+return(vsl_rt_result)
 }
 ```
 
 #t.test for rt slope
 
 ```{r,echo=FALSE,warning=FALSE}
-fam_trial_vsl <- compute_visual()
+vsl_rt_result <- compute_visual()
+vsl_rt_subj <- vsl_rt_result$vsl_rt_subj
 
 model1 <- lm(rt_col~reindex*group_cond,data=fam_trial_vsl)
 #model2 <- aov(rt_col~group_cond*timeline + Error(id/timeline),data=fam_trial_vsl)
@@ -285,14 +292,15 @@ subj_table$group <- group
 print(t.test(subj_table$rt_slope[subj_table$group=="DD"],mu=0,alternative="less"))
 print(t.test(subj_table$rt_slope[subj_table$group=="TYP"],mu=0,alternative="less"))
 
-
-return(mean_table)
+tsl_rt_result <- list("tsl_rt_trial"=mean_table,"tsl_rt_subj"=subj_table)
+return(tsl_rt_result)
 }
 ```
 
 #t.test for RT Slope
 ```{r,echo=FALSE,warning=FALSE}
-fam_trial_tsl <- compute_aud()
+tsl_rt_result <- compute_aud()
+tsl_rt_subj <- tsl_rt_result$tsl_rt_subj
 
 model1 <- lm(rt_col~reindex*group_cond,data=fam_trial_tsl)
 #model2 <- aov(rt_col~group_cond*timeline + Error(id/timeline),data=fam_trial_tsl)
@@ -351,6 +359,14 @@ for(id in TYP){
   TYP_vsl_hit_rate<-round(mean(append(TYP_vsl_hit_rate,round(sum(fam_trial_vsl$rt_col[fam_trial_vsl$id==id]!=-1)/total_vsl_trial,digits =2)),na.rm=TRUE),digits=2)
   TYP_tsl_hit_rate<-round(mean(append(TYP_tsl_hit_rate,round(sum(fam_trial_tsl$rt_col[fam_trial_tsl$id==id]!=-1000)/total_tsl_trial,digits =2)),na.rm=TRUE),digits=2)
   number_TYP <- length(intersect(list_vsl_id, TYP))
+}
+
+vsl_slope_typ = matrix(, nrow = 40, ncol = 2)
+for(id in TYP){
+  vsl_slope = matrix(, nrow = 1, ncol = 2)
+  vsl_slope[,1] = id
+  vsl_slope[,2] = summary(lm(rt_col~reindex,data=fam_trial_vsl[fam_trial_vsl$id==id,]))$coefficients[2]
+  vsl_slope_typ = rbind(vsl_slope_typ,vsl_slope)
 }
 
 DD_col <- rbind(DD_mean_tsl,DD_mean_vsl,DD_tsl_hit_rate,DD_vsl_hit_rate,number_DD)
@@ -502,12 +518,12 @@ t.test(TYP_acc_tsl,mu=0.5,alternative = "greater")
 #A t-test to compare between Dylexia and Typical group
 ##In tsl
 ```{r,echo=FALSE}
-t.test(DD_acc_tsl,TYP_acc_tsl)
+t.test(DD_acc_tsl,TYP_acc_tsl, var.equal=TRUE)
 ```
 
 ##In vsl
 ```{r,echo=FALSE}
-t.test(DD_acc_vsl,TYP_acc_vsl)
+t.test(DD_acc_vsl,TYP_acc_vsl,var.equal=TRUE)
 ```
 
 ```{r,fig.width=10, fig.height=10, echo=FALSE}
