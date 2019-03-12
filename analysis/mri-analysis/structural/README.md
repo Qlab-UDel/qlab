@@ -1,10 +1,10 @@
 # **Extracting gray matter measures**
-This tutorial will show you how to extract your gray matter volume (GMV) and cortical thickness (CT) measures from your freesurfer reconstructed data.  This step comes after the final reconstruction step (using the recon-all -autorecon-all command).  
+This tutorial will show you how to extract your gray matter volume (GMV) and cortical thickness (CT) measures from your freesurfer reconstructed data.  This step comes after the final reconstruction step (using the recon-all -autorecon-all command). Therefore, in this tutorial whenever I refer to reconstructed data, I am referring to the output files that Freesurfer creates and fills in during the recon-all process.   
 ## **Overview**
 Freesurfer provides a very simple and organized method for extracting gray matter measures after reconstruction.  The output is a text file which you can open in Excel (make sure you specify that it is tab delimited in excel to open the file).  These outputs will include each subject’s CT or GMV (based on which scripts below you run) for each region in the desikan killiany atlas. These outputs are particularly useful when you want to run region of interest (ROI) based analyses.
 # **To Start**
 ## **Set up your subject's directory**
-Setting up your subject's directory informs Freesurfer where you want your created files to go.  Make sure you go to the directory where all the participant’s reconstructed data are, then designate where you want the output files (usually I just put them in this same central location as where the reconstructed data are) using the export command.
+Setting up your subject's directory informs Freesurfer where you want your created files to go.  Make sure you go to the directory (main folder) where all the participant’s reconstructed data are (so you should see all your subjects' folders here, make sure you do not go into just one subject's folder). Then, you should designate where you want the output files to go (usually I just put them in this same central location as where the reconstructed data are, since freesurfer tends to work better when I do this) using the export command.
 ````
 cd /home/qigroup/Documents/projects/<path_where_reconstructed_data_are>
 export SUBJECTS_DIR=/home/qigroup/Documents/projects/<path_where_you_want_the_output_to_go>
