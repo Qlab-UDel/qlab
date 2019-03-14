@@ -1,8 +1,8 @@
-#  BLAST TSL Analysis
+#  BLAST ssl Analysis
 #  Violet Kozloff
 #  Last updated January 8th, 2019 
-#  Adapted from mturk_tsl by An Nguyen
-#  This script analyses reaction time for TSL files from the online session of the BLAST experiment
+#  Adapted from mturk_ssl by An Nguyen
+#  This script analyses reaction time for ssl files from the online session of the BLAST experiment
 #  ****************************************************************************
 
 
@@ -10,15 +10,15 @@
 # Prepare workspace ------------------------------------------------------------
 
 # Set directory
-setwd("/Volumes/data/projects/blast/data/online_sl/blast_adult")
+setwd("/Volumes/data-1/projects/blast/data/online/blast_adult")
 # NOTE: Comment out the above line and use this one for children
-# setwd("/Volumes/data/projects/blast/data/online/blast_child")
+# setwd("/Volumes/data-1/projects/blast/data/online/blast_child")
 
 # Remove objects in environment
 rm(list=ls())
 
 # Output path
-output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_online_adult/breakdown/")
+output_path <- ("/Volumes/data-1/projects/blast/data_summaries/blast_online_adult/")
 # NOTE: Comment out the above line and use this one for children
 # output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_online_child")
 
@@ -30,18 +30,21 @@ output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_online_adult/
 correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
 
 # List input files
-tsl_files <- list.files(pattern="*tsl.csv")
+ssl_files <- list.files(pattern="*ssl.csv")
+# TO DO: This needs to be able to change
+# TO DO: THis also needs to work for kids
+ssl_files <- ssl_files[1:24]
 
 # Confirm that all files are present. If not, alert user
-if(length(tsl_files)!=correct_total_files){
-  stop(print(paste("Found", length(tsl_files), "files. You indicated that there are", correct_total_files, "participants. Please check files in folder against the qlab_participant_checklist.")))
+if(length(ssl_files)!=correct_total_files){
+  stop(print(paste("Found", length(ssl_files), "files. You indicated that there are", correct_total_files, "participants. Please check files in folder against the qlab_participant_checklist.")))
 }
 
 # Initialize variable to hold data
-tsl <- NULL
+ssl <- NULL
 
 # Extract relevant data and combine it
-for (file in tsl_files){
+for (file in ssl_files){
   # Select only relevant columns
   extracted_data <- read.csv(file)[c("rt", "trial_index", "targ","key_press", "stimulus")]  
   # Create a column populated with the participant ID based on the file name
@@ -53,7 +56,7 @@ for (file in tsl_files){
   colnames(extracted_data)[colnames(extracted_data)=="rt"] <- "press_time"
   # Standardize stimulus names and types
   extracted_data$stimulus<- gsub(".wav","", extracted_data$stimulus)
-  extracted_data$stimulus<- gsub("../../tones/","",extracted_data$stimulus)
+  extracted_data$stimulus<- gsub("sound/","",extracted_data$stimulus)
   extracted_data$press_time<-as.numeric(extracted_data$press_time)
   # Identify blank keypresses
   extracted_data[which(extracted_data$press_time==-1000),]$press_time<-NA
@@ -62,8 +65,12 @@ for (file in tsl_files){
   extracted_data$prev_stim <- append(NA, (head(extracted_data$stimulus, -1)))
   extracted_data$next_stim <- append(extracted_data$stimulus[-1], NA)
   extracted_data$two_stim_later <- append(append((tail(extracted_data$stimulus, -2)), NA), NA)
+  #  extracted_data$two_targ_before <- append(NA, (append(NA, head(extracted_data$targ, -2))))
+  #  extracted_data$prev_targ <- append(NA, (head(extracted_data$targ, -1)))
+  #  extracted_data$next_targ <- append(extracted_data$targ[-1], NA)    
+  #  extracted_data$two_targ_later <- append(append((tail(extracted_data$targ, -2)), NA), NA)
   # Combine data from current file
-  tsl<-rbind(tsl,extracted_data)
+  ssl<-rbind(ssl,extracted_data)
 }
 
 
@@ -76,40 +83,40 @@ calculated <-NULL
 removed <- NULL
 negatives <- 0
 
-for (i in 2:length(tsl$press_time)){
+for (i in 2:length(ssl$press_time)){
   
   # Identify negative keypress values following NAs. Use them to calculate the preceding stimuli's response times
-  if (tsl[i,]$press_time <0 & is.na(tsl[i-1,]$press_time) & !is.na(tsl[i,]$press_time)){
-    tsl[i-1,]$press_time <-480+(tsl[i,]$press_time)
-     calculated <- append(calculated, (paste(i, ":", tsl[i,]$press_time)))
-    tsl[i,]$press_time<- NA
-     negatives <- negatives +1}
-
+  if (ssl[i,]$press_time <0 & is.na(ssl[i-1,]$press_time) & !is.na(ssl[i,]$press_time)){
+    ssl[i-1,]$press_time <-480+(ssl[i,]$press_time)
+    calculated <- append(calculated, (paste(i, ":", ssl[i,]$press_time)))
+    ssl[i,]$press_time<- NA
+    negatives <- negatives +1}
+  
   # Identify negative keypress values following valid keypresses. Remove the duplicates.
-  else if (tsl[i,]$press_time <0 & !is.na(tsl[i-1,]$press_time) & !is.na(tsl[i,]$press_time)){
-     removed <- append(removed, (paste(i, ":", tsl[i,]$press_time)))
-    tsl[i,]$press_time<- NA
+  else if (ssl[i,]$press_time <0 & !is.na(ssl[i-1,]$press_time) & !is.na(ssl[i,]$press_time)){
+    removed <- append(removed, (paste(i, ":", ssl[i,]$press_time)))
+    ssl[i,]$press_time<- NA
     negatives <- negatives +1
-    }
   }
+}
 
 # List all the participants
-all_ids<- unique(tsl$part_id)
+all_ids<- unique(ssl$part_id)
 
 
 # Calculate and summarize true reaction times ------------------------------------------------------------
 
 # Set boundaries for the exposure phase. These correspond to the first and last trial numbers
 # NOTE: Due to some variation between files, include the lowest and highest trial numbers across all files
-exp_phase_start <-23
-exp_phase_end <-599
+exp_phase_start <-10
+exp_phase_end <-585
 
 # Extract exposure phase
-exp_phase <- tsl[which(tsl$trial_index<=exp_phase_end & tsl$trial_index>=exp_phase_start),]
+exp_phase <- ssl[which(ssl$trial_index<=exp_phase_end & ssl$trial_index>=exp_phase_start),]
 
 # Remove extra instructions present in some files
-exp_phase <- exp_phase[!(exp_phase$stimulus=="../../tone_instr/instr_8"),]
-exp_phase <- exp_phase[!(exp_phase$stimulus=="../../tone_instr/fixation_instr"),]
+exp_phase <- exp_phase[!(exp_phase$stimulus=="ssl_instr7"),]
+exp_phase <- exp_phase[!(exp_phase$stimulus=="ssl_instr8"),]
 
 # Internal check: Make sure that there are 576 stimuli per participant
 # Initialize variables
@@ -120,11 +127,11 @@ for(check_id in unique(exp_phase$part_id)){
 stimulus_check <- (cbind(all_ids, total_stimuli))
 
 # Identify participants with too few/many targets and alert user if present
-if(! all(unique (total_stimuli) == "576")){
+if(! all(unique (total_stimuli) == "575")){
   # Create error message alerting user
   print(" The following participant(s) has an incorrect number of extracted trials:")
   # List the participants with the wrong number of targets
-  print(paste("", stimulus_check[which(total_stimuli!="576")]))
+  print(paste("", stimulus_check[which(total_stimuli!="575")]))
   print(" Please check the number of targets in the following input files.")
   print(" If the participant saw too few or too many stimuli, exclude them from analysis and alert the lab member maintaining bluehost.")
   print(" If the wrong number of stimuli was extracted, adjust the values of exp_phase_start and exp_phase_end.")
@@ -151,7 +158,7 @@ for(id in unique(exp_phase$part_id)){
   this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$two_stim_later <- NA
   # Update the exposure phase with the corrected data
   exp_phase[(which(exp_phase$part_id==id)),] <- this_exp_phase
-  }
+}
 
 # Extract the row numbers for all lines in which the stimulus is the target
 targets <- which(exp_phase$targ==exp_phase$stimulus)
@@ -165,21 +172,26 @@ target_rows <-(exp_phase[targets,])
 total_targets <- NULL
 # Find the number of targets for each participant
 for(check_id in unique(exp_phase$part_id)){
-  total_targets <- append(total_targets, length(which(target_rows$part_id==check_id)))}
+  total_targets <- append(total_targets, length(which(target_rows$part_id==check_id)))
+  # Find out if the 
+  if(unique(exp_phase$targ)=="ku"
+  }
 target_check <- (cbind(all_ids, total_targets))
+
+# TO DO: Find all the ones who only heard 47, find all the ones who had target "ku." If they match, remove them.
 
 # Identify participants with too few/many targets and alert user if present
 if(! all(unique (total_targets) == correct_total_targets)){
-      # Create error message alerting user
-      print(" The following participant(s) has an incorrect number of extracted targets:")
-      # List the participants with the wrong number of targets
-      print(paste("", target_check[which(total_targets!=correct_total_targets)]))
-      print(" Please check the number of targets in the following input files.")
-      print(" If the participant saw too few or too many targets, exclude them from analysis and alert the lab member maintaining bluehost.")
-      print(" If the wrong number of targets was extracted, adjust exp_phase_start + exp_phase_end.")
-      # Open a new window showing the user the number of targets for each participant
-      View(target_check)
-      stop()}
+  # Create error message alerting user
+  print(" The following participant(s) has an incorrect number of extracted targets:")
+  # List the participants with the wrong number of targets
+  print(paste("", target_check[which(total_targets!=correct_total_targets)]))
+  print(" Please check the number of targets in the following input files.")
+  print(" If the participant saw too few or too many targets, exclude them from analysis and alert the lab member maintaining bluehost.")
+  print(" If the wrong number of targets was extracted, adjust lines 59 + 60.")
+  # Open a new window showing the user the number of targets for each participant
+  View(target_check)
+  stop()}
 
 
 
@@ -210,7 +222,7 @@ exp_phase$type <- NA
 
 # Calculate true reaction times
 for (i in targets){
-    
+  
   # Isolate variables used for calculations
   # Current trial
   this_trial <- exp_phase[i,][,"trial_index"]
@@ -221,18 +233,18 @@ for (i in targets){
   # Keypress time recorded from preceding trial
   {if(this_trial>exp_phase_start) {
     this_preceding_trial_press <- exp_phase[i-1,][,"press_time"]}
-  else {
-  this_preceding_trial_press <- NA}}
+    else {
+      this_preceding_trial_press <- NA}}
   
   # Press time recorded for current target
   this_target_trial_press <- exp_phase[i,][,"press_time"]
-
+  
   # # Press time recorded for following trial
   # {if(this_trial<exp_phase_end){
   #   this_following_trial_press <- exp_phase[i+1,][,"press_time"]}
   #  else {
   #    this_following_trial_press <- NA}}
-    
+  
   # NOTE: Uncomment this section for troubleshooting the number of targets/ RTs
   
   # # List of all target stimuli
@@ -241,14 +253,16 @@ for (i in targets){
   # preceding_trial_press <- append (preceding_trial_press, this_preceding_trial_press)
   # # List of press times for all targets
   # target_trial_press <- append(target_trial_press, this_target_trial_press)
+  # # Press times recorded for trials following all targets
+  # following_trial_press <- append (following_trial_press, this_following_trial_press)
   
   # Anticipation, positive RT from preceding trial: )
   if (!is.na(exp_phase[i-1,]$press_time > 0) & (exp_phase[i-1,]$press_time > 0)){
-      reaction_time <- append(reaction_time, (this_preceding_trial_press-480))
-      exp_phase[i,]$type <- "hit_before"
-      # type <- rbind(type, "hit_before")
-      }
-      
+    reaction_time <- append(reaction_time, (this_preceding_trial_press-480))
+    exp_phase[i,]$type <- "hit_before"
+    # type <- rbind(type, "hit_before")
+  }
+  
   # On-target, positive RT from target trial)
   else if (!is.na(exp_phase[i,]$press_time > 0) & exp_phase[i,]$press_time > 0){
     reaction_time <- append(reaction_time, (exp_phase[i,][,"press_time"]))
@@ -257,21 +271,20 @@ for (i in targets){
   }
   
   # Delay, positive RT from following trial
-  # TO DO: Check this
   # else if ( !is.na(this_trial< exp_phase_end & exp_phase[i+1,]$press_time > 0) & (this_trial< exp_phase_end & exp_phase[i+1,]$press_time > 0)){
   else if (!is.na(exp_phase[i+1,]$press_time > 0) & (exp_phase[i+1,]$press_time > 0)){
     reaction_time <- append(reaction_time, (480+exp_phase[i+1,][,"press_time"]))
     exp_phase[i,]$type <- "hit_after"
-    # type <- rbind(type, "hit_after")
+    #type <- rbind(type, "hit_after")
   }
   
   # Misses
-      else {
-        reaction_time <- append(reaction_time, NA)
-        exp_phase[i,]$type <- "miss"
-        # type <- rbind(type, "miss")
-      }
+  else {
+    reaction_time <- append(reaction_time, NA)
+    exp_phase[i,]$type <- "miss"
+    # type <- rbind(type, "miss")
   }
+}
 
 # exp_targets now contains all targets from the exposure phase and their true RTs (includes any response within 480 ms of a target)
 exp_targets <- data.frame(trial,reaction_time,id)
@@ -303,9 +316,12 @@ if(! all(unique (total_rts) == correct_total_targets)){
   stop()}
 
 # Reindex the targets from 1 to the expected number of targets for each participant
-targ_index <- rep(1:correct_total_targets,length(exp_targets$trial)/correct_total_targets)
-exp_targets$targ_index <- targ_index
-
+exp_targets$targ_index <- NA
+for (id in unique(exp_targets$id)){
+    #Find the number of expected targets for each participant and use it to reindex
+    exp_targets[which(exp_targets$id==id),]$targ_index <- rep(1:length(exp_targets[which(exp_targets$id==id),]$id))
+  
+}
 
 
 # Find reaction time slopes and mean reaction times and write them to NAS ------------------------------------
@@ -313,14 +329,18 @@ exp_targets$targ_index <- targ_index
 # Internal check: make sure that all RTs are valid, ie. fall within 1 SOA of the stimulus
 check_rts_1 <- exp_targets[which(exp_targets$reaction_time!=-1 & exp_targets$reaction_time>960),]
 check_rts_2 <- exp_targets[which(exp_targets$reaction_time< -480),]
+# TO DO: For visual, only accept answers in range of -1000 < x < 1000
 
 # Alert the user of invalid RTs
 if(length(check_rts_1[,1]) | length(check_rts_2[,1]) !=0){
   # Create error message alerting user
-  print("One or more participants has an invalid reaction time. Please check the reaction time calculations above.")
+  print("One or more participants has an invalid reaction time. Please check the reaction time calculations as indicated in line 279.")
   # Open a new window showing the user the RTs for each participant
   View(exp_targets)
   stop()}
+
+# TO DO: Also do this for the first and last stimuli of a participant's exposure
+# TO DO: Check if SSL, VSL, LSL also don't ever have targets at beginning/end of exp phase
 
 # Find all the false alarms
 exp_phase[which(
@@ -333,7 +353,7 @@ exp_phase[which(
   # It was not directly after a target
   & exp_phase$prev_stim!=exp_phase$targ
   # Change their type 
-  ),]$type<-"false_alarm"
+),]$type<-"false_alarm"
 
 
 # Find all the correct rejections
@@ -349,89 +369,55 @@ exp_phase[which(
   # Change their type 
 ),]$type<-"corr_rej"
 
-# For TSL, the first and last stimuli in an exposure phase are never targets. Categorize if they are correct rejection or false alarm
-# TO DO: Check if SSL, VSL, LSL also don't ever have targets at beginning/end of exp phase (if so, adjust accordingly)
-for (id in unique(exp_phase$part_id)){
-  # Find the highest and lowest trials from this participant
-  this_min <- min(exp_phase[which(exp_phase$part_id==id),]$trial)
-  this_max <- max(exp_phase[which(exp_phase$part_id==id),]$trial)
-  # Categorize first stimulus
-  if (is.na(exp_phase[which(exp_phase$trial_index==this_min & exp_phase$part_id==id),]$press_time))
-    exp_phase[which(exp_phase$trial_index==this_min & exp_phase$part_id==id),]$type <- "corr_rej"
-  else {
-    exp_phase[which(exp_phase$trial_index==this_min & exp_phase$part_id==id),]$type <- "false_alarm"
-  }
-  # Categorize last stimulus
-  if (is.na(exp_phase[which(exp_phase$trial_index==this_max & exp_phase$part_id==id),]$press_time))
-    exp_phase[which(exp_phase$trial_index==this_max & exp_phase$part_id==id),]$type <- "corr_rej"
-  else {
-    exp_phase[which(exp_phase$trial_index==this_max & exp_phase$part_id==id),]$type <- "false_alarm"
-  }
-}
-
 # TO DO: For visual, it also counts as false alarm if it's during the following trial
 
-# Initialize variables for RT calculations
+# TO DO: Add a column for each person of whether they heard 47 or 48 stimuli and make sure that the the calculations for RT take that into account
+# TO DO: Also add a column for the number of non-target stimuli they heard (will vary based on if first/last stim is target and also how many targets they heard)
+# Initialize variables for RT calculations 
 mean_rt <- NULL
 rt_slope <- NULL
-# Initialize variables for response accuracy calculations
 hits <- NULL
-hit_rate <- NULL
-misses <- NULL
-miss_rate <- NULL
-false_alarms <- NULL
-false_alarm_rate <- NULL
-corr_rej <- NULL
-corr_rej_rate <- NULL
-resp_acc<-NULL
-keep <- NULL
-# Variable for later internal check
-total_disc <- NULL
+# hit_rate <- NULL
+# this_false_alarm <- NA
+# false_alarm_rate <- NULL
+# false_alarms <- NULL
+# corr_rej_rate <- NULL
+# this_resp_acc<-NA
+# resp_acc<-NULL
+# keep <- NULL
+# this_corr_rej<-NA
+# corr_rej <- NULL
 
+
+# TO DO: Fix it for those with only 575 and/or the different number of non-targets
 # Extract the mean response time and rt slope for each participant
 for(id in (all_ids)){
   this_id<-exp_phase[which(exp_phase$part_id==id),]
   mean_rt<-append(mean_rt,round(mean(exp_targets$reaction_time[exp_targets$id==id],na.rm=TRUE),digits=3))
-  rt_slope <-append(rt_slope,round(summary(lm(exp_targets$reaction_time[exp_targets$id==id]~exp_targets$targ_index[exp_targets$id==id]))$coefficient[2,1],digits=3))
-  # Find this participant's number of hits, misses, correct rejections, and false alarms
-  this_hit <- length(this_id[which((this_id$type=="hit_before"|this_id$type=="hit_during"|this_id$type=="hit_after") & this_id$part_id==id),1])
-  this_miss <- length(this_id[which((this_id$type=="miss") & this_id$part_id==id),1])
-  this_corr_rej <- length(this_id[which((this_id$type=="corr_rej") & this_id$part_id==id),1])
-  this_false_alarm <- length(this_id[which((this_id$type=="false_alarm") & this_id$part_id==id),1])
-  # Store these values for all participants
-  hits <- append (hits, this_hit)
-  misses <- append (misses, this_miss)
-  corr_rej<-append(corr_rej, this_corr_rej)
-  false_alarms <- append (false_alarms, this_false_alarm)
-  # Find the rates of each
-  hit_rate <- append(hit_rate, round(this_hit/48, digits=3))
-  miss_rate <- append (miss_rate, round(this_miss/48, digits = 3))
-  # TO DO: For SSL, there are a different number of non-target stimuli each time, since the stimulus before and after each target is counted as an extention of the target
-  # Note: There are 432 non-targets total (576 stimuli = 48 targets + 48 stimuli preceding targets + 48 stimuli following targets + 432 non-targets)
-  false_alarm_rate <- append(false_alarm_rate, round(this_false_alarm/432, digits = 3))
-  corr_rej_rate <-append(corr_rej_rate, round(this_corr_rej/432, digits = 3))
-  # This is to later double-check the number of discriminations
-  # Calculate response accuracy
-  # Note: the participant makes 480 discriminations (432 non-targets + 48 targets)
-  total_disc <- append (total_disc, (this_hit+this_miss+this_corr_rej+this_false_alarm))
-  this_resp_acc <- round((this_corr_rej+this_hit)/480, digits=3)
-  resp_acc <- append(resp_acc, this_resp_acc)
-  if (this_resp_acc>=0.5){keep <- append(keep, 1)} else {keep <- append(keep, 0)}
+  # TO DO: Copy this to ssl_48_targs and tsl
+  if(length(exp_targets[which(exp_targets$id==id & !is.na(exp_targets$reaction_time)),]$id)==0)
+  {rt_slope<-append(rt_slope, "no response")}
+  else
+  {rt_slope <-append(rt_slope,round(summary(lm(exp_targets$reaction_time[exp_targets$id==id]~exp_targets$targ_index[exp_targets$id==id]))$coefficient[2,1],digits=3))
+}
+#  this_hit <- length(this_id[which((this_id$type=="hit_before"|this_id$type=="hit_during"|this_id$type=="hit_after") & this_id$part_id==id),1])
+#  hits <- append (hits, this_hit)
+#  hit_rate <- append(hit_rate, this_hit/48)
+#  this_false_alarm <- length(exp_phase[which(exp_phase$type=="false_alarm" & exp_phase$part_id==id),1])
+#  false_alarms <- append (false_alarms, this_false_alarm)
+#  false_alarm_rate <- append(false_alarm_rate, this_false_alarm/434)
+#  this_corr_rej<-(434-this_false_alarm)
+#  corr_rej<-append(corr_rej, this_corr_rej)
+#  corr_rej_rate <-append(corr_rej_rate, (this_corr_rej/434))
+#  this_resp_acc <- (this_corr_rej+this_hit)/482
+#  resp_acc <- append(resp_acc, this_resp_acc)
+#  if (this_resp_acc>=0.5){keep <- append(keep, 1)} else {keep <- append(keep, 0)}
 }
 
-# Combine participants' individual RT data
-indiv_rts <- cbind(all_ids, mean_rt, rt_slope, hits, hit_rate, misses, miss_rate, corr_rej, corr_rej_rate, false_alarms, false_alarm_rate, total_disc, resp_acc, keep)
 
-# Identify participants with too few/many discrimintations and alert user if present
-if(! all(unique (total_disc) == "480")){
-  # Create error message alerting user
-  print(" The following participant(s) has an incorrect number of discriminations:")
-  # List the participants with the wrong number of targets
-  print(paste("", indiv_rts[which(total_disc!="576")]))
-  print(" Please check how discriminations are categorized for this participant in exp_phase$type.")
-  # Open a new window showing the user the number of targets for each participant
-  View(indiv_rts)
-  stop()}
+# TO DO: Interal check that makes sure all the corr_rej+hits+misses+false_alarms is the right number (also calc individually above)
+# Combine participants' individual RT data
+indiv_rts <- cbind(all_ids, mean_rt, rt_slope)
 
 # Note: Uncomment this to find and exclude participants with unusually high/ low RT slopes
 # Find values for 2.5 standard deviations within the mean
@@ -445,24 +431,23 @@ if(! all(unique (total_disc) == "480")){
 # indiv_rts <- indiv_rts[indiv_rts$press_time_slope>=lowerbound,]
 # indiv_rts <- indiv_rts[indiv_rts$press_time_slope<=upperbound,]
 
-# Remove any extra columns that are only helpful for internal checks
-final_indiv_rts <- cbind(all_ids, mean_rt, rt_slope, hits, hit_rate, misses, miss_rate, false_alarm_rate, total_disc, resp_acc, keep)
 # Tidy up column names
-colnames(final_indiv_rts)[colnames(final_indiv_rts)=="all_ids"] <- "part_id"
+colnames(indiv_rts)[colnames(indiv_rts)=="all_ids"] <- "part_id"
+
 
 # Write individual RT results and save them to NAS
-write.csv(final_indiv_rts, paste0(output_path, "online_tsl_indiv_rts.csv"))
+write.csv(indiv_rts, paste0(output_path, "online_ssl_indiv_rt_575stim.csv"))
 
 
 
 # Calculate and summarize individual accuracies ------------------------------------------------------------
 
 #Extract the test phase
-test_phase <- tsl[(tsl$stimulus=="silent" & !tsl$key_press==-1),]
+test_phase <- ssl[(ssl$stimulus=="silence" & !ssl$key_press==-1),]
 
 #Internal check: this should be exactly 32 (32 forced choices per participant)
 # TO DO: Make this automatic so it just warns user if participant doesn't have exactly 32
-forced_choice_rows <- test_phase[(test_phase$stimulus=="silent" & !test_phase$key_press==-1),]
+forced_choice_rows <- test_phase[(test_phase$stimulus=="silence" & !test_phase$key_press==-1),]
 View(length(forced_choice_rows$targ)/length(unique(test_phase$part_id)))
 
 ans <- NULL
@@ -472,16 +457,14 @@ cond<- NULL
 
 #Extract rows in which the participant gives a response
 #targetsv is just row number for the test block
-targetsv <- which(test_phase$key_press != -1 & test_phase$stimulus=="silent")
+targetsv <- which(test_phase$key_press != -1 & test_phase$stimulus=="silence")
 for (i in targetsv){
   ans<-append(ans,test_phase[i,]$key_press)
   subj <- append(subj,paste(test_phase[i,]$part_id))
 }
 
 # Create a data frame that contains the participants' responses
-tsl_accuracy <- data.frame(ans,subj)
-
-# TO DO: create a test to make sure all have the right number
+ssl_accuracy <- data.frame(ans,subj)
 
 keyv<- NULL
 
@@ -491,34 +474,36 @@ i=0
 language = list(1,1,2,1,1,1,2,2,2,2,1,1,1,2,2,1,2,2,1,1,2,1,2,1,2,1,2,1,1,2,2,2)
 
 # Combine the answer keys for the two language conditions that the participant saw
-keyv <- rep(language, times = length(unique(tsl_accuracy$subj)))
+keyv <- rep(language, times = length(unique(ssl_accuracy$subj)))
 
 # Find all of the IDs for the participants whose accuracy you're calculating
-acc_id <- unique(tsl_accuracy$subj)
+acc_id <- unique(ssl_accuracy$subj)
 
-tsl_accuracy$key <- keyv
+ssl_accuracy$key <- keyv
 
 #Substitute the key press (37,39) with the answer (1,2)
-tsl_accuracy$ans <- gsub(37,1,tsl_accuracy$ans)
-tsl_accuracy$ans <- gsub(39,2,tsl_accuracy$ans)
+ssl_accuracy$ans <- gsub(37,1,ssl_accuracy$ans)
+ssl_accuracy$ans <- gsub(39,2,ssl_accuracy$ans)
 
 
 #Loop through and count the correct answer
 corr <- NULL
-for (i in seq(from=1,to=length(tsl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(tsl_accuracy[i,]$ans==tsl_accuracy[i,]$key))}
-tsl_accuracy$corr <- corr
-subj_corr <- NULL
-for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(tsl_accuracy$corr[tsl_accuracy$subj==id])/32,digits=3))}
-tsl_acc_table <- data.frame(acc_id,subj_corr)
+for (i in seq(from=1,to=length(ssl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(ssl_accuracy[i,]$ans==ssl_accuracy[i,]$key))}
 
-lowerbound <- mean(tsl_acc_table$subj_corr) - 2.5*sd(tsl_acc_table$subj_corr)
-upperbound <- mean(tsl_acc_table$subj_corr) + 2.5*sd(tsl_acc_table$subj_corr)
+
+ssl_accuracy$corr <- corr
+subj_corr <- NULL
+for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(ssl_accuracy$corr[ssl_accuracy$subj==id])/32,digits=3))}
+ssl_acc_table <- data.frame(acc_id,subj_corr)
+
+lowerbound <- mean(ssl_acc_table$subj_corr) - 2.5*sd(ssl_acc_table$subj_corr)
+upperbound <- mean(ssl_acc_table$subj_corr) + 2.5*sd(ssl_acc_table$subj_corr)
 
 # Internal check: whose mean rt is unusually low?
-too_low <- tsl_acc_table[tsl_acc_table$subj_corr<=lowerbound,]
+too_low <- ssl_acc_table[ssl_acc_table$subj_corr<=lowerbound,]
 # Internal check: whose data is unusually high?
-too_high <- tsl_acc_table[tsl_acc_table$subj_corr>=upperbound,]
+too_high <- ssl_acc_table[ssl_acc_table$subj_corr>=upperbound,]
 
 
-write.csv(tsl_acc_table, "/Volumes/data/projects/blast/data_summaries/blast_online_adult/breakdown/online_tsl_accuracies.csv")
+write.csv(ssl_acc_table, paste0(output_path, "online_ssl_575stim_accuracies.csv"))
 

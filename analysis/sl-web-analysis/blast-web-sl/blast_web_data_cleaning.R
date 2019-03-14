@@ -3,42 +3,27 @@
 #  September 10th, 2018 
 #  Adapted from lsl_rt_clean_file and mturk_combine_raw by An Nguyen
 #  This script cleans LSL, SSL, TSL, and VSL files from the online session of the BLAST experiment
-#  NOTE: Before running, make sure all files contain "responses" column (may need to be added manually)
-#  TO DO: Make sure it can accept the weird files with no "responses" column
 #  ****************************************************************************
-
-# TO DO: Add "responses" column wherever necessary and make sure it has the new blast_a_024 data
 
 # Prepare workspace ------------------------------------------------------------
 
 # Set directory
-setwd("/Users/vkozloff/Documents/qlab/analysis/sl-web-analysis/blast-web-sl")
+setwd("/Volumes/data/projects/blast/data/online/blast_adult/original")
+
 # Remove objects in environment
 rm(list=ls())
 
 
 # Prepare files ------------------------------------------------------------
 
-# Set up input paths
-lsl_input <- ("../../../../blast_adult_web_sl_data/original/lsl_original/")
-ssl_input <- ("../../../../blast_adult_web_sl_data/original/ssl_original/")
-tsl_input <- ("../../../../blast_adult_web_sl_data/original/tsl_original/")
-vsl_input <- ("../../../../blast_adult_web_sl_data/original/vsl_original/")
+# Set up output path
+clean_data_path <- ("/../clean")
 
-
-# Set up output paths
-lsl_rt_output <- ("../../../../blast_adult_web_sl_data/clean/lsl_rt_clean/")
-lsl_acc_output <- ("../../../../blast_adult_web_sl_data/clean/lsl_acc_clean/")
-ssl_output <- ("../../../../blast_adult_web_sl_data/clean/ssl_clean/")
-tsl_output <- ("../../../../blast_adult_web_sl_data/clean/tsl_clean/")
-vsl_output <- ("../../../../blast_adult_web_sl_data/clean/vsl_clean/")
-
-
-# List files in input paths
-lsl_original_files <- list.files(path=lsl_input, pattern="*.csv") 
-ssl_original_files <- list.files(path=ssl_input, pattern="*.csv") 
-tsl_original_files <- list.files(path=tsl_input, pattern="*.csv") 
-vsl_original_files <- list.files(path=vsl_input, pattern="*.csv") 
+# List input files
+lsl_files <- list.files(pattern="*lsl.csv")
+ssl_files <- list.files(pattern="*ssl.csv")
+tsl_files <- list.files(pattern="*tsl.csv")
+vsl_files <- list.files(pattern="*vsl.csv")
 
 # Clean TSL files ———————————————————————————————————
 
@@ -59,7 +44,7 @@ tsl_clean <- function(file) {
 }
 
 # Apply function to all tsl files
-for (file in tsl_original_files)
+for (file in tsl_files)
 {
   tsl_clean(paste0(tsl_input,file))
 }
