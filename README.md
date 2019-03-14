@@ -1,5 +1,5 @@
-# qlab
-The lab repository for experiment and analysis codes
+# QLAB: Language Acquisition and Brain Laboratory
+This is the lab repository for experiment and analysis codes
 # To Start
 ## Setup git
 You can easily setup Git in any operating system. Detailed instructions are available at <http://git-scm.com/downloads>
