@@ -1,0 +1,4 @@
+function blast_env()
+{
+source /home/qigroup/env/blast_env
+}

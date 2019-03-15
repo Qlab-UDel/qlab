@@ -1,0 +1,20 @@
+#!/bin/bash
+# allow group access for the files/folders you generate, equivalent to chmod 775
+umask 002
+#Project specific environments
+source /home/qigroup/project_list
+
+#Source anaconda2, FSL, Freesurfer, matlab
+PATH=/home/qigroup/anaconda2/bin:$PATH
+FSLDIR=/usr/local/fsl/6.0.0
+. ${FSLDIR}/etc/fslconf/fsl.sh
+PATH=${FSLDIR}/bin:${PATH}
+export FSLDIR PATH
+PATH=/usr/local/MATLAB/R2018b/bin:$PATH
+# Setup project specific subj dir
+export SUBJECTS_DIR=/home/qigroup/Documents/projects/blast/higher_level_analysis/freesurfer
+# Setup project specific conda python environments
+export CONDA_ENVS_PATH=/home/qigroup/Documents/projects/conda_env/blast
+source activate /home/qigroup/Documents/projects/conda_env/blast
+
+export project_name="blast"
