@@ -14,7 +14,7 @@ PATH=/usr/local/MATLAB/R2018b/bin:$PATH
 # Setup project specific subj dir
 export SUBJECTS_DIR=/home/qigroup/Documents/projects/blast/higher_level_analysis/freesurfer
 # Setup project specific conda python environments
-export CONDA_ENVS_PATH=/home/qigroup/Documents/projects/conda_env/blast
-source activate /home/qigroup/Documents/projects/conda_env/blast
+export CONDA_ENVS_PATH=/home/qigroup/Documents/projects/conda_env
+source activate blast
 
 export project_name="blast"
