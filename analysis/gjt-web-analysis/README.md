@@ -17,10 +17,12 @@ This MATLAB code automates the GJT scoring process for BLAST and SPOLI participa
 
 ## Step 2. 
 * Define the location of the spreadsheets with SPOLI and BLAST subject's ages 
-'''
+
+
+```
 spoli_age_path = '/Volumes/data-1/projects/blast/demographic_data/spoli_ages.xlsx';
 blast_age_path = '/Volumes/data-1/projects/blast/demographic_data/blast_ages.xlsx';
-'''
+```
 
  
  
