@@ -8,7 +8,8 @@ cd /Volumes/data-1/projects/blast/matlab_scripts/gjt_sharon_working/
 * code is saved in NAS, and needs files saved in NAS in order to run
 * The files needed to run this code are: 
   * raw SPOLI data (csv file)
-  * raw BLAST data (csv file)* gjt standard score conversion table (csv file)
+  * raw BLAST data (csv file)
+  * gjt standard score conversion table (csv file)
   * SPOLI participant ages (csv file)
   * BLAST participant ages (csv file)
   
