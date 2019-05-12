@@ -40,8 +40,7 @@ titled_scores = array2table(scores, 'VariableNames', {'part_id', 'hit_rate', 'fa
  ## Step 5. 
  * Match the particpant's age to their ID. Use ages and raw score to calculate standard score through a for loop. 
  * If the particpant's age is missing from the spreadsheet, the code excludes it from the for loop that calculates standard score, and outputs and error message in the final output table.
- ```
- ## Step 6. 
+ ``` 
 * Create a table which includes participant ID, hit rate, false alarm rate, raw score, and standard score. 
 * Save the scores to NAS in the data_summaries folder: 
 
