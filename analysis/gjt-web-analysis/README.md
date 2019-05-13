@@ -3,10 +3,10 @@ This MATLAB code automates the GJT scoring process for BLAST and SPOLI participa
 # General Guideline for GJT Analysis
 * The working directory is set as:
 ```
-cd /Volumes/data-1/projects/blast/matlab_scripts/gjt_sharon_working/
+/Volumes/data-1/projects/blast/matlab_scripts/gjt_analysis/ *Change folder name*
 ```
 * code is saved in NAS, and needs files saved in NAS in order to run
-* The files needed to run this code are: 
+* The files needed to run this code are: *Add locations on NAS*
   * raw SPOLI data (csv file)
   * raw BLAST data (csv file)
   * gjt standard score conversion table (csv file)
@@ -39,8 +39,8 @@ scores=horzcat(string(ids), hits, false_alarms, a_prime_round);
 titled_scores = array2table(scores, 'VariableNames', {'part_id', 'hit_rate', 'false_alarm_rate', 'a_prime'});
  ```
  ## Step 5. 
- * Match the particpant's age to their ID. Use ages and raw score to calculate standard score through a for loop. 
- * If the particpant's age is missing from the spreadsheet, the script excludes it from the for loop that calculates standard score, and outputs and error message in the final output table.
+ * Match the participant's age to their ID. Use ages and raw score to calculate standard score through a for loop. 
+ * If the participant's age is missing from the spreadsheet, the script excludes it from the for loop that calculates standard score, and outputs and error message in the final output table. *Check spelling of participant*
 
 ## Step 6. 
 * Create a table which includes participant ID, hit rate, false alarm rate, raw score, and standard score. 
