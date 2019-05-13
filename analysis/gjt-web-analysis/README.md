@@ -6,12 +6,12 @@ This MATLAB code automates the GJT scoring process for BLAST and SPOLI participa
 /Volumes/data-1/projects/blast/matlab_scripts/gjt_analysis/ *Change folder name*
 ```
 * code is saved in NAS, and needs files saved in NAS in order to run
-* The files needed to run this code are: *Add locations on NAS*
-  * raw SPOLI data (csv file)
-  * raw BLAST data (csv file)
-  * gjt standard score conversion table (csv file)
-  * SPOLI participant ages (csv file)
-  * BLAST participant ages (csv file)
+* The files needed to run this code are: 
+  * raw SPOLI data: `/Volumes/data-1/projects/spoli/raw_sl_data`
+  * raw BLAST data: `/Volumes/data-1/projects/blast/data/online_sl/blast_child`
+  * gjt standard score conversion table: `/Volumes/data-1/projects/blast/matlab_scripts/gjt_standard_score_conversion_table`
+  * SPOLI participant ages: `/Volumes/data-1/projects/blast/demographic_data/spoli_ages.xlsx`
+  * BLAST participant ages: `/Volumes/data-1/projects/blast/demographic_data/blast_ages.xlsx` 
   
 # Steps of GJT Automation 
 
@@ -29,9 +29,9 @@ spoli_age_path = '/Volumes/data-1/projects/blast/demographic_data/spoli_ages.xls
 blast_age_path = '/Volumes/data-1/projects/blast/demographic_data/blast_ages.xlsx';
 ```
 ## Step 3. 
-Create empty lists for the raw score, standard score, particpant IDs, number of hits, and number of false alarms. The for loops in future steps will add values to these empty lists
+Create empty lists for the raw score, standard score, participant IDs, number of hits, and number of false alarms. The for loops in future steps will add values to these empty lists
 ## Step 4.
-Calculate the raw score for each particpant. Then, create a table containing the particpant ID, hit rate, and false alarm rate. 
+Calculate the raw score for each participant. Then, create a table containing the participant ID, hit rate, and false alarm rate. 
 ```
 %Combine scores
 scores=horzcat(string(ids), hits, false_alarms, a_prime_round);
