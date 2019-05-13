@@ -3,7 +3,7 @@ This MATLAB code automates the GJT scoring process for BLAST and SPOLI participa
 # General Guideline for GJT Analysis
 * The working directory is set as:
 ```
-/Volumes/data-1/projects/blast/matlab_scripts/gjt_analysis/ *Change folder name*
+/Volumes/data-1/projects/blast/matlab_scripts/gjt_analysis/ 
 ```
 * code is saved in NAS, and needs files saved in NAS in order to run
 * The files needed to run this code are: 
