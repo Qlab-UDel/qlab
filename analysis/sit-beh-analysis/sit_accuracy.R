@@ -21,7 +21,7 @@ library("dplyr")
 library("corrplot")
 
 # Set working directory
-setwd("Documents/qlab/analysis/sit-beh-analysis")
+setwd("/Users/vkozloff/Documents/qlab/analysis/sl-psychopy-analysis")
 
 # Remove objects in environment
 rm(list=ls())
@@ -159,11 +159,11 @@ for(id in list_part_id){
 # Combine data for each participant
 indiv_lv_accuracies <- data.frame(part_id, task, same_or_diff, test_phase, accuracy)
 
-# TEST: There should be 26 entries
+# TEST: There should be 32 entries
 length(indiv_lv_accuracies$part_id)
 
 # TEST: All entries should all have an accuracy value
-# View(indiv_lv_accuracies)
+View(indiv_lv_accuracies)
 
 
 
@@ -196,11 +196,11 @@ for(id in list_part_id){
 # Combine data for each participant
 indiv_ll_accuracies <- data.frame(part_id, task, same_or_diff, test_phase, accuracy)
 
-# TEST: There should be 22 entries
+# TEST: There should be 32 entries
 length(indiv_ll_accuracies$part_id)
 
 # TEST: All entries should all have an accuracy value
-# View(indiv_ll_accuracies)
+ View(indiv_ll_accuracies)
 
 
 
@@ -233,11 +233,11 @@ for(id in list_part_id){
 # Combine data for each participant
 indiv_vl_accuracies <- data.frame(part_id, task, same_or_diff, test_phase, accuracy)
 
-# TEST: There should be 26 entries
+# TEST: There should be 32 entries
 length(indiv_vl_accuracies$part_id)
 
 # TEST: All entries should all have an accuracy value
-# View(indiv_vl_accuracies)
+View(indiv_vl_accuracies)
 
 
 
@@ -271,11 +271,14 @@ for(id in list_part_id){
 # Combine data for each participant
 indiv_vv_accuracies <- data.frame(part_id, task, same_or_diff, test_phase, accuracy)
 
-# TEST: There should be 22 entries
+# TEST: There should be 32 entries 
 length(indiv_vv_accuracies$part_id)
 
 # TEST: All entries should all have an accuracy value
-# View(indiv_vv_accuracies)
+View(indiv_vv_accuracies)
+
+# Remove one participant did not complete this trial
+indiv_vv_accuracies<-indiv_vv_accuracies[which(part_id!="blast_a_054"),]
 
 
 #Summarize individual accuracies--------
@@ -375,13 +378,16 @@ chi_square_data <- chi_square_data[chi_square_vars]
 matched_data <- chi_square_data
 
 # Chi-square test for gender
+# p>0.05 tells us that they are matched for gender
 gender_table <- cast(matched_data,sex~same_or_diff,value = "score",length)
 chisq.test(gender_table)
 
 # T-test for vocab score by group
+# p>0.05 tells us that vocab scores are not significantly different by group
 t.test(score~same_or_diff, data=matched_data) 
 
 # T-test for age by group 
+# p>0.05 tells us that ages are not significantly different by group
 t.test(age~same_or_diff, data=matched_data)
 
 
@@ -389,6 +395,23 @@ t.test(age~same_or_diff, data=matched_data)
 # *************************** TEST EFFECTS OF GROUP AND TEST PHASE ON ACCURACY *******************
 
 # ANOVA to test effects
+# Remove accuracies for participants with no accuracy score for one task
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_054"),]
+
+# Remove accuracies for participants who had at least one phase with very low hit rates (<50%)
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_013"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_019"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_035"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_051"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_053"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_056"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_059"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_062"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_063"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_064"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_065"),]
+indiv_accuracies<-indiv_accuracies[which(indiv_accuracies$part_id!="sit_a_066"),]
+
 m1=aov(accuracy~test_phase*same_or_diff+Error(part_id/test_phase), data=indiv_accuracies)
 summary(m1)
 
@@ -425,15 +448,18 @@ diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
 
 # Test p-values of correlation matrices for different condition
 lv_corr<-cor.test(diff_corr$lv,diff_corr$score)
+lv_corr
 vl_corr<-cor.test(diff_corr$vl,diff_corr$score)
+vl_corr
 
 # Create correlation matrices for same condition
 same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
 
 # Test p-values of correlation matrices for different condition
 ll_corr<-cor.test(same_corr$ll, same_corr$score) 
+ll_corr
 vv_corr<-cor.test(same_corr$vv, same_corr$score) 
-
+vv_corr
 
 
 #  ************* ANALYSIS 4: SEE WHETHER PERFORMANCE WAS ABOVE CHANCE WITH T-TESTS *************
@@ -443,3 +469,7 @@ t.test(indiv_ll_accuracies$accuracy, alternative= "greater", mu=0.5)
 t.test(indiv_vv_accuracies$accuracy, alternative= "greater", mu=0.5)
 t.test(indiv_vl_accuracies$accuracy, alternative= "greater", mu=0.5)
 t.test(indiv_lv_accuracies$accuracy, alternative= "greater", mu=0.5)
+
+#2-sample t-test within letter and image types to see whether group diff is significant (accuracy)
+# t.test(indiv_accuracies$accuracy)
+
