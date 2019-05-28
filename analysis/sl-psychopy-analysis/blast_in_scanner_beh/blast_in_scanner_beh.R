@@ -256,6 +256,8 @@ for (i in auditory_targets) {
 # exp_auditory_targets now contains all targets from the exposure phase and their true auditory_rts (includes any response within 480 ms of a target)
 exp_auditory_targets <- data.frame(auditory_part_id, auditory_condition, auditory_modality, auditory_task, auditory_rt)
 
+all_auditory_ids <- unique(as.character(auditory_data$part_id))
+
 
 
 # TO DO: Add this to output
@@ -269,9 +271,9 @@ total_tone_rts <- NULL
 
 # Check RTs
 for(check_id in all_auditory_ids){
-  total_tone_rts <- append(total_tone_rts, length(which(exp_auditory_targets$part_id==check_id & exp_auditory_targets$task=="tone")))
-  total_syllable_rts <- append(total_syllable_rts, length(which(exp_auditory_targets$part_id==check_id & exp_auditory_targets$task=="syllable")))
-  total_rts <- append(total_rts, length(which(exp_auditory_targets$part_id==check_id)))
+  total_tone_rts <- append(total_tone_rts, length(which(exp_auditory_targets$auditory_part_id==check_id & exp_auditory_targets$auditory_task=="tone")))
+  total_syllable_rts <- append(total_syllable_rts, length(which(exp_auditory_targets$auditory_part_id==check_id & exp_auditory_targets$auditory_task=="syllable")))
+  total_rts <- append(total_rts, length(which(exp_auditory_targets$auditory_part_id==check_id)))
   }
 auditory_rt_check <- (cbind(all_auditory_ids, total_tone_rts, total_syllable_rts, total_rts))
 
@@ -285,9 +287,75 @@ exp_auditory_mean_rts<- cast(exp_auditory_targets, auditory_part_id~auditory_con
 # Calculate rt slopes  -----------------------------------------------------------------------------------------------------
 # TO DO: Fill this out
 
-all_auditory_ids <- unique(as.character(auditory_data$part_id))
+# Reindex the targets from 1 to the expected number of targets for each participant
+exp_auditory_targets$index <- NA
+  
+
+for (i in unique(exp_auditory_targets$auditory_part_id)){ 
+  # Identify all rows with SSL value
+  total_structured_ssl <- which(exp_auditory_targets$auditory_part_id==i & exp_auditory_targets$auditory_task=="syllable" & exp_auditory_targets$auditory_condition == "structured")
+  # number them from 1 to the total number of ssl
+  k <- 1
+  for (j in total_structured_ssl){
+    exp_auditory_targets$index[j] <- k
+    k <- k+1
+  }
+  # Identify all rows with SSL value
+  total_random_ssl <- which(exp_auditory_targets$auditory_part_id==i & exp_auditory_targets$auditory_task=="syllable" & exp_auditory_targets$auditory_condition == "random")
+  # number them from 1 to the total number of ssl
+  k <- 1
+  for (j in total_random_ssl){
+    exp_auditory_targets$index[j] <- k
+    k <- k+1
+  }
+  # Identify all rows with tsl value
+  total_structured_tsl <- which(exp_auditory_targets$auditory_part_id==i & exp_auditory_targets$auditory_task=="tone" & exp_auditory_targets$auditory_condition == "structured")
+  # number them from 1 to the total number of tsl
+  k <- 1
+  for (j in total_structured_tsl){
+    exp_auditory_targets$index[j] <- k
+    k <- k+1
+  }
+  # Identify all rows with tsl value
+  total_random_tsl <- which(exp_auditory_targets$auditory_part_id==i & exp_auditory_targets$auditory_task=="tone" & exp_auditory_targets$auditory_condition == "random")
+  # number them from 1 to the total number of tsl
+  k <- 1
+  for (j in total_random_tsl){
+    exp_auditory_targets$index[j] <- k
+    k <- k+1
+  }
+}
+
+# TO DO: Just pull out the maximums from these different conditions rather than counting above
+
+# TO DO: find the number of rows with random TSL values, etc
 
 
+# Initialize variables for RT calculations
+random_ssl_rt_slope <- NULL
+random_tsl_rt_slope <- NULL
+structured_ssl_rt_slope <- NULL
+structured_tsl_rt_slope <- NULL
+
+# Extract the mean response time and rt slope for each participant
+for(id in (unique(auditory_part_id))){
+  random_ssl <- exp_auditory_targets[which(exp_auditory_targets$auditory_part_id==id & exp_auditory_targets$auditory_task=="syllable" & exp_auditory_targets$auditory_condition=="random"),]
+  random_tsl <- exp_auditory_targets[which(exp_auditory_targets$auditory_part_id==id & exp_auditory_targets$auditory_task=="tone" & exp_auditory_targets$auditory_condition=="random"),]
+  structured_ssl <- exp_auditory_targets[which(exp_auditory_targets$auditory_part_id==id & exp_auditory_targets$auditory_task=="syllable" & exp_auditory_targets$auditory_condition=="structured"),]
+  structured_tsl <- exp_auditory_targets[which(exp_auditory_targets$auditory_part_id==id & exp_auditory_targets$auditory_task=="tone" & exp_auditory_targets$auditory_condition=="structured"),]
+  
+  if (!all(is.na(unique(random_ssl$auditory_rt))) & length(unique(random_ssl$auditory_rt))>1){random_ssl_rt_slope <-append(random_ssl_rt_slope,round(summary(lm(random_ssl$auditory_rt~random_ssl$index))$coefficient[2,1],digits=3))}
+  else(random_ssl_rt_slope<- append(random_ssl_rt_slope, "too few hits"))
+  if (!all(is.na(unique(random_tsl$auditory_rt))) & length(unique(random_tsl$auditory_rt))>1){random_tsl_rt_slope<-append(random_tsl_rt_slope,round(summary(lm(random_tsl$auditory_rt~random_tsl$index))$coefficient[2,1],digits=3))}
+  else(random_tsl_rt_slope<- append(random_tsl_rt_slope, "too few hits"))
+  if (!all(is.na(unique(structured_ssl$auditory_rt))) & length(unique(structured_ssl$auditory_rt))>1){structured_ssl_rt_slope <-append(structured_ssl_rt_slope,round(summary(lm(structured_ssl$auditory_rt~structured_ssl$index))$coefficient[2,1],digits=3))}
+  else(structured_ssl_rt_slope<- append(structured_ssl_rt_slope, "too few hits"))
+  if (!all(is.na(unique(structured_tsl$auditory_rt))) & length(unique(structured_tsl$auditory_rt))>1){structured_tsl_rt_slope <-append(structured_tsl_rt_slope,round(summary(lm(structured_tsl$auditory_rt~structured_tsl$index))$coefficient[2,1],digits=3))}
+  else(structured_tsl_rt_slope<- append(structured_tsl_rt_slope, "too few hits"))
+}
+  
+
+indiv_rts <- cbind(unique(auditory_part_id), random_ssl_rt_slope, random_tsl_rt_slope, structured_ssl_rt_slope, structured_tsl_rt_slope)
 
 
 
