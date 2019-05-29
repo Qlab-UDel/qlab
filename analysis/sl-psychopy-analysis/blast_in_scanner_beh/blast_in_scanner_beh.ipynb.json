@@ -1,0 +1,409 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# BLAST in-scanner behavioral analysis"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Violet Kozloff"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Last updated: May 29th 2019 "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This script analyzes structured and random blocks across four tasks: auditory (speech and tones) and visual (letters and images)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "It measures the mean reaction time and the slope of the reaction time for each participant for each condition."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 1. Extract and prepare data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Prepare environment"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Install packages and load libraries"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Updating HTML index of packages in '.Library'\n",
+      "Making 'packages.html' ... done\n",
+      "Updating HTML index of packages in '.Library'\n",
+      "Making 'packages.html' ... done\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Install packages\n",
+    "install.packages(\"dplyr\")\n",
+    "install.packages(\"reshape\")\n",
+    "\n",
+    "# Load libraries\n",
+    "library (\"plyr\")\n",
+    "library(\"reshape\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Set working directory"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "setwd(\"/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data\")\n",
+    "# Alternate working directory if the above throws error (depends on how NAS is mounted)\n",
+    "# setwd(\"/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Remove objects in environment"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rm(list=ls())\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Extract auditory data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Extract relevant columns of auditory data\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "# List files\n",
+    "auditory_files <- list.files(pattern=glob2rx(\"*auditory_*.csv\"))\n",
+    "\n",
+    "# Store relevant data\n",
+    "auditory_data <- NULL \n",
+    "\n",
+    "# Extract only the relevant columns\n",
+    "for (file in auditory_files) {\n",
+    "  current_file <- read.csv(file)\n",
+    "  # Check that the participant responded to both types of stimuli\n",
+    "  if (length((current_file$sound_block_key_resp.rt))&(length(current_file$tone_block_key_resp.rt)>0)){\n",
+    "    value <- c(\"soundFile\", \"fam_trials_loop.thisTrialN\", \"trials_1.thisTrialN\", \"condition\", \"sound_block_key_resp.rt\",\"tone_block_key_resp.rt\",\"starget\",\"Run\",\"PartID\",\"ttarget\",\"expName\")\n",
+    "    # If they did not respond to syllables, only extract tone response times\n",
+    "    } else if (length(current_file$tone_block_key_resp.rt)>0){\n",
+    "    value <- c(\"soundFile\", \"fam_trials_loop.thisTrialN\", \"trials_1.thisTrialN\", \"condition\",\"tone_block_key_resp.rt\",\"starget\",\"Run\",\"PartID\",\"ttarget\",\"expName\")\n",
+    "    # If they did not respond to tones, only extract syllable response times\n",
+    "    } else if (length(current_file$sound_block_key_resp.rt)>0){\n",
+    "      value <- c(\"soundFile\", \"fam_trials_loop.thisTrialN\", \"trials_1.thisTrialN\", \"condition\",\"sound_block_key_resp.rt\",\"starget\",\"Run\",\"PartID\",\"ttarget\",\"expName\")\n",
+    "    # If they didn't respond to either stimulus type, only extract information about the stimuli presented  \n",
+    "    } else {\n",
+    "        value <- c(\"soundFile\", \"fam_trials_loop.thisTrialN\", \"trials_1.thisTrialN\", \"condition\",\"starget\",\"Run\",\"PartID\",\"ttarget\",\"expName\")}\n",
+    "  current_data <- current_file[value]\n",
+    "  current_data <- \n",
+    "  # Combine all auditory data into a single data frame\n",
+    "  auditory_data <- rbind.fill (auditory_data,current_data)\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Check for extra or incorrect  auditory targets"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Check for extra or incorrect syllable targets\n",
+    "if (!all(levels(unique(auditory_data$starget))==c(\"bi\",\"du\",\"pu\",\"da\"))){\n",
+    "  print(paste(\"Incorrect syllable targets identified. The syllable targets should be bi, du, pu, and da. Please check your data's syllable targets in the window labeled unique(auditory_data$starget).\"))\n",
+    "  stop(View(unique(auditory_data$starget)))\n",
+    "  }\n",
+    "\n",
+    "# Check for extra or incorrect tone targets\n",
+    "if (!all(levels(unique(auditory_data$ttarget))==c(\"1C\",\"2C\"))){\n",
+    "  print(\"Incorrect tone targets identified. The tone targets should be 1C and 2C. Please check your data's syllable targets in the window labeled unique(auditory_data$ttarget).\")\n",
+    "  stop(View(unique(auditory_data$ttarget)))\n",
+    "}  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Prepare auditory data for use"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Convert targets and soundFile from factors to atomic variables \n",
+    "auditory_data$ttarget<-as.character(auditory_data$ttarget)\n",
+    "auditory_data$soundFile<-as.character(auditory_data$soundFile)\n",
+    "auditory_data$starget<-as.character(auditory_data$starget)\n",
+    "\n",
+    "# Match name of image with name of target in auditory files by removing extension from end of sound_file\n",
+    "auditory_data$soundFile <- gsub (\".wav\", \"\", auditory_data$soundFile, ignore.case=TRUE)\n",
+    "\n",
+    "# Rename columns to standard format\n",
+    "names(auditory_data) <- c('stimulus','syllable_trial', 'tone_trial', 'condition','syllable_keypress','tone_keypress','syllable_target','run','part_id','tone_target','modality')\n",
+    "\n",
+    "# Combine all responses into one column\n",
+    "auditory_data$keypress <- (paste(auditory_data$tone_keypress, auditory_data$syllable_keypress))\n",
+    "auditory_data$keypress <- gsub(\"NA NA\", NA, auditory_data$keypress)\n",
+    "auditory_data$keypress <- gsub(\" NA\", \"\", auditory_data$keypress)\n",
+    "auditory_data$keypress <- gsub(\"NA \", \"\", auditory_data$keypress)\n",
+    "\n",
+    "# Explicitly indicate conditions\n",
+    "auditory_data$condition <- gsub (\"R\", \"random\", auditory_data$condition, ignore.case=TRUE)\n",
+    "auditory_data$condition <- gsub (\"S\", \"structured\", auditory_data$condition, ignore.case=TRUE)\n",
+    "auditory_data$condition <- gsub (\"B\", \"blank\", auditory_data$condition, ignore.case=TRUE)\n",
+    "\n",
+    "# Explicitly state the task\n",
+    "auditory_data$task <- NA\n",
+    "auditory_data[which(auditory_data$stimulus %in% c(\"1A\",\"1B\",\"1C\",\"2A\",\"2B\",\"2C\",\"3A\",\"3B\",\"3C\",\"4A\",\"4B\",\"4C\")),]$task <- \"tone\"\n",
+    "auditory_data[which(auditory_data$stimulus %in% c(\"pi\",\"tu\",\"bi\",\"di\",\"ba\",\"pu\",\"bu\",\"pa\",\"da\",\"ta\",\"ti\",\"du\"  )),]$task <- \"syllable\"\n",
+    "\n",
+    "# Standardize all strings into lowercase\n",
+    "auditory_data$stimulus <- tolower(auditory_data$stimulus)\n",
+    "auditory_data$tone_target <- tolower(auditory_data$tone_target)\n",
+    "\n",
+    "# In the design, blank blocks were mistakenly indexed as trials 95 and on of the preceding block. Remove these indices.\n",
+    "auditory_data$tone_trial[which(auditory_data$tone_trial>95)] <- NA\n",
+    "auditory_data$syllable_trial[which(auditory_data$syllable_trial>95)] <- NA\n",
+    "\n",
+    "# Index each trial within a block. Exclude trial numbers for blank blocks. Combine all trial data into one column.\n",
+    "auditory_data$stimulus_trial <- (paste(auditory_data$tone_trial, auditory_data$syllable_trial))\n",
+    "auditory_data$stimulus_trial <- gsub(\"NA NA\", NA, auditory_data$stimulus_trial)\n",
+    "auditory_data$stimulus_trial <- gsub(\" NA\", \"\", auditory_data$stimulus_trial)\n",
+    "auditory_data$stimulus_trial <- gsub(\"NA \", \"\", auditory_data$stimulus_trial)\n",
+    "\n",
+    "# Remove extra columns used for old keypresses\n",
+    "auditory_data$syllable_keypress <- NULL\n",
+    "auditory_data$tone_keypress <- NULL\n",
+    "auditory_data$syllable_trial <- NULL\n",
+    "auditory_data$tone_trial <- NULL\n",
+    "\n",
+    "# Convert keypress times to milliseconds\n",
+    "auditory_data$keypress <- as.numeric(auditory_data$keypress)*1000\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Extract visual data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Extract relevant columns of visual data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# List files\n",
+    "visual_files <- list.files(pattern=glob2rx(\"*visual_*.csv\"))\n",
+    "\n",
+    "# Store relevant data\n",
+    "visual_data <- NULL \n",
+    "\n",
+    "# Extract only the relevant columns\n",
+    "for (file in visual_files) {\n",
+    "  current_file <- read.csv(file)\n",
+    "  # Override default where \"F\" is read in as \"FALSE\"\n",
+    "  current_file$ltarget <- gsub(FALSE, \"F_not_false\", current_file$ltarget)\n",
+    "  # Extract only relevant columns\n",
+    "  value <- c(\"image\", \"v_block_trials.thisTrialN\", \"l_block_trial_loop.thisTrialN\", \"condition\",\"l_block_trial_key_resp.rt\",\"v_block_trial_key_resp.rt\",\"ltarget\",\"Run\",\"PartID\",\"vtarget\",\"expName\")\n",
+    "  current_data <- current_file[value]\n",
+    "  # Combine all visual data into a single data frame\n",
+    "  visual_data <- rbind.fill (visual_data,current_data)\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Check for extra or incorrect visual targets"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Return \"F_not_false\" values to \"F\"\n",
+    "visual_data$ltarget <- tolower(as.character(gsub (\"F_not_false\", \"F\", visual_data$ltarget, ignore.case=TRUE)))\n",
+    "\n",
+    "# Check for extra or incorrect letter targets\n",
+    "if (!all(unique(visual_data$ltarget)==c(\"f\", \"g\", \"h\", \"b\"))){\n",
+    "  print(paste(\"Incorrect letter targets identified. The letter targets should be f, g, h, and b. Please check your data's letter targets in the window labeled unique(visual_data$ltarget).\"))\n",
+    "  stop(View(unique(visual_data$ltarget)))\n",
+    "}\n",
+    "\n",
+    "# Check for extra or incorrect letter targets\n",
+    "if (!all(unique(visual_data$vtarget)==c(3,6,15,18,24,21))){\n",
+    "  print(paste(\"Incorrect image targets identified. The image targets should be 3, 6, 15, 18, 24, and 21. Please check your data's image targets in the window labeled unique(visual_data$vtarget).\"))\n",
+    "  stop(View(unique(visual_data$vtarget)))\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Prepare visual data for use"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Remove \"Alien\" from beginning of vtarget names\n",
+    "visual_data$image <- gsub (\"Alien\", \"\", visual_data$image, ignore.case=TRUE)\n",
+    "\n",
+    "# Remove extensions from end of end of target names\n",
+    "visual_data$image <- gsub (\".bmp\", \"\", visual_data$image, ignore.case=TRUE)\n",
+    "visual_data$image <- gsub (\".png\", \"\", visual_data$image, ignore.case=TRUE)\n",
+    "\n",
+    "# Rename columns to standard format\n",
+    "names(visual_data) <- c('stimulus', 'image_trial', 'letter_trial', 'condition','letter_keypress','image_keypress','letter_target','run','part_id','image_target','modality')\n",
+    "\n",
+    "# Combine all responses into one column\n",
+    "visual_data$keypress <- (paste(visual_data$image_keypress, visual_data$letter_keypress))\n",
+    "visual_data$keypress <- gsub(\"NA NA\", NA, visual_data$keypress)\n",
+    "visual_data$keypress <- gsub(\" NA\", \"\", visual_data$keypress)\n",
+    "visual_data$keypress <- gsub(\"NA \", \"\", visual_data$keypress)\n",
+    "visual_data$image_keypress <- NULL\n",
+    "visual_data$letter_keypress <- NULL\n",
+    "\n",
+    "# Explicitly indicate conditions\n",
+    "visual_data$condition <- gsub (\"R\", \"random\", visual_data$condition, ignore.case=TRUE)\n",
+    "visual_data$condition <- gsub (\"S\", \"structured\", visual_data$condition, ignore.case=TRUE)\n",
+    "visual_data$condition <- gsub (\"B\", \"blank\", visual_data$condition, ignore.case=TRUE)\n",
+    "\n",
+    "# Explicitly state the task\n",
+    "visual_data$task <- NA\n",
+    "visual_data[which(visual_data$stimulus %in% c(\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\",\"10\", \"11\", \"12\", \"13\", \"14\", \"15\", \"16\", \"17\", \"18\", \"19\", \"20\", \"21\", \"22\", \"23\", \"24\")),]$task <- \"image\"\n",
+    "visual_data[which(visual_data$stimulus %in% c(\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\", \"J\", \"K\", \"L\", \"M\")),]$task <- \"letter\"\n",
+    " \n",
+    "# Standardize all strings into lowercase\n",
+    "visual_data$stimulus <- tolower(visual_data$stimulus)\n",
+    "visual_data$letter_target <- tolower(visual_data$letter_target)\n",
+    "visual_data$letter_target <- gsub(\"f_not_false\", \"f\", visual_data$letter_target)\n",
+    "\n",
+    "# Blank blocks were mistakenly indexed as trials 48 and on of the preceding block. Remove these indices.\n",
+    "visual_data$image_trial[which(visual_data$image_trial>48)] <- NA\n",
+    "visual_data$letter_trial[which(visual_data$letter_trial>48)] <- NA\n",
+    "\n",
+    "# Index each trial within a block. Exclude trial numbers for blank blocks. Combine all trial data into one column.\n",
+    "visual_data$stimulus_trial <- (paste(visual_data$image_trial, visual_data$letter_trial))\n",
+    "visual_data$stimulus_trial <- gsub(\"NA NA\", NA, visual_data$stimulus_trial)\n",
+    "visual_data$stimulus_trial <- gsub(\" NA\", \"\", visual_data$stimulus_trial)\n",
+    "visual_data$stimulus_trial <- gsub(\"NA \", \"\", visual_data$stimulus_trial)\n",
+    "visual_data$letter_trial <- NULL\n",
+    "visual_data$image_trial <- NULL\n",
+    "\n",
+    "# Convert keypress times to milliseconds\n",
+    "visual_data$keypress <- as.numeric(visual_data$keypress)*1000"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "R",
+   "language": "R",
+   "name": "ir"
+  },
+  "language_info": {
+   "codemirror_mode": "r",
+   "file_extension": ".r",
+   "mimetype": "text/x-r-source",
+   "name": "R",
+   "pygments_lexer": "r",
+   "version": "3.5.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

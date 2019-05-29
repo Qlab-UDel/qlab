@@ -1,15 +1,10 @@
 #  ****************************************************************************
 #  BLAST IN-SCANNER BEHAVIORAL ANALYSIS
 #  Violet Kozloff
-#  Last updated: May 20th 2018 
+#  Last updated: May 29th 2019 
 #  This script analyzes structured and random blocks across four tasks: auditory (speech and tones) and visual (letters and images).
 #  It measures the mean reaction time and the slope of the reaction time for each participant for each condition.
-#  It also runs an ANOVA to compare reaction time slope between tasks, modalities, and domains.
 #  ****************************************************************************
-
-### TO DO: Figure out why discrepancy between numbers of targets seen
-
-
 
 # ******************** I. EXTRACT AND PREPARE DATA *************************
 
@@ -21,7 +16,9 @@ library (plyr)
 library("reshape")
 
 # Set working directory
-setwd("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data")
+setwd("/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data")
+# Alternate working directory if the above throws error (depends on how NAS is mounted)
+# setwd("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data")
 
 # Remove objects in environment
 rm(list=ls())
@@ -30,9 +27,10 @@ rm(list=ls())
 # Extract auditory data ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 auditory_files <- list.files(pattern=glob2rx("*auditory_*.csv"))
-auditory_data <- NULL 
 
 # Extract only the relevant columns of auditory data
+auditory_data <- NULL 
+
 for (file in auditory_files) {
   current_file <- read.csv(file)
   # Check that the participant responded to both types of stimuli
@@ -48,24 +46,34 @@ for (file in auditory_files) {
     } else {
         value <- c("soundFile", "fam_trials_loop.thisTrialN", "trials_1.thisTrialN", "condition","starget","Run","PartID","ttarget","expName")}
   current_data <- current_file[value]
-  current_data <- 
   # Combine all auditory data into a single data frame
   auditory_data <- rbind.fill (auditory_data,current_data)
 }
 
+# Check for extra or incorrect targets----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# TO DO: Alert user if they don't have levels(unique(auditory_data$starget))==c("bi","du","pu","da") or levels(unique(auditory_data$ttarget))==c("1C","2C")
+# Check for extra or incorrect syllable targets
+if (!all(levels(unique(auditory_data$starget))==c("bi","du","pu","da"))){
+  print(paste("Incorrect syllable targets identified. The syllable targets should be bi, du, pu, and da. Please check your data's syllable targets in the window labeled unique(auditory_data$starget)."))
+  stop(View(unique(auditory_data$starget)))
+  }
 
+# Check for extra or incorrect tone targets
+if (!all(levels(unique(auditory_data$ttarget))==c("1C","2C"))){
+  print("Incorrect tone targets identified. The tone targets should be 1C and 2C. Please check your data's syllable targets in the window labeled unique(auditory_data$ttarget).")
+  stop(View(unique(auditory_data$ttarget)))
+}   
+       
 
 # Prepare auditory data for use----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Match name of image with name of target in auditory files by removing extension from end of sound_file
-auditory_data$soundFile <- gsub (".wav", "", auditory_data$soundFile, ignore.case=TRUE)
 
 # Convert targets and soundFile from factors to atomic variables 
 auditory_data$ttarget<-as.character(auditory_data$ttarget)
 auditory_data$soundFile<-as.character(auditory_data$soundFile)
 auditory_data$starget<-as.character(auditory_data$starget)
+
+# Match name of image with name of target in auditory files by removing extension from end of sound_file
+auditory_data$soundFile <- gsub (".wav", "", auditory_data$soundFile, ignore.case=TRUE)
 
 # Rename columns to standard format
 names(auditory_data) <- c('stimulus','syllable_trial', 'tone_trial', 'condition','syllable_keypress','tone_keypress','syllable_target','run','part_id','tone_target','modality')
@@ -75,8 +83,6 @@ auditory_data$keypress <- (paste(auditory_data$tone_keypress, auditory_data$syll
 auditory_data$keypress <- gsub("NA NA", NA, auditory_data$keypress)
 auditory_data$keypress <- gsub(" NA", "", auditory_data$keypress)
 auditory_data$keypress <- gsub("NA ", "", auditory_data$keypress)
-auditory_data$syllable_keypress <- NULL
-auditory_data$tone_keypress <- NULL
 
 # Explicitly indicate conditions
 auditory_data$condition <- gsub ("R", "random", auditory_data$condition, ignore.case=TRUE)
@@ -92,7 +98,7 @@ auditory_data[which(auditory_data$stimulus %in% c("pi","tu","bi","di","ba","pu",
 auditory_data$stimulus <- tolower(auditory_data$stimulus)
 auditory_data$tone_target <- tolower(auditory_data$tone_target)
 
-# Blank blocks were mistakenly indexed as trials 95 and on of the preceding block. Remove these indices.
+# In the design, blank blocks were mistakenly indexed as trials 95 and on of the preceding block. Remove these indices.
 auditory_data$tone_trial[which(auditory_data$tone_trial>95)] <- NA
 auditory_data$syllable_trial[which(auditory_data$syllable_trial>95)] <- NA
 
@@ -101,6 +107,10 @@ auditory_data$stimulus_trial <- (paste(auditory_data$tone_trial, auditory_data$s
 auditory_data$stimulus_trial <- gsub("NA NA", NA, auditory_data$stimulus_trial)
 auditory_data$stimulus_trial <- gsub(" NA", "", auditory_data$stimulus_trial)
 auditory_data$stimulus_trial <- gsub("NA ", "", auditory_data$stimulus_trial)
+
+# Remove old columns
+auditory_data$syllable_keypress <- NULL
+auditory_data$tone_keypress <- NULL
 auditory_data$syllable_trial <- NULL
 auditory_data$tone_trial <- NULL
 
@@ -110,7 +120,11 @@ auditory_data$keypress <- as.numeric(auditory_data$keypress)*1000
 
 
 # Extract visual data ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# List files
 visual_files <- list.files(pattern=glob2rx("*visual_*.csv"))
+
+# Store relevant data
 visual_data <- NULL 
 
 # Extract only the relevant columns
@@ -125,6 +139,24 @@ for (file in visual_files) {
   # Combine all visual data into a single data frame
   visual_data <- rbind.fill (visual_data,current_data)
 }
+
+# Check for extra or incorrect targets 
+
+# Return "F_not_false" values to "F"
+visual_data$ltarget <- tolower(as.character(gsub ("F_not_false", "F", visual_data$ltarget, ignore.case=TRUE)))
+
+# Check for extra or incorrect letter targets
+if (!all(unique(visual_data$ltarget)==c("f", "g", "h", "b"))){
+  print(paste("Incorrect letter targets identified. The letter targets should be f, g, h, and b. Please check your data's letter targets in the window labeled unique(visual_data$ltarget)."))
+  stop(View(unique(visual_data$ltarget)))
+}
+
+# Check for extra or incorrect letter targets
+if (!all(unique(visual_data$vtarget)==c(3,6,15,18,24,21))){
+  print(paste("Incorrect image targets identified. The image targets should be 3, 6, 15, 18, 24, and 21. Please check your data's image targets in the window labeled unique(visual_data$vtarget)."))
+  stop(View(unique(visual_data$vtarget)))
+}
+
 
 
 # Prepare visual data for use  ----------------------------------------------------------------------------------------
@@ -355,61 +387,7 @@ for(id in (unique(auditory_part_id))){
 }
   
 
-indiv_rts <- cbind(unique(auditory_part_id), random_ssl_rt_slope, random_tsl_rt_slope, structured_ssl_rt_slope, structured_tsl_rt_slope)
-
-
-
-# # # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
-# 
-# # Calculate mean rt and rt_slope  -----------------------------------------------------------------------------------------------------
-# 
-# # Define variables
-# auditory_mean_rt <- NULL
-# auditory_random_rt_slope <- NULL
-# auditory_part_id <- NULL
-# auditory_domain <- NULL
-# auditory_modality <- NULL
-# auditory_type <- NULL
-# auditory_task<- NULL
-# 
-# # Extract the mean response time and rt slope for each participant
-# for(id in (all_ids)){
-#   this_id<-exp_phase[which(exp_phase$part_id==id),]
-#   mean_rt<-append(mean_rt,round(mean(exp_targets$reaction_time[exp_targets$id==id],na.rm=TRUE),digits=3))
-#   # Find this participant's number of hits, misses, correct rejections, and false alarms
-#   this_hit <- length(this_id[which((this_id$type=="hit_before"|this_id$type=="hit_during"|this_id$type=="hit_after") & this_id$part_id==id),1])
-#   # If there are enough hits to find RT slope, calculate it
-#   if (this_hit>1){rt_slope <-append(rt_slope,round(summary(lm(exp_targets$reaction_time[exp_targets$id==id]~exp_targets$targ_index[exp_targets$id==id]))$coefficient[2,1],digits=3))}
-#   # Otherwise, record that there are too few
-#   else {rt_slope <- append(rt_slope, "too few hits")}
-#   this_miss <- length(this_id[which((this_id$type=="miss") & this_id$part_id==id),1])
-#   this_corr_rej <- length(this_id[which((this_id$type=="corr_rej") & this_id$part_id==id),1])
-#   this_false_alarm <- length(this_id[which((this_id$type=="false_alarm") & this_id$part_id==id),1])
-#   # TO DO: Add to SSL, LSL, VSL
-#   total_disc <- append (total_disc, (this_hit+this_miss+this_corr_rej+this_false_alarm))
-#   # Store these values for all participants
-#   hits <- append (hits, this_hit)
-#   misses <- append (misses, this_miss)
-#   corr_rej<-append(corr_rej, this_corr_rej)
-#   false_alarms <- append (false_alarms, this_false_alarm)
-#   # Find the d-prime
-#   this_d_prime <- qnorm(this_hit/(this_hit+this_miss))-qnorm(this_false_alarm/(this_false_alarm+this_corr_rej))
-#   d_prime <- append (d_prime, this_d_prime)
-#   # Find the rates of each
-#   this_distractors <- this_false_alarm+this_corr_rej
-#   distractors <- append (distractors, this_distractors)
-#   this_targets <- this_hit+this_miss
-#   targets <- append (targets, this_targets)
-#   hit_rate <- append(hit_rate, round(this_hit/this_targets, digits=3))
-#   miss_rate <- append (miss_rate, round(this_miss/this_targets, digits = 3))
-#   false_alarm_rate <- append(false_alarm_rate, round(this_false_alarm/(this_distractors), digits = 3))
-#   corr_rej_rate <-append(corr_rej_rate, round(this_corr_rej/(this_distractors), digits = 3))
-#   this_resp_acc <- round((this_corr_rej+this_hit)/(this_distractors+48), digits=3)
-#   resp_acc <- append(resp_acc, this_resp_acc)
-# }
-# 
-# indiv_rts <- cbind(all_ids, mean_rt, rt_slope, d_prime, this_targets, hits, hit_rate, misses, miss_rate, corr_rej, corr_rej_rate, false_alarms, false_alarm_rate, distractors, total_disc, resp_acc, total_stimuli)
-
+indiv_auditory_rts <- cbind(unique(auditory_part_id), random_ssl_rt_slope, random_tsl_rt_slope, structured_ssl_rt_slope, structured_tsl_rt_slope)
 
 
 # TO DO: Add this to both auditory and visual
