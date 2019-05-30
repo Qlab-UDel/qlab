@@ -58,7 +58,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 59,
+   "execution_count": 1,
    "metadata": {
     "scrolled": true
    },
@@ -70,7 +70,14 @@
       "Updating HTML index of packages in '.Library'\n",
       "Making 'packages.html' ... done\n",
       "Updating HTML index of packages in '.Library'\n",
-      "Making 'packages.html' ... done\n"
+      "Making 'packages.html' ... done\n",
+      "\n",
+      "Attaching package: ‘reshape’\n",
+      "\n",
+      "The following objects are masked from ‘package:plyr’:\n",
+      "\n",
+      "    rename, round_any\n",
+      "\n"
      ]
     }
    ],
@@ -93,13 +100,19 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 31,
+   "execution_count": 21,
    "metadata": {},
    "outputs": [],
    "source": [
-    "setwd(\"/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data\")\n",
+    "# Set working directory\n",
+    "setwd(\"/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data\")\n",
     "# Alternate working directory if the above throws error (depends on how NAS is mounted)\n",
-    "# setwd(\"/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data\")"
+    "#setwd(\"/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data\")\n",
+    "\n",
+    "# Set output path\n",
+    "output_path <- (\"/Volumes/data/projects/blast/data_summaries/blast_in_lab_adult/behavioral/\")\n",
+    "# Alternate working directory if the above throws error (depends on how NAS is mounted)\n",
+    "# output_path <- (\"/Volumes/data-1/projects/blast/data_summaries/blast_in_lab_adult/behavioral/\")"
    ]
   },
   {
@@ -111,18 +124,18 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 33,
+   "execution_count": 3,
    "metadata": {},
    "outputs": [],
    "source": [
-    "rm(list=ls())\n"
+    "rm(list=ls())"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Extract auditory data"
+    "### Extract and prepare auditory data"
    ]
   },
   {
@@ -134,7 +147,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 66,
+   "execution_count": 4,
    "metadata": {
     "scrolled": true
    },
@@ -177,8 +190,10 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 55,
-   "metadata": {},
+   "execution_count": 5,
+   "metadata": {
+    "scrolled": true
+   },
    "outputs": [],
    "source": [
     "# Check for extra or incorrect syllable targets\n",
@@ -203,7 +218,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 62,
+   "execution_count": 6,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -255,14 +270,14 @@
     "auditory_data$tone_trial <- NULL\n",
     "\n",
     "# Convert keypress times to milliseconds\n",
-    "auditory_data$keypress <- as.numeric(auditory_data$keypress)*1000\n"
+    "auditory_data$keypress <- as.numeric(auditory_data$keypress)*1000"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Extract visual data"
+    "### Extract and prepare visual data"
    ]
   },
   {
@@ -274,7 +289,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -306,7 +321,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -335,7 +350,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -387,6 +402,698 @@
     "# Convert keypress times to milliseconds\n",
     "visual_data$keypress <- as.numeric(visual_data$keypress)*1000"
    ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2. Find Auditory Reaction Time Means and Slopes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Identify response times to target stimuli. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Isolate target rows"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Identify the rows when the target was presented\n",
+    "auditory_targets <- which((auditory_data$stimulus==auditory_data$tone_target) | (auditory_data$stimulus==auditory_data$syllable_target))\n",
+    "\n",
+    "# Initialize variables to track participant ID, condition, modality, task, and reaction time (RT)\n",
+    "auditory_part_id <- NULL\n",
+    "auditory_condition <- NULL\n",
+    "auditory_modality <- NULL\n",
+    "auditory_task <- NULL\n",
+    "auditory_rt <- NULL\n",
+    "\n",
+    "# Track the cases for calculating each type of reaction time\n",
+    "\n",
+    "# Case 1: The participant responds during the target, which is the first trial in a block \n",
+    "auditory_case1 <- NULL\n",
+    "# Case 2: The participant responds to the trial directly following the target, which is the first trial in a block \n",
+    "auditory_case2 <- NULL\n",
+    "# Case 3: Anticipation of target, participant responded to stimulus directly preceding target\n",
+    "auditory_case3 <- NULL\n",
+    "# Case 4: Response to target during the target trial\n",
+    "auditory_case4 <- NULL\n",
+    "# Case 5: Delay from target, participant responded to stimulus directly following target\n",
+    "auditory_case5 <- NULL\n",
+    "# Case 6: Missed target, record NA reaction time\n",
+    "auditory_case6 <- NULL"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Isolate participants' response times."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Include rows when the participant responded to stimuli adjacent to the target \n",
+    "# (i.e. any time that the participant pressed the button within one stimulus before or after the target)\n",
+    "for (i in auditory_targets) {\n",
+    "  \n",
+    "  # Isolate the ID number, auditory_condition, auditory_modality, and auditory_task\n",
+    "  auditory_part_id <- append(auditory_part_id, paste(auditory_data[i,]$part_id))\n",
+    "  auditory_condition <- append (auditory_condition, paste(auditory_data[i,]$condition))\n",
+    "  auditory_modality <- append (auditory_modality, paste(auditory_data[i,]$modality))\n",
+    "  auditory_task <- append (auditory_task, paste(auditory_data[i,]$task))\n",
+    "  \n",
+    "  # Check if you are looking at the first trial If so, it does not have a preceeding target\n",
+    "  # TO DO: Check this auditory_condition\n",
+    "  if (auditory_data[i,]$stimulus_trial==0 & !is.na(auditory_data[1,]$keypress)){ \n",
+    "    # Count the response time from the target stimulus (NA)\n",
+    "   auditory_rt <- append (auditory_rt, auditory_data[i,][,\"keypress\"])\n",
+    "   auditory_case1 <- append (auditory_case1, i)\n",
+    "\n",
+    "  # If it's the first trial and there was no target keypress, count the response time from the following stimulus\n",
+    "  } else if (auditory_data[i,]$stimulus_trial==0) {\n",
+    "   # TO DO: test this auditory_condition\n",
+    "    auditory_rt <- append (auditory_rt, 480+(auditory_data[i+1,][,\"keypress\"]))\n",
+    "    auditory_case2 <- append (auditory_case2, i)\n",
+    "  }  \n",
+    "  \n",
+    "  # Otherwise, if the participant responded during the stimulus preceding the target, and the preceding stimulus was not also a target\n",
+    "  else if (!is.na(auditory_data[i-1,] [,\"keypress\"]) & ((auditory_data[i-1,][,\"tone_target\"] != (auditory_data[i-1,][,\"stimulus\"])))){\n",
+    "    # Count their response time as how much sooner they responded than when the stimulus was presented (anticipation)\n",
+    "    auditory_rt <- append(auditory_rt, (auditory_data[i-1,][,\"keypress\"]-480))\n",
+    "    auditory_case3 <- append (auditory_case3, i)\n",
+    "  }\n",
+    "  \n",
+    "  # Otherwise, if the participant responded during the target\n",
+    "  else if (!is.na(auditory_data[i,] [,\"keypress\"])){\n",
+    "    # Count their response time as how much sooner they responded than when the stimulus was presented\n",
+    "    auditory_rt <- append(auditory_rt, (auditory_data[i,][,\"keypress\"]))\n",
+    "    auditory_case4 <- append (auditory_case4, i)\n",
+    "  }\n",
+    "  \n",
+    "  # Otherwise, if the participant responded after the target\n",
+    "  else if (!is.na(auditory_data[i+1,]$keypress > 0) & (auditory_data[i+1,]$keypress > 0)){\n",
+    "    # Count their response time as how much later they responded than when the stimulus was presented\n",
+    "    auditory_rt <- append(auditory_rt, (480+auditory_data[i+1,][,\"keypress\"]))\n",
+    "    auditory_case5 <- append (auditory_case5, i)\n",
+    "    \n",
+    "  # Otherwise, record the miss with a reaction time of NA\n",
+    "    } else {\n",
+    "      auditory_rt <- append(auditory_rt, NA)\n",
+    "      auditory_case6 <- append (auditory_case6, i)\n",
+    "    }\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Combine the reaction time data into one dataframe. Note that auditory_case_1 through auditory_case_6 are excluded. These are for hand-testing the logic of the above loop only"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# exp_auditory_targets now contains all targets from the exposure phase and their true auditory_rts (includes any response within 480 ms of a target)\n",
+    "exp_auditory_targets <- data.frame(auditory_part_id, auditory_condition, auditory_modality, auditory_task, auditory_rt)\n",
+    "\n",
+    "# Find all participants with auditory data\n",
+    "all_auditory_ids <- unique(as.character(auditory_data$part_id))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Note: This code does not currently account for alternating auditory targets and keypresses\n",
+    "\n",
+    "Example 1:\n",
+    "- Trial 1: target, no keypress\n",
+    "- Trial 2: non-target stimulus, keypress\n",
+    "- Trial 3: target, no keypress\n",
+    "\n",
+    "Example 2:\n",
+    "- Trial 1: target, no keypress\n",
+    "- Trial 2: non-target stimulus, keypress\n",
+    "- Trial 3: target, no keypress\n",
+    "- Trial 4: non-target stimulus, keypress\n",
+    "\n",
+    "\n",
+    "A future modification should be made to address these cases, with direction from Zhenghan Qi as to whether the alternating keypresses are anticipations or delays. No modifications need to be made to the visual reaction time calculations."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Find the number of RTs for each participant"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Find all auditory IDs\n",
+    "all_auditory_ids <- unique(as.character(auditory_data$part_id))\n",
+    "\n",
+    "# Initialize variables\n",
+    "total_auditory_rts <- NULL\n",
+    "total_syllable_rts <- NULL\n",
+    "total_tone_rts <- NULL\n",
+    "\n",
+    "# Check RTs\n",
+    "for(check_id in all_auditory_ids){\n",
+    "  total_tone_rts <- append(total_tone_rts, length(which(exp_auditory_targets$auditory_part_id==check_id & exp_auditory_targets$auditory_task==\"tone\")))\n",
+    "  total_syllable_rts <- append(total_syllable_rts, length(which(exp_auditory_targets$auditory_part_id==check_id & exp_auditory_targets$auditory_task==\"syllable\")))\n",
+    "  total_auditory_rts <- append(total_auditory_rts, length(which(exp_auditory_targets$auditory_part_id==check_id)))\n",
+    "  }\n",
+    "auditory_rt_check <- (cbind(all_auditory_ids, total_tone_rts, total_syllable_rts, total_auditory_rts))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Internal check: make sure that all RTs are valid, ie. fall within 1 SOA of the stimulus. Alert user if not."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Alert the user of invalid RTs\n",
+    "check_rts_1 <- exp_auditory_targets[which(exp_auditory_targets$auditory_rt > 960),]\n",
+    "check_rts_2 <- exp_auditory_targets[which(exp_auditory_targets$auditory_rt < -480),]\n",
+    "if(length(check_rts_1[,1]) | length(check_rts_2[,1]) !=0){\n",
+    "  # Create error message alerting user\n",
+    "  print(\"One or more participants has an invalid reaction time. Please check the reaction time calculations above.\")\n",
+    "  # Open a new window showing the user the RTs for each participant\n",
+    "  View(exp_auditory_targets)\n",
+    "  stop()}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Calculate auditory mean reaction times"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# mean reaction times\n",
+    "exp_auditory_mean_rts<- cast(exp_auditory_targets, auditory_part_id~auditory_condition+auditory_task, value = \"auditory_rt\", fun.aggregate = mean, na.rm=TRUE)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Calculate auditory reaction time slopes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Reindex the targets by type (random syllable, structured tone, etc) for each participant"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Initialize column to track numbers of targets\n",
+    "exp_auditory_targets$index <- NA\n",
+    "\n",
+    "# Loop trhough targets and index them\n",
+    "for (i in unique(exp_auditory_targets$auditory_part_id)){ \n",
+    "  # Identify all rows with SSL value\n",
+    "  total_structured_ssl <- which(exp_auditory_targets$auditory_part_id==i & exp_auditory_targets$auditory_task==\"syllable\" & exp_auditory_targets$auditory_condition == \"structured\")\n",
+    "  # number them from 1 to the total number of ssl\n",
+    "  k <- 1\n",
+    "  for (j in total_structured_ssl){\n",
+    "    exp_auditory_targets$index[j] <- k\n",
+    "    k <- k+1\n",
+    "  }\n",
+    "  # Identify all rows with SSL value\n",
+    "  total_random_ssl <- which(exp_auditory_targets$auditory_part_id==i & exp_auditory_targets$auditory_task==\"syllable\" & exp_auditory_targets$auditory_condition == \"random\")\n",
+    "  # number them from 1 to the total number of ssl\n",
+    "  k <- 1\n",
+    "  for (j in total_random_ssl){\n",
+    "    exp_auditory_targets$index[j] <- k\n",
+    "    k <- k+1\n",
+    "  }\n",
+    "  # Identify all rows with tsl value\n",
+    "  total_structured_tsl <- which(exp_auditory_targets$auditory_part_id==i & exp_auditory_targets$auditory_task==\"tone\" & exp_auditory_targets$auditory_condition == \"structured\")\n",
+    "  # number them from 1 to the total number of tsl\n",
+    "  k <- 1\n",
+    "  for (j in total_structured_tsl){\n",
+    "    exp_auditory_targets$index[j] <- k\n",
+    "    k <- k+1\n",
+    "  }\n",
+    "  # Identify all rows with tsl value\n",
+    "  total_random_tsl <- which(exp_auditory_targets$auditory_part_id==i & exp_auditory_targets$auditory_task==\"tone\" & exp_auditory_targets$auditory_condition == \"random\")\n",
+    "  # number them from 1 to the total number of tsl\n",
+    "  k <- 1\n",
+    "  for (j in total_random_tsl){\n",
+    "    exp_auditory_targets$index[j] <- k\n",
+    "    k <- k+1\n",
+    "  }\n",
+    "}\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Calculate reaction time slopes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Initialize variables for RT calculations\n",
+    "random_ssl_rt_slope <- NULL\n",
+    "random_tsl_rt_slope <- NULL\n",
+    "structured_ssl_rt_slope <- NULL\n",
+    "structured_tsl_rt_slope <- NULL\n",
+    "\n",
+    "# Extract the rt slope for each participant\n",
+    "for(id in (unique(auditory_part_id))){\n",
+    "  \n",
+    "  # Separate data by target and condition type (eg. random syllables, structured tones)\n",
+    "  random_ssl <- exp_auditory_targets[which(exp_auditory_targets$auditory_part_id==id & exp_auditory_targets$auditory_task==\"syllable\" & exp_auditory_targets$auditory_condition==\"random\"),]\n",
+    "  random_tsl <- exp_auditory_targets[which(exp_auditory_targets$auditory_part_id==id & exp_auditory_targets$auditory_task==\"tone\" & exp_auditory_targets$auditory_condition==\"random\"),]\n",
+    "  structured_ssl <- exp_auditory_targets[which(exp_auditory_targets$auditory_part_id==id & exp_auditory_targets$auditory_task==\"syllable\" & exp_auditory_targets$auditory_condition==\"structured\"),]\n",
+    "  structured_tsl <- exp_auditory_targets[which(exp_auditory_targets$auditory_part_id==id & exp_auditory_targets$auditory_task==\"tone\" & exp_auditory_targets$auditory_condition==\"structured\"),]\n",
+    "  \n",
+    "  # Calculate slopes for any target type that has two or more data points. If not, mark that there are too few hits (correctly identified targets) to calculate it\n",
+    "  if (!all(is.na(unique(random_ssl$auditory_rt))) & length(unique(random_ssl$auditory_rt))>1){random_ssl_rt_slope <-append(random_ssl_rt_slope,round(summary(lm(random_ssl$auditory_rt~random_ssl$index))$coefficient[2,1],digits=3))}\n",
+    "  else(random_ssl_rt_slope<- append(random_ssl_rt_slope, \"too few hits\"))\n",
+    "  if (!all(is.na(unique(random_tsl$auditory_rt))) & length(unique(random_tsl$auditory_rt))>1){random_tsl_rt_slope<-append(random_tsl_rt_slope,round(summary(lm(random_tsl$auditory_rt~random_tsl$index))$coefficient[2,1],digits=3))}\n",
+    "  else(random_tsl_rt_slope<- append(random_tsl_rt_slope, \"too few hits\"))\n",
+    "  if (!all(is.na(unique(structured_ssl$auditory_rt))) & length(unique(structured_ssl$auditory_rt))>1){structured_ssl_rt_slope <-append(structured_ssl_rt_slope,round(summary(lm(structured_ssl$auditory_rt~structured_ssl$index))$coefficient[2,1],digits=3))}\n",
+    "  else(structured_ssl_rt_slope<- append(structured_ssl_rt_slope, \"too few hits\"))\n",
+    "  if (!all(is.na(unique(structured_tsl$auditory_rt))) & length(unique(structured_tsl$auditory_rt))>1){structured_tsl_rt_slope <-append(structured_tsl_rt_slope,round(summary(lm(structured_tsl$auditory_rt~structured_tsl$index))$coefficient[2,1],digits=3))}\n",
+    "  else(structured_tsl_rt_slope<- append(structured_tsl_rt_slope, \"too few hits\"))\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Bind all auditory output"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Combine auditory RT slopes\n",
+    "auditory_rt_slopes <- cbind(unique(auditory_part_id), random_ssl_rt_slope, random_tsl_rt_slope, structured_ssl_rt_slope, structured_tsl_rt_slope)\n",
+    "\n",
+    "# Combine auditory RT slopes, mean RTs, and total RTs\n",
+    "colnames(auditory_rt_check)[1] <- \"auditory_part_id\"\n",
+    "colnames(exp_auditory_mean_rts) <- c(\"auditory_part_id\", \"random_syllable_mean_rt\", \"random_tone_mean_rt\", \"structured_syllable_mean_rt\", \"structured_tone_mean_rt\")\n",
+    "colnames(auditory_rt_slopes)[1] <- \"auditory_part_id\"\n",
+    "auditory_output <- merge(merge(auditory_rt_check, exp_auditory_mean_rts), auditory_rt_slopes)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Check auditory output. Save results to NAS under data/projects/blast/data_summaries/blast_in_lab_adult/behavioral/ as \"blast_adults_in_scanner_behavioral.csv\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 26 × 12</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>auditory_part_id</th><th scope=col>total_tone_rts</th><th scope=col>total_syllable_rts</th><th scope=col>total_auditory_rts</th><th scope=col>random_syllable_mean_rt</th><th scope=col>random_tone_mean_rt</th><th scope=col>structured_syllable_mean_rt</th><th scope=col>structured_tone_mean_rt</th><th scope=col>random_ssl_rt_slope</th><th scope=col>random_tsl_rt_slope</th><th scope=col>structured_ssl_rt_slope</th><th scope=col>structured_tsl_rt_slope</th></tr>\n",
+       "\t<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>blast_a_001</td><td>95</td><td>96</td><td>191</td><td>692.6959</td><td>322.28187</td><td> 703.7487</td><td>626.76593</td><td>-0.211</td><td>12.229      </td><td>4.545       </td><td>-9.529 </td></tr>\n",
+       "\t<tr><td>blast_a_002</td><td>97</td><td>96</td><td>193</td><td>534.6428</td><td>406.37809</td><td> 544.2369</td><td>462.22364</td><td>1.291 </td><td>-0.924      </td><td>1.955       </td><td>-4.449 </td></tr>\n",
+       "\t<tr><td>blast_a_004</td><td>97</td><td>96</td><td>193</td><td>601.8905</td><td>446.80654</td><td> 736.9722</td><td>311.43438</td><td>1.74  </td><td>6.603       </td><td>-0.553      </td><td>1.406  </td></tr>\n",
+       "\t<tr><td>blast_a_005</td><td>96</td><td>96</td><td>192</td><td>668.8246</td><td>261.55777</td><td> 641.7833</td><td>192.00386</td><td>-0.215</td><td>9.953       </td><td>-0.11       </td><td>10.604 </td></tr>\n",
+       "\t<tr><td>blast_a_006</td><td>96</td><td>96</td><td>192</td><td>603.3038</td><td>328.90459</td><td> 627.6390</td><td>279.68425</td><td>-1.053</td><td>7.354       </td><td>-1.894      </td><td>4.717  </td></tr>\n",
+       "\t<tr><td>blast_a_007</td><td>96</td><td>96</td><td>192</td><td>629.8780</td><td>484.92121</td><td> 630.3589</td><td>583.64111</td><td>2.156 </td><td>-1.854      </td><td>-0.656      </td><td>0.621  </td></tr>\n",
+       "\t<tr><td>blast_a_008</td><td>72</td><td>72</td><td>144</td><td>590.9793</td><td>614.63005</td><td> 591.5702</td><td>671.80899</td><td>1.229 </td><td>-6.864      </td><td>3.362       </td><td>2.155  </td></tr>\n",
+       "\t<tr><td>blast_a_010</td><td>96</td><td>96</td><td>192</td><td>682.6454</td><td>500.28634</td><td> 682.8350</td><td>667.07553</td><td>5.38  </td><td>2.07        </td><td>1.122       </td><td>0.843  </td></tr>\n",
+       "\t<tr><td>blast_a_011</td><td>96</td><td>96</td><td>192</td><td>647.3054</td><td>588.99339</td><td> 332.8786</td><td>665.42780</td><td>5.109 </td><td>4.396       </td><td>17.589      </td><td>-0.982 </td></tr>\n",
+       "\t<tr><td>blast_a_012</td><td>72</td><td>72</td><td>144</td><td>711.5849</td><td>295.27549</td><td> 673.7773</td><td>610.26149</td><td>0.484 </td><td>4.017       </td><td>-0.373      </td><td>19.605 </td></tr>\n",
+       "\t<tr><td>blast_a_013</td><td>96</td><td>96</td><td>192</td><td>626.3311</td><td> 85.19973</td><td> 673.5349</td><td> 95.54858</td><td>4.91  </td><td>8.091       </td><td>-1.212      </td><td>12.696 </td></tr>\n",
+       "\t<tr><td>blast_a_014</td><td>96</td><td>96</td><td>192</td><td>699.9669</td><td>569.73828</td><td> 686.1996</td><td>527.97805</td><td>-1.471</td><td>7.277       </td><td>2.859       </td><td>-0.197 </td></tr>\n",
+       "\t<tr><td>blast_a_015</td><td>96</td><td>96</td><td>192</td><td>665.6717</td><td>201.28750</td><td> 636.1304</td><td>266.29131</td><td>2.622 </td><td>12.857      </td><td>5.862       </td><td>-5.32  </td></tr>\n",
+       "\t<tr><td>blast_a_017</td><td>96</td><td>96</td><td>192</td><td>676.9570</td><td>410.36360</td><td> 780.0794</td><td>614.13381</td><td>-4.117</td><td>-0.647      </td><td>1.331       </td><td>1.931  </td></tr>\n",
+       "\t<tr><td>blast_a_018</td><td>96</td><td>96</td><td>192</td><td>615.0683</td><td>302.34715</td><td> 688.5048</td><td>575.23627</td><td>-2.987</td><td>0.137       </td><td>2.602       </td><td>-1.942 </td></tr>\n",
+       "\t<tr><td>blast_a_020</td><td>96</td><td>96</td><td>192</td><td>583.2397</td><td>543.64352</td><td> 660.2802</td><td>615.84860</td><td>2.547 </td><td>-1.187      </td><td>-0.216      </td><td>1.345  </td></tr>\n",
+       "\t<tr><td>blast_a_021</td><td>96</td><td>96</td><td>192</td><td>587.1420</td><td>336.11605</td><td> 640.7527</td><td>471.15810</td><td>-1.706</td><td>-10.011     </td><td>-1.661      </td><td>-2.695 </td></tr>\n",
+       "\t<tr><td>blast_a_022</td><td>96</td><td>96</td><td>192</td><td>482.2197</td><td>105.81395</td><td> 460.3313</td><td>251.55211</td><td>-0.164</td><td>-2.584      </td><td>-0.174      </td><td>-2.386 </td></tr>\n",
+       "\t<tr><td>blast_a_023</td><td>96</td><td>96</td><td>192</td><td>673.3689</td><td>353.48730</td><td>-163.8908</td><td>332.56829</td><td>-0.898</td><td>0.186       </td><td>-0.779      </td><td>-10.318</td></tr>\n",
+       "\t<tr><td>blast_a_024</td><td>96</td><td>96</td><td>192</td><td>657.9653</td><td>480.56950</td><td> 718.2292</td><td>268.52558</td><td>-3.583</td><td>2.797       </td><td>-1.997      </td><td>-9.329 </td></tr>\n",
+       "\t<tr><td>blast_a_025</td><td>96</td><td>96</td><td>192</td><td>703.9058</td><td>112.08194</td><td> 643.9986</td><td>304.72904</td><td>-3.882</td><td>-1.632      </td><td>-2.062      </td><td>2.236  </td></tr>\n",
+       "\t<tr><td>blast_a_026</td><td>48</td><td>48</td><td>96 </td><td>649.7117</td><td>184.76951</td><td> 479.7201</td><td>380.99477</td><td>-20.4 </td><td>3.272       </td><td>-5.043      </td><td>-18.72 </td></tr>\n",
+       "\t<tr><td>blast_a_027</td><td>96</td><td>96</td><td>192</td><td>712.5048</td><td>435.08413</td><td> 688.6165</td><td>398.41377</td><td>-2.736</td><td>5.202       </td><td>-0.917      </td><td>3.595  </td></tr>\n",
+       "\t<tr><td>blast_a_028</td><td>72</td><td>72</td><td>144</td><td>480.2179</td><td>      NaN</td><td>      NaN</td><td>460.20168</td><td>-3.064</td><td>too few hits</td><td>too few hits</td><td>34.827 </td></tr>\n",
+       "\t<tr><td>blast_a_029</td><td>96</td><td>96</td><td>192</td><td>666.4098</td><td>748.24475</td><td> 649.4215</td><td>270.36514</td><td>-1.607</td><td>-6.671      </td><td>-0.174      </td><td>7.756  </td></tr>\n",
+       "\t<tr><td>blast_a_032</td><td>96</td><td>96</td><td>192</td><td>555.9392</td><td>255.63566</td><td> 438.7529</td><td>476.26252</td><td>-3.317</td><td>-5.431      </td><td>11.54       </td><td>-5.314 </td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 26 × 12\n",
+       "\\begin{tabular}{r|llllllllllll}\n",
+       " auditory\\_part\\_id & total\\_tone\\_rts & total\\_syllable\\_rts & total\\_auditory\\_rts & random\\_syllable\\_mean\\_rt & random\\_tone\\_mean\\_rt & structured\\_syllable\\_mean\\_rt & structured\\_tone\\_mean\\_rt & random\\_ssl\\_rt\\_slope & random\\_tsl\\_rt\\_slope & structured\\_ssl\\_rt\\_slope & structured\\_tsl\\_rt\\_slope\\\\\n",
+       " <fct> & <fct> & <fct> & <fct> & <dbl> & <dbl> & <dbl> & <dbl> & <fct> & <fct> & <fct> & <fct>\\\\\n",
+       "\\hline\n",
+       "\t blast\\_a\\_001 & 95 & 96 & 191 & 692.6959 & 322.28187 &  703.7487 & 626.76593 & -0.211 & 12.229       & 4.545        & -9.529 \\\\\n",
+       "\t blast\\_a\\_002 & 97 & 96 & 193 & 534.6428 & 406.37809 &  544.2369 & 462.22364 & 1.291  & -0.924       & 1.955        & -4.449 \\\\\n",
+       "\t blast\\_a\\_004 & 97 & 96 & 193 & 601.8905 & 446.80654 &  736.9722 & 311.43438 & 1.74   & 6.603        & -0.553       & 1.406  \\\\\n",
+       "\t blast\\_a\\_005 & 96 & 96 & 192 & 668.8246 & 261.55777 &  641.7833 & 192.00386 & -0.215 & 9.953        & -0.11        & 10.604 \\\\\n",
+       "\t blast\\_a\\_006 & 96 & 96 & 192 & 603.3038 & 328.90459 &  627.6390 & 279.68425 & -1.053 & 7.354        & -1.894       & 4.717  \\\\\n",
+       "\t blast\\_a\\_007 & 96 & 96 & 192 & 629.8780 & 484.92121 &  630.3589 & 583.64111 & 2.156  & -1.854       & -0.656       & 0.621  \\\\\n",
+       "\t blast\\_a\\_008 & 72 & 72 & 144 & 590.9793 & 614.63005 &  591.5702 & 671.80899 & 1.229  & -6.864       & 3.362        & 2.155  \\\\\n",
+       "\t blast\\_a\\_010 & 96 & 96 & 192 & 682.6454 & 500.28634 &  682.8350 & 667.07553 & 5.38   & 2.07         & 1.122        & 0.843  \\\\\n",
+       "\t blast\\_a\\_011 & 96 & 96 & 192 & 647.3054 & 588.99339 &  332.8786 & 665.42780 & 5.109  & 4.396        & 17.589       & -0.982 \\\\\n",
+       "\t blast\\_a\\_012 & 72 & 72 & 144 & 711.5849 & 295.27549 &  673.7773 & 610.26149 & 0.484  & 4.017        & -0.373       & 19.605 \\\\\n",
+       "\t blast\\_a\\_013 & 96 & 96 & 192 & 626.3311 &  85.19973 &  673.5349 &  95.54858 & 4.91   & 8.091        & -1.212       & 12.696 \\\\\n",
+       "\t blast\\_a\\_014 & 96 & 96 & 192 & 699.9669 & 569.73828 &  686.1996 & 527.97805 & -1.471 & 7.277        & 2.859        & -0.197 \\\\\n",
+       "\t blast\\_a\\_015 & 96 & 96 & 192 & 665.6717 & 201.28750 &  636.1304 & 266.29131 & 2.622  & 12.857       & 5.862        & -5.32  \\\\\n",
+       "\t blast\\_a\\_017 & 96 & 96 & 192 & 676.9570 & 410.36360 &  780.0794 & 614.13381 & -4.117 & -0.647       & 1.331        & 1.931  \\\\\n",
+       "\t blast\\_a\\_018 & 96 & 96 & 192 & 615.0683 & 302.34715 &  688.5048 & 575.23627 & -2.987 & 0.137        & 2.602        & -1.942 \\\\\n",
+       "\t blast\\_a\\_020 & 96 & 96 & 192 & 583.2397 & 543.64352 &  660.2802 & 615.84860 & 2.547  & -1.187       & -0.216       & 1.345  \\\\\n",
+       "\t blast\\_a\\_021 & 96 & 96 & 192 & 587.1420 & 336.11605 &  640.7527 & 471.15810 & -1.706 & -10.011      & -1.661       & -2.695 \\\\\n",
+       "\t blast\\_a\\_022 & 96 & 96 & 192 & 482.2197 & 105.81395 &  460.3313 & 251.55211 & -0.164 & -2.584       & -0.174       & -2.386 \\\\\n",
+       "\t blast\\_a\\_023 & 96 & 96 & 192 & 673.3689 & 353.48730 & -163.8908 & 332.56829 & -0.898 & 0.186        & -0.779       & -10.318\\\\\n",
+       "\t blast\\_a\\_024 & 96 & 96 & 192 & 657.9653 & 480.56950 &  718.2292 & 268.52558 & -3.583 & 2.797        & -1.997       & -9.329 \\\\\n",
+       "\t blast\\_a\\_025 & 96 & 96 & 192 & 703.9058 & 112.08194 &  643.9986 & 304.72904 & -3.882 & -1.632       & -2.062       & 2.236  \\\\\n",
+       "\t blast\\_a\\_026 & 48 & 48 & 96  & 649.7117 & 184.76951 &  479.7201 & 380.99477 & -20.4  & 3.272        & -5.043       & -18.72 \\\\\n",
+       "\t blast\\_a\\_027 & 96 & 96 & 192 & 712.5048 & 435.08413 &  688.6165 & 398.41377 & -2.736 & 5.202        & -0.917       & 3.595  \\\\\n",
+       "\t blast\\_a\\_028 & 72 & 72 & 144 & 480.2179 &       NaN &       NaN & 460.20168 & -3.064 & too few hits & too few hits & 34.827 \\\\\n",
+       "\t blast\\_a\\_029 & 96 & 96 & 192 & 666.4098 & 748.24475 &  649.4215 & 270.36514 & -1.607 & -6.671       & -0.174       & 7.756  \\\\\n",
+       "\t blast\\_a\\_032 & 96 & 96 & 192 & 555.9392 & 255.63566 &  438.7529 & 476.26252 & -3.317 & -5.431       & 11.54        & -5.314 \\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 26 × 12\n",
+       "\n",
+       "| auditory_part_id &lt;fct&gt; | total_tone_rts &lt;fct&gt; | total_syllable_rts &lt;fct&gt; | total_auditory_rts &lt;fct&gt; | random_syllable_mean_rt &lt;dbl&gt; | random_tone_mean_rt &lt;dbl&gt; | structured_syllable_mean_rt &lt;dbl&gt; | structured_tone_mean_rt &lt;dbl&gt; | random_ssl_rt_slope &lt;fct&gt; | random_tsl_rt_slope &lt;fct&gt; | structured_ssl_rt_slope &lt;fct&gt; | structured_tsl_rt_slope &lt;fct&gt; |\n",
+       "|---|---|---|---|---|---|---|---|---|---|---|---|\n",
+       "| blast_a_001 | 95 | 96 | 191 | 692.6959 | 322.28187 |  703.7487 | 626.76593 | -0.211 | 12.229       | 4.545        | -9.529  |\n",
+       "| blast_a_002 | 97 | 96 | 193 | 534.6428 | 406.37809 |  544.2369 | 462.22364 | 1.291  | -0.924       | 1.955        | -4.449  |\n",
+       "| blast_a_004 | 97 | 96 | 193 | 601.8905 | 446.80654 |  736.9722 | 311.43438 | 1.74   | 6.603        | -0.553       | 1.406   |\n",
+       "| blast_a_005 | 96 | 96 | 192 | 668.8246 | 261.55777 |  641.7833 | 192.00386 | -0.215 | 9.953        | -0.11        | 10.604  |\n",
+       "| blast_a_006 | 96 | 96 | 192 | 603.3038 | 328.90459 |  627.6390 | 279.68425 | -1.053 | 7.354        | -1.894       | 4.717   |\n",
+       "| blast_a_007 | 96 | 96 | 192 | 629.8780 | 484.92121 |  630.3589 | 583.64111 | 2.156  | -1.854       | -0.656       | 0.621   |\n",
+       "| blast_a_008 | 72 | 72 | 144 | 590.9793 | 614.63005 |  591.5702 | 671.80899 | 1.229  | -6.864       | 3.362        | 2.155   |\n",
+       "| blast_a_010 | 96 | 96 | 192 | 682.6454 | 500.28634 |  682.8350 | 667.07553 | 5.38   | 2.07         | 1.122        | 0.843   |\n",
+       "| blast_a_011 | 96 | 96 | 192 | 647.3054 | 588.99339 |  332.8786 | 665.42780 | 5.109  | 4.396        | 17.589       | -0.982  |\n",
+       "| blast_a_012 | 72 | 72 | 144 | 711.5849 | 295.27549 |  673.7773 | 610.26149 | 0.484  | 4.017        | -0.373       | 19.605  |\n",
+       "| blast_a_013 | 96 | 96 | 192 | 626.3311 |  85.19973 |  673.5349 |  95.54858 | 4.91   | 8.091        | -1.212       | 12.696  |\n",
+       "| blast_a_014 | 96 | 96 | 192 | 699.9669 | 569.73828 |  686.1996 | 527.97805 | -1.471 | 7.277        | 2.859        | -0.197  |\n",
+       "| blast_a_015 | 96 | 96 | 192 | 665.6717 | 201.28750 |  636.1304 | 266.29131 | 2.622  | 12.857       | 5.862        | -5.32   |\n",
+       "| blast_a_017 | 96 | 96 | 192 | 676.9570 | 410.36360 |  780.0794 | 614.13381 | -4.117 | -0.647       | 1.331        | 1.931   |\n",
+       "| blast_a_018 | 96 | 96 | 192 | 615.0683 | 302.34715 |  688.5048 | 575.23627 | -2.987 | 0.137        | 2.602        | -1.942  |\n",
+       "| blast_a_020 | 96 | 96 | 192 | 583.2397 | 543.64352 |  660.2802 | 615.84860 | 2.547  | -1.187       | -0.216       | 1.345   |\n",
+       "| blast_a_021 | 96 | 96 | 192 | 587.1420 | 336.11605 |  640.7527 | 471.15810 | -1.706 | -10.011      | -1.661       | -2.695  |\n",
+       "| blast_a_022 | 96 | 96 | 192 | 482.2197 | 105.81395 |  460.3313 | 251.55211 | -0.164 | -2.584       | -0.174       | -2.386  |\n",
+       "| blast_a_023 | 96 | 96 | 192 | 673.3689 | 353.48730 | -163.8908 | 332.56829 | -0.898 | 0.186        | -0.779       | -10.318 |\n",
+       "| blast_a_024 | 96 | 96 | 192 | 657.9653 | 480.56950 |  718.2292 | 268.52558 | -3.583 | 2.797        | -1.997       | -9.329  |\n",
+       "| blast_a_025 | 96 | 96 | 192 | 703.9058 | 112.08194 |  643.9986 | 304.72904 | -3.882 | -1.632       | -2.062       | 2.236   |\n",
+       "| blast_a_026 | 48 | 48 | 96  | 649.7117 | 184.76951 |  479.7201 | 380.99477 | -20.4  | 3.272        | -5.043       | -18.72  |\n",
+       "| blast_a_027 | 96 | 96 | 192 | 712.5048 | 435.08413 |  688.6165 | 398.41377 | -2.736 | 5.202        | -0.917       | 3.595   |\n",
+       "| blast_a_028 | 72 | 72 | 144 | 480.2179 |       NaN |       NaN | 460.20168 | -3.064 | too few hits | too few hits | 34.827  |\n",
+       "| blast_a_029 | 96 | 96 | 192 | 666.4098 | 748.24475 |  649.4215 | 270.36514 | -1.607 | -6.671       | -0.174       | 7.756   |\n",
+       "| blast_a_032 | 96 | 96 | 192 | 555.9392 | 255.63566 |  438.7529 | 476.26252 | -3.317 | -5.431       | 11.54        | -5.314  |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "   auditory_part_id total_tone_rts total_syllable_rts total_auditory_rts\n",
+       "1  blast_a_001      95             96                 191               \n",
+       "2  blast_a_002      97             96                 193               \n",
+       "3  blast_a_004      97             96                 193               \n",
+       "4  blast_a_005      96             96                 192               \n",
+       "5  blast_a_006      96             96                 192               \n",
+       "6  blast_a_007      96             96                 192               \n",
+       "7  blast_a_008      72             72                 144               \n",
+       "8  blast_a_010      96             96                 192               \n",
+       "9  blast_a_011      96             96                 192               \n",
+       "10 blast_a_012      72             72                 144               \n",
+       "11 blast_a_013      96             96                 192               \n",
+       "12 blast_a_014      96             96                 192               \n",
+       "13 blast_a_015      96             96                 192               \n",
+       "14 blast_a_017      96             96                 192               \n",
+       "15 blast_a_018      96             96                 192               \n",
+       "16 blast_a_020      96             96                 192               \n",
+       "17 blast_a_021      96             96                 192               \n",
+       "18 blast_a_022      96             96                 192               \n",
+       "19 blast_a_023      96             96                 192               \n",
+       "20 blast_a_024      96             96                 192               \n",
+       "21 blast_a_025      96             96                 192               \n",
+       "22 blast_a_026      48             48                 96                \n",
+       "23 blast_a_027      96             96                 192               \n",
+       "24 blast_a_028      72             72                 144               \n",
+       "25 blast_a_029      96             96                 192               \n",
+       "26 blast_a_032      96             96                 192               \n",
+       "   random_syllable_mean_rt random_tone_mean_rt structured_syllable_mean_rt\n",
+       "1  692.6959                322.28187            703.7487                  \n",
+       "2  534.6428                406.37809            544.2369                  \n",
+       "3  601.8905                446.80654            736.9722                  \n",
+       "4  668.8246                261.55777            641.7833                  \n",
+       "5  603.3038                328.90459            627.6390                  \n",
+       "6  629.8780                484.92121            630.3589                  \n",
+       "7  590.9793                614.63005            591.5702                  \n",
+       "8  682.6454                500.28634            682.8350                  \n",
+       "9  647.3054                588.99339            332.8786                  \n",
+       "10 711.5849                295.27549            673.7773                  \n",
+       "11 626.3311                 85.19973            673.5349                  \n",
+       "12 699.9669                569.73828            686.1996                  \n",
+       "13 665.6717                201.28750            636.1304                  \n",
+       "14 676.9570                410.36360            780.0794                  \n",
+       "15 615.0683                302.34715            688.5048                  \n",
+       "16 583.2397                543.64352            660.2802                  \n",
+       "17 587.1420                336.11605            640.7527                  \n",
+       "18 482.2197                105.81395            460.3313                  \n",
+       "19 673.3689                353.48730           -163.8908                  \n",
+       "20 657.9653                480.56950            718.2292                  \n",
+       "21 703.9058                112.08194            643.9986                  \n",
+       "22 649.7117                184.76951            479.7201                  \n",
+       "23 712.5048                435.08413            688.6165                  \n",
+       "24 480.2179                      NaN                 NaN                  \n",
+       "25 666.4098                748.24475            649.4215                  \n",
+       "26 555.9392                255.63566            438.7529                  \n",
+       "   structured_tone_mean_rt random_ssl_rt_slope random_tsl_rt_slope\n",
+       "1  626.76593               -0.211              12.229             \n",
+       "2  462.22364               1.291               -0.924             \n",
+       "3  311.43438               1.74                6.603              \n",
+       "4  192.00386               -0.215              9.953              \n",
+       "5  279.68425               -1.053              7.354              \n",
+       "6  583.64111               2.156               -1.854             \n",
+       "7  671.80899               1.229               -6.864             \n",
+       "8  667.07553               5.38                2.07               \n",
+       "9  665.42780               5.109               4.396              \n",
+       "10 610.26149               0.484               4.017              \n",
+       "11  95.54858               4.91                8.091              \n",
+       "12 527.97805               -1.471              7.277              \n",
+       "13 266.29131               2.622               12.857             \n",
+       "14 614.13381               -4.117              -0.647             \n",
+       "15 575.23627               -2.987              0.137              \n",
+       "16 615.84860               2.547               -1.187             \n",
+       "17 471.15810               -1.706              -10.011            \n",
+       "18 251.55211               -0.164              -2.584             \n",
+       "19 332.56829               -0.898              0.186              \n",
+       "20 268.52558               -3.583              2.797              \n",
+       "21 304.72904               -3.882              -1.632             \n",
+       "22 380.99477               -20.4               3.272              \n",
+       "23 398.41377               -2.736              5.202              \n",
+       "24 460.20168               -3.064              too few hits       \n",
+       "25 270.36514               -1.607              -6.671             \n",
+       "26 476.26252               -3.317              -5.431             \n",
+       "   structured_ssl_rt_slope structured_tsl_rt_slope\n",
+       "1  4.545                   -9.529                 \n",
+       "2  1.955                   -4.449                 \n",
+       "3  -0.553                  1.406                  \n",
+       "4  -0.11                   10.604                 \n",
+       "5  -1.894                  4.717                  \n",
+       "6  -0.656                  0.621                  \n",
+       "7  3.362                   2.155                  \n",
+       "8  1.122                   0.843                  \n",
+       "9  17.589                  -0.982                 \n",
+       "10 -0.373                  19.605                 \n",
+       "11 -1.212                  12.696                 \n",
+       "12 2.859                   -0.197                 \n",
+       "13 5.862                   -5.32                  \n",
+       "14 1.331                   1.931                  \n",
+       "15 2.602                   -1.942                 \n",
+       "16 -0.216                  1.345                  \n",
+       "17 -1.661                  -2.695                 \n",
+       "18 -0.174                  -2.386                 \n",
+       "19 -0.779                  -10.318                \n",
+       "20 -1.997                  -9.329                 \n",
+       "21 -2.062                  2.236                  \n",
+       "22 -5.043                  -18.72                 \n",
+       "23 -0.917                  3.595                  \n",
+       "24 too few hits            34.827                 \n",
+       "25 -0.174                  7.756                  \n",
+       "26 11.54                   -5.314                 "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# Check auditory output\n",
+    "auditory_output\n",
+    "# Write  results and save them to NAS\n",
+    "write.csv(auditory_output, paste0(output_path, \"blast_adult_in_scanner_behavioral.csv\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3. Find Auditory Reaction Time Means and Slopes\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Identify response times to target stimuli. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Isolate target rows"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Isolate participants' response times."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Combine the reaction time data into one dataframe. Note that auditory_case_1 through auditory_case_6 are excluded. These are for hand-testing the logic of the above loop only"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Find the number of RTs for each participant"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Internal check: make sure that all RTs are valid, ie. fall within 1 SOA of the stimulus. Alert user if not."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Calculate auditory mean reaction times"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Calculate auditory reaction time slopes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Reindex the targets by type (random syllable, structured tone, etc) for each participant"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Calculate reaction time slopes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Bind all auditory output"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Check auditory output. Save results to NAS under data/projects/blast/data_summaries/blast_in_lab_adult/behavioral/ as \"blast_adults_in_scanner_behavioral.csv\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
   }
  ],
  "metadata": {
