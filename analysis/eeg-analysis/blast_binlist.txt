@@ -1,0 +1,65 @@
+bin 1
+
+standard runone
+.{100}
+
+bin 2
+
+standard runtwo
+
+.{200}
+bin 3
+standard runthree
+
+.{300}
+
+bin 4
+
+voice deviant lowfreq
+
+.{122;124;126}
+bin 5
+voice deviant highfreq
+
+.{222;224;226}
+
+bin 6
+
+voice deviant equalfreq
+
+.{322;324;326}
+
+bin 7
+
+syllable deviant highfreq
+
+.{152;154;156}
+
+bin 8
+syllable deviant lowfreq
+.{252;254;256}
+
+bin 9
+
+syllable deviant equalfreq
+
+.{352;354;356} 
+
+bin 10
+voice deviant short
+.{122;222}
+bin 11
+syllable deviant short
+.{152;252}
+bin 12
+voice deviant middle
+.{124;224}
+bin 13
+syllable deviant middle
+.{154;254}
+bin 14
+voice deviant long
+.{126;226}
+bin 15
+syllable deviant long
+.{156;256}

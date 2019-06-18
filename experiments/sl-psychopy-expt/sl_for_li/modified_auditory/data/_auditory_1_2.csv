@@ -1,0 +1,6 @@
+soundFile,word,location,repetition,trialnum,condition,trials_1.thisRepN,trials_1.thisTrialN,trials_1.thisN,trials_1.thisIndex,tone_block_key_resp.keys,starget,Run,PartID,frameRate,ttarget,expName,date,
+1A.wav,0,1,1,1,R,0,0,0,0,None,da,1,,59.9685573314,1c,auditory,2018_Jan_30_1400,
+1B.wav,0,2,1,2,R,0,1,1,1,None,da,1,,59.9685573314,1c,auditory,2018_Jan_30_1400,
+4A.wav,0,3,1,3,R,0,2,2,2,None,da,1,,59.9685573314,1c,auditory,2018_Jan_30_1400,
+1C.wav,0,1,1,4,R,0,3,3,3,None,da,1,,59.9685573314,1c,auditory,2018_Jan_30_1400,
+3C.wav,0,2,1,5,R,0,4,4,4,None,da,1,,59.9685573314,1c,auditory,2018_Jan_30_1400,

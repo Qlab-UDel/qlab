@@ -2,27 +2,30 @@
 #  Violet Kozloff
 #  April 8th 2018 
 #  This script cleans files from the SIT experiment
-#  Note
+#  NOTE: Before starting, manually add columns to each file that contain "first_targ" and "second_targ."
+#  These values come from the corresponding .log file on NAS data/projects/sit/visual_inter/data/
+#  "first_targ" comes from the line "Created firstTarget_image"; "second_targ" from "Created secondTarget_image"
 #  ****************************************************************************
 
 
-
 # Prepare files ------------------------------------------------------------
+
+# Set working directory
+setwd("/Users/vkozloff/Documents/qlab/analysis/sl-psychopy-analysis/sit-beh-analysis")
 
 # Remove objects in environment
 rm(list=ls())
 
 # Set up file paths
-ll_input <- ("../../../sit_data/original/ll_original/")
-lv_input <- ("../../../sit_data/original/lv_original/")
-vl_input <- ("../../../sit_data/original/vl_original/")
-vv_input <- ("../../../sit_data/original/vv_original/")
-ll_output <- ("../../../sit_data/clean/ll_clean/")
-lv_output <- ("../../../sit_data/clean/lv_clean/")
-vl_output <- ("../../../sit_data/clean/vl_clean/")
-vv_output <- ("../../../sit_data/clean/vv_clean/")
+ll_input <- ("/Users/vkozloff/Documents/sit_data/original/ll_original/")
+lv_input <- ("/Users/vkozloff/Documents/sit_data/original/lv_original/")
+vl_input <- ("/Users/vkozloff/Documents/sit_data/original/vl_original/")
+vv_input <- ("/Users/vkozloff/Documents/sit_data/original/vv_original/")
+ll_output <- ("/Users/vkozloff/Documents/sit_data/clean/ll_clean/")
+lv_output <- ("/Users/vkozloff/Documents/sit_data/clean/lv_clean/")
+vl_output <- ("/Users/vkozloff/Documents/sit_data/clean/vl_clean/")
+vv_output <- ("/Users/vkozloff/Documents/sit_data/clean/vv_clean/")
 ll_files<- list.files(path = ll_input, pattern="*.csv")
-ll_output_files <- list.files(path = ll_output, pattern="*.csv")
 lv_files<- list.files(path = lv_input, pattern="*.csv")
 vl_files<- list.files(path = vl_input, pattern="*.csv")
 vv_files<- list.files(path = vv_input, pattern="*.csv")
@@ -67,6 +70,9 @@ for (file in ll_files)
 {
   ll_clean(paste0(ll_input,file))
 }
+
+ll_output_files <- list.files(path = ll_output, pattern="*.csv")
+
 
 # create a new file containing only the relevant columns in the output folder
 lv_clean <- function(file) {
