@@ -1,24 +1,21 @@
 # General Guideline for MRI file processing
-* All the dicoms files should be saved at `/Users/qigroup/Documents/project/{projectname}/dicoms/`
+* All the dicoms files should be saved at `/home/qigroup/Documents/project/{projectname}/dicoms/`
 * The EP2D_DIFF_SMS_ABCD_TENSOR_* series are not currently convertable by heudiconv. Please mv this folder to ./tensor/{subj}/.
-* All the nifti files should be saved at `/Users/qigroup/Documents/project/{projectname}/bids/`
+* All the nifti files should be saved at `/home/qigroup/Documents/project/{projectname}/bids/`
 * Backup all the dicoms to our lab server: `/data/project/{projectname}`
-* Create a folder for freesurfer outputs at `/Users/qigroup/Documents/project/{projectname}/surface`
+* Create a folder for freesurfer outputs at `/home/qigroup/Documents/project/{projectname}/surface`
 * Make a symbolic link for the surface folder at ./bids/derivatives/freesurfer:`ln -s`
 
 ## To convert dicoms to BIDS formatted nifti
 ### Make sure docker is running on the imac
 ### On the terminal, type:
 ```
-cd /Users/qigroup/Documents/project/{projectname}/
-docker pull nipy/heudiconv
+cd /home/qigroup/Documents/projects/{projectname}/
 docker run --rm -it --entrypoint=bash -v $(pwd):/data nipy/heudiconv:latest
 ```
 Now you will be inside of the container. Type:
 ```
 cd /data
-mkdir bids
-source activate neuro
 ```
 The first step is to run a dry pass (no conversion), which will stack and group the dicoms into series.
 ```

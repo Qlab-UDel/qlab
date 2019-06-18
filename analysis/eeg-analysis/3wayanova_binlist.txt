@@ -1,0 +1,55 @@
+bin 1
+
+syll hi long
+.{156}
+
+bin 2
+
+syll hi short
+.{152}
+
+bin 3
+syll low long
+.{256}
+
+bin 4
+
+syll low short
+.{252}
+bin 5
+
+voice hi long
+.{226}
+
+bin 6
+
+voice hi short
+.{222}
+bin 7
+voice low long
+.{126}
+
+bin 8
+
+voice low short
+.{122}
+bin 9
+
+all short
+.{122;222;152;252}
+
+bin 10
+all long
+.{126;226;156;256}
+
+bin 11
+all standards
+.{100;200;300}
+
+bin 12
+standard runone
+.{100}
+
+bin 13
+standard runtwo
+.{200}
