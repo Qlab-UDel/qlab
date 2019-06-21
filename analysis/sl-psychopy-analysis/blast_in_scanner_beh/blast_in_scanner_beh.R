@@ -18,19 +18,24 @@ library("reshape")
 # Set working directory
 setwd("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data")
 # Alternate working directory if the above throws error (depends on how NAS is mounted)
-#setwd("/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data")
+# setwd("/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data")
+# 6.13 Child working directory
+# setwd("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/child/sl_raw_data")
+# Alternate working directory if the above throws error (depends on how NAS is mounted)
+# setwd("/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/child/sl_raw_data")
 
+# Remove objects in environment
+rm(list=ls())
+
+#6.18
 # Set output path
 output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_in_lab_adult/behavioral/")
 # Alternate working directory if the above throws error (depends on how NAS is mounted)
 # output_path <- ("/Volumes/data-1/projects/blast/data_summaries/blast_in_lab_adult/behavioral/")
-
-# NOTE: Try this one if you can't connect to this output path
+# 6.13 Child output path
 # output_path <- ("/Volumes/data-1/projects/blast/data_summaries/blast_online_child/breakdown/")
-
-
-# Remove objects in environment
-rm(list=ls())
+# Alternate working directory if the above throws error (depends on how NAS is mounted)
+# output_path <- ("/Volumes/data-1/projects/blast/data_summaries/blast_online_child/breakdown/")
 
 
 # Extract auditory data ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -252,44 +257,57 @@ auditory_case6 <- NULL
 # Isolate participants' response times.
 
 # Include rows when the participant responded to stimuli adjacent to the target (i.e. any time that the participant pressed the button within one stimulus before or after the target)
-for (i in auditory_targets) {
-  
+#for (i in auditory_targets) {
+for (i in c(62537)) {
+
   # Isolate the ID number, auditory_condition, auditory_modality, and auditory_task
   auditory_part_id <- append(auditory_part_id, paste(auditory_data[i,]$part_id))
   auditory_condition <- append (auditory_condition, paste(auditory_data[i,]$condition))
   auditory_modality <- append (auditory_modality, paste(auditory_data[i,]$modality))
   auditory_task <- append (auditory_task, paste(auditory_data[i,]$task))
   
-  # Check if you are looking at the first trial If so, it does not have a preceeding target
-  # TO DO: Check this auditory_condition
-  if (auditory_data[i,]$stimulus_trial==0 & !is.na(auditory_data[1,]$keypress)){ 
-    # Count the response time from the target stimulus (NA)
+  # 6.18 Check if you are looking at the first trial or if you're in a random block. If so, the target does not have a preceeding target
+  if ((auditory_data[i,]$stimulus_trial==0 | auditory_data[i,]$condition=="random") 
+      # Check if the participant responded during the target trial
+      & !is.na(auditory_data[1,]$keypress)){ 
+    # If so, count the response time from the target stimulus
    auditory_rt <- append (auditory_rt, auditory_data[i,][,"keypress"])
    auditory_case1 <- append (auditory_case1, i)
 
-  # If it's the first trial and there was no target keypress, count the response time from the following stimulus
-  } else if (auditory_data[i,]$stimulus_trial==0 & (auditory_data[i,])$condition==(auditory_data[i+1,]$condition)) {
-   # TO DO: test this auditory_condition
+  # If it's the first trial, or a random block, and there was no target keypress
+  } else if (((auditory_data[i,]$stimulus_trial==0 | (auditory_data[i,]$condition=="random")) & (auditory_data[i,])$condition==(auditory_data[i+1,]$condition))
+    # 6.13 Check that the following stimulus was not also a target from the same block (to avoid counting the same keypress twice)
+    & !((i+1%in% auditory_targets)&auditory_data[i+1,]$condition==auditory_data[i,]$condition)){
+    # 6.18 Then count the response time from the following stimulus.
     auditory_rt <- append (auditory_rt, 480+(auditory_data[i+1,][,"keypress"]))
     auditory_case2 <- append (auditory_case2, i)
   }  
   
-  # Otherwise, if the participant responded during the stimulus preceding the target, and the preceding stimulus was not also a target, and the preceding stimulus came from the same block
-  else if (!is.na(auditory_data[i-1,] [,"keypress"]) & ((auditory_data[i-1,][,"tone_target"] != (auditory_data[i-1,][,"stimulus"]))) & (auditory_data[i,])$condition==(auditory_data[i-1,]$condition)){
-    # Count their response time as how much sooner they responded than when the stimulus was presented (anticipation)
+  # Otherwise, if the participant responded during the stimulus preceding the target
+  else if (!is.na(auditory_data[i-1,] [,"keypress"])  
+           # 6.13 and the block is structured
+           & (auditory_data[i,])$condition=="structured"
+           # 6.13 and the preceding stimulus was not also a target
+           & ((auditory_data[i-1,][,"tone_target"] != (auditory_data[i-1,][,"stimulus"])))
+           # and the preceding stimulus came from the same block
+           & (auditory_data[i,])$condition==(auditory_data[i-1,]$condition)){
+    # Count the response time as how much sooner they responded than when the stimulus was presented (anticipation)
     auditory_rt <- append(auditory_rt, (auditory_data[i-1,][,"keypress"]-480))
     auditory_case3 <- append (auditory_case3, i)
   }
   
   # Otherwise, if the participant responded during the target
   else if (!is.na(auditory_data[i,] [,"keypress"])){
-    # Count their response time as how much sooner they responded than when the stimulus was presented
+    # Count their response time as the keypress
     auditory_rt <- append(auditory_rt, (auditory_data[i,][,"keypress"]))
     auditory_case4 <- append (auditory_case4, i)
   }
   
   # Otherwise, if the participant responded after the target, and the following target came from the same block
-  else if (!is.na(auditory_data[i+1,]$keypress > 0) & (auditory_data[i+1,]$keypress > 0) & (auditory_data[i,])$condition==(auditory_data[i+1,]$condition)){
+  # 6.13: Check that two stimuli following was not also a target from the same block (to avoid counting the same keypress twice)
+  else if ((!is.na(auditory_data[i+1,]$keypress > 0) & (auditory_data[i+1,]$keypress > 0)) & auditory_data[i,]$condition==auditory_data[i+1,]$condition
+           # 6.13 Check that the following stimulus was not also a target
+           & !((i+1)%in% auditory_targets)){
     # Count their response time as how much later they responded than when the stimulus was presented
     auditory_rt <- append(auditory_rt, (480+auditory_data[i+1,][,"keypress"]))
     auditory_case5 <- append (auditory_case5, i)
@@ -437,4 +455,118 @@ write.csv(auditory_output, paste0(output_path, "adult_in_scanner_behavioral.csv"
 
 
 
+
+# ******************** III. FIND VISUAL RT SLOPES. NOTE TO DO: This section needs to be fully developed and added to the Jupyter notebook  *************************
+
+# # Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding/ following stimulus ---------------------------------------------
+#  
+# part_id <- NULL
+# condition <- NULL
+# modality <- NULL
+# task <- NULL
+# rt <- NULL
+# case1 <- NULL
+# case2 <- NULL
+# case3 <- NULL
+# case4 <- NULL
+#  
+# # # Identify the rows when the target was presented
+# visual_targets <- which((visual_data$stimulus==visual_data$image_target) | (visual_data$stimulus==visual_data$letter_target))
+#  
+# # Isolate participants' response times.
+# # Include rows when the participant responded to stimuli adjacent to the target (i.e. any time that the participant pressed the button within one stimulus before or after the target)
+# 
+# for (i in visual_targets) {
+#    
+# # Isolate the ID number, condition, modality, and task
+# part_id <- append(part_id, paste(visual_data[i,]$part_id))
+# condition <- append (condition, paste(visual_data[i,]$condition))
+# modality <- append (modality, paste(visual_data[i,]$modality))
+# task <- append (task, paste(visual_data[i,]$task))
+#    
+# # Check if you are looking at the first target. If so, it does not have a preceeding target
+# # TO DO: Check this condition
+# if (visual_data[i,]$stimulus_trial==0 & !is.na(visual_data[1,]$keypress)){ 
+#   # Count the response time from the target stimulus (NA)
+#   rt <- append (rt, visual_data[i,][,"keypress"])
+#   case1 <- append (case1, i)
+#   }  
+# 
+# # Otherwise, if the participant responded during the stimulus preceding the target
+# else if (!is.na(visual_data[i-1,] [,"keypress"])){
+#   # TO DO: Test this condition
+#   # Count their response time as how much sooner they responded than when the stimulus was presented
+#   rt <- append(rt, (visual_data[i-1,][,"keypress"]-1000))
+#   case2 <- append (case2, i)
+#   }
+# 
+# # Otherwise, if the participant responded during the target
+# else if (!is.na(visual_data[i,] [,"keypress"])){
+#   # TO DO: Test this condition
+#   # Count their response time as how much sooner they responded than when the stimulus was presented
+#   rt <- append(rt, (visual_data[i,][,"keypress"]))
+#   case3 <- append (case3, i)
+# 
+# # Otherwise, record the miss with a reaction time of NA
+#   } else {
+#     rt <- append(rt, NA)
+#     case4 <- append (case4, i)
+#   }
+# }
+#  
+# # exp_visual_targets now contains all targets from the exposure phase and their true RTs (includes any response within 1000 ms of a target)
+# exp_visual_targets <- data.frame(part_id, condition, modality, task, rt)
+# 
+# 
+# # Identify all ids
+# all_visual_ids <- unique(as.character(visual_data$part_id))
+# 
+# 
+# # mean reaction times
+# exp_visual_mean_rts<- cast(exp_visual_targets, part_id~condition+task, value = "rt", fun.aggregate = mean, na.rm=TRUE)
+# 
+# 
+# # Initialize variables
+# total_auditory_rts <- NULL
+# total_letter_rts <- NULL
+# total_image_rts <- NULL
+# 
+# # Check RTs
+# for(check_id in all_visual_ids){
+#   total_image_rts <- append(total_image_rts, length(which(exp_visual_targets$part_id==check_id & exp_visual_targets$task=="image")))
+#   total_letter_rts <- append(total_letter_rts, length(which(exp_visual_targets$part_id==check_id & exp_visual_targets$task=="letter")))
+#   total_auditory_rts <- append(total_auditory_rts, length(which(exp_visual_targets$part_id==check_id)))
+# }
+# visual_rt_check <- (cbind(all_visual_ids, total_image_rts, total_letter_rts, total_auditory_rts))
+# 
+# 
+# # Calculate mean rt  -----------------------------------------------------------------------------------------------------
+# 
+# # mean reaction times
+# exp_visual_mean_rts<- cast(exp_visual_targets, part_id~condition+task, value = "rt", fun.aggregate = mean, na.rm=TRUE)
+# 
+# # TO DO: This is the same as auditory. Why?
+
+
+
+
+
+# TO DO: Add this to the final output
+
+# # List unique participant IDs for this condition
+# list_part_id <- unique(random_tsl_extracted$id)
+# 
+# # Find the number of targets shown to each participant
+# a <- NULL
+# for(i in list_part_id){a <- append(a,sum(random_tsl_extracted$id==i))}
+# 
+# # For each participant, index the targets
+# reindex <- NULL
+# for (i in a) {reindex <- append (reindex, rep(1:i, 1))}
+# 
+# # Add the targets' indices
+# random_tsl_extracted$reindex <- reindex
+# 
+# # Remove any values lower than -.48, higher than .96, or of NA
+# random_tsl_extracted <- random_tsl_extracted[random_tsl_extracted$rt_col<=0.96 & random_tsl_extracted$rt_col>= -.48 & !is.na(random_tsl_extracted$rt_col),]
 
