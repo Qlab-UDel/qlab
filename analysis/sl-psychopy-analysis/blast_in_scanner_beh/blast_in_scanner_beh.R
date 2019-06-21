@@ -1,7 +1,7 @@
 #  ****************************************************************************
 #  BLAST IN-SCANNER BEHAVIORAL ANALYSIS
 #  Violet Kozloff
-#  Last updated: May 29th 2019 
+#  Last updated: June 21st 2019 
 #  This script analyzes structured and random blocks across four tasks: auditory (speech and tones) and visual (letters and images).
 #  It measures the mean reaction time and the slope of the reaction time for each participant for each condition.
 #  ****************************************************************************
