@@ -1,7 +1,7 @@
 #  ****************************************************************************
 #  BLAST IN-SCANNER BEHAVIORAL ANALYSIS
 #  Violet Kozloff
-#  Last updated: June 21st 2019 
+#  Last updated: May 29th 2019 
 #  This script analyzes structured and random blocks across four tasks: auditory (speech and tones) and visual (letters and images).
 #  It measures the mean reaction time and the slope of the reaction time for each participant for each condition.
 #  ****************************************************************************
@@ -257,8 +257,8 @@ auditory_case6 <- NULL
 # Isolate participants' response times.
 
 # Include rows when the participant responded to stimuli adjacent to the target (i.e. any time that the participant pressed the button within one stimulus before or after the target)
-#for (i in auditory_targets) {
-for (i in c(62537)) {
+for (i in auditory_targets) {
+# for (i in c(62537)) {
 
   # Isolate the ID number, auditory_condition, auditory_modality, and auditory_task
   auditory_part_id <- append(auditory_part_id, paste(auditory_data[i,]$part_id))
