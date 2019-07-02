@@ -1,9 +1,11 @@
 # General Guideline for MRI file processing
-* All the dicoms files should be saved at `/home/qigroup/Documents/project/{projectname}/dicoms/`
+## All the analysis are currently conducted on the sylvian server.
+## The project folder should be backed up to our qilab server once every week.
+* All the dicoms files should be saved at `/home/qigroup/Documents/projects/{projectname}/dicoms/`
 * The EP2D_DIFF_SMS_ABCD_TENSOR_* series are not currently convertable by heudiconv. Please mv this folder to ./tensor/{subj}/.
-* All the nifti files should be saved at `/home/qigroup/Documents/project/{projectname}/bids/`
+* All the nifti files should be saved at `/home/qigroup/Documents/projects/{projectname}/bids/`
 * Backup all the dicoms to our lab server: `/data/project/{projectname}`
-* Create a folder for freesurfer outputs at `/home/qigroup/Documents/project/{projectname}/surface`
+* Create a folder for freesurfer outputs at `/home/qigroup/Documents/projects/{projectname}/surface`
 * Make a symbolic link for the surface folder at ./bids/derivatives/freesurfer:`ln -s`
 
 ## To convert dicoms to BIDS formatted nifti
