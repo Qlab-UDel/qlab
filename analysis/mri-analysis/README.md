@@ -36,21 +36,21 @@ heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f /data/projectname_
 ## Run freesurfer
 ### first define the FREESURFER directories
 ```
-export FREESURFER_HOME=/Applications/freesurfer
+export FREESURFER_HOME=/usr/local/freesurfer/bin/freesurfer
 source $FREESURFER_HOME/SetUpFreeSurfer.sh
-export SUBJECTS_DIR=/Users/qigroup/Documents/project/projectname/surfaces
+export SUBJECTS_DIR=/home/qigroup/Documents/projects/projectname/freesurfer
 ```
 ### if the subject has T2w scans, type the following in the terminal (replace subjid with the real subject id)
 ```
-recon-all -subject subjid -i /Users/qigroup/Documents/project/projectname/bids/subjid/anat/subjid_T1w.nii.gz -T2 /Users/qigroup/Documents/project/projectname/bids/subjid/anat/subjid_T2w.nii.gz -T2pial -all
+recon-all -subject subjid -i /home/qigroup/Documents/projects/projectname/bids/subjid/anat/subjid_T1w.nii.gz -T2 /home/qigroup/Documents/projects/projectname/bids/subjid/anat/subjid_T2w.nii.gz -T2pial -all
 ```
 ### if the subject does not have T2 scan, type the following in the terminal
 ```
-recon-all -autorecon-all -subject subjid -i /Users/qigroup/Documents/project/projectname/bids/subjid/anat/subjid_T1w.nii.gz
+recon-all -autorecon-all -subject subjid -i /home/qigroup/Documents/projects/projectname/bids/subjid/anat/subjid_T1w.nii.gz
 ```
 ## Edit Freesurfer outputs
 ### Use the freesurfer editing GUI
-`python /Users/qigroup/Documents/project/blast/scripts/edit_freesurfer_surface.py`
+`python /home/qigroup/Documents/projects/blast/scripts/edit_freesurfer_surface.py`
 ### For more documentation and tips, see the lab wiki: <https://github.com/Qlab-UDel/qlab/wiki/FreeSurfer-Overview> and the official wiki: <http://ftp.nmr.mgh.harvard.edu/fswiki/FreeSurferWiki>
 
 ###To validate BIDS files, see the BIDS validator: <http://incf.github.io/bids-validator/>
