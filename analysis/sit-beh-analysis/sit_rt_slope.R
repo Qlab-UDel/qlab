@@ -1,10 +1,10 @@
 #  SIT Reaction Time Analysis
 #  Violet Kozloff
-#  May 8, 2018
-#  This script analyzes mean reaction time and reaction time slope for statistical learning tasks involving structured and random triplets of letters and images
+#  Adapted from extraction files produced by An Nguyen
+#  Last modified July 3rd, 2019
+#  This script extracts mean reaction time and reaction time slope for statistical learning tasks involving structured and random triplets of letters and images
 #  NOTE: relevant columns have been pre-selected through sit_cleaning.R
 #  NOTE: Excludes any trials where participant responded to less than 50% of the targets (or responded to a different image than the target)
-#  NOTE: Currently excludes sit_a_010 from analysis from line 1679 on, because they do not have any rt data for one of the files
 
 # ******************** I. PREPARE FILES *************************
 
@@ -20,183 +20,135 @@ library("dplyr")
 library("corrplot")
 
 # Set working directory
-setwd("/Users/vkozloff/Documents/qlab/analysis/sl-psychopy-analysis")
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/")
 
 # Remove objects in environment
 rm(list=ls())
 
-
-# Prepare paths for files --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-#For use on Mac 
-ll_input <- ("../../../sit_data/clean/ll_clean/")
-lv_input <- ("../../../sit_data/clean/lv_clean/")
-vl_input <- ("../../../sit_data/clean/vl_clean/")
-vv_input <- ("../../../sit_data/clean/vv_clean/")
-vocab_input <- ("../../../sit_data/clean/vocab_clean/vocab_clean.csv")
-
-# Read in NIH toolbox data
-picture_vocab <- read.csv(vocab_input)
+# Read in picture vocabulary scores --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+picture_vocab <- read.csv("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/vocab_clean/vocab_clean.csv")
 
 
 # Read in ll files and combine them into one data frame -----------------------------------------------------------------------------------------------------------------------------------
 
-ll_underscore_files <- list.files(path=ll_input, pattern = ".csv")
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/ll_clean")
+ll_files <- list.files(pattern=("*.csv"))
+ll_data <- NULL
 
-#Remove the underscores in file names
-ll_files <- gsub("_", "", ll_underscore_files)
-
-# Prepare data_frame to hold the files you're reading in
-ll_data_frame<-list()
-
-# Remove the dashes in each file name read it in
-for(file in ll_underscore_files)
+for (file in ll_files)
 {
-  assign(
-    gsub("_", "", file),
-    read_file <- read.csv(paste(ll_input, file, sep="")))
+  current_file <- read.csv(file)
+  ll_data <- rbind.fill (ll_data, current_file)
 }
 
-# Combine each file with the previous files into ll_data_frame
-for (file in ll_files){ll_data_frame <- append(ll_data_frame, list(eval(parse(text=file))))}
-ll_data_frame <- do.call(rbind.data.frame, ll_data_frame)
-
 # Read "f_not_false" as "F"
-levels(ll_data_frame$structured_targ)[levels(ll_data_frame$structured_targ)=="f_not_false"] <- "F"
-levels(ll_data_frame$random_targ)[levels(ll_data_frame$random_targ)=="f_not_false"] <- "F"
+levels(ll_data$structured_targ)[levels(ll_data$structured_targ)=="f_not_false"] <- "F"
+levels(ll_data$random_targ)[levels(ll_data$random_targ)=="f_not_false"] <- "F"
 
 # Convert reaction times from milliseconds to seconds
-ll_data_frame$l_rt<-ll_data_frame$l_rt*1000
+ll_data$l_rt<-ll_data$l_rt*1000
 
 # Remove extensions from image names
-ll_data_frame$image <- gsub (".png", "", ll_data_frame$image, ignore.case=TRUE)
-ll_data_frame$image <- gsub (".bmp", "", ll_data_frame$image, ignore.case=TRUE)
-ll_data_frame$random_targ <- gsub (".png", "", ll_data_frame$random_targ, ignore.case=TRUE)
-ll_data_frame$structured_targ <- gsub (".png", "", ll_data_frame$structured_targ, ignore.case=TRUE)
-ll_data_frame$random_targ <- gsub (".bmp", "", ll_data_frame$random_targ, ignore.case=TRUE)
-ll_data_frame$structured_targ <- gsub (".bmp", "", ll_data_frame$structured_targ, ignore.case=TRUE)
+ll_data$image <- gsub (".png", "", ll_data$image, ignore.case=TRUE)
+ll_data$image <- gsub (".bmp", "", ll_data$image, ignore.case=TRUE)
+ll_data$random_targ <- gsub (".png", "", ll_data$random_targ, ignore.case=TRUE)
+ll_data$structured_targ <- gsub (".png", "", ll_data$structured_targ, ignore.case=TRUE)
+ll_data$random_targ <- gsub (".bmp", "", ll_data$random_targ, ignore.case=TRUE)
+ll_data$structured_targ <- gsub (".bmp", "", ll_data$structured_targ, ignore.case=TRUE)
 
 
 # Read in lv files and combine them into one data frame -----------------------------------------------------------------------------------------------------------------------------------
 
-lv_underscore_files <- list.files(path=lv_input, pattern = ".csv")
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/lv_clean")
+lv_files <- list.files(pattern=("*.csv"))
+lv_data <- NULL
 
-#Remove the underscores in file names
-lv_files <- gsub("_", "", lv_underscore_files)
-
-# Prepare data_frame to hold the files you're reading in
-lv_data_frame<-list()
-
-# Remove the dashes in each file name read it in
-for(file in lv_underscore_files)
+for (file in lv_files)
 {
-  assign(
-    gsub("_", "", file),
-    read_file <- read.csv(paste(lv_input, file, sep="")))
+  current_file <- read.csv(file)
+  lv_data <- rbind.fill (lv_data, current_file)
 }
 
-# Combine each file with the previous files into lv_data_frame
-for (file in lv_files){lv_data_frame <- append(lv_data_frame, list(eval(parse(text=file))))}
-lv_data_frame <- do.call(rbind.data.frame, lv_data_frame)
-
 # Read "f_not_false" as "F"
-levels(lv_data_frame$structured_targ)[levels(lv_data_frame$structured_targ)=="f_not_false"] <- "F"
-levels(lv_data_frame$random_targ)[levels(lv_data_frame$random_targ)=="f_not_false"] <- "F"
+levels(lv_data$structured_targ)[levels(lv_data$structured_targ)=="f_not_false"] <- "F"
+levels(lv_data$random_targ)[levels(lv_data$random_targ)=="f_not_false"] <- "F"
 
 # Convert reaction times from milliseconds to seconds
-lv_data_frame$l_rt <- lv_data_frame$l_rt*1000
-lv_data_frame$v_rt <- lv_data_frame$v_rt*1000
+lv_data$l_rt <- lv_data$l_rt*1000
+lv_data$v_rt <- lv_data$v_rt*1000
 
 # Remove extensions from image names
-lv_data_frame$image <- gsub (".png", "", lv_data_frame$image, ignore.case=TRUE)
-lv_data_frame$image <- gsub (".bmp", "", lv_data_frame$image, ignore.case=TRUE)
-lv_data_frame$random_targ <- gsub (".png", "", lv_data_frame$random_targ, ignore.case=TRUE)
-lv_data_frame$structured_targ <- gsub (".png", "", lv_data_frame$structured_targ, ignore.case=TRUE)
-lv_data_frame$random_targ <- gsub (".bmp", "", lv_data_frame$random_targ, ignore.case=TRUE)
-lv_data_frame$structured_targ <- gsub (".bmp", "", lv_data_frame$structured_targ, ignore.case=TRUE)
+lv_data$image <- gsub (".png", "", lv_data$image, ignore.case=TRUE)
+lv_data$image <- gsub (".bmp", "", lv_data$image, ignore.case=TRUE)
+lv_data$random_targ <- gsub (".png", "", lv_data$random_targ, ignore.case=TRUE)
+lv_data$structured_targ <- gsub (".png", "", lv_data$structured_targ, ignore.case=TRUE)
+lv_data$random_targ <- gsub (".bmp", "", lv_data$random_targ, ignore.case=TRUE)
+lv_data$structured_targ <- gsub (".bmp", "", lv_data$structured_targ, ignore.case=TRUE)
+
 
 # Read in vl files and combine them into one data frame -----------------------------------------------------------------------------------------------------------------------------------
 
-vl_underscore_files <- list.files(path=vl_input, pattern = ".csv")
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/vl_clean")
+vl_files <- list.files(pattern=("*.csv"))
+vl_data <- NULL
 
-#Remove the underscores in file names
-vl_files <- gsub("_", "", vl_underscore_files)
-
-# Prepare data_frame to hold the files you're reading in
-vl_data_frame<-list()
-
-# Remove the dashes in each file name read it in
-for(file in vl_underscore_files)
+for (file in vl_files)
 {
-  assign(
-    gsub("_", "", file),
-    read_file <- read.csv(paste(vl_input, file, sep="")))
+  current_file <- read.csv(file)
+  vl_data <- rbind.fill (vl_data, current_file)
 }
 
-# Combine each file with the previous files into vl_data_frame
-for (file in vl_files){vl_data_frame <- append(vl_data_frame, list(eval(parse(text=file))))}
-vl_data_frame <- do.call(rbind.data.frame, vl_data_frame)
-
 # Read "f_not_false" as "F"
-levels(vl_data_frame$structured_targ)[levels(vl_data_frame$structured_targ)=="f_not_false"] <- "F"
-levels(vl_data_frame$random_targ)[levels(vl_data_frame$random_targ)=="f_not_false"] <- "F"
+levels(vl_data$structured_targ)[levels(vl_data$structured_targ)=="f_not_false"] <- "F"
+levels(vl_data$random_targ)[levels(vl_data$random_targ)=="f_not_false"] <- "F"
 
 # Convert reaction times from milliseconds to seconds
-vl_data_frame$l_rt <- vl_data_frame$l_rt*1000
-vl_data_frame$v_rt <- vl_data_frame$v_rt*1000
+vl_data$l_rt <- vl_data$l_rt*1000
+vl_data$v_rt <- vl_data$v_rt*1000
 
 # Remove extensions from image names
-vl_data_frame$image <- gsub (".png", "", vl_data_frame$image, ignore.case=TRUE)
-vl_data_frame$image <- gsub (".bmp", "", vl_data_frame$image, ignore.case=TRUE)
-vl_data_frame$random_targ <- gsub (".png", "", vl_data_frame$random_targ, ignore.case=TRUE)
-vl_data_frame$structured_targ <- gsub (".png", "", vl_data_frame$structured_targ, ignore.case=TRUE)
-vl_data_frame$random_targ <- gsub (".bmp", "", vl_data_frame$random_targ, ignore.case=TRUE)
-vl_data_frame$structured_targ <- gsub (".bmp", "", vl_data_frame$structured_targ, ignore.case=TRUE)
+vl_data$image <- gsub (".png", "", vl_data$image, ignore.case=TRUE)
+vl_data$image <- gsub (".bmp", "", vl_data$image, ignore.case=TRUE)
+vl_data$random_targ <- gsub (".png", "", vl_data$random_targ, ignore.case=TRUE)
+vl_data$structured_targ <- gsub (".png", "", vl_data$structured_targ, ignore.case=TRUE)
+vl_data$random_targ <- gsub (".bmp", "", vl_data$random_targ, ignore.case=TRUE)
+vl_data$structured_targ <- gsub (".bmp", "", vl_data$structured_targ, ignore.case=TRUE)
+
 
 # Read in vv files and combine them into one data frame -----------------------------------------------------------------------------------------------------------------------------------
 
-vv_underscore_files <- list.files(path=vv_input, pattern = ".csv")
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/vv_clean")
+vv_files <- list.files(pattern=("*.csv"))
+vv_data <- NULL
 
-#Remove the underscores in file names
-vv_files <- gsub("_", "", vv_underscore_files)
-
-# Prepare data_frame to hold the files you're reading in
-vv_data_frame<-list()
-
-# Remove the dashes in each file name read it in
-for(file in vv_underscore_files)
+for (file in vv_files)
 {
-  assign(
-    gsub("_", "", file),
-    read_file <- read.csv(paste(vv_input, file, sep="")))
+  current_file <- read.csv(file)
+  vv_data <- rbind.fill (vv_data, current_file)
 }
 
-# Combine each file with the previous files into vv_data_frame
-for (file in vv_files){vv_data_frame <- append(vv_data_frame, list(eval(parse(text=file))))}
-vv_data_frame <- do.call(rbind.data.frame, vv_data_frame)
-
 # Convert response times to milliseconds
-vv_data_frame$v_rt <- vv_data_frame$v_rt*1000
+vv_data$v_rt <- vv_data$v_rt*1000
 
 # Remove extensions from image names
-vv_data_frame$image <- gsub (".png", "", vv_data_frame$image, ignore.case=TRUE)
-vv_data_frame$image <- gsub (".bmp", "", vv_data_frame$image, ignore.case=TRUE)
-vv_data_frame$random_targ <- gsub (".png", "", vv_data_frame$random_targ, ignore.case=TRUE)
-vv_data_frame$structured_targ <- gsub (".png", "", vv_data_frame$structured_targ, ignore.case=TRUE)
-vv_data_frame$random_targ <- gsub (".bmp", "", vv_data_frame$random_targ, ignore.case=TRUE)
-vv_data_frame$structured_targ <- gsub (".bmp", "", vv_data_frame$structured_targ, ignore.case=TRUE)
+vv_data$image <- gsub (".png", "", vv_data$image, ignore.case=TRUE)
+vv_data$image <- gsub (".bmp", "", vv_data$image, ignore.case=TRUE)
+vv_data$random_targ <- gsub (".png", "", vv_data$random_targ, ignore.case=TRUE)
+vv_data$structured_targ <- gsub (".png", "", vv_data$structured_targ, ignore.case=TRUE)
+vv_data$random_targ <- gsub (".bmp", "", vv_data$random_targ, ignore.case=TRUE)
+vv_data$structured_targ <- gsub (".bmp", "", vv_data$structured_targ, ignore.case=TRUE)
 
 
 # ******************** CONDITION 1: RANDOM LL*******************
 
 
 # Separate random condition
-random_ll <- ll_data_frame[ which(ll_data_frame$condition== "R"),]
+random_ll <- ll_data[ which(ll_data$condition== "R"),]
 
 
 ## Index the targets -----------------------------------------------
 
-# Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding/ following stimulus ---------------------------------------------
+# Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding stimulus ---------------------------------------------
 
 # Identify the rows when this condition's target was presented
 random_ll_targets <- random_ll[which(random_ll$random_targ==random_ll$image),]
@@ -210,9 +162,9 @@ for(id in list_part_id){
   total_lines <- append(total_lines, nrow(random_ll_targets[which(random_ll$part_id==id),]))
 }
 rll_line_number <- data.frame(part_id, total_lines)
-# There should be 32 entries
+# TEST: There should be 32 entries
 length(rll_line_number$part_id)
-# They should all contain 288 lines
+# TEST: They should all contain 288 lines
 rll_line_number$total_lines
 
 # Set up variables to loop through participants by trials and track the target
@@ -323,11 +275,12 @@ low_hits<-NULL
 hits<-NULL
 # Find people with a low hit rate
 for (id in extracted_part_id){
-  if (length(random_ll_extracted[which(random_ll_extracted$id==id),]$loop)<13)
+  if (length(random_ll_extracted[which(random_ll_extracted$id==id & !is.na(random_ll_extracted$rt_col)),]$rt_col)<13)
   {low_hits<-append(low_hits, id)
   hits<-append(hits, length(random_ll_extracted[which(random_ll_extracted$id==id),]$loop))
   }
 }
+
 # Remove people with low hit rate
 random_ll_extracted <- random_ll_extracted[! random_ll_extracted$id %in% low_hits, ]
 # Find only participants with over 50% hit rate
@@ -347,6 +300,7 @@ lower_bound <- NULL
 this_range <- NULL
 same_or_diff <- NULL
 test_phase <- NULL
+number_rts <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -358,7 +312,8 @@ for(id in extracted_part_id){
   type <- append (type, "random")
   same_or_diff <- append (same_or_diff, "same")
   test_phase <- append (test_phase, "lsl")
-  mean_rt <- append(mean_rt, round(mean(random_ll_extracted$rt_col[random_ll_extracted$id==id]),digits=3))
+  number_rts <- append(number_rts, length(!is.na(random_ll_extracted$rt_col[random_ll_extracted$id==id])))
+  mean_rt <- append(mean_rt, round(mean(random_ll_extracted$rt_col[random_ll_extracted$id==id], na.rm = TRUE),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(random_ll_extracted$rt_col[random_ll_extracted$id==id]~random_ll_extracted$targ_index[random_ll_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (random_ll_extracted[ which(random_ll_extracted$id==id),])
   this_range<- range(data_this_id$rt_col, na.rm = TRUE)
@@ -366,6 +321,10 @@ for(id in extracted_part_id){
   lower_bound <- append (lower_bound,this_range[2])
   range <- append (range, (this_range[2]-this_range[1]))
 }
+
+number_rts
+mean(number_rts)
+sd(number_rts)
 
 # Combine data for each participant
 rll <- data.frame(part_id, task, same_or_diff, test_phase, domain, type, mean_rt, range, upper_bound, lower_bound, rt_slope) 
@@ -381,7 +340,7 @@ rll <- data.frame(part_id, task, same_or_diff, test_phase, domain, type, mean_rt
 
 
 # Separate random and structured conditions
-random_lv <- lv_data_frame[ which(lv_data_frame$condition== "R"),]
+random_lv <- lv_data[ which(lv_data$condition== "R"),]
 
 
 # Index the targets -----------------------------------------------
@@ -398,9 +357,9 @@ for(id in list_part_id){
   total_lines <- append(total_lines, nrow(random_lv_targets[which(random_lv$part_id==id),]))
 }
 rlv_line_number <- data.frame(part_id, total_lines)
-# There should be 32 entries
+# TEST: There should be 32 entries
 length(rlv_line_number$part_id)
-# They should all contain 288 lines
+# TEST: They should all contain 288 lines
 rlv_line_number$total_lines
 
 
@@ -536,6 +495,7 @@ lower_bound <- NULL
 this_range <- NULL
 same_or_diff <- NULL
 test_phase <- NULL
+number_rts <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -548,6 +508,7 @@ for(id in extracted_part_id){
   same_or_diff <- append (same_or_diff, "different")
   test_phase <- append (test_phase, "lsl")
   mean_rt <- append(mean_rt, round(mean(random_lv_extracted$rt_col[random_lv_extracted$id==id]),digits=3))
+  number_rts <- append(number_rts, length(!is.na(random_lv_extracted$rt_col[random_lv_extracted$id==id])))
   rt_slope <- append (rt_slope, round(summary(lm(random_lv_extracted$rt_col[random_lv_extracted$id==id]~random_lv_extracted$targ_index[random_lv_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (random_lv_extracted[ which(random_lv_extracted$id==id),])
   this_range<- range(data_this_id$rt_col, na.rm = TRUE)
@@ -557,7 +518,11 @@ for(id in extracted_part_id){
 }
 
 # Combine data for each participant
-rlv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+rlv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type, mean_rt, range, upper_bound, lower_bound, rt_slope)
+
+number_rts
+mean(number_rts)
+sd(number_rts)
 
 #Remove any points outside 2.5 stdev of the mean
 # lowerbound <- mean(rlv$rt_slope) - 2.5*sd(rlv$rt_slope)
@@ -570,7 +535,7 @@ rlv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, 
 # ******************** CONDITION 3: RANDOM VL*******************
 
 # Separate random and structured conditions
-random_vl <- vl_data_frame[ which(vl_data_frame$condition== "R"),]
+random_vl <- vl_data[ which(vl_data$condition== "R"),]
 
 
 # Index the targets -----------------------------------------------
@@ -730,6 +695,7 @@ range <- NULL
 upper_bound <- NULL
 lower_bound <- NULL
 this_range <- NULL
+number_rts <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -742,6 +708,7 @@ for(id in extracted_part_id){
   same_or_diff <- append (same_or_diff, "different")
   test_phase <- append (test_phase, "vsl")
   mean_rt <- append(mean_rt, round(mean(random_vl_extracted$rt_col[random_vl_extracted$id==id]),digits=3))
+  number_rts <- append(number_rts, length(!is.na(random_vl_extracted$rt_col[random_vl_extracted$id==id])))
   rt_slope <- append (rt_slope, round(summary(lm(random_vl_extracted$rt_col[random_vl_extracted$id==id]~random_vl_extracted$targ_index[random_vl_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (random_vl_extracted[ which(random_vl_extracted$id==id),])
   this_range<- range(data_this_id$rt_col, na.rm = TRUE)
@@ -752,6 +719,10 @@ for(id in extracted_part_id){
 
 # Combine data for each participant
 rvl <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+
+number_rts
+mean(number_rts)
+sd(number_rts)
 
 #Remove any points outside 2.5 stdev of the mean
 # lowerbound <- mean(rvl$rt_slope) - 2.5*sd(rvl$rt_slope)
@@ -764,11 +735,10 @@ rvl <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, 
 mean_rvl_rt_slope <- mean (rvl$rt_slope)
 
 
-
 # ******************** CONDITION 4: RANDOM VV *******************
 
 # Separate random and structured conditions
-random_vv <- vv_data_frame[ which(vv_data_frame$condition== "R"),]
+random_vv <- vv_data[ which(vv_data$condition== "R"),]
 
 # Index the targets -----------------------------------------------
 
@@ -930,6 +900,7 @@ range <- NULL
 upper_bound <- NULL
 lower_bound <- NULL
 this_range <- NULL
+number_rts <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -942,6 +913,7 @@ for(id in extracted_part_id){
   same_or_diff <- append (same_or_diff, "same")
   test_phase <- append (test_phase, "vsl")
   mean_rt <- append(mean_rt, round(mean(random_vv_extracted$rt_col[random_vv_extracted$id==id]),digits=3))
+  number_rts <- append(number_rts, length(!is.na(random_vv_extracted$rt_col[random_vv_extracted$id==id])))
   rt_slope <- append (rt_slope, round(summary(lm(random_vv_extracted$rt_col[random_vv_extracted$id==id]~random_vv_extracted$targ_index[random_vv_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (random_vv_extracted[ which(random_vv_extracted$id==id),])
   this_range<- range(data_this_id$rt_col, na.rm = TRUE)
@@ -953,7 +925,12 @@ for(id in extracted_part_id){
 # Combine data for each participant
 rvv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
-#Remove any points outside 2.5 stdev of the mean
+number_rts
+length(number_rts)
+mean(number_rts)
+sd(number_rts)
+
+# Remove any points outside 2.5 stdev of the mean
 # lowerbound <- mean(rvv$rt_slope) - 2.5*sd(rvv$rt_slope)
 # upperbound <- mean(rvv$rt_slope) + 2.5*sd(rvv$rt_slope)
 # rvv <- rvv[rvv$rt_slope>=lowerbound,]
@@ -964,7 +941,7 @@ rvv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, 
 # ******************** CONDITION 5: STRUCTURED LL*******************
 
 # Separate random and structured conditions
-structured_ll <- ll_data_frame[ which(ll_data_frame$condition== "S"),]
+structured_ll <- ll_data[ which(ll_data$condition== "S"),]
 
 # Identify the rows when this condition's target was presented
 structured_ll_targets <- structured_ll[which(structured_ll$structured_targ==structured_ll$image),]
@@ -978,13 +955,13 @@ for(id in list_part_id){
   total_lines <- append(total_lines, nrow(structured_ll_targets[which(structured_ll$part_id==id),]))
 }
 sll_line_number <- data.frame(part_id, total_lines)
-# There should be 32 entries (for the 32 participants)
+# TEST: There should be 32 entries (for the 32 participants)
 length(sll_line_number$part_id)
-# They should all contain 288 lines (for the 288 lines each participant saw)
+# TEST: They should all contain 288 lines (for the 288 lines each participant saw)
 sll_line_number$total_lines
 
 
-# Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding/ following stimulus ---------------------------------------------
+# Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding stimulus ---------------------------------------------
 
 
 # Index the targets -----------------------------------------------
@@ -1123,6 +1100,7 @@ range <- NULL
 upper_bound <- NULL
 lower_bound <- NULL
 this_range <- NULL
+number_rts <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -1135,6 +1113,7 @@ for(id in extracted_part_id){
   same_or_diff <- append (same_or_diff, "same")
   test_phase <- append (test_phase, "lsl")
   mean_rt <- append(mean_rt, round(mean(structured_ll_extracted$rt_col[structured_ll_extracted$id==id]),digits=3))
+  number_rts <- append(number_rts, length(!is.na(structured_ll_extracted$rt_col[structured_ll_extracted$id==id])))
   rt_slope <- append (rt_slope, round(summary(lm(structured_ll_extracted$rt_col[structured_ll_extracted$id==id]~structured_ll_extracted$targ_index[structured_ll_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (structured_ll_extracted[ which(structured_ll_extracted$id==id),])
   this_range<- range(data_this_id$rt_col, na.rm = TRUE)
@@ -1145,6 +1124,11 @@ for(id in extracted_part_id){
 
 # Combine data for each participant
 sll <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+
+length(number_rts)
+number_rts
+mean(number_rts)
+sd(number_rts)
 
 #Remove any points outside 2.5 stdev of the mean
 # lowerbound <- mean(sll$rt_slope) - 2.5*sd(sll$rt_slope)
@@ -1162,7 +1146,7 @@ mean_sll_rt_slope
 # ******************** CONDITION 6: lv structured*******************
 
 # Separate structured and structured conditions
-structured_lv <- lv_data_frame[ which(lv_data_frame$condition== "S"),]
+structured_lv <- lv_data[ which(lv_data$condition== "S"),]
 
 # Identify the rows when this condition's target was presented
 structured_lv_targets <- structured_lv[which(structured_lv$structured_targ==structured_lv$image),]
@@ -1302,7 +1286,6 @@ structured_lv_extracted <- structured_lv_extracted[! structured_lv_extracted$id 
 # Find only participants with over 50% hit rate
 extracted_part_id <- unique(structured_lv_extracted$id)
 
-
 # Define variables
 mean_rt <- NULL
 rt_slope <- NULL
@@ -1317,6 +1300,7 @@ range <- NULL
 upper_bound <- NULL
 lower_bound <- NULL
 this_range <- NULL
+number_rts <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -1329,6 +1313,7 @@ for(id in extracted_part_id){
   same_or_diff <- append (same_or_diff, "different")
   test_phase <- append (test_phase, "lsl")
   mean_rt <- append(mean_rt, round(mean(structured_lv_extracted$rt_col[structured_lv_extracted$id==id]),digits=3))
+  number_rts <- append(number_rts, length(!is.na(structured_lv_extracted$rt_col[structured_lv_extracted$id==id])))
   rt_slope <- append (rt_slope, round(summary(lm(structured_lv_extracted$rt_col[structured_lv_extracted$id==id]~structured_lv_extracted$targ_index[structured_lv_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (structured_lv_extracted[ which(structured_lv_extracted$id==id),])
   this_range<- range(data_this_id$rt_col, na.rm = TRUE)
@@ -1339,6 +1324,11 @@ for(id in extracted_part_id){
 
 # Combine data for each participant
 slv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+
+number_rts
+length(number_rts)
+mean(number_rts)
+sd(number_rts)
 
 #Remove any points outside 2.5 stdev of the mean
 # lowerbound <- mean(slv$rt_slope) - 2.5*sd(slv$rt_slope)
@@ -1356,7 +1346,7 @@ mean_slv_rt_slope
 # ******************** CONDITION 7: vl structured*******************
 
 # Separate structured and structured conditions
-structured_vl <- vl_data_frame[ which(vl_data_frame$condition== "S"),]
+structured_vl <- vl_data[ which(vl_data$condition== "S"),]
 
 # Identify the rows when this condition's target was presented
 structured_vl_targets <- structured_vl[which(structured_vl$structured_targ==structured_vl$image),]
@@ -1493,7 +1483,7 @@ structured_vl_extracted <- structured_vl_extracted[!is.na(structured_vl_extracte
 low_hits<-NULL
 # Find people with a low hit rate
 for (id in extracted_part_id){
-  if (length(structured_vl_extracted[which(structured_vl_extracted$id==id),]$loop)<13)
+  if (length(structured_vl_extracted[which(structured_vl_extracted$id==id),]$rt_col)<13)
   {low_hits<-append(low_hits, id)}
 }
 # Remove people with low hit rate
@@ -1516,6 +1506,7 @@ range <- NULL
 upper_bound <- NULL
 lower_bound <- NULL
 this_range <- NULL
+number_rts <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -1528,6 +1519,7 @@ for(id in extracted_part_id){
   same_or_diff <- append (same_or_diff, "different")
   test_phase <- append (test_phase, "vsl")
   mean_rt <- append(mean_rt, round(mean(structured_vl_extracted$rt_col[structured_vl_extracted$id==id]),digits=3))
+  number_rts <- append(number_rts, length(!is.na(structured_vl_extracted$rt_col[structured_vl_extracted$id==id])))
   rt_slope <- append (rt_slope, round(summary(lm(structured_vl_extracted$rt_col[structured_vl_extracted$id==id]~structured_vl_extracted$targ_index[structured_vl_extracted$id==id]))$coefficient[2,1],digits = 4))
   data_this_id <- (structured_vl_extracted[ which(structured_vl_extracted$id==id),])
   this_range<- range(data_this_id$rt_col, na.rm = TRUE)
@@ -1538,6 +1530,11 @@ for(id in extracted_part_id){
 
 # Combine data for each participant
 svl <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
+
+number_rts
+mean(number_rts)
+sd(number_rts)
+length(number_rts)
 
 #Remove any points outside 2.5 stdev of the mean
 # lowerbound <- mean(svl$rt_slope) - 2.5*sd(svl$rt_slope)
@@ -1559,7 +1556,7 @@ mean_svl_rt_slope
 # ******************** CONDITION 8: STRUCTURED VV *******************
 
 # Separate structured and structured conditions
-structured_vv <- vv_data_frame[ which(vv_data_frame$condition== "S"),]
+structured_vv <- vv_data[ which(vv_data$condition== "S"),]
 
 # Identify the rows when this condition's target was presented
 structured_vv_targets <- structured_vv[which(structured_vv$structured_targ==structured_vv$image),]
@@ -1689,7 +1686,7 @@ extracted_part_id <- unique(structured_vv_extracted$id)
 low_hits<-NULL
 # Find people with a low hit rate
 for (id in extracted_part_id){
-  if (length(structured_vv_extracted[which(structured_vv_extracted$id==id),]$loop)<13)
+  if (length(!is.na(structured_vv_extracted[which(structured_vv_extracted$id==id),]$rt_col))<13)
   {low_hits<-append(low_hits, id)}
 }
 # Remove people with low hit rate
@@ -1711,6 +1708,7 @@ range <- NULL
 upper_bound <- NULL
 lower_bound <- NULL
 this_range <- NULL
+number_rts <- NULL
 
 # For each participant, extract id
 # Assign domain and type
@@ -1724,12 +1722,18 @@ for(id in extracted_part_id){
   test_phase <- append (test_phase, "vsl")
   mean_rt <- append(mean_rt, round(mean(structured_vv_extracted$rt_col[structured_vv_extracted$id==id]),digits=3))
   rt_slope <- append (rt_slope, round(summary(lm(structured_vv_extracted$rt_col[structured_vv_extracted$id==id]~structured_vv_extracted$targ_index[structured_vv_extracted$id==id]))$coefficient[2,1],digits = 4))
+  number_rts <- append(number_rts, length(!is.na(structured_vv_extracted$rt_col[structured_vv_extracted$id==id])))
   data_this_id <- (structured_vv_extracted[ which(structured_vv_extracted$id==id),])
   this_range<- range(data_this_id$rt_col, na.rm = TRUE)
   range <- append (range, (this_range[2]-this_range[1]))
   upper_bound <- append (upper_bound,this_range[1])
   lower_bound <- append (lower_bound,this_range[2])
 }
+
+number_rts
+mean(number_rts)
+sd(number_rts)
+length(number_rts)
 
 # Combine data for each participant
 svv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
@@ -1751,6 +1755,17 @@ mean_svv_rt_slope
 # Bind conditions
 indiv_rt_slope<- data.frame(rbind(rll, rlv, rvl, rvv, sll, slv, svl, svv))
 
+sd_rll_rt_slope <- sd(rll$rt_slope)
+sd_rlv_rt_slope <- sd(rlv$rt_slope)
+sd_rvl_rt_slope <- sd(rvl$rt_slope)
+sd_rvv_rt_slope <- sd(rvv$rt_slope)
+sd_sll_rt_slope <- sd(sll$rt_slope)
+sd_slv_rt_slope <- sd(slv$rt_slope)
+sd_svl_rt_slope <- sd(svl$rt_slope)
+sd_svv_rt_slope <- sd(svv$rt_slope)
+
+
+
 # Summarize rt_slope
 indiv_rt_slope_wide <- cast(indiv_rt_slope, part_id ~ task, mean, value = 'rt_slope')
 indiv_rt_slope_wide<- merge(indiv_rt_slope_wide, picture_vocab, by = "part_id", all=TRUE)
@@ -1763,7 +1778,7 @@ all_diff$same_or_diff <- ("different")
 indiv_rt_slope_wide <- rbind(all_same, all_diff)
 
 # Write rt_slope summary into a file
-write.csv(indiv_rt_slope_wide, "sit_rt_slope_indiv.csv")
+write.csv(indiv_rt_slope_wide, "/Volumes/data/projects/completed_projects/sit/analysis/summaries/sit_rts_vocab_wide.csv")
 
 # Summarize mean_rt
 indiv_rt_wide <- cast(indiv_rt_slope, part_id ~ task, mean, value = 'mean_rt')
@@ -1777,7 +1792,7 @@ all_diff$same_or_diff <- ("different")
 indiv_rt_wide <- rbind(all_same, all_diff)
 
 # Write mean_rt summary into a file
-write.csv(indiv_rt_wide, "sit_mean_rt_indiv.csv")
+write.csv(indiv_rt_wide, "/Volumes/data/projects/completed_projects/sit/analysis/summaries/sit_mean_rt_vocab.csv")
 
 
 # Find group-level mean rt_slope accross tasks------------------------------------------------------------------------------------
@@ -1840,206 +1855,5 @@ mean_rand_rt <- append(mean_rand_rt, round(mean(indiv_rt_slope[ which(indiv_rt_s
 group_rt_slope <- data.frame(cbind(task, mean_rand_rt_slope, mean_struct_rt_slope, mean_struct_rt, mean_rand_rt))
 
 # Write rt slope data into a file
-write.csv(group_rt_slope, "sit_rt_slope_group.csv")
-
-
-
-# *************************** ANALYSIS 1: TEST EFFECTS OF GROUP, TYPE, AND TEST PHASE *******************
-
-
-# ANOVA to test effects of type (random/ structured), test phase and group (same/ different) on RT Slope----------------------
-
-# Find all of the ids
-all_ids <- unique(indiv_rt_slope$part_id)
-
-# You will remove participants with incomplete rt slope data
-incomplete_ids <- NULL
-
-# Find the number of RT slopes for each person
-for (id in all_ids){
-  # Each participant should have 4 rt slopes: lingustic random, linguistic structured, non-linguistic structured, and non-linguistic random
-  if (sum(indiv_rt_slope$part_id==id)!=4){
-    incomplete_ids <- append (incomplete_ids, id)
-  }
-}
-
-# Remove data from any participants who have an incomplete number of RT slopes
-for (id in incomplete_ids){
-  indiv_rt_slope <- indiv_rt_slope[which(indiv_rt_slope$part_id!=id),]
-}
-
-# RT Slope ANOVA ----------------------
-
-# Test effects of type (random/ structured), test phase and group (same/ different) on rt slope
-m2 = aov(rt_slope~domain*type*same_or_diff+Error(part_id/(domain*type)),data =indiv_rt_slope)
-summary(m2)
-
-# Mean RT ANOVA ----------------------
-
-# Test effects of type (random/ structured), test phase and group (same/ different) on rt slope
-m3 = aov(mean_rt~domain*type*same_or_diff+Error(part_id/(domain*type)),data =indiv_rt_slope)
-summary(m3)
-
-
-# *************************** ANALYSIS 2: CORRELATION MATRICES **********************************
-
-
-# RT Slope Correlation matrices-------------------------------------------------------------------------------------------------------------------------------------
-
-# Extract relevant data from indiv_rt_slope and picture_vocab
-corr_data <- cast(indiv_rt_slope, part_id ~ task, mean, value = 'rt_slope')
-corr_data <- merge(corr_data, picture_vocab, by = "part_id", all=TRUE)
-
-# Add corr_data's groups of same/ different
-corr_data <- cbind(corr_data, "same_or_diff")
-colnames(corr_data)[9] <- "same_or_diff"
-all_same <- corr_data[ which(corr_data$ll>0), ]
-all_same$same_or_diff <- ("same")
-all_diff <- corr_data[ which(corr_data$lv>0), ]
-all_diff$same_or_diff <- ("different")
-corr_data <- rbind(all_same, all_diff)
-corr_data <- corr_data[ which(corr_data$score>0), ]
-
-# Separate corr_data into groups by same/ different
-same_corr <- corr_data[ which(!is.na(corr_data$ll)), ]
-same_corr <- same_corr[, c(2, 5, 6)]
-diff_corr <- corr_data[ which(!is.na(corr_data$lv)), ]
-diff_corr <- diff_corr[, c(3, 4, 6)]
-
-# Create correlation matrices for different condition
-diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
-diff
-
-# Test p-values of correlation matrices for different condition
-lv_corr<-cor.test(diff_corr$lv,diff_corr$score)
-lv_corr
-vl_corr<-cor.test(diff_corr$vl,diff_corr$score)
-vl_corr
-
-# Create correlation matrices for same condition
-same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
-same
-
-# Test p-values of correlation matrices for different condition
-ll_corr<-cor.test(same_corr$ll, same_corr$score)
-ll_corr
-vv_corr<-cor.test(same_corr$vv, same_corr$score)
-vv_corr
-
-# calculate the difference scores between structured condition and random condition within linguistic and non-linguistic domains.
-rt_slope_diff = cast(indiv_rt_slope,part_id+same_or_diff+domain~type,value = "rt_slope")
-rt_slope_diff$slope_diff = rt_slope_diff$structured-rt_slope_diff$random
-rt_slope_diff = merge(rt_slope_diff,picture_vocab,id=1)
-rt_slope_diff = cast(rt_slope_diff,part_id+score+same_or_diff~domain,value="slope_diff")
-colnames(rt_slope_diff)[5]="non_linguistic"
-
-# Plot rt slope difference
-
-rt_slope_diff_diff = subset(rt_slope_diff,same_or_diff=="diff")
-rt_slope_diff_diff_complete = rt_slope_diff_diff[complete.cases(rt_slope_diff_diff),]
-
-# Test the correlation between the same condition's difference scores and vocabulary 
-rt_slope_diff_same = subset(rt_slope_diff,same_or_diff=="same")
-rt_slope_diff_same_complete = rt_slope_diff_same[complete.cases(rt_slope_diff_same),]
-cor.test(rt_slope_diff_same_complete$linguistic,rt_slope_diff_same_complete$score,altermative ="less",method="pearson")
-cor.test(rt_slope_diff_same_complete$non_linguistic,rt_slope_diff_same_complete$score,altermative ="less",method="pearson") 
-
-# Test the correlation between the different condition's difference scores and vocabulary 
-rt_slope_diff_diff = subset(rt_slope_diff,same_or_diff=="different")
-rt_slope_diff_diff_complete = rt_slope_diff_diff[complete.cases(rt_slope_diff_diff),]
-cor.test(rt_slope_diff_diff_complete$linguistic,rt_slope_diff_diff_complete$score,alternative = "less", method="pearson")
-cor.test(rt_slope_diff_diff_complete$non_linguistic,rt_slope_diff_diff_complete$score,alternative = "less", method="pearson")
-
-myvars <- c("score", "linguistic", "non_linguistic")
-test_same <- data.frame(rt_slope_diff_same_complete[myvars])
-test_diff <- data.frame(rt_slope_diff_diff_complete[myvars])
-names(test_same) <- gsub ("linguistic", "linguistic_same", names(test_same))
-names(test_diff) <- gsub ("linguistic", "linguistic_diff", names(test_diff))
-test_same[,"linguistic_diff"] <- NA
-test_same[,"non_linguistic_diff"] <- NA
-test_diff[,"linguistic_same"] <- NA
-test_diff[,"non_linguistic_same"] <- NA
-test<-(rbind(test_same,test_diff))
-test[is.na(test)] <- 0
-names(test)<-gsub("_", " ", names(test))
-
-test$part_id <- NULL
-M <- cor(test, use="pairwise.complete.obs")
-corrplot(M, method = "circle", insig = "p-value")
-
-# Mean RT Correlation matrices-------------------------------------------------------------------------------------------------------------------------------------
-
-# Extract relevant data from indiv_rt_slope and picture_vocab
-corr_data <- cast(indiv_rt_slope, part_id ~ task, mean, value = 'mean_rt')
-corr_data <- merge(corr_data, picture_vocab, by = "part_id", all=TRUE)
-
-# Add corr_data's groups of same/ different
-corr_data <- cbind(corr_data, "same_or_diff")
-colnames(corr_data)[9] <- "same_or_diff"
-all_same <- corr_data[ which(corr_data$ll>0), ]
-all_same$same_or_diff <- ("same")
-all_diff <- corr_data[ which(corr_data$lv>0), ]
-all_diff$same_or_diff <- ("different")
-corr_data <- rbind(all_same, all_diff)
-corr_data <- corr_data[ which(corr_data$score>0), ]
-
-# Separate corr_data into groups by same/ different
-same_corr <- corr_data[ which(!is.na(corr_data$ll)), ]
-same_corr <- same_corr[, c(2, 5, 6)]
-diff_corr <- corr_data[ which(!is.na(corr_data$lv)), ]
-diff_corr <- diff_corr[, c(3, 4, 6)]
-
-# Create correlation matrices for different condition
-diff <- cor(diff_corr, method = c("pearson"),use="pairwise.complete.obs")
-
-# Test p-values of correlation matrices for different condition
-lv_corr<-cor.test(diff_corr$lv,diff_corr$score)
-lv_corr
-vl_corr<-cor.test(diff_corr$vl,diff_corr$score)
-vl_corr
-
-# Create correlation matrices for same condition
-same <- cor(same_corr, method = c("pearson"),use="pairwise.complete.obs")
-
-# Test p-values of correlation matrices for different condition
-ll_corr<-cor.test(same_corr$ll, same_corr$score)
-ll_corr
-vv_corr<-cor.test(same_corr$vv, same_corr$score)
-vv_corr
-
-
-# calculate the mean rt difference scores between structured condition and random condition 
-# within linguistic and non-linguistic domainsfor individual difference analyses
-rt_diff = cast(indiv_rt_slope,part_id+same_or_diff+domain~type,value = "mean_rt")
-rt_diff$meanrt_diff = rt_diff$structured-rt_diff$random
-rt_diff = merge(rt_diff,picture_vocab,id=1)
-rt_diff = cast(rt_diff,part_id+score+same_or_diff~domain,value="meanrt_diff")
-colnames(rt_diff)[5]="non_linguistic"
-rt_diff_same = subset(rt_diff,same_or_diff=="same")
-rt_diff_same_complete = rt_diff_same[complete.cases(rt_diff_same),]
-cor.test(rt_diff_same_complete$linguistic,rt_diff_same_complete$score,alternative = "greater", method="pearson")
-cor.test(rt_diff_same_complete$non_linguistic,rt_diff_same_complete$score,alternative = "greater", method="pearson")
-
-rt_diff_diff = subset(rt_diff,same_or_diff=="different")
-cor.test(rt_diff_diff$linguistic,rt_diff_diff$score, alternative = "greater", method="pearson")
-cor.test(rt_diff_diff$non_linguistic,rt_diff_diff$score, alternative = "less", method="pearson")
-
-plot(rt_diff_diff$non_linguistic,rt_diff_diff$score)
-
-
-
-
-#  ************* SEE WHETHER PERFORMANCE WAS ABOVE CHANCE: T-TESTS *************
-
-# test whether in each condition rt slope was different from zero.
-t.test(sll$rt_slope, mu=0)
-t.test(slv$rt_slope, mu=0)
-t.test(svl$rt_slope, mu=0) 
-t.test(svv$rt_slope, mu=0)
-
-# test whether in each condition rt slope was significantly less than zero.
-t.test(sll$rt_slope, alternative="less", mu=0)
-t.test(slv$rt_slope, alternative="less", mu=0)
-t.test(svl$rt_slope, alternative="less", mu=0)
-t.test(svv$rt_slope, alternative="less", mu=0) 
+write.csv(group_rt_slope, "/Volumes/data/projects/completed_projects/sit/analysis/summaries/sit_rt_slope_group.csv")
 

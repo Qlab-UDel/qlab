@@ -1,40 +1,35 @@
 #  SIT RT Slope Cleaning
 #  Violet Kozloff
-#  April 8th 2018 
+#  Adapted from cleaning files produced by An Nguyen
+#  Last modified July 3rd, 2019
 #  This script cleans files from the SIT experiment
-#  NOTE: Before starting, manually add columns to each file that contain "first_targ" and "second_targ."
-#  These values come from the corresponding .log file on NAS data/projects/sit/visual_inter/data/
-#  "first_targ" comes from the line "Created firstTarget_image"; "second_targ" from "Created secondTarget_image"
+#  NOTE: Before starting, "first_targ" and "second_targ" columns must be manually added to each raw data file
+#        These values come from the corresponding .log file on NAS data/projects/sit/visual_inter/data/
+#        "first_targ" comes from the line "Created firstTarget_image"; "second_targ" from "Created secondTarget_image"
+#        A future version of this script should automatically extract these values.
+#  NOTE: This script generates warnings when the value 'F' cannot be found in a column. 
+#        While this does not affect the output, a future version of this script should account for this case.  
 #  ****************************************************************************
 
 
 # Prepare files ------------------------------------------------------------
 
 # Set working directory
-setwd("/Users/vkozloff/Documents/qlab/analysis/sl-psychopy-analysis/sit-beh-analysis")
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/")
 
 # Remove objects in environment
 rm(list=ls())
 
-# Set up file paths
-ll_input <- ("/Users/vkozloff/Documents/sit_data/original/ll_original/")
-lv_input <- ("/Users/vkozloff/Documents/sit_data/original/lv_original/")
-vl_input <- ("/Users/vkozloff/Documents/sit_data/original/vl_original/")
-vv_input <- ("/Users/vkozloff/Documents/sit_data/original/vv_original/")
-ll_output <- ("/Users/vkozloff/Documents/sit_data/clean/ll_clean/")
-lv_output <- ("/Users/vkozloff/Documents/sit_data/clean/lv_clean/")
-vl_output <- ("/Users/vkozloff/Documents/sit_data/clean/vl_clean/")
-vv_output <- ("/Users/vkozloff/Documents/sit_data/clean/vv_clean/")
-ll_files<- list.files(path = ll_input, pattern="*.csv")
-lv_files<- list.files(path = lv_input, pattern="*.csv")
-vl_files<- list.files(path = vl_input, pattern="*.csv")
-vv_files<- list.files(path = vv_input, pattern="*.csv")
 
+# Clean ll files with an lsl test phase --------------------------------------------------------------------------------
 
-# Clean files with an lsl test phase --------------------------------------------------------------------------------
+# Find ll files
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/data/original/ll_original")
+ll_files <- list.files(pattern=("*.csv"))
+ll_output <- ("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/ll_clean")
 
-# create a new file containing only the relevant columns in the output folder
-ll_clean <- function(file) {
+# Clean ll files and put output on NAS under /Volumes/data/projects/completed_projects/sit/analysis/data/clean/ll_clean
+for (file in ll_files) {
   current_file <- read.csv(file)
   # Select relevant columns
   value <- c("PartID", "trialnum", "expName", "condition", "l_block_trial_loop.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","lsl_question_key_resp.corr")
@@ -61,21 +56,18 @@ ll_clean <- function(file) {
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
   # Write file
-  this_path<-file.path(ll_output, basename(file))
-  write.csv(newdata, file=(this_path))
+  write.csv(newdata, paste('/Volumes/data/projects/completed_projects/sit/analysis/data/clean/ll_clean/clean_', basename(file), sep=""))
 }
 
-# Apply function to all ll files
-for (file in ll_files)
-{
-  ll_clean(paste0(ll_input,file))
-}
 
-ll_output_files <- list.files(path = ll_output, pattern="*.csv")
+# Clean lv files with an lsl test phase --------------------------------------------------------------------------------
 
+# Find lv files
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/data/original/lv_original")
+lv_files <- list.files(pattern=("*.csv"))
+lv_output <- ("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/lv_clean")
 
-# create a new file containing only the relevant columns in the output folder
-lv_clean <- function(file) {
+for (file in lv_files) {
   current_file <- read.csv(file)
   # Select relevant columns
   value <- c("PartID", "expName", "trialnum", "condition", "l_block_trial_loop.thisTrialN", "v_block_trials.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt", "v_block_trial_key_resp.rt","lsl_question_key_resp.corr")
@@ -100,21 +92,19 @@ lv_clean <- function(file) {
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
   # Write file
-  this_path<-file.path(lv_output, basename(file))
-  write.csv(newdata, file=(this_path))
-}
-
-# Apply function to all lv files
-for (file in lv_files)
-{
-  lv_clean(paste0(lv_input,file))
+  write.csv(newdata, paste('/Volumes/data/projects/completed_projects/sit/analysis/data/clean/lv_clean/clean_', basename(file), sep=""))
 }
 
 
-# Clean files with a vsl test phase --------------------------------------------------------------------------------
+# Clean vl files --------------------------------------------------------------------------------
+
+# Find vl files
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/data/original/vl_original")
+vl_files <- list.files(pattern=("*.csv"))
+vl_output <- ("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/vl_clean")
 
 # create a new file containing only the relevant columns in the output folder
-vl_clean <- function(file) {
+for (file in vl_files) {
   current_file <- read.csv(file)
   # Select relevant columns
   value <- c("PartID", "trialnum", "expName", "condition", "l_block_trial_loop.thisTrialN", "v_block_trials.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","v_block_trial_key_resp.rt", "vsl_question_key_resp.corr")
@@ -139,20 +129,19 @@ vl_clean <- function(file) {
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
   # Write file
-  this_path<-file.path(vl_output, basename(file))
-  write.csv(newdata, file=(this_path))
+  write.csv(newdata, paste('/Volumes/data/projects/completed_projects/sit/analysis/data/clean/vl_clean/clean_', basename(file), sep=""))
 }
 
-# Apply function to all vl files
-for (file in vl_files)
-{
-  vl_clean(paste0(vl_input,file))
-}
 
-newdata <- NULL
+# Clean vv files --------------------------------------------------------------------------------
+
+# Find vv files
+setwd("/Volumes/data/projects/completed_projects/sit/analysis/data/original/vv_original")
+vv_files <- list.files(pattern=("*.csv"))
+vv_output <- ("/Volumes/data/projects/completed_projects/sit/analysis/data/clean/vv_clean")
 
 # create a new file containing only the relevant columns in the output folder
-vv_clean <- function(file) {
+for (file in vv_files) {
   current_file <- read.csv(file)
   # Select relevant columns
   value <- c("PartID", "expName", "trialnum", "condition", "v_block_trials.thisTrialN", "image", "first_targ", "second_targ","v_block_trial_key_resp.rt", "vsl_question_key_resp.corr")
@@ -173,13 +162,6 @@ vv_clean <- function(file) {
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
   # Write file
-  this_path<-file.path(vv_output, basename(file))
-  write.csv(newdata, file=(this_path))
-}
-
-# Apply function to all vv files
-for (file in vv_files)
-{
-  vv_clean(paste0(vv_input,file))
+  write.csv(newdata, paste('/Volumes/data/projects/completed_projects/sit/analysis/data/clean/vv_clean/clean_', basename(file), sep=""))
 }
 
