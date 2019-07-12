@@ -4,7 +4,7 @@ This R script automates the behavioral data analysis process for BLAST in-scanne
 It uses information about the results from participant's keypresses to find mean reaction time and reaction time from the two-alternative forced-choice task.
 Calculations are peformed for visual and auditory data from linguistic and non-linguistic domains in random and structured blocks 
 
-* The working directory is set as the location where the script is saved on NAS:
+* The working directory is set as the location where the data is saved on NAS:
 ```
 Volumes/data/projects/blast/data/mri/in_scanner_behavioral/adult/sl_raw_data
 ```
