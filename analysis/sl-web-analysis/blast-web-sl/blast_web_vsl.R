@@ -2,7 +2,7 @@
 #  Violet Kozloff
 #  Last updated February 27th
 #  Adapted from mturk_vsl by An Nguyen
-#  This script analyses reaction time for lsl files from the online session of the BLAST experiment
+#  This script analyses reaction time for vsl files from the online session of the BLAST experiment
 #  ****************************************************************************
 
 # Prepare workspace ------------------------------------------------------------
@@ -11,37 +11,29 @@
 setwd("/Volumes/data/projects/blast/data/online_sl/blast_adult")
 # NOTE: Comment out the above line and use this one for children
 # setwd("/Volumes/data/projects/blast/data/online_sl/blast_child")
+# NOTE: This is the path for SPOLI
+# setwd("/Volumes/data-1/projects/spoli/raw_sl_data/")
+
+# Install packages
+install.packages("reshape")
+library("reshape")
+install.packages("DescTools")
+library("DescTools")
+
 
 # Remove objects in environment
 rm(list=ls())
 
 # Output path
-output_path <- ("/Volumes/data-1/projects/blast/data_summaries/blast_online_adult/")
+output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_online_adult/breakdown/")
+# output_path <- ("/Volumes/data-1/projects/blast/data_summaries/blast_online_child/")
+
 
 # Extract data from files ------------------------------------------------------------
 
-# Ask user for input on how many files are expected (i.e. how many participants are there?)
-correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
-
-# List input files
-lsl_files <- list.files(pattern="*lsl.csv")
-# TO DO: This needs to be able to change
-# TO DO: THis also needs to work for kids
-lsl_files <- lsl_files[1:24]
-
-# Confirm that all files are present. If not, alert user
-if(length(ssl_files)!=correct_total_files){
-  stop(print(paste("Found", length(ssl_files), "files. You indicated that there are", correct_total_files, "participants. Please check files in folder against the qlab_participant_checklist.")))
-}
-
-# Initialize variable to hold data
-ssl <- NULL
-
-
-# NOTE: Comment out the above line and use this one for children
-# output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_online_child")
-
-# Extract data from files ------------------------------------------------------------
+# Read in the entropy key
+vsl_entropy_key <- read.csv("/Volumes/data/projects/blast/data/online_sl/entropy_keys/vsl_entropy_key.csv")
+vsl_entropy_key <- (vsl_entropy_key[c("target_type","target_order","target_occurance_order","alien_target")])
 
 # Ask user for input on how many files are expected (i.e. how many participants are there?)
 correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
@@ -53,6 +45,7 @@ vsl_files <- list.files(pattern="*vsl.csv")
 if(length(vsl_files)!=correct_total_files){
   stop(print(paste("Found", length(vsl_files), "files. You indicated that there are", correct_total_files, "participants. Please check files in folder against the qlab_participant_checklist.")))
 }
+
 
 # Initialize variable to hold data
 vsl <- NULL
@@ -96,7 +89,7 @@ exp_phase_end <-298
 exp_phase <- vsl[which(vsl$trial_index<=exp_phase_end & vsl$trial_index>=exp_phase_start),]
 
 # Internal check: Make sure that there are 286 stimuli per participant
-# NOTE: Unlike tsl and ssl, which have 576, these ones have 286
+# NOTE: Unlike vsl and vsl, which have 576, these ones have 286
 # Initialize variables
 total_stimuli <- NULL
 # Find the number of stimuli for each participant
@@ -418,9 +411,64 @@ vsl_accuracy$ans <- gsub(49,1,vsl_accuracy$ans)
 corr <- NULL
 for (i in seq(from=1,to=length(vsl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(vsl_accuracy[i,]$ans==vsl_accuracy[i,]$key))}
 vsl_accuracy$corr <- corr
+
+
+
+# Entropy
+
+# Find the triplet type (each triplet gets coded with a value from A-D)
+triplet_type <- rep(vsl_entropy_key$target_type, times = length(unique(vsl_accuracy$subj)))
+# Find the order for the triplet (the triplet either appeared first or second, with respect to the foil)
+triplet_order <- rep(vsl_entropy_key$target_order, times = length(unique(vsl_accuracy$subj)))
+# Find the occurance for the triplet (each triplet occurs between 7 and 9 times. Number each occurance.)
+triplet_occurance <- rep(vsl_entropy_key$target_occurance_order, times = length(unique(vsl_accuracy$subj)))
+# Find the image triplet (which three images make up the triplet)
+image_triplet <- rep(vsl_entropy_key$alien_target, times = length(unique(vsl_accuracy$subj)))
+
+vsl_accuracy$triplet_type <- triplet_type
+vsl_accuracy$triplet_order <- triplet_order
+vsl_accuracy$triplet_occurance <- triplet_occurance
+vsl_accuracy$image_triplet <- image_triplet
+
+
+# Entropy
+vsl_entropy_wide<- cast(vsl_accuracy, subj~corr+triplet_type, value = "image_triplet", fun.aggregate = length)
+
+
+#Caculate Entropy for each target type by group and by task
+vsl_entropy_by_triplet <- data.frame()
+
+# vsl Entropy for each target type
+for (i in 1:nrow(vsl_entropy_wide)) {
+  vsl_entropy_by_triplet[i,"vsl_a_entropy"] <- Entropy(vsl_entropy_wide[i,c("0_A","1_A")])
+}
+
+for (i in 1:nrow(vsl_entropy_wide)) {
+  vsl_entropy_by_triplet[i,"vsl_b_entropy"] <- Entropy(vsl_entropy_wide[i,c("0_B","1_B")])
+}
+
+for (i in 1:nrow(vsl_entropy_wide)) {
+  vsl_entropy_by_triplet[i,"vsl_c_entropy"] <- Entropy(vsl_entropy_wide[i,c("0_C","1_C")])
+}
+
+for (i in 1:nrow(vsl_entropy_wide)) {
+  vsl_entropy_by_triplet[i,"vsl_d_entropy"] <- Entropy(vsl_entropy_wide[i,c("0_D","1_D")])
+}
+
+for (i in 1:nrow(vsl_entropy_wide)) {
+  vsl_entropy_by_triplet[i,"part_id"] <- vsl_entropy_wide[i,c("subj")]
+}
+
+vsl_entropy_by_triplet$mean_entropy <- round(rowMeans(vsl_entropy_by_triplet[,1:4], na.rm = FALSE, dims = 1), 3)
+
+write.csv(vsl_entropy_by_triplet[,5:6], paste0(output_path, "online_vsl_entropy_adults.csv"))
+
+
+# Count how many answers were correct for each participant
 subj_corr <- NULL
 for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(vsl_accuracy$corr[vsl_accuracy$subj==id])/32,digits=3))}
 vsl_acc_table <- data.frame(acc_id,subj_corr)
 
-write.csv(vsl_acc_table, "/Volumes/data/projects/blast/data_summaries/blast_online_adult/breakdown/online_vsl_accuracies.csv")
+write.csv(vsl_acc_table, "/Volumes/data/projects/blast/data_summaries/blast_online_child/breakdown/online_vsl_accuracies.csv")
+#write.csv(vsl_acc_table, "/Volumes/data/projects/blast/data_summaries/blast_online_adult/breakdown/online_vsl_accuracies.csv")
 
