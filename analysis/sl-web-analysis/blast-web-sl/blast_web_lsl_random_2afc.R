@@ -1,6 +1,6 @@
 #  BLAST LSL Analysis
 #  Violet Kozloff
-#  Last updated February 27th
+#  Last updated May 23rd
 #  Adapted from mturk_lsl by An Nguyen
 #  This script analyses reaction time for lsl files from the online session of the BLAST experiment
 #  ****************************************************************************
@@ -11,12 +11,24 @@
 setwd("/Volumes/data/projects/blast/data/online_sl/blast_adult")
 # NOTE: Comment out the above line and use this one for children
 # setwd("/Volumes/data/projects/blast/data/online_sl/blast_child")
+# NOTE: This is the one for SPOLI
+# setwd("/Volumes/data-1/projects/spoli/raw_sl_data")
+
+# TO DO: Add this to SSL, LSL pred, VSL
+install.packages("reshape")
+library("reshape")
+install.packages("DescTools")
+library("DescTools")
+
+
 
 # Remove objects in environment
 rm(list=ls())
 
 # Output path
 output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_online_adult/breakdown/")
+# output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_online_child/breakdown/")
+
 
 #importing files
 
@@ -24,11 +36,11 @@ output_path <- ("/Volumes/data/projects/blast/data_summaries/blast_online_adult/
 lsl_files <- list.files(pattern="*lsl.csv")
 # TO DO: This needs to be able to change
 # TO DO: THis also needs to work for kids
-lsl_files <- lsl_files[24:28]
+# lsl_files <- lsl_files[24:28]
 
 
 # TO DO: This should change for corrected LSL files
-language = list(1,1,2,1,1,1,2,1,2,2,1,1,1,2,2,1,2,2,1,1,2,1,2,1,2,1,2,1,1,2,2,2)
+language = list(1,1,2,1,1,1,2,2,2,2,1,1,1,2,2,1,2,2,1,1,2,1,2,1,2,1,2,1,1,2,2,2)
 
 
 
@@ -101,10 +113,70 @@ lsl_accuracy$key <- keyv
 lsl_accuracy$ans <- gsub(50,2,lsl_accuracy$ans)
 lsl_accuracy$ans <- gsub(49,1,lsl_accuracy$ans)
 
-#Loop through and count the correct answer
+#Loop through and mark answers as correct or incorrect
 corr <- NULL
 for (i in seq(from=1,to=length(lsl_accuracy$ans),by=1)) {corr<-append(corr,as.numeric(lsl_accuracy[i,]$ans==lsl_accuracy[i,]$key))}
 lsl_accuracy$corr <- corr
+
+
+# Entropy
+
+# Read in the entropy key
+lsl_entropy_key <- read.csv("/Volumes/data/projects/blast/data/online_sl/entropy_keys/lsl_entropy_key_randomized.csv")
+lsl_entropy_key <- (lsl_entropy_key[c("target_type","target_order","target_occurance_order","letter_target")])
+
+
+# Entropy
+
+# Find the triplet type (each triplet gets coded with a value from A-D)
+triplet_type <- rep(lsl_entropy_key$target_type, times = length(unique(lsl_accuracy$subj)))
+# Find the order for the triplet (the triplet either appeared first or second, with respect to the foil)
+triplet_order <- rep(lsl_entropy_key$target_order, times = length(unique(lsl_accuracy$subj)))
+# Find the occurance for the triplet (each triplet occurs between 7 and 9 times. Number each occurance.)
+triplet_occurance <- rep(lsl_entropy_key$target_occurance_order, times = length(unique(lsl_accuracy$subj)))
+# Find the letter triplet (which three syllables make up the triplet)
+letter_triplet <- rep(lsl_entropy_key$letter_target, times = length(unique(lsl_accuracy$subj)))
+
+lsl_accuracy$triplet_type <- triplet_type
+lsl_accuracy$triplet_order <- triplet_order
+lsl_accuracy$triplet_occurance <- triplet_occurance
+lsl_accuracy$letter_triplet <- letter_triplet
+
+# Entropy
+lsl_entropy_wide<- cast(lsl_accuracy, subj~corr+triplet_type, value = "letter_triplet", fun.aggregate = length)
+
+
+#Caculate Entropy for each target type by group and by task
+lsl_entropy_by_triplet <- data.frame()
+
+# LSL Entropy for each target type
+for (i in 1:nrow(lsl_entropy_wide)) {
+  lsl_entropy_by_triplet[i,"lsl_a_entropy"] <- Entropy(lsl_entropy_wide[i,c("0_A","1_A")])
+}
+
+for (i in 1:nrow(lsl_entropy_wide)) {
+  lsl_entropy_by_triplet[i,"lsl_b_entropy"] <- Entropy(lsl_entropy_wide[i,c("0_B","1_B")])
+}
+
+for (i in 1:nrow(lsl_entropy_wide)) {
+  lsl_entropy_by_triplet[i,"lsl_c_entropy"] <- Entropy(lsl_entropy_wide[i,c("0_C","1_C")])
+}
+
+for (i in 1:nrow(lsl_entropy_wide)) {
+  lsl_entropy_by_triplet[i,"lsl_d_entropy"] <- Entropy(lsl_entropy_wide[i,c("0_D","1_D")])
+}
+
+for (i in 1:nrow(lsl_entropy_wide)) {
+  lsl_entropy_by_triplet[i,"part_id"] <- lsl_entropy_wide[i,c("subj")]
+}
+
+lsl_entropy_by_triplet$mean_entropy <- round(rowMeans(lsl_entropy_by_triplet[,1:4], na.rm = FALSE, dims = 1), 3)
+
+write.csv(lsl_entropy_by_triplet[,5:6], paste0(output_path, "online_lsl_randomized_entropy_adults.csv"))
+
+
+
+# Find the number of correct answers for each participant
 subj_corr <- NULL
 for (id in acc_id) {subj_corr <- append(subj_corr,round(sum(lsl_accuracy$corr[lsl_accuracy$subj==id])/32,digits=3))}
 lsl_acc_table <- data.frame(acc_id,subj_corr)
