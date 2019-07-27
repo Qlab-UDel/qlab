@@ -288,6 +288,9 @@ for (i in auditory_targets) {
            # and the preceding stimulus was not also a target
            & ((auditory_data[i-1,][,"tone_target"] != (auditory_data[i-1,][,"stimulus"])))
            & ((auditory_data[i-1,][,"syllable_target"] != (auditory_data[i-1,][,"stimulus"])))
+           #  and two stimuli prior was  also not a target
+           & ((auditory_data[i-2,][,"tone_target"] != (auditory_data[i-2,][,"stimulus"])))
+           & ((auditory_data[i-2,][,"syllable_target"] != (auditory_data[i-2,][,"stimulus"])))
            # and the preceding stimulus came from the same block
            & (auditory_data[i,])$condition==(auditory_data[i-1,]$condition)){
     # Count the response time as how much sooner they responded than when the stimulus was presented (anticipation)
@@ -297,8 +300,8 @@ for (i in auditory_targets) {
   
   # Otherwise, if the participant responded during the target
   else if (!is.na(auditory_data[i,] [,"keypress"])
-    # and the previous stimulus was not also a target
-    & !((i-1)%in%auditory_targets)){
+    # and the previous stimulus was not also a target with its own keypress
+    & (!((i-1)%in%auditory_targets) | ((i-1)%in%auditory_targets) & is.na(auditory_data[i-1,] [,"keypress"]))){
     # Count their response time as the keypress
     auditory_rt <- append(auditory_rt, (auditory_data[i,][,"keypress"]))
     #auditory_case4 <- append (auditory_case4, i)
@@ -508,6 +511,9 @@ for (i in visual_targets) {
            # and the preceding stimulus was not also a target
            & ((visual_data[i-1,][,"image_target"] != (visual_data[i-1,][,"stimulus"])))
            & ((visual_data[i-1,][,"letter_target"] != (visual_data[i-1,][,"stimulus"])))
+           #  and two stimuli prior was  also not a target
+           & ((visual_data[i-2,][,"image_target"] != (visual_data[i-2,][,"stimulus"])))
+           & ((visual_data[i-2,][,"letter_target"] != (visual_data[i-2,][,"stimulus"])))
            # and the preceding stimulus came from the same block
            & (visual_data[i,])$condition==(visual_data[i-1,]$condition)){
     # Count the response time as how much sooner they responded than when the stimulus was presented (anticipation)
@@ -517,8 +523,8 @@ for (i in visual_targets) {
   
   # Otherwise, if the participant responded during the target
   else if (!is.na(visual_data[i,] [,"keypress"])
-           # and the previous stimulus was not also a target
-           & !((i-1)%in%visual_targets)){
+           # and the previous stimulus was not also a target with its own keypress
+           & (!((i-1)%in%visual_targets) | ((i-1)%in%visual_targets) & is.na(visual_data[i-1,] [,"keypress"]))){
     # Count their response time as the keypress
     visual_rt <- append(visual_rt, (visual_data[i,][,"keypress"]))
     #visual_case4 <- append (visual_case4, i)
@@ -661,7 +667,7 @@ for(id in (unique(visual_part_id))){
 
 visual_rt_slopes <- cbind(unique(visual_part_id), random_lsl_rt_slope, random_vsl_rt_slope, structured_lsl_rt_slope, structured_vsl_rt_slope)
 colnames(visual_rt_check)[1] <- "visual_part_id"
-colnames(exp_visual_mean_rts) <- c("visual_part_id", "random_letter_mean_rt", "random_image_mean_rt", "structured_letter_mean_rt", "structured_image_mean_rt")
+colnames(exp_visual_mean_rts) <- c("visual_part_id", "random_letter_rt_slope", "random_image_rt_slope", "structured_letter_rt_slope", "structured_image_rt_slope")
 colnames(visual_rt_slopes)[1] <- "visual_part_id"
 visual_output <- merge(merge(visual_rt_check, exp_visual_mean_rts), visual_rt_slopes)
 
