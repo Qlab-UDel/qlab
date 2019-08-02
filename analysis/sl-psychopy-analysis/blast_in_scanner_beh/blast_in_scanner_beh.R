@@ -1,7 +1,7 @@
 #  ****************************************************************************
 #  BLAST IN-SCANNER BEHAVIORAL ANALYSIS
 #  Violet Kozloff
-#  Last updated: August 1st, 2019 
+#  Last updated: August 2nd, 2019 
 #  This script extracts data from structured and random blocks across four tasks: auditory (speech and tones) and visual (letters and images).
 #  It measures the mean reaction time and the slope of the reaction time for each participant for each condition.
 #  ****************************************************************************
@@ -314,7 +314,11 @@ for (i in auditory_targets) {
   # Otherwise, if the participant responded during the target
   else if (!is.na(auditory_data[i,] [,"keypress"])
     # and the previous stimulus was not also a target with its own keypress
-    & (!((i-1)%in%auditory_targets) | ((i-1)%in%auditory_targets) & is.na(auditory_data[i-1,] [,"keypress"]))){
+    & (!((i-1)%in%auditory_targets) | ((i-1)%in%auditory_targets) & is.na(auditory_data[i-1,] [,"keypress"]))
+    # 08.02.19
+    # and the previous stimulus was not also a target with no keypress, while the following stimulus was a distractor with a keypress
+    & !(((i-1)%in%auditory_targets & is.na(auditory_data[i-1,] [,"keypress"]) & !(i+1)%in%auditory_targets & !is.na(auditory_data[i+1,] [,"keypress"])))
+  ){
     # Count their response time as the keypress
     auditory_rt <- append(auditory_rt, (auditory_data[i,][,"keypress"]))
     auditory_case4 <- append (auditory_case4, i)
