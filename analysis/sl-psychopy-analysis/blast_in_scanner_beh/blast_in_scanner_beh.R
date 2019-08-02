@@ -201,8 +201,7 @@ visual_data$condition <- gsub ("B", "blank", visual_data$condition, ignore.case=
 
 # Explicitly state the task
 visual_data$task <- NA
-visual_data[which(visual_data$stimulus %in% c("1", "2", "3", "4", "5", "6", "7", "8", "9","10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24")),]$task <- "image"
-visual_data[which(visual_data$stimulus %in% c("A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M")),]$task <- "letter"
+changevisual_data[which(visual_data$stimulus %in% c("A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M")),]$task <- "letter"
  
 # Standardize all strings into lowercase
 visual_data$stimulus <- tolower(visual_data$stimulus)
