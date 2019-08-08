@@ -12,19 +12,21 @@
 # Prepare files ------------------------------------------------------------
 
 # Load packages
-install.packages("plyr")
-install.packages("reshape")
+#install.packages("plyr")
+#install.packages("reshape")
+
 library ("plyr")
 library("reshape")
 
 # Set working directory (note: specific to MAC)
-setwd("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/raw_data/adult/sl_raw_data")
+#setwd("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/raw_data/adult/sl_raw_data")
 # Alternate working directory if the above throws error (depends on how NAS is mounted)
 # setwd("/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/raw_data/adult/sl_raw_data")
 # Child working directory
 # setwd("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/raw_data/child/sl_raw_data")
 # Alternate working directory if the above throws error (depends on how NAS is mounted)
 # setwd("/Volumes/data-1/projects/blast/data/mri/in_scanner_behavioral/raw_data/child/sl_raw_data")
+setwd("/Volumes/data/users/diana/in_scanner_behavioral/adult/sl_raw_data")
 
 # Remove objects in environment
 rm(list=ls())
@@ -285,8 +287,8 @@ for (i in auditory_targets) {
     auditory_case2 <- append (auditory_case2, i)
   }  
   
-  # Otherwise, if the participant responded during the stimulus preceding the target
-  else if (!is.na(auditory_data[i-1,] [,"keypress"])  
+  # 08.06.19 Otherwise, if the participant responded during the stimulus preceding the target, which was in the same block
+  else if (!is.na(auditory_data[i-1,] [,"keypress"]) & auditory_data[i-1,] [,"condition"]==auditory_data[1,] [,"condition"]
            # and the preceding stimulus was not also a target
            & ((auditory_data[i-1,][,"tone_target"] != (auditory_data[i-1,][,"stimulus"])))
            & ((auditory_data[i-1,][,"syllable_target"] != (auditory_data[i-1,][,"stimulus"])))
@@ -298,13 +300,16 @@ for (i in auditory_targets) {
            & (auditory_data[i,])$condition==(auditory_data[i-1,]$condition)
            # and, if in a random block
            & (auditory_data[i,]$condition=="structured" 
-              # EITHER the following stimulus is not a target from the same block,
-              | (!(i+1) %in% auditory_targets & auditory_data[i+1,]$condition!=auditory_data[i,]$condition
+              # 08.06.19
+              # EITHER they did not press in the following trial
+              | !((i+1) %in% auditory_targets & auditory_data[i+1,]$condition==auditory_data[i,]$condition)
+              # OR the following stimulus is not a target from the same block,
+              | !((i+1) %in% auditory_targets & auditory_data[i+1,]$condition==auditory_data[i,]$condition)
               # OR it is a target from the same block, but has neither an on-target keypress 
               | ((i+1) %in% auditory_targets & auditory_data[i+1,]$condition==auditory_data[i,]$condition & is.na(auditory_data[i+1,]$keypress)
                 # nor a delay from the same block
                 & (auditory_data[i+2,]$condition!=auditory_data[i,]$condition | is.na(auditory_data[i+2,]$keypress))
-  )))){
+  ))){
     # Count the response time as how much sooner they responded than when the stimulus was presented (anticipation)
     auditory_rt <- append(auditory_rt, (auditory_data[i-1,][,"keypress"]-480))
     auditory_case3 <- append (auditory_case3, i)
@@ -709,10 +714,11 @@ for(id in (unique(visual_part_id))){
 
 visual_rt_slopes <- cbind(unique(visual_part_id), random_lsl_rt_slope, random_vsl_rt_slope, structured_lsl_rt_slope, structured_vsl_rt_slope)
 colnames(visual_rt_check)[1] <- "visual_part_id"
-colnames(exp_visual_mean_rts) <- c("visual_part_id", "random_letter_rt_slope", "random_image_rt_slope", "structured_letter_rt_slope", "structured_image_rt_slope")
+colnames(exp_visual_mean_rts) <- c("visual_part_id", "random_image_mean_rt", "random_letter_mean_rt", "structured_image_mean_rt", "structured_letter_mean_rt")
 colnames(visual_rt_slopes)[1] <- "visual_part_id"
 visual_output <- merge(merge(visual_rt_check, exp_visual_mean_rts), visual_rt_slopes)
 
 # Write  results and save them to NAS
 write.csv(auditory_output, paste0(output_path, "adult_in_scanner_auditory_behavioral.csv"))
 write.csv(visual_output, paste0(output_path, "adult_in_scanner_visual_behavioral.csv"))
+
