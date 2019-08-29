@@ -1,0 +1,93 @@
+---
+title: "HEB_data_analysis"
+author: "Schneider, Arnon, and Qi"
+date: "8/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,include=FALSE,echo=FALSE,warning=FALSE}
+#Loading library
+library(psych)
+library(readr)
+library(optimx)
+library(corrplot)
+library(reshape)
+library(reshape2)
+library(lmerTest)
+library(ggplot2)
+library(scales)
+library(ggbeeswarm)
+library(Hmisc)
+library(arm)
+library(ez)
+source("~/Dropbox (MIT)/how-to/stats/R-related/centerfactor.R")
+```
+
+```{r,include=FALSE,echo=FALSE,warning=FALSE}
+#Load data
+hebtrial <- read.csv("~/Dropbox (MIT)/UDel/projects/collaboration/InbalArnon/hebresultsupdate/heb_trial_clean_082819.csv")
+hebindiv <- read.csv("~/Dropbox (MIT)/UDel/projects/collaboration/InbalArnon/HEB_Data.csv", comment.char="#")
+hebtrial$task = as.factor(as.character(hebtrial$task)) # 0 means nonlinguistic and 1 means linguistic task
+hebtrial$task_order = as.factor(as.character(hebtrial$task_order)) # 0 means nonlinguistic task comes first and 1 means linguistic task comes first
+hebtrial$trial_order = as.factor(as.character(hebtrial$trial_order)) # 0 means foil comes first and 1 means target comes first
+hebtrial$subject = as.factor(as.character(hebtrial$subject)) 
+hebtrial$trial = as.factor(as.character(hebtrial$trial)) 
+eng_trial<- hebtrial[which(hebtrial$language == "english"),]
+eng_trial=droplevels(eng_trial)
+contrasts(eng_trial$trial)=centerfactor(eng_trial$trial)
+summary(eng_trial)
+```
+### Multi-level modeling in the English group based on the trial-by-trial data: fixed effects of task order (linguistic first or second), trial order (target or foil first), task (linguistic or non-linguistic), and trial (order of the test trials 1-25). Including task into random slope results in a non-converging model.
+* no effect of task order
+* significant effect of task
+* significant effect of trial order (target first was more accurate)
+* minimal effect of trial presentation order (later trials don't appear to be more accurate than earlier trials)
+
+```{r}
+eng.lmer <- glmer(trial_accuracy ~ 1 + task_order + task + trial_order + trial + (1|subject), family = binomial, control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)), data = eng_trial)
+summary(eng.lmer)
+```
+
+### ANOVA testing the main effect of task (linguistic vs. non-linguistic) based on the overall accuracy data in the English group: *Marginal difference*
+```{r}
+# remove two participants who only had one task
+hebindiv=hebindiv[is.na(hebindiv$accuracy)==0,]
+hebindiv=subset(hebindiv,subject!="a_005")
+hebindiv=subset(hebindiv,subject!="a_026")
+eng_indiv=subset(hebindiv,group=="English")
+summary(eng_indiv)
+```
+
+```{r,warning=FALSE}
+taskanova <- ezANOVA(eng_indiv, accuracy, subject, within = .(task), type = 2, detailed = TRUE)
+taskanova
+```
+
+### Testing the effect of familiarity on the overall accuracy (1) and the trial-by-trial accuracy (2) of the linguistic task in the English group
+```{r}
+m1 = lm(accuracy~familiarity,data=eng_indiv[eng_indiv$task=="Linguistic",])
+summary(m1)
+```
+```{r}
+eng_ling_trial=subset(eng_trial,task=="1")
+eng_ling_trial$fam_ratings=as.factor(as.character(eng_ling_trial$fam_ratings))
+contrasts(eng_ling_trial$fam_ratings)=centerfactor(eng_ling_trial$fam_ratings)
+m1 = glmer(trial_accuracy~fam_ratings+(1|subject),family = binomial,data=eng_ling_trial)
+summary(m1)
+```
+
+### Testing the relationship between vocabulary and performance across tasks in the English group.
+```{r}
+glmvoc = glm(accuracy~vocabulary*task,data=eng_indiv)
+summary(glmvoc)
+```
+
+### Testing the group by task interaction in a multi-level model based on the trial-by-trial data
+```{r}
+hebgroup.lmer <- glmer(trial_accuracy ~ 1 + language * task + (1|subject), na.action = na.omit, family = binomial,control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)), data = hebtrial)
+summary(hebgroup.lmer)
+```
