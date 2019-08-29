@@ -12,7 +12,7 @@
 ### Make sure docker is running on the imac
 ### On the terminal, type:
 ```
-cd /home/qigroup/Documents/projects/{projectname}/
+cd /home/nas/projects/{projectname}/
 docker run --rm -it --entrypoint=bash -v $(pwd):/data nipy/heudiconv:latest
 ```
 Now you will be inside of the container. Type:
@@ -30,9 +30,10 @@ example here: <http://nipy.org/heudiconv/#22>
 for most updated bids specification: <http://bids.neuroimaging.io/bids_spec.pdf>
 
 ### run the conversion
+## anything in all caps must be edited
 ```
 rm -r -f /data/niftis/*
-heudiconv -d /data/dicoms/{subject}/*/*/*.IMA -s subjectID -f /data/projectname_heuristics.py -c dcm2niix -b -o /data/bids
+heudiconv -d /data/data/mri/imaging/dicoms/{subject}/*/*/*.IMA -s SUBJECTID -f /data/data/mri/imaging/PROJECTNAME_heuristics.py -c dcm2niix -b -o /data/bids
 ```
 
 ## Run freesurfer
