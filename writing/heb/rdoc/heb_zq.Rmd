@@ -80,6 +80,18 @@ m1 = glmer(trial_accuracy~fam_ratings+(1|subject),family = binomial,data=eng_lin
 summary(m1)
 ```
 
+### Testing the correlation between vocabulary and each word's familiarity
+```{r}
+hebindiv_asl<-hebindiv[which(hebindiv$group=="English"),]
+hebindiv_ling_eng<- hebindiv_asl[which(hebindiv_asl$Task == "Linguistic"),]
+
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q1, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q2, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q3, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q4, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q5, method = "spearman")
+```
+
 ### Testing the relationship between vocabulary and performance across tasks in the English group.
 ```{r}
 glmvoc = glm(accuracy~vocabulary*task,data=eng_indiv)
@@ -90,4 +102,20 @@ summary(glmvoc)
 ```{r}
 hebgroup.lmer <- glmer(trial_accuracy ~ 1 + language * task + (1|subject), na.action = na.omit, family = binomial,control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)), data = hebtrial)
 summary(hebgroup.lmer)
+```
+
+### Testing the correlation between linguistic and non-linguistic tasks for English Speakers
+```{r}
+hebindiv_eng<-hebindiv[which(hebindiv$group=="English"),]
+hebindiv_ling_eng<- hebindiv_eng[which(hebindiv_eng$Task == "Linguistic"),]
+hebindiv_nonling_eng<- hebindiv_eng[which(hebindiv_eng$Task == "Non-Linguistic"),]
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_nonling_eng$accuracy, method = "pearson")
+```
+
+### Testing the correlation between linguistic and non-linguistic tasks for Hebrew Speakers
+```{r}
+hebindiv_heb<-hebindiv[which(hebindiv$group=="Hebrew"),]
+hebindiv_ling_heb<- hebindiv_heb[which(hebindiv_heb$Task == "Linguistic"),]
+hebindiv_nonling_heb<- hebindiv_heb[which(hebindiv_heb$Task == "Non-Linguistic"),]
+cor.test(hebindiv_ling_heb$accuracy,hebindiv_nonling_heb$accuracy, method = "pearson")
 ```
