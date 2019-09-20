@@ -24,13 +24,13 @@ library(ggbeeswarm)
 library(Hmisc)
 library(arm)
 library(ez)
-source("~/Dropbox (MIT)/how-to/stats/R-related/centerfactor.R")
+source("/Users/julieschneider/Julie_Personal/Projects/HEB/R_scripts/centerfactor.R")
 ```
 
 ```{r,include=FALSE,echo=FALSE,warning=FALSE}
 #Load data
-hebtrial <- read.csv("~/Dropbox (MIT)/UDel/projects/collaboration/InbalArnon/hebresultsupdate/heb_trial_clean_082819.csv")
-hebindiv <- read.csv("~/Dropbox (MIT)/UDel/projects/collaboration/InbalArnon/HEB_Data.csv", comment.char="#")
+hebtrial <- read.csv('/Users/julieschneider/Julie_Personal/Projects/HEB/R_scripts/heb_trial_clean_031719.csv')
+hebindiv <- read.csv('/Users/julieschneider/Julie_Personal/Projects/HEB/R_scripts/HEB_Data.csv')
 hebtrial$task = as.factor(as.character(hebtrial$task)) # 0 means nonlinguistic and 1 means linguistic task
 hebtrial$task_order = as.factor(as.character(hebtrial$task_order)) # 0 means nonlinguistic task comes first and 1 means linguistic task comes first
 hebtrial$trial_order = as.factor(as.character(hebtrial$trial_order)) # 0 means foil comes first and 1 means target comes first
@@ -63,13 +63,13 @@ summary(eng_indiv)
 ```
 
 ```{r,warning=FALSE}
-taskanova <- ezANOVA(eng_indiv, accuracy, subject, within = .(task), type = 2, detailed = TRUE)
+taskanova <- ezANOVA(eng_indiv, accuracy, subject, within = .(Task), type = 2, detailed = TRUE)
 taskanova
 ```
 
 ### Testing the effect of familiarity on the overall accuracy (1) and the trial-by-trial accuracy (2) of the linguistic task in the English group
 ```{r}
-m1 = lm(accuracy~familiarity,data=eng_indiv[eng_indiv$task=="Linguistic",])
+m1 = lm(accuracy~familiarity,data=eng_indiv[eng_indiv$Task=="Linguistic",])
 summary(m1)
 ```
 ```{r}
@@ -80,9 +80,21 @@ m1 = glmer(trial_accuracy~fam_ratings+(1|subject),family = binomial,data=eng_lin
 summary(m1)
 ```
 
+### Testing the correlation between vocabulary and each word's familiarity
+```{r}
+hebindiv_asl<-hebindiv[which(hebindiv$group=="English"),]
+hebindiv_ling_eng<- hebindiv_asl[which(hebindiv_asl$Task == "Linguistic"),]
+
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q1, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q2, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q3, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q4, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q5, method = "spearman")
+```
+
 ### Testing the relationship between vocabulary and performance across tasks in the English group.
 ```{r}
-glmvoc = glm(accuracy~vocabulary*task,data=eng_indiv)
+glmvoc = glm(accuracy~vocabulary*Task,data=eng_indiv)
 summary(glmvoc)
 ```
 
@@ -90,4 +102,20 @@ summary(glmvoc)
 ```{r}
 hebgroup.lmer <- glmer(trial_accuracy ~ 1 + language * task + (1|subject), na.action = na.omit, family = binomial,control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)), data = hebtrial)
 summary(hebgroup.lmer)
+```
+
+### Testing the correlation between linguistic and non-linguistic tasks for English Speakers
+```{r}
+hebindiv_eng<-hebindiv[which(hebindiv$group=="English"),]
+hebindiv_ling_eng<- hebindiv_eng[which(hebindiv_eng$Task == "Linguistic"),]
+hebindiv_nonling_eng<- hebindiv_eng[which(hebindiv_eng$Task == "Non-Linguistic"),]
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_nonling_eng$accuracy, method = "pearson")
+```
+
+### Testing the correlation between linguistic and non-linguistic tasks for Hebrew Speakers
+```{r}
+hebindiv_heb<-hebindiv[which(hebindiv$group=="Hebrew"),]
+hebindiv_ling_heb<- hebindiv_heb[which(hebindiv_heb$Task == "Linguistic"),]
+hebindiv_nonling_heb<- hebindiv_heb[which(hebindiv_heb$Task == "Non-Linguistic"),]
+cor.test(hebindiv_ling_heb$accuracy,hebindiv_nonling_heb$accuracy, method = "pearson")
 ```

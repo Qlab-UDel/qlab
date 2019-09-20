@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Schneider, Arnon, and Qi" />
@@ -70,9 +71,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -86,7 +85,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -97,22 +95,80 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -122,8 +178,8 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">HEB_data_analysis</h1>
-<h4 class="author"><em>Schneider, Arnon, and Qi</em></h4>
-<h4 class="date"><em>8/28/2019</em></h4>
+<h4 class="author">Schneider, Arnon, and Qi</h4>
+<h4 class="date">8/28/2019</h4>
 
 </div>
 
@@ -136,8 +192,9 @@ $(document).ready(function () {
 <li>significant effect of trial order (target first was more accurate)</li>
 <li>minimal effect of trial presentation order (later trials don’t appear to be more accurate than earlier trials)</li>
 </ul>
-<pre class="r"><code>eng.lmer &lt;- glmer(trial_accuracy ~ 1 + task_order + task + trial_order + trial + (1|subject), family = binomial, control=glmerControl(optimizer=&quot;bobyqa&quot;, optCtrl=list(maxfun=2e5)), data = eng_trial)
-summary(eng.lmer)</code></pre>
+<pre class="r"><code>eng.lmer &lt;- glmer(trial_accuracy ~ 1 + task_order + task + trial_order + trial + (1|subject), family = binomial, control=glmerControl(optimizer=&quot;bobyqa&quot;, optCtrl=list(maxfun=2e5)), data = eng_trial)</code></pre>
+<pre><code>## fixed-effect model matrix is rank deficient so dropping 1 column / coefficient</code></pre>
+<pre class="r"><code>summary(eng.lmer)</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
 ##   Approximation) [glmerMod]
 ##  Family: binomial  ( logit )
@@ -148,53 +205,79 @@ summary(eng.lmer)</code></pre>
 ## glmerControl(optimizer = &quot;bobyqa&quot;, optCtrl = list(maxfun = 2e+05))
 ## 
 ##      AIC      BIC   logLik deviance df.resid 
-##   3555.6   3726.2  -1748.8   3497.6     2621 
+##   3589.4   3901.2  -1741.7   3483.4     2597 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -2.1782 -1.0624  0.6482  0.8295  1.4071 
+## -2.2191 -1.0607  0.6348  0.8286  1.4940 
 ## 
 ## Random effects:
 ##  Groups  Name        Variance Std.Dev.
-##  subject (Intercept) 0.06872  0.2622  
+##  subject (Intercept) 0.06986  0.2643  
 ## Number of obs: 2650, groups:  subject, 53
 ## 
 ## Fixed effects:
-##                  Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)      0.281172   0.087359   3.219  0.00129 ** 
-## task_order1     -0.125451   0.112711  -1.113  0.26570    
-## task1           -0.232004   0.080951  -2.866  0.00416 ** 
-## trial_orderword  0.515442   0.081449   6.328 2.48e-10 ***
-## trial1          -0.394940   0.237944  -1.660  0.09695 .  
-## trial2           0.151834   0.230467   0.659  0.51002    
-## trial3           0.012471   0.232972   0.054  0.95731    
-## trial4          -0.142127   0.234095  -0.607  0.54376    
-## trial5          -0.181218   0.232594  -0.779  0.43591    
-## trial6           0.093527   0.229024   0.408  0.68300    
-## trial7          -0.033243   0.230371  -0.144  0.88526    
-## trial8          -0.057833   0.230660  -0.251  0.80202    
-## trial9           0.103920   0.229140   0.454  0.65017    
-## trial10          0.274443   0.230074   1.193  0.23293    
-## trial11          0.195687   0.232625   0.841  0.40023    
-## trial12         -0.362711   0.238713  -1.519  0.12865    
-## trial13         -0.246635   0.233033  -1.058  0.28989    
-## trial14          0.006517   0.230079   0.028  0.97740    
-## trial15         -0.155518   0.230531  -0.675  0.49993    
-## trial16          0.418954   0.229120   1.829  0.06747 .  
-## trial17          0.349331   0.230503   1.516  0.12964    
-## trial18          0.357528   0.235057   1.521  0.12825    
-## trial19         -0.242260   0.244789  -0.990  0.32234    
-## trial20         -0.320492   0.242087  -1.324  0.18555    
-## trial21          0.169474   0.235454   0.720  0.47166    
-## trial22         -0.556778   0.245371  -2.269  0.02326 *  
-## trial23          0.398547   0.244045   1.633  0.10245    
-## trial24         -0.302592   0.286412  -1.056  0.29074    
+##                 Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)      0.26542    0.18462   1.438   0.1505    
+## task_order1     -0.12670    0.11330  -1.118   0.2634    
+## task1           -0.19458    0.33513  -0.581   0.5615    
+## trial_orderword  0.51373    0.08213   6.255 3.98e-10 ***
+## trial1          -0.67582    0.34918  -1.935   0.0529 .  
+## trial2           0.13135    0.32484   0.404   0.6860    
+## trial3          -0.01629    0.32816  -0.050   0.9604    
+## trial4          -0.29173    0.32814  -0.889   0.3740    
+## trial5          -0.16051    0.32364  -0.496   0.6199    
+## trial6          -0.02395    0.32211  -0.074   0.9407    
+## trial7           0.08546    0.32347   0.264   0.7916    
+## trial8          -0.16088    0.32381  -0.497   0.6193    
+## trial9           0.22312    0.32339   0.690   0.4902    
+## trial10          0.56525    0.32491   1.740   0.0819 .  
+## trial11          0.31074    0.33022   0.941   0.3467    
+## trial12         -0.58623    0.34645  -1.692   0.0906 .  
+## trial13         -0.57953    0.33270  -1.742   0.0815 .  
+## trial14          0.23550    0.32399   0.727   0.4673    
+## trial15         -0.23323    0.32697  -0.713   0.4757    
+## trial16          0.12187    0.33297   0.366   0.7144    
+## trial17          0.47762    0.36217   1.319   0.1872    
+## trial18          0.21328    0.45973   0.464   0.6427    
+## trial19          0.15940    0.33168   0.481   0.6308    
+## trial20          0.25876    0.33806   0.765   0.4440    
+## trial21         -0.24844    0.35762  -0.695   0.4872    
+## trial22          0.16942    0.37731   0.449   0.6534    
+## trial23         -0.30853    0.47900  -0.644   0.5195    
+## trial24          0.17622    0.33721   0.523   0.6013    
+## trial25         -0.47678    0.34935  -1.365   0.1723    
+## trial26          0.23214    0.32804   0.708   0.4792    
+## trial27         -0.30313    0.33787  -0.897   0.3696    
+## trial28         -0.06930    0.33054  -0.210   0.8339    
+## trial29          0.19143    0.32627   0.587   0.5574    
+## trial30          0.07901    0.33126   0.239   0.8115    
+## trial31          0.08896    0.33650   0.264   0.7915    
+## trial32         -0.05735    0.34815  -0.165   0.8692    
+## trial33          0.51177    0.37142   1.378   0.1682    
+## trial34         -0.59835    0.48501  -1.234   0.2173    
+## trial35         -0.16092    0.33172  -0.485   0.6276    
+## trial36          0.03919    0.32958   0.119   0.9054    
+## trial37         -0.03576    0.32914  -0.109   0.9135    
+## trial38         -0.06065    0.32952  -0.184   0.8540    
+## trial39          0.00602    0.32763   0.018   0.9853    
+## trial40          0.07129    0.32914   0.217   0.8285    
+## trial41         -0.27535    0.33582  -0.820   0.4123    
+## trial42         -0.15626    0.33521  -0.466   0.6411    
+## trial43          0.55653    0.35563   1.565   0.1176    
+## trial44         -0.11464    0.43919  -0.261   0.7941    
+## trial45          0.15716    0.32899   0.478   0.6329    
+## trial47         -0.64820    0.34157  -1.898   0.0577 .  
+## trial48          0.55175    0.34587   1.595   0.1107    
+## trial49         -0.33548    0.39969  -0.839   0.4013    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <pre><code>## 
-## Correlation matrix not shown by default, as p = 28 &gt; 12.
+## Correlation matrix not shown by default, as p = 52 &gt; 12.
 ## Use print(x, correlation=TRUE)  or
-##   vcov(x)     if you need it</code></pre>
+##     vcov(x)        if you need it</code></pre>
+<pre><code>## fit warnings:
+## fixed-effect model matrix is rank deficient so dropping 1 column / coefficient</code></pre>
 </div>
 <div id="anova-testing-the-main-effect-of-task-linguistic-vs.non-linguistic-based-on-the-overall-accuracy-data-in-the-english-group-marginal-difference" class="section level3">
 <h3>ANOVA testing the main effect of task (linguistic vs. non-linguistic) based on the overall accuracy data in the English group: <em>Marginal difference</em></h3>
@@ -212,7 +295,7 @@ summary(eng_indiv)</code></pre>
 ##  a_007  : 2                             3rd Qu.:21.00   3rd Qu.:120.0  
 ##  a_008  : 2                             Max.   :37.00   Max.   :143.0  
 ##  (Other):98                                             NA's   :4      
-##    authortask     familiarity                task       accuracy    
+##    authortask     familiarity                Task       accuracy    
 ##  Min.   :-7.00   Min.   :0.000   Linguistic    :55   Min.   :28.00  
 ##  1st Qu.: 5.00   1st Qu.:0.000   Non-Linguistic:55   1st Qu.:52.00  
 ##  Median : 9.00   Median :1.000                       Median :60.00  
@@ -236,23 +319,23 @@ summary(eng_indiv)</code></pre>
 ##  3rd Qu.:3.000   3rd Qu.:2.000   3rd Qu.:1.800           
 ##  Max.   :5.000   Max.   :5.000   Max.   :3.000           
 ##  NA's   :57      NA's   :57      NA's   :57</code></pre>
-<pre class="r"><code>taskanova &lt;- ezANOVA(eng_indiv, accuracy, subject, within = .(task), type = 2, detailed = TRUE)
+<pre class="r"><code>taskanova &lt;- ezANOVA(eng_indiv, accuracy, subject, within = .(Task), type = 2, detailed = TRUE)
 taskanova</code></pre>
 <pre><code>## $ANOVA
 ##        Effect DFn DFd         SSn      SSd           F            p p&lt;.05
 ## 1 (Intercept)   1  54 380788.9455 9083.055 2263.842296 9.037190e-46     *
-## 2        task   1  54    456.1455 6279.855    3.922361 5.275195e-02      
+## 2        Task   1  54    456.1455 6279.855    3.922361 5.275195e-02      
 ##          ges
 ## 1 0.96121965
 ## 2 0.02883519</code></pre>
 </div>
 <div id="testing-the-effect-of-familiarity-on-the-overall-accuracy-1-and-the-trial-by-trial-accuracy-2-of-the-linguistic-task-in-the-english-group" class="section level3">
 <h3>Testing the effect of familiarity on the overall accuracy (1) and the trial-by-trial accuracy (2) of the linguistic task in the English group</h3>
-<pre class="r"><code>m1 = lm(accuracy~familiarity,data=eng_indiv[eng_indiv$task==&quot;Linguistic&quot;,])
+<pre class="r"><code>m1 = lm(accuracy~familiarity,data=eng_indiv[eng_indiv$Task==&quot;Linguistic&quot;,])
 summary(m1)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = accuracy ~ familiarity, data = eng_indiv[eng_indiv$task == 
+## lm(formula = accuracy ~ familiarity, data = eng_indiv[eng_indiv$Task == 
 ##     &quot;Linguistic&quot;, ])
 ## 
 ## Residuals:
@@ -311,13 +394,79 @@ summary(m1)</code></pre>
 ## fam_ratngs4  0.008 -0.038 -0.061 -0.077       
 ## fam_ratngs5  0.008  0.129  0.243  0.311  0.383</code></pre>
 </div>
+<div id="testing-the-correlation-between-vocabulary-and-each-words-familiarity" class="section level3">
+<h3>Testing the correlation between vocabulary and each word’s familiarity</h3>
+<pre class="r"><code>hebindiv_asl&lt;-hebindiv[which(hebindiv$group==&quot;English&quot;),]
+hebindiv_ling_eng&lt;- hebindiv_asl[which(hebindiv_asl$Task == &quot;Linguistic&quot;),]
+
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q1, method = &quot;spearman&quot;)</code></pre>
+<pre><code>## Warning in cor.test.default(hebindiv_ling_eng$accuracy,
+## hebindiv_ling_eng$Q1, : Cannot compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Spearman's rank correlation rho
+## 
+## data:  hebindiv_ling_eng$accuracy and hebindiv_ling_eng$Q1
+## S = 21053, p-value = 0.2798
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##       rho 
+## 0.1512132</code></pre>
+<pre class="r"><code>cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q2, method = &quot;spearman&quot;)</code></pre>
+<pre><code>## Warning in cor.test.default(hebindiv_ling_eng$accuracy,
+## hebindiv_ling_eng$Q2, : Cannot compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Spearman's rank correlation rho
+## 
+## data:  hebindiv_ling_eng$accuracy and hebindiv_ling_eng$Q2
+## S = 22041, p-value = 0.4271
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##       rho 
+## 0.1114087</code></pre>
+<pre class="r"><code>cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q3, method = &quot;spearman&quot;)</code></pre>
+<pre><code>## Warning in cor.test.default(hebindiv_ling_eng$accuracy,
+## hebindiv_ling_eng$Q3, : Cannot compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Spearman's rank correlation rho
+## 
+## data:  hebindiv_ling_eng$accuracy and hebindiv_ling_eng$Q3
+## S = 24704, p-value = 0.9771
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##         rho 
+## 0.004042225</code></pre>
+<pre class="r"><code>cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q4, method = &quot;spearman&quot;)</code></pre>
+<pre><code>## Warning in cor.test.default(hebindiv_ling_eng$accuracy,
+## hebindiv_ling_eng$Q4, : Cannot compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Spearman's rank correlation rho
+## 
+## data:  hebindiv_ling_eng$accuracy and hebindiv_ling_eng$Q4
+## S = 20994, p-value = 0.2722
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##      rho 
+## 0.153603</code></pre>
+<pre class="r"><code>cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q5, method = &quot;spearman&quot;)</code></pre>
+<pre><code>## Warning in cor.test.default(hebindiv_ling_eng$accuracy,
+## hebindiv_ling_eng$Q5, : Cannot compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Spearman's rank correlation rho
+## 
+## data:  hebindiv_ling_eng$accuracy and hebindiv_ling_eng$Q5
+## S = 20777, p-value = 0.2455
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##      rho 
+## 0.162336</code></pre>
+</div>
 <div id="testing-the-relationship-between-vocabulary-and-performance-across-tasks-in-the-english-group." class="section level3">
 <h3>Testing the relationship between vocabulary and performance across tasks in the English group.</h3>
-<pre class="r"><code>glmvoc = glm(accuracy~vocabulary*task,data=eng_indiv)
+<pre class="r"><code>glmvoc = glm(accuracy~vocabulary*Task,data=eng_indiv)
 summary(glmvoc)</code></pre>
 <pre><code>## 
 ## Call:
-## glm(formula = accuracy ~ vocabulary * task, data = eng_indiv)
+## glm(formula = accuracy ~ vocabulary * Task, data = eng_indiv)
 ## 
 ## Deviance Residuals: 
 ##      Min        1Q    Median        3Q       Max  
@@ -327,8 +476,8 @@ summary(glmvoc)</code></pre>
 ##                               Estimate Std. Error t value Pr(&gt;|t|)   
 ## (Intercept)                    15.5589    13.3056   1.169  0.24499   
 ## vocabulary                      0.3647     0.1183   3.084  0.00263 **
-## taskNon-Linguistic             54.7018    18.8170   2.907  0.00448 **
-## vocabulary:taskNon-Linguistic  -0.4505     0.1672  -2.694  0.00827 **
+## TaskNon-Linguistic             54.7018    18.8170   2.907  0.00448 **
+## vocabulary:TaskNon-Linguistic  -0.4505     0.1672  -2.694  0.00827 **
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -380,6 +529,42 @@ summary(hebgroup.lmer)</code></pre>
 ## task1       -0.545  0.377       
 ## lngghbrw:t1  0.370 -0.548 -0.679</code></pre>
 </div>
+<div id="testing-the-correlation-between-linguistic-and-non-linguistic-tasks-for-english-speakers" class="section level3">
+<h3>Testing the correlation between linguistic and non-linguistic tasks for English Speakers</h3>
+<pre class="r"><code>hebindiv_eng&lt;-hebindiv[which(hebindiv$group==&quot;English&quot;),]
+hebindiv_ling_eng&lt;- hebindiv_eng[which(hebindiv_eng$Task == &quot;Linguistic&quot;),]
+hebindiv_nonling_eng&lt;- hebindiv_eng[which(hebindiv_eng$Task == &quot;Non-Linguistic&quot;),]
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_nonling_eng$accuracy, method = &quot;pearson&quot;)</code></pre>
+<pre><code>## 
+##  Pearson's product-moment correlation
+## 
+## data:  hebindiv_ling_eng$accuracy and hebindiv_nonling_eng$accuracy
+## t = 1.3779, df = 53, p-value = 0.174
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.08344845  0.43004610
+## sample estimates:
+##       cor 
+## 0.1859658</code></pre>
+</div>
+<div id="testing-the-correlation-between-linguistic-and-non-linguistic-tasks-for-hebrew-speakers" class="section level3">
+<h3>Testing the correlation between linguistic and non-linguistic tasks for Hebrew Speakers</h3>
+<pre class="r"><code>hebindiv_heb&lt;-hebindiv[which(hebindiv$group==&quot;Hebrew&quot;),]
+hebindiv_ling_heb&lt;- hebindiv_heb[which(hebindiv_heb$Task == &quot;Linguistic&quot;),]
+hebindiv_nonling_heb&lt;- hebindiv_heb[which(hebindiv_heb$Task == &quot;Non-Linguistic&quot;),]
+cor.test(hebindiv_ling_heb$accuracy,hebindiv_nonling_heb$accuracy, method = &quot;pearson&quot;)</code></pre>
+<pre><code>## 
+##  Pearson's product-moment correlation
+## 
+## data:  hebindiv_ling_heb$accuracy and hebindiv_nonling_heb$accuracy
+## t = 0.7809, df = 51, p-value = 0.4385
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.1664855  0.3681763
+## sample estimates:
+##       cor 
+## 0.1086998</code></pre>
+</div>
 
 
 
@@ -398,6 +583,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
