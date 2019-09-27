@@ -13,8 +13,32 @@ fMRIprep Installation Process (https://fmriprep.readthedocs.io/en/latest/install
      - Select Preferences
      - Select File Sharing
      - Add your Applications folder
-    
+
+## Pre-processing data with fMRI prep 
+
+Before running the following steps, ensure that the following has happened:
+1. Heudiconv has been run so that data is in BIDS format
+2. The fieldmap inclusion script has been run to ensure 'add intended for' is listed accurately in .json files.
+
+### Adult Pre-Processing of fMRI data 
 Running fMRIprep Pre-Processing (change SUBJECTID):
 ```
-fmriprep-docker /Users/qigroup/Documents/project/blast/bids /Users/qigroup/Documents/project/blast/bids participant --participant_label SUBJECTID --no-freesurfer --fs-license-file /Applications/freesurfer/license.txt
+docker run -ti --rm -v /home/qigroup/Documents/projects/blast/data/bids:/data:ro -v
+/home/qigroup/Documents/projects/blast/data/derivatives:/out -v
+/home/qigroup/Documents/projects/blast/license.txt:/opt/freesurfer/license.txt
+poldracklab/fmriprep:latest /data /out participant --participant_label SUBJECTID
+```
+
+### Child Pre-Processing of fMRI data
+Running fMRIprep Pre-Processing for Structural data ONLY (change SUBJECTID):
+```
+docker run -ti --rm -v /home/qigroup/Documents/projects/blast/data/bids:/data:ro -v /home/qigroup/Documents/projects/blast/data/derivatives:/out -v /home/qigroup/Documents/projects/blast/license.txt:/opt/freesurfer/license.txt 
+poldracklab/fmriprep:1.3.1 /data /out participant --participant_label SUBJECTID --anat-only
+```
+Using Qoala-T, evaluate quality of structural data and manually edit if necessary.
+
+Running fMRIprep Pre-Processing (change SUBJECTID):
+```
+docker run -ti --rm -v /home/qigroup/Documents/projects/blast/data/bids:/data:ro -v /home/qigroup/Documents/projects/blast/data/derivatives:/out -v /home/qigroup/Documents/projects/blast/license.txt:/opt/freesurfer/license.txt 
+poldracklab/fmriprep:1.3.1 /data /out participant --participant_label SUBJECTID
 ```
