@@ -176,6 +176,7 @@ ggplot() +
   scale_fill_brewer(palette = 'Set2') +
   theme(legend.position = "none")
 ```
+
 ### plot the line graphs to illustrate interaction between two groups and two tasks
 ```{r}
 d <- hebindiv %>%
