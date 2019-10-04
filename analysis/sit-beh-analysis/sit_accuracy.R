@@ -1,7 +1,7 @@
 #  SIT ACCURACY EXTRACTION
 #  Violet Kozloff
 #  Adapted from analysis scripts by An Nguyen
-#  Last modified July 3rd, 2019
+#  Last modified October 4th, 2019
 #  This script finds two-alternative forced-choice task accuracies for statistical learning tasks involving structured and random triplets of letters and images
 #  NOTE: relevant columns have been pre-selected through sit_cleaning.R
 #  ****************************************************************************

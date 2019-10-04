@@ -32,7 +32,7 @@ ll_output <- ("/Volumes/data/projects/completed_projects/sit/analysis/data/clean
 for (file in ll_files) {
   current_file <- read.csv(file)
   # Select relevant columns
-  value <- c("PartID", "trialnum", "expName", "condition", "l_block_trial_loop.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","lsl_question_key_resp.corr")
+  value <- c("PartID", "trialnum", "expName", "condition", "l_block_trial_loop.thisTrialN", "image","first_targ", "second_targ","l_block_trial_key_resp.rt","lsl_question_key_resp.corr", "letter6",	"letter5",	"letter4",	"letter3",	"letter2",	"letter1",	"corrAns")
   newdata <- current_file[value]
   # Make sure that F is not marked as False
   newdata$first_targ[newdata$first_targ == FALSE] <- 'f_not_false'
@@ -55,8 +55,16 @@ for (file in ll_files) {
   # Define targets by condition
   names(newdata) <- gsub ("first_targ", "structured_targ", names(newdata))
   names(newdata) <- gsub ("second_targ", "random_targ", names(newdata))
+  names(newdata) <- gsub ("letter6", "sixth2AFC", names(newdata))
+  names(newdata) <- gsub ("letter5", "fifth2AFC", names(newdata))
+  names(newdata) <- gsub ("letter4", "fourth2AFC", names(newdata))
+  names(newdata) <- gsub ("letter3", "third2AFC", names(newdata))
+  names(newdata) <- gsub ("letter2", "second2AFC", names(newdata))
+  names(newdata) <- gsub ("letter1", "first2AFC", names(newdata))
+  names(newdata) <- gsub ("corrAns", "triplet_position", names(newdata))
+  
   # Write file
-  write.csv(newdata, paste('/Volumes/data/projects/completed_projects/sit/analysis/data/clean/ll_clean/clean_', basename(file), sep=""))
+  write.csv(newdata, paste('/Volumes/data/projects/completed_projects/sit/analysis/data/clean/ll_clean/clean2_', basename(file), sep=""))
 }
 
 

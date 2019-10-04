@@ -13,10 +13,10 @@
 
 # Install packages
 install.packages("reshape")
-install.packages("dplyr")
+install.packages("plyr")
 install.packages("corrplot")
 library("reshape")
-library("dplyr")
+library("plyr")
 library("corrplot")
 
 # Set working directory
@@ -137,6 +137,9 @@ vv_data$random_targ <- gsub (".png", "", vv_data$random_targ, ignore.case=TRUE)
 vv_data$structured_targ <- gsub (".png", "", vv_data$structured_targ, ignore.case=TRUE)
 vv_data$random_targ <- gsub (".bmp", "", vv_data$random_targ, ignore.case=TRUE)
 vv_data$structured_targ <- gsub (".bmp", "", vv_data$structured_targ, ignore.case=TRUE)
+
+
+# For all data, identify triplet type for each trial
 
 
 # ******************** CONDITION 1: RANDOM LL*******************
@@ -943,6 +946,10 @@ sd(number_rts)
 # Separate random and structured conditions
 structured_ll <- ll_data[ which(ll_data$condition== "S"),]
 
+# Find all of the triplets presented
+structured_ll$triplet <- rep (do.call(paste, as.data.frame(t(matrix(structured_ll$image, 3)), stringsAsFactors=FALSE)), each = 3)
+
+
 # Identify the rows when this condition's target was presented
 structured_ll_targets <- structured_ll[which(structured_ll$structured_targ==structured_ll$image),]
 
@@ -1148,6 +1155,9 @@ mean_sll_rt_slope
 # Separate structured and structured conditions
 structured_lv <- lv_data[ which(lv_data$condition== "S"),]
 
+# Find all of the triplets presented
+structured_lv$triplet <- rep (do.call(paste, as.data.frame(t(matrix(structured_lv$image, 3)), stringsAsFactors=FALSE)), each = 3)
+
 # Identify the rows when this condition's target was presented
 structured_lv_targets <- structured_lv[which(structured_lv$structured_targ==structured_lv$image),]
 
@@ -1348,9 +1358,13 @@ mean_slv_rt_slope
 # Separate structured and structured conditions
 structured_vl <- vl_data[ which(vl_data$condition== "S"),]
 
+# Find all of the triplets presented
+structured_vl$triplet <- rep (do.call(paste, as.data.frame(t(matrix(structured_vl$image, 3)), stringsAsFactors=FALSE)), each = 3)
+
+structured_vl$triplet <- gsub("Alien", "", structured_vl$triplet)
+
 # Identify the rows when this condition's target was presented
 structured_vl_targets <- structured_vl[which(structured_vl$structured_targ==structured_vl$image),]
-
 
 ## Index the images by structured/ structured-----------------------------------------------
 
@@ -1560,6 +1574,11 @@ structured_vv <- vv_data[ which(vv_data$condition== "S"),]
 
 # Identify the rows when this condition's target was presented
 structured_vv_targets <- structured_vv[which(structured_vv$structured_targ==structured_vv$image),]
+
+# Find all of the triplets presented
+structured_vv$triplet <- rep (do.call(paste, as.data.frame(t(matrix(structured_vv$image, 3)), stringsAsFactors=FALSE)), each = 3)
+
+structured_vv$triplet <- gsub("Alien", "", structured_vv$triplet)
 
 # TEST: Create a data frame to check the number of lines per participant
 list_part_id <- unique(structured_vv_targets$part_id)
