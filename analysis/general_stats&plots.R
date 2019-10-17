@@ -89,3 +89,85 @@ df_corr$var2 <- df_corr$voice #Change variable of interest
 ggplot(df_corr, aes(x=var1, y=var2)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Voice & Inhibition/Attention",
                                                                                                           x="NIH Flanker", y = "Voice ERP") + theme_classic() +theme(plot.title = element_text(hjust = 0.5)) + theme(text = element_text(family="Times", size=20, color="black")) + geom_smooth(method=lm)
 
+#Line Plots for group means and standard error
+
+#You will need a data frame with 4 columns: group, condition, mean, standard error.
+#Change your_data_frame, your_condition_column (experiment conditions), 
+#your_mean (means in each condition/group combination), your_std_error (standard error)
+
+pd <- position_dodge(width = 0.2)
+
+your_data_frame %>%
+  ggplot(aes(x = your_condition_column, y = your_mean, group = your_group_column)) +
+  geom_line(aes(linetype = your_group_column, color = your_group_column), position = pd, size = 1.8) +
+  geom_errorbar(aes(ymin = your_mean - your_std_error, ymax = your_mean + your_std_error), width = .1, position = pd) +
+  geom_point(aes(color = your_group_column), size = 4, position = pd,show.legend = FALSE) + 
+  geom_point(size = 3, color = "white", position = pd) +
+  labs(title = "Your Plot Title", # Change Title
+       x = "Your X-axis label",  # Change axes labels
+       y = "Your Y-axis label") + 
+  theme(plot.title = element_text(hjust = 0.5)) + # Center or left align title
+  theme(
+    plot.title = element_text(size=16, face="bold"), 
+    axis.title.x = element_text(size=14, face="bold"),
+    axis.title.y = element_text(size=14, face="bold"),
+    axis.text=element_text(size=12, face = "bold")
+  ) +
+  theme(legend.text=element_text(size=14, face="bold"),
+        legend.title=element_text(size=15, face="bold")) +
+  theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) 
+
+
+# Correlation Plot with multiple groups and tasks
+
+#Use scale_shape_manual and scale_color_manual with caution. 
+#This is used for complex plots that need customized dot shape and colors.
+
+your_data_frame %>%
+  ggplot(
+    aes(x= your_value_for_correlation, 
+        y = your_other_value_for_correlation,
+        color = your_group,
+        shape = your_group
+    )) +
+  theme(legend.title = element_blank()) + #Remove legend title
+  geom_point(size = 4) +
+  scale_shape_manual(values=c(16, 16, 17, 17))+ #Manually change the dot shape for each group
+  scale_color_manual(values = c("#756bb1", "#fec44f", "#756bb1", "#fec44f")) + #Manually change the colors of dots for each group
+  labs(title = "Your Title",
+       y = bquote(bold("Your X-axis Label"~(mm^3))),  # Change x-axis label with mm^3 as unit
+       x = "Your Y-axis label") +
+  theme(plot.title = element_text(hjust = 0.23)) + # Center or left align title
+  theme(
+    plot.title = element_text(size=16, face="bold"), # Format legend text
+    axis.title.x = element_text(size=14, face="bold"),
+    axis.title.y = element_text(size=14, face="bold"),
+    axis.text=element_text(size=12, face = "bold")
+  ) +
+  theme(legend.text=element_text(size=14, face="bold")) +
+  theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) 
+
+#Uncomment below if you would like to add linear lines and R and p-values to your correlation plots
+#This allows you to subset your data event further, so that the line does not have to have the same grouping
+#as the dot plot above
+
+# +
+#   geom_smooth(data = subset(your_data_frame, your_column == "your_variable_to_subset"),
+#               aes(x=your_x_axis_value, y=your_y_axis_value),
+#               method=lm, se=FALSE, show.legend = F, inherit.aes = F, color = "#756bb1") + #inherit.aes is necessary to override the grouping above
+#   stat_cor(data = subset(your_data_frame, your_column == "your_variable_to_subset"), #add the R and p value to the plot
+#            aes(x=your_x_axis_value, y=your_x_axis_value), method = "pearson", label.x = your_customized_x_position, label.y = your_customized_y_position,
+#            inherit.aes = F, color = "#756bb1", size = 5) 
+
+
+
