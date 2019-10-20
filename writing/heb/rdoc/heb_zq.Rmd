@@ -135,6 +135,57 @@ cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q4, method = "spearman")
 cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q5, method = "spearman")
 ```
 
+### descriptive stats of the familiarity ranking
+```{r}
+library(likert)
+library(psych)
+library(ordinal)
+# remove NA's
+hebrank=subset(hebindiv_ling_eng,subject!="a_050")
+hebrank=subset(hebrank,subject!="a_002")
+hebrank=subset(hebrank,subject!="a_035")
+hebrank=hebrank[c(11:15)]
+hebrank$Q1 = factor(hebrank$Q1,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+hebrank$Q2 = factor(hebrank$Q2,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+hebrank$Q3 = factor(hebrank$Q3,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+hebrank$Q4 = factor(hebrank$Q4,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+hebrank$Q5 = factor(hebrank$Q5,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+headTail(hebrank)
+summary(hebrank)
+results=likert(hebrank)
+summary(results)
+plot(results,
+     type="heat",
+           low.color = "white",
+           high.color = "red",
+           text.color = "black",
+           text.size = 4,
+           wrap = 50)
+```
+### test whether different items have different familiarity rankings: Q4 is significantly different from Q3, and marginally from Q2 and Q5.
+```{r}
+library(dunn.test)
+hebrank=subset(hebindiv_ling_eng,subject!="a_050")
+hebrank=subset(hebrank,subject!="a_002")
+hebrank=subset(hebrank,subject!="a_035")
+hebrank=hebrank[c(1,11:15)]
+hebrank=melt(hebrank,id=1)
+colnames(hebrank)[2]="item"
+colnames(hebrank)[3]="ranking"
+kruskal.test(ranking ~ item,
+             data = hebrank)
+DT = dunn.test(hebrank$ranking,hebrank$item, method="bh")      # Adjusts p-values for multiple comparisons;
+```
 ### Testing the relationship between vocabulary and performance across tasks in the English group.
 ```{r}
 glmvoc = glm(accuracy~vocabulary*Task,data=eng_indiv)
