@@ -1,5 +1,5 @@
 # BLAST
-## Brain 
+## Brain and Language Acquisition Study
 
 ### This file overviews the task design and evolution of the BLAST project. 
 
