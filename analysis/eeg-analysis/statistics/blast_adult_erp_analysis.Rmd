@@ -8,26 +8,26 @@ output: html_document
 ## This code analyzes the BLAST projects' adult EEG data.
 
 ### Import libraries
-```{r echo=FALSE}
+```{r, eval=TRUE}
 library(ez); library(ggplot2); library(multcomp); library(nlme); library(pastecs); library(reshape)
 library(Hmisc); library (WRS2); library(lme4); library(lmerTest); library(plyr); library(splitstackshape) 
 library(naniar); library(tidyr); library(dplyr); library(memisc); library(psychReport);library(Hmisc); library(ggplot2); library(scales); library(ggbeeswarm)
 
 ```
 ### Import data as dataframe
-```{r echo=FALSE}
+```{r, eval=TRUE}
 setwd("/Volumes/data/projects/blast/adult_erp_manuscript/")
 df_corr=read.csv('blast_online_erp_adult_corr_data.csv')
 df_factor=read.csv('blast_adult_factor_analysis_n45.csv')
 ```
 ### Compare Correlation matrix and Factor matrix subjects
-```{r echo=FALSE}
+```{r, eval=TRUE}
 df_factor_subset <- df_factor[1:45,]
 df_factor_subset$subject[!(df_factor_subset$subject %in% df_corr$subject)]
 df_corr$subject[!(df_corr$subject %in% df_factor_subset$subject)]
 ```
 ### Remove subjects that do not have SSL online data or do not have ERP data
-```{r eval=TRUE}
+```{r, eval=TRUE}
 df_factor<- df_factor[!grepl("blast_a_012", df_factor$subject),]
 df_factor<- df_factor[!grepl("blast_a_020", df_factor$subject),]
 df_factor<- df_factor[!grepl("blast_a_027", df_factor$subject),]
@@ -42,39 +42,39 @@ df_corr<- df_corr[!grepl("blast_a_040", df_corr$subject),]
 df_corr<- df_corr[!grepl("blast_a_052", df_corr$subject),]
 ```
 ### GLMER of Early ERP Data
-```{r echo=FALSE}
+```{r, echo=TRUE}
 model<- lmer(Early~ 1 + Domain*Global*Local + (1|subject), family = gaussian(), control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),data = df_factor)
 summary(model)
 ```
 ### GLMER of Late ERP Data
-```{r echo=FALSE}
+```{r, echo=TRUE}
 model<- lmer(Late~ 1 + Domain*Global*Local + (1|subject), family = gaussian(), control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),data = df_factor)
 summary(model)
 ```
 ### ANOVA of Early ERP Data
-```{r echo=TRUE}
+```{r, echo=TRUE}
 early_blastANOVA <- ezANOVA(df_factor, Early, subject, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
 early_blastANOVA
 ```
 ### ANOVA of Late ERP Data
-```{r echo=TRUE}
+```{r, echo=TRUE}
 early_blastANOVA <- ezANOVA(df_factor, Late, subject, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
 early_blastANOVA
 ```
 ### Table of Means for Early ERP
-```{r echo=TRUE}
+```{r, echo=TRUE}
 tapply(X = df_factor$Early, INDEX = list(df_factor$Global), FUN = mean)
 tapply(X = df_factor$Early, INDEX = list(df_factor$Local), FUN = mean)
 tapply(X = df_factor$Early, INDEX = list(df_factor$Domain), FUN = mean)
 ```
 ### Table of Means for Late ERP
-```{r echo=TRUE}
+```{r, echo=TRUE}
 tapply(X = df_factor$Late, INDEX = list(df_factor$Global), FUN = mean)
 tapply(X = df_factor$Late, INDEX = list(df_factor$Local), FUN = mean)
 tapply(X = df_factor$Late, INDEX = list(df_factor$Domain), FUN = mean)
 ```
 ### Pairwise t-tests
-```{r echo=TRUE}
+```{r, echo=TRUE}
 pairwise.t.test(df_factor$Early, df_factor$Domain, p.adj = 'bonferroni')
 pairwise.t.test(df_factor$Early, df_factor$Global, p.adj = 'bonferroni')
 pairwise.t.test(df_factor$Early, df_factor$Local, p.adj = 'bonferroni')
@@ -88,7 +88,7 @@ pairwise.t.test(df_factor$Late, df_factor$Local, p.adj = 'bonferroni')
 This section is used to analyze the correlation between SSL and BLAST ERP amplitudes.
 
 ### Organizing correlation data
-```{r eval=TRUE}
+```{r, eval=TRUE}
 df_factor$Early = as.numeric(df_factor$Early)
 df_factor$Late = as.numeric(df_factor$Late)
 
@@ -111,12 +111,13 @@ domain_late<-cast(df_factor,subject~Domain, mean, value = "Late")
 df_corr$domain_late <- rowMeans(domain_late[c('Syllable', 'Voice')], na.rm=TRUE)
 ```
 
-```{r eval=TRUE}
+```{r, eval=TRUE}
 df_corr$subject = as.numeric(df_corr$subject)
 df_corr$accuracy = as.numeric(df_corr$accuracy)
 df_corr$mean_rt = as.numeric(df_corr$mean_rt)
 df_corr$scaled_rt_slope = as.numeric(df_corr$scaled_rt_slope)
 df_corr$entropy = as.numeric(df_corr$entropy)
+df_corr$vocab = as.numeric(df_corr$vocab)
 df_corr$global_early = as.numeric(df_corr$global_early)
 df_corr$global_late = as.numeric(df_corr$global_late)
 df_corr$local_early = as.numeric(df_corr$local_early)
@@ -126,7 +127,7 @@ df_corr$domain_late = as.numeric(df_corr$domain_late)
 ```
 
 ### Run correlation matrix
-```{r echo=TRUE}
+```{r, echo=TRUE}
 #df_corr<- na.omit(df_corr)
 mycor <- rcorr(as.matrix(df_corr),type = "spearman")
 mycor$r #Pearsons R
@@ -137,7 +138,7 @@ mycor_r <- mycor$r
 ## Now let's do some plotting!!
 
 ### Local and Global Interaction in Early Time Window
-```{r echo=FALSE}
+```{r, echo=FALSE}
 ggplot() +
   theme_classic(base_size = 20.0) +
   ggtitle("Interaction in Early Time Window") + theme(plot.title = element_text(hjust = 0.5)) +
@@ -151,9 +152,8 @@ ggplot() +
   scale_fill_brewer(palette = 'Set2') +
   theme(legend.position = "none")
 ```
-
 ### Local and Global Interaction in Late Time Window
-```{r echo=FALSE}
+```{r, echo=FALSE}
 ggplot() +
   theme_classic(base_size = 20.0) +
   ggtitle("Interaction in Late Time Window") + theme(plot.title = element_text(hjust = 0.5)) +
