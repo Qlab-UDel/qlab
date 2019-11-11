@@ -238,7 +238,8 @@ rt_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_ssl_indiv
 
 colnames(accuracy_df)[colnames(accuracy_df)==&quot;acc_id&quot;] &lt;- &quot;subject&quot;
 colnames(rt_df)[colnames(rt_df)==&quot;par_id&quot;] &lt;- &quot;subject&quot;
-colnames(entropy_df)[colnames(entropy_df)==&quot;part_id&quot;] &lt;- &quot;subject&quot;</code></pre>
+colnames(entropy_df)[colnames(entropy_df)==&quot;part_id&quot;] &lt;- &quot;subject&quot;
+colnames(accuracy_df)[colnames(accuracy_df)==&quot;subj_corr&quot;] &lt;- &quot;accuracy&quot;</code></pre>
 <div id="merge-dataframes" class="section level3">
 <h3>Merge Dataframes</h3>
 <pre class="r"><code>require(plyr)
@@ -262,7 +263,7 @@ df&lt;- df[!grepl(&quot;blast_a_030&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_019&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_022&quot;, df$subject),]
 df &lt;- df[-c(18:39), ]
-df &lt;- df[ -c(15,16,20:31,33) ]
+df &lt;- df[ -c(15,20:33) ]
 
 write.csv(df, &quot;/Volumes/data/projects/blast/data_summaries/adult_composite_in_lab_online.csv&quot;)</code></pre>
 </div>
