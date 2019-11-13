@@ -13,12 +13,14 @@ Calculations are peformed for visual and auditory data from linguistic and non-l
 data/projects/blast/r_scripts/blast_scanner_sl/blast_in_scanner_beh.R
 ```
 
-```
+
 ## The cleaned data output is stored on NAS:
+
 ```
-/Volumes/data/projects/blast/data_summaries/blast_in_lab_adult/behavioral/adult_in_scanner_auditory_behavioral.csv
-/Volumes/data/projects/blast/data_summaries/blast_in_lab_adult/behavioral/adult_in_scanner_visual_behavioral.csv
+data/projects/blast/data_summaries/blast_in_lab_adult/behavioral/adult_in_scanner_auditory_behavioral.csv
+data/projects/blast/data_summaries/blast_in_lab_adult/behavioral/adult_in_scanner_visual_behavioral.csv
 ```
+
 The cleaned data output is pushed to cleaned_data folder here on github (RT slope are not scaled, will rerun if scaling is needed (11/12/2019))
 
 - Auditory data: adult_in_scanner_auditory_behavioral.csv
@@ -83,7 +85,9 @@ exp_auditory_mean_rts
 ```
 
 ## Calculate auditory reaction time slopes
+
 Reindex the targets by type (random syllable, structured tone, etc) for each participant
+
 ```
 exp_auditory_targets$index
 ```
@@ -91,6 +95,7 @@ exp_auditory_targets$index
 Calculate reaction time slopes
 
 Bind all auditory output
+
 ```
 auditory_output
 ```
