@@ -14,7 +14,7 @@
 ## Specific conference folders
 - scripts for statistical analysis for cleaned raw data 
 
-The reason why they are grouped in specific conferences are because they have specific sample and results. Back up for raw data input will be in a different place.
+(The reason why they are grouped in specific conferences are because they have specific sample and results. Back up for raw data input will be in a different place).
 
 ## cleaned_data folder
 
@@ -33,7 +33,7 @@ The reason why they are grouped in specific conferences are because they have sp
 
 1. Run all scripts in child_raw_data_cleaning_scripts folder first to clean the raw data:
 
-- The LSL script has to be run in this order:
+**The LSL script has to be run in this order:**
 
 **First, blast_web_lsl_cleaning.R**
 Then, blast_web_lsl_predictable_2afc.R, blast_web_lsl_random_2afc.R, blast_web_lsl_rt_analysis.R (order does not matter here.)
@@ -48,7 +48,7 @@ Then, blast_web_lsl_predictable_2afc.R, blast_web_lsl_random_2afc.R, blast_web_l
 
 1. Run all scripts in adult_raw_data_cleaning_scripts folder first to clean the raw data:
 
-- The LSL script has to be run in this order:
+**The LSL script has to be run in this order:**
 
 **First, blast_web_lsl_cleaning.R**
 Then, blast_web_lsl_predictable_2afc.R, blast_web_lsl_random_2afc.R, blast_web_lsl_rt_analysis.R (order does not matter here.)
