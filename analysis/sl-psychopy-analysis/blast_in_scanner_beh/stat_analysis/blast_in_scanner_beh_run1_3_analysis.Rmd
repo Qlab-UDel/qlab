@@ -1,0 +1,462 @@
+---
+title: "in_scanner_aduly_beh_run1_3_analysis"
+author: "Jojo Hu"
+date: "9/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Blast In Scanner Adult Behavioral Analysis for Run 1 and 3
+
+1. Please look at the histogram, scatter plots for data distribution. 
+2. Please look at the descriptive statistics.
+3. Please look at mean RT paired t-test results.
+4. RT slope has not been analyzed. Please ignore any results for RT slope now.
+5. Bar graphs do not have significance level marked. Please check t.test.
+
+```{r}
+#Set up current working directory
+setwd (
+  ""
+)
+
+output_path <- (
+  ""
+)
+
+# Read in in-scanner behavioral data
+visual_data <-
+  read.csv("adult_in_scanner_visual_behavioral_run1_3.csv")
+auditory_data <-
+  read.csv("adult_in_scanner_auditory_behavioral_run1_3.csv")
+
+#Visual data--------------------------------------------------------------------------------------
+#Plot the basic data------------------------------------------------------------------------------
+#Remove the participants who do not have data
+#First, transform the column type to numeric for later analysis
+type_converted_column_index <-
+  match(
+    c(
+      "structured_vsl_rt_slope",
+      "random_vsl_rt_slope",
+      "structured_lsl_rt_slope",
+      "random_lsl_rt_slope",
+      "structured_image_mean_rt",
+      "random_image_mean_rt",
+      "structured_letter_mean_rt",
+      "random_letter_mean_rt"
+    ),
+    names(visual_data)
+  )
+
+visual_data[, c(type_converted_column_index)] <-
+  lapply(visual_data[, c(type_converted_column_index)],
+         function(x)
+           as.numeric(as.character(x)))
+
+#Remove participants that do have all data
+#Save whose data are deleted, participants with too few hits or no hits.
+
+deleted_id_incomplete_data <-
+  paste("deleted visual id due to too few or no hits:",
+        visual_data[!complete.cases(visual_data[, c(type_converted_column_index)]),
+                    "visual_part_id"])
+
+visual_data <-
+  visual_data[complete.cases(visual_data[, c(type_converted_column_index)]),]
+
+#Plot histograms and dot plots to look at the distribution of the data first (Normal Distribution? Outliners?)
+#Save the plots into a pdf file
+
+library("reshape")
+library("ggplot2")
+
+hist_long_data <- melt(visual_data, id.vars = "visual_part_id")
+
+hist_var_plotted <- c(
+  "total_image_rts",
+  "total_letter_rts",
+  "structured_image_mean_rt",
+  "random_image_mean_rt",
+  "structured_letter_mean_rt",
+  "random_letter_mean_rt",
+  "structured_vsl_rt_slope",
+  "random_vsl_rt_slope",
+  "structured_lsl_rt_slope",
+  "random_lsl_rt_slope"
+)
+
+hist_long_data <-
+  hist_long_data[which(hist_long_data$variable %in% hist_var_plotted),]
+
+pdf("visual_data_distribution_sanity_check.pdf")
+
+hist_visual <-
+  ggplot(hist_long_data,
+         aes(value)) +
+  geom_histogram() +
+  facet_wrap(~ variable, scales = "free")
+
+#Histogram for visual data
+print(hist_visual)
+
+dot_visual <-
+  ggplot(hist_long_data,
+         aes(x = visual_part_id, y = value)) +
+  geom_point() +
+  facet_wrap(~ variable, scales = "free")
+
+#Scatter plot for visual data
+print(dot_visual)
+
+dev.off()
+
+#----------------------------------------------------------------------------------------------
+
+#Learning Effect Analysis----------------------------------------------------------------------------
+#Descriptive Stats for Visual Data
+library("psych")
+descrip_visual_column <- c(
+  "structured_image_mean_rt",
+  "random_image_mean_rt",
+  "structured_letter_mean_rt",
+  "random_letter_mean_rt"
+)
+
+descrip_visual_data <-
+  visual_data[, which(names(visual_data) %in% descrip_visual_column)]
+
+descrip_stat_visual <- describe(descrip_visual_data)
+
+#Descriptive statistics for visual data
+print(descrip_stat_visual)
+
+write.csv(descrip_stat_visual,
+          paste0(output_path, "descrip_stat_visual.csv"))
+
+# Run Welch's paired t-test on mean RT
+# p<0.05 tells us that random has significantly longer mean RT than structured, and there is learning effect
+
+#T.test for letter
+t.test(
+  visual_data$random_letter_mean_rt,
+  visual_data$structured_letter_mean_rt,
+  paired = TRUE,
+  alternative = "greater"
+)
+
+#T.test for image
+t.test(
+  visual_data$random_image_mean_rt,
+  visual_data$structured_image_mean_rt,
+  paired = TRUE,
+  alternative = "greater"
+)
+
+#Auditory_data---------------------------------------------------------------------------------------
+type_converted_column_index_auditory <-
+  match(
+    c(
+      "structured_ssl_rt_slope",
+      "random_ssl_rt_slope",
+      "structured_tsl_rt_slope",
+      "random_tsl_rt_slope",
+      "structured_syllable_mean_rt",
+      "random_syllable_mean_rt",
+      "structured_tone_mean_rt",
+      "random_tone_mean_rt"
+    ),
+    names(auditory_data)
+  )
+
+auditory_data[, c(type_converted_column_index_auditory)] <-
+  lapply(auditory_data[, c(type_converted_column_index_auditory)],
+         function(x)
+           as.numeric(as.character(x)))
+
+#Remove participants that do have all data
+#Save whose data are deleted, participants with too few hits or no hits.
+
+deleted_id_incomplete_data_auditory <-
+  paste("deleted auditory id due to too few or no hits:",
+        auditory_data[!complete.cases(auditory_data[, c(type_converted_column_index_auditory)]),
+                      "auditory_part_id"])
+
+deleted_id_incomplete_data <-
+  rbind(deleted_id_incomplete_data,
+        deleted_id_incomplete_data_auditory)
+
+write.csv(deleted_id_incomplete_data,
+          paste0(output_path, "deleted_id_in_analysis.csv"))
+
+#THe participants that are deleted because of too few hits or no hits
+print(deleted_id_incomplete_data)
+
+auditory_data <- auditory_data[complete.cases(auditory_data[, c(type_converted_column_index_auditory)]), ]
+
+#Plot histograms and dot plots to look at the distribution of the data first (Normal Distribution? Outliners?)
+#Save the plots into a pdf file
+pdf("auditory_data_distribution_sanity_check.pdf")
+
+library("reshape")
+library("ggplot2")
+
+hist_long_data_auditory <-
+  melt(auditory_data, id.vars = "auditory_part_id")
+
+hist_auditory_column <- c(
+  "total_tone_rts",
+  "total_syllable_rts",
+  "structured_tone_mean_rt",
+  "random_tone_mean_rt",
+  "structured_syllable_mean_rt",
+  "random_syllable_mean_rt",
+  "structured_tsl_rt_slope",
+  "random_tsl_rt_slope",
+  "structured_ssl_rt_slope",
+  "random_ssl_rt_slope"
+)
+
+hist_long_data_auditory <-
+  hist_long_data_auditory[which(hist_long_data_auditory$variable %in% hist_auditory_column), ]
+
+hist_auditory <- ggplot(hist_long_data_auditory,
+                        aes(value)) +
+  geom_histogram() +
+  facet_wrap(~ variable, scales = "free")
+
+#Histogram for auditory data
+print(hist_auditory)
+
+dot_auditory <- ggplot(hist_long_data_auditory,
+                       aes(x = auditory_part_id, y = value)) +
+  geom_point() +
+  facet_wrap(~ variable, scales = "free")
+
+#Scatter plots for auditory data
+print(dot_auditory)
+
+dev.off()
+
+
+#---------------------------------------------------------------------------------
+
+#Learning Effect Analysis---------------------------------------------------------
+#Descriptive Stats for auditory Data
+library("psych")
+descrip_auditory_column <- c(
+  "structured_tone_mean_rt",
+  "random_tone_mean_rt",
+  "structured_syllable_mean_rt",
+  "random_syllable_mean_rt"
+)
+
+descrip_auditory_data <-
+  auditory_data[, which(names(auditory_data) %in% descrip_auditory_column)]
+
+descrip_stat_auditory <- describe(descrip_auditory_data)
+
+write.csv(descrip_stat_auditory,
+          paste0(output_path, "descrip_stat_auditory.csv"))
+
+#Descriptive data for auditory
+print(descrip_stat_auditory)
+
+#T.test for auditory data-------------------------------------------------------
+# p<0.05 tells us that random has significantly longer mean RT than structured, and there is learning effect
+
+#T.test for tone
+t.test(
+  auditory_data$random_tone_mean_rt,
+  auditory_data$structured_tone_mean_rt,
+  paired = TRUE,
+  alternative = "greater"
+)
+
+#T.test for syllable
+t.test(
+  auditory_data$random_syllable_mean_rt,
+  auditory_data$structured_syllable_mean_rt,
+  paired = TRUE,
+  alternative = "greater"
+)
+```
+
+Plot Bar graphs for Mean RT
+
+```{r}
+#Prepare visual bar graph data-----------------------------------------------
+library("reshape")
+
+bar_visual_data <-
+  melt(
+    visual_data,
+    by.vars = c("visual_part_id"),
+    measure.vars = c(
+      "structured_image_mean_rt",
+      "random_image_mean_rt",
+      "structured_letter_mean_rt",
+      "random_letter_mean_rt"
+    )
+  )
+
+library("stringr")
+
+colnames(bar_visual_data)[colnames(bar_visual_data) == "value"] <-
+  "Mean_Reaction_Time"
+
+bar_visual_data[which(str_detect(bar_visual_data$variable, "structured") == TRUE),
+                c("Condition")] <-
+  "Structured"
+
+bar_visual_data[which(str_detect(bar_visual_data$variable, "random") == TRUE),
+                c("Condition")] <-
+  "Random"
+
+bar_visual_data[which(str_detect(bar_visual_data$variable, "image") == TRUE), c("Type")]  <-
+  "Image"
+
+bar_visual_data[which(str_detect(bar_visual_data$variable, "letter") == TRUE), c("Type")]  <-
+  "Letter"
+
+#ggplot visual bar grapgh--------------------------------------------------------
+library("ggbeeswarm")
+library("ggsignif")
+
+visual_bar_graph <-
+  ggplot(bar_visual_data, aes(x = Type, y = Mean_Reaction_Time)) +
+  geom_bar(
+    aes(fill = Condition),
+    stat = "summary",
+    fun.y = "mean",
+    position = position_dodge(width = 0.9),
+    width = 0.9
+  ) +
+  geom_beeswarm(
+    aes(fill = Condition),
+    dodge.width = 0.9,
+    cex = 2.5,
+    size = 0.8,
+    show.legend = FALSE
+  ) +
+  ylab("Mean Reaction Time (ms)") +
+  xlab("Task") +
+  theme(
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 12)
+  ) +
+  geom_signif(
+    annotations = "*",
+    y_position = 650,
+    xmin = 0.75,
+    xmax = 1.25,
+    tip_length = 0.01,
+    vjust = 0.4
+  ) +
+  geom_signif(
+    annotations = "***",
+    y_position = 650,
+    xmin = 1.75,
+    xmax = 2.25,
+    tip_length = 0.01,
+    vjust = 0.4
+  )
+
+ggsave(paste0(output_path, "visual_mean_rt_graph.png"),
+       dpi = 150)
+
+#Bar plot for visual mean RT by task and condition
+print(visual_bar_graph)
+
+#Prepare auditory bar graph data---------------------------------------------
+bar_auditory_data <-
+  melt(
+    auditory_data,
+    by.vars = c("auditory_part_id"),
+    measure.vars = c(
+      "structured_tone_mean_rt",
+      "random_tone_mean_rt",
+      "structured_syllable_mean_rt",
+      "random_syllable_mean_rt"
+    )
+  )
+
+colnames(bar_auditory_data)[colnames(bar_auditory_data) == "value"] <-
+  "Mean_Reaction_Time"
+
+
+bar_auditory_data[which(str_detect(bar_auditory_data$variable, "structured") == TRUE),
+                  c("Condition")] <-
+  "Structured"
+
+bar_auditory_data[which(str_detect(bar_auditory_data$variable, "random") == TRUE),
+                  c("Condition")] <-
+  "Random"
+
+bar_auditory_data[which(str_detect(bar_auditory_data$variable, "tone") == TRUE), c("Type")]  <-
+  "Tone"
+
+bar_auditory_data[which(str_detect(bar_auditory_data$variable, "syllable") == TRUE), c("Type")]  <-
+  "Syllable"
+
+bar_auditory_data$Type <- as.character(bar_auditory_data$Type)
+bar_auditory_data$Type <- factor(bar_auditory_data$Type, levels =
+                                   c("Tone", "Syllable"))
+
+bar_auditory_data <-
+  bar_auditory_data[order(bar_auditory_data$Type),]
+
+#Plot auditory bar graph-----------------------------------------------------
+auditory_bar_graph <-
+  ggplot(bar_auditory_data, aes(x = Type, y = Mean_Reaction_Time)) +
+  geom_bar(
+    aes(fill = Condition),
+    stat = "summary",
+    fun.y = "mean",
+    position = position_dodge(width = 0.9),
+    width = 0.9
+  ) +
+  geom_beeswarm(
+    aes(fill = Condition),
+    dodge.width = 0.9,
+    cex = 2.5,
+    size = 0.8,
+    show.legend = FALSE
+  ) +
+  ylab("Mean Reaction Time (ms)") +
+  xlab("Task") +
+  theme(
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 12)
+  ) +
+  geom_signif(
+    annotations = "check t.test",
+    y_position = 800,
+    xmin = 1.75,
+    xmax = 2.25,
+    tip_length = 0.01,
+    vjust = 0.4
+  ) +
+  geom_signif(
+    annotations = "check t.test",
+    y_position = 800,
+    xmin = 0.75,
+    xmax = 1.25,
+    tip_length = 0.01,
+    vjust = 0.4
+  ) +
+  scale_fill_brewer(palette = "Set2")
+
+ggsave("auditory_mean_rt_graph.png",
+       dpi = 150)
+
+#Bar plot for auditory data by task and condition
+print(auditory_bar_graph)
+```

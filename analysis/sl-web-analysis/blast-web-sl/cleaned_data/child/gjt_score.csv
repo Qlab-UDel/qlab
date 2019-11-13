@@ -1,0 +1,53 @@
+part_id,hit_rate,false_alarm_rate,a_prime,standard_score
+spoli_c_008,0.9,0,0.88,105
+spoli_c_012,1,0,1,116
+spoli_c_014,0.9,0.7,0.52,71
+spoli_c_030,0.7,0.7,0.5,69
+spoli_c_054,1,0.1,0.88,no age norm
+spoli_c_071,0.9,0.4,0.6,no age norm
+spoli_c_076,1,0,1,no age norm
+spoli_c_078,1,0,1,no age norm
+spoli_c_088,1,0.8,0.51,70
+spoli_c_090,0.9,0.6,0.54,73
+spoli_c_093,0.9,0.4,0.6,78
+spoli_c_125,1,0.3,0.71,89
+spoli_c_126,1,0.6,0.56,75
+spoli_c_148,0.9,0.5,0.56,75
+spoli_c_235,1,0.1,0.88,no age norm
+spoli_c_237,1,0.4,0.64,no age norm
+spoli_c_242,0.9,0.2,0.71,no age norm
+blast_c_002,0.8,0.6,0.52,40
+blast_c_018,1,0.2,0.79,88
+blast_c_023,0.7,0.9,0.5,45
+blast_c_028,1,0.5,0.59,51
+blast_c_030,1,0.1,0.88,89
+blast_c_034,0.7,0.5,0.52,71
+blast_c_036,0.8,0,0.79,81
+blast_c_037,1,0.2,0.79,81
+blast_c_038,0.8,0,0.79,no age norm
+blast_c_045,0.9,0.2,0.71,no age norm
+blast_c_056,0.5,0.6,0.5,37
+blast_c_061,0.9,0.1,0.79,96
+blast_c_071,1,0.1,0.88,94
+blast_c_073,0.8,0.3,0.61,79
+blast_c_085,1,0.2,0.79,70
+blast_c_088,1,1,0.5,no age norm
+blast_c_092,1,0.2,0.79,88
+blast_c_095,0.9,0.1,0.79,81
+blast_c_096,1,0,1,120
+blast_c_097,1,0.3,0.71,69
+blast_c_101,1,0.3,0.71,69
+blast_c_109,1,1,0.5,37
+blast_c_112,1,0,1,116
+blast_c_118,1,1,0.5,69
+blast_c_119,0.9,0.7,0.52,48
+blast_c_121,0.9,0.7,0.52,71
+blast_c_122,0.9,0.5,0.56,75
+blast_c_147,1,0.2,0.79,70
+blast_c_149,0.9,1,0.5,45
+blast_c_150,1,0.1,0.88,no age norm
+blast_c_157,0.6,0.4,0.52,no age norm
+blast_c_213,1,0,1,115
+blast_c_231,1,0,1,120
+blast_c_232,1,0,1,115
+blast_c_265,1,0,1,112
