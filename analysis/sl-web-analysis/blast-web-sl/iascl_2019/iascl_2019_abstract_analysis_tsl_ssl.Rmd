@@ -1,0 +1,2292 @@
+---
+title: "iascl_beh_analysis"
+author: "Jojo Hu"
+date: "10/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## IASCL Behavioral Analysis
+
+# Age at MRI and EEG
+``` {r, include=F}
+drive_checklist <-
+  read.csv("drive_checklist.csv")
+
+#Reformat date columns
+drive_checklist$date_of_mri <-
+as.Date(drive_checklist$date_of_mri, format = "%Y-%m-%d")
+
+drive_checklist$date.of.birth <-
+as.Date(drive_checklist$date.of.birth, format = "%Y-%m-%d")
+
+
+drive_checklist$date_of_eeg <-
+as.Date(drive_checklist$date_of_eeg, format = "%Y-%m-%d")
+
+#Calculate age in days
+for (i in 1:length(drive_checklist$date.of.birth)) { 
+if (!is.na(drive_checklist[i, "date_of_mri"])) {
+  drive_checklist[i, "age_at_neuro_day"] <-
+    difftime(drive_checklist[i, "date_of_mri"], drive_checklist[i, "date.of.birth"],
+             units = c("days"))
+} else {
+  drive_checklist[i, "age_at_neuro_day"] <-
+    difftime(drive_checklist[i, "date_of_eeg"], drive_checklist[i, "date.of.birth"],
+             units = c("days"))
+}
+}
+
+#Calculate age in months---------------------------------------------------------------------------------------------
+#From Stackoverflow: https://stackoverflow.com/questions/1995933/number-of-months-between-two-dates
+#Answer by https://stackoverflow.com/users/143305/dirk-eddelbuettel
+#Credit to: Dirk Eddelbuettel
+
+# turn a date into a 'monthnumber' relative to an origin
+monnb <- function(d) {
+  lt <- as.POSIXlt(as.Date(d, origin="1900-01-01"))
+  lt$year*12 + lt$mon
+  } 
+# compute a month difference as a difference between two monnb's
+mondf <- function(d1, d2) { 
+  monnb(d2) - monnb(d1) 
+}
+
+#Calculate age in months
+for (i in 1:length(drive_checklist$date.of.birth)) { 
+if (!is.na(drive_checklist[i, "date_of_mri"])) {
+  drive_checklist[i, "age_at_neuro_month"] <-
+    mondf(drive_checklist[i, "date.of.birth"], drive_checklist[i, "date_of_mri"])
+} else {
+  drive_checklist[i, "age_at_neuro_month"] <-
+    mondf(drive_checklist[i, "date.of.birth"], drive_checklist[i, "date_of_eeg"])
+}
+}
+
+drive_checklist$age_at_neuro_year <- round(drive_checklist$age_at_neuro_month /12, 3)
+
+
+```
+
+#Clean Data
+```{r,echo=FALSE}
+#Read in demographic data
+iascl_demo_all <- read.csv("iascl_demo_all_manually_editted.csv")
+#Read in GJT data 
+gjt <- read.csv("gjt_score.csv")
+#Read in analyzed behavioral data
+iascl_blast_data_list <- 
+  list.files(path = "your_path_to_the_dir",
+             pattern = "*blast_all.csv", full.names = T)
+
+iascl_spoli_data_list <-
+  list.files(path = "your_path_to_the_dir",
+             pattern = "*spoli_all.csv", full.names = T)
+
+iascl_blast_data <- lapply(iascl_blast_data_list, read.csv)
+
+iascl_spoli_data <- lapply(iascl_spoli_data_list, read.csv)
+
+
+
+#Seperate mean rt and rt slope data into two dataframes
+iascl_blast_data[[4]] <- iascl_blast_data[[3]][,c("X", "par_id", "mean_rt", "task")]
+iascl_blast_data[[5]] <- iascl_blast_data[[3]][,c("X", "par_id", "scaled_rt_slope", "task")]
+
+iascl_spoli_data[[4]] <- iascl_spoli_data[[3]][,c("X", "par_id", "mean_rt", "task")]
+iascl_spoli_data[[5]] <- iascl_spoli_data[[3]][,c("X", "par_id", "scaled_rt_slope", "task")]
+
+#Rbind Blast and Spoli data for each measure------------------------------------------------------------------------------
+blast_spoli_data <- list()
+
+for (i in 1:length(iascl_blast_data)) {
+blast_spoli_data[[i]] <- 
+ rbind(iascl_blast_data[[i]], iascl_spoli_data[[i]])
+}
+#Select only Accuracy data, reformat column names and add in which measure it is into a new column
+blast_spoli_acc <- blast_spoli_data[[1]][,c("X", "acc_id", "subj_corr", "task")]
+blast_spoli_acc$measure <- "accuracy"
+colnames(blast_spoli_acc)[colnames(blast_spoli_acc) == "subj_corr"] <- "value"
+colnames(blast_spoli_acc)[colnames(blast_spoli_acc) == "acc_id"] <- "part_id"
+
+#Select only Entropy data, reformat column names and add in which measure it is into a new column
+blast_spoli_entropy <- blast_spoli_data[[2]][,c("X", "part_id", "mean_entropy", "task")]
+blast_spoli_entropy$measure <- "entropy"
+colnames(blast_spoli_entropy)[colnames(blast_spoli_entropy) == "mean_entropy"] <- "value"
+
+#Select only Mean RT data, reformat column names and add in which measure it is into a new column
+library("stringr")
+
+blast_spoli_rt <- blast_spoli_data[[4]][,c("X", "par_id", "mean_rt", "task")]
+blast_spoli_rt$measure <- "rt"
+
+blast_spoli_rt$par_id <- as.character(blast_spoli_rt$par_id)
+
+blast_spoli_rt[which(blast_spoli_rt$task == "children_lsl_indiv_rts"), "par_id"] <-
+  str_extract(blast_spoli_rt[which(blast_spoli_rt$task == "children_lsl_indiv_rts"), "par_id"], "\\S+(?=_lsl)")
+  
+colnames(blast_spoli_rt)[colnames(blast_spoli_rt) == "mean_rt"] <- "value"
+colnames(blast_spoli_rt)[colnames(blast_spoli_rt) == "par_id"] <- "part_id"
+
+#Select only RT Slope data, reformat column names and add in which measure it is into a new column
+blast_spoli_slope <- blast_spoli_data[[5]][,c("X", "par_id", "scaled_rt_slope", "task")]
+blast_spoli_slope$measure <- "slope"
+
+blast_spoli_slope$par_id <- as.character(blast_spoli_slope$par_id)
+
+blast_spoli_slope[which(blast_spoli_slope$task == "children_lsl_indiv_rts"), "par_id"] <-
+  str_extract(blast_spoli_slope[which(blast_spoli_slope$task == "children_lsl_indiv_rts"), "par_id"], "\\S+(?=_lsl)")
+
+blast_spoli_slope$task <- paste0(blast_spoli_slope$task, "_slope")
+
+colnames(blast_spoli_slope)[colnames(blast_spoli_slope) == "scaled_rt_slope"] <- "value"
+colnames(blast_spoli_slope)[colnames(blast_spoli_slope) == "par_id"] <- "part_id"
+
+#Format GJT data
+gjt$measure <- "gjt_std_score"
+gjt$task <- "gjt_web"
+gjt$X <- seq(from = 1, to = length(gjt$part_id), by = 1)
+colnames(gjt)[colnames(gjt) == "standard_score"] <- "value"
+
+blast_spoli_gjt <- gjt[,c("X", "part_id", "value", "task", "measure")]
+
+#Rbind all measures into long form
+blast_spoli_data_long <- rbind(blast_spoli_acc, blast_spoli_entropy, blast_spoli_rt, blast_spoli_slope, blast_spoli_gjt)
+
+
+
+```
+
+## All behavioral data prep
+```{r, include=F}
+#Make all measures into wide form by participant and measure
+library("reshape")
+library("data.table")
+library("dplyr")
+#Some lsl rt data are from siblings because those siblings did not get moved to the blast_sib folder on NAS
+blast_spoli_data_wide <- cast(blast_spoli_data_long, part_id~measure+task)
+
+#Extract relevant demo information
+gender_group_info <- iascl_demo_all[,c("part_id", "group", "sex", "age_at_web_month", "age_at_web_year")]
+#Merge all demo data with sl measures
+blast_spoli_data_wide <-
+  merge(gender_group_info, blast_spoli_data_wide,
+      by.x = "part_id", by.y = "part_id",
+      all.y = TRUE)
+ 
+
+blast_spoli_data_wide$accuracy_children_lsl_random_2afc_accuracies <-
+as.numeric(as.character(blast_spoli_data_wide$accuracy_children_lsl_random_2afc_accuracies))
+
+blast_spoli_data_wide$accuracy_lsl_predictable_2afc_accuracies <-
+as.numeric(as.character(blast_spoli_data_wide$accuracy_lsl_predictable_2afc_accuracies))
+
+blast_spoli_data_wide$entropy_children_lsl_predictable_entropy <-
+as.numeric(as.character(blast_spoli_data_wide$entropy_children_lsl_predictable_entropy))
+
+blast_spoli_data_wide$entropy_children_lsl_randomized_entropy <-
+as.numeric(as.character(blast_spoli_data_wide$entropy_children_lsl_randomized_entropy))
+
+
+blast_spoli_data_wide$accuracy_children_lsl_accuracies <-
+  coalesce(blast_spoli_data_wide$accuracy_children_lsl_random_2afc_accuracies,
+           blast_spoli_data_wide$accuracy_lsl_predictable_2afc_accuracies)
+
+
+blast_spoli_data_wide$entropy_children_lsl_entropy <-
+  coalesce(blast_spoli_data_wide$entropy_children_lsl_predictable_entropy,
+           blast_spoli_data_wide$entropy_children_lsl_randomized_entropy)
+```
+
+
+# MRI correlation Data Prep 
+# MRI Subjects, TSL LSL only
+```{r}
+mri <- read.csv("RH_LH_GM_extraction.csv")
+
+mri <- mri[,c(1,2,5,6)]
+
+mri_gray_matter_wide <- cast(mri, part_id~roi, value = "total_gray_matter_volume")
+mri_gray_matter_wide <- mri_gray_matter_wide[,!colnames(mri_gray_matter_wide) %in% "LeftAntTemp"]
+
+average_cor_thick_wide <- cast(mri, part_id~roi, value = "average_cortical_thickness")
+average_cor_thick_wide <- average_cor_thick_wide[,!colnames(average_cor_thick_wide) %in% "LeftAntTemp"]
+
+iascl_beh_gray_matter <- 
+merge(mri_gray_matter_wide, blast_spoli_data_wide,
+      by.x = "part_id", by.y = "part_id",
+      all.x = TRUE)
+
+iascl_beh_gray_matter <-
+  merge(iascl_beh_gray_matter, gjt[,c("part_id", "a_prime")],
+        by.x = "part_id", by.y = "part_id",
+        all.x = TRUE)
+
+iascl_beh_gray_matter <-
+iascl_beh_gray_matter[,c(1:12, 25, 36, 16, 17, 22, 23, 27, 28, 31, 32)]
+
+iascl_beh_gray_matter <- 
+merge(iascl_beh_gray_matter, drive_checklist[,c("Participant.ID", "age_at_neuro_year")],
+      by.x = "part_id", by.y = "Participant.ID",
+      all.x = TRUE)
+
+iascl_beh_gray_matter_td <-
+iascl_beh_gray_matter[which(iascl_beh_gray_matter$group == "TD"),] 
+
+iascl_beh_gray_matter_asd <-
+iascl_beh_gray_matter[which(iascl_beh_gray_matter$group == "ASD"),] 
+
+
+iascl_beh_cor_thick <- 
+merge(average_cor_thick_wide, blast_spoli_data_wide,
+      by.x = "part_id", by.y = "part_id",
+      all.x = TRUE)
+
+iascl_beh_cor_thick <-
+  merge(iascl_beh_cor_thick, gjt[,c("part_id", "a_prime")],
+        by.x = "part_id", by.y = "part_id",
+        all.x = TRUE)
+
+iascl_beh_cor_thick <-
+iascl_beh_cor_thick[,c(1:12, 25, 36, 16, 17, 22, 23, 27, 28, 31, 32)]
+
+iascl_beh_cor_thick <- 
+merge(iascl_beh_cor_thick, drive_checklist[,c("Participant.ID", "age_at_neuro_year")],
+      by.x = "part_id", by.y = "Participant.ID",
+      all.x = TRUE)
+
+iascl_beh_cor_thick_td <-
+iascl_beh_cor_thick[which(iascl_beh_cor_thick$group == "TD"),] 
+
+iascl_beh_cor_thick_asd <-
+iascl_beh_cor_thick[which(iascl_beh_cor_thick$group == "ASD"),] 
+
+#MRI data participants
+print(iascl_beh_cor_thick[,c("part_id", "group")])
+
+#Intersection between Beh and MRI participants
+intersect(blast_spoli_data_wide$part_id, iascl_beh_cor_thick$part_id)
+
+identical(iascl_beh_cor_thick$part_id, iascl_beh_gray_matter$part_id)
+```
+
+# EEG + MRI participants, SSL, TSL only
+```{r, include=F}
+eeg_part_id <- read.csv("eeg_part_id.csv")
+
+eeg_mri_id <- append(as.character(eeg_part_id$part_id), as.character(iascl_beh_cor_thick$part_id))
+
+eeg_mri_id <- unique(eeg_mri_id)
+
+eeg_mri_id <- data.frame(eeg_mri_id)
+
+eeg_mri_id$part_id <- eeg_mri_id$eeg_mri_id
+
+#eeg_mri_id_beh_data <-
+#blast_spoli_data_wide[which(blast_spoli_data_wide$part_id %in% eeg_mri_id$part_id),]
+
+
+in_lab_part <- intersect(drive_checklist$Participant.ID, blast_spoli_data_wide$part_id)
+
+in_lab_beh <- blast_spoli_data_wide[which(blast_spoli_data_wide$part_id %in% in_lab_part),]
+
+eeg_mri_id_beh_data <- in_lab_beh
+
+setdiff(in_lab_beh$part_id, eeg_mri_id$part_id)
+setdiff(eeg_mri_id$part_id, in_lab_beh$part_id)
+
+add_row <- data.frame(matrix(ncol = 26, nrow = 1))
+colnames(add_row) <- colnames(eeg_mri_id_beh_data)
+add_row$part_id <- "blast_c_215"
+add_row$group <- "TD"
+add_row$sex <- "F"
+
+eeg_mri_id_beh_data <- rbind(eeg_mri_id_beh_data, add_row)
+
+eeg_mri_id_beh_data[which(eeg_mri_id_beh_data$accuracy_children_ssl_accuracies != ""), "SSL"] <- 1
+
+eeg_mri_id_beh_data[which(eeg_mri_id_beh_data$accuracy_children_tsl_accuracies != ""), "TSL"] <- 1
+
+eeg_mri_id_beh_data[which(eeg_mri_id_beh_data$part_id %in% eeg_part_id$part_id), "EEG"] <- 1
+
+eeg_mri_id_beh_data[which(eeg_mri_id_beh_data$part_id %in% iascl_beh_gray_matter$part_id), "MRI"] <- 1
+
+eeg_mri_beh_data <- 
+merge(drive_checklist[,c("Participant.ID", 
+                         "age_at_neuro_year", 
+                         "kbit_matrices_raw",
+                         "kbit_matrices_std",
+                         "scq_total")], 
+      eeg_mri_id_beh_data,
+      by.x = "Participant.ID", by.y = "part_id")
+
+gjt_original_file <- read.csv("gjt_score.csv")
+
+eeg_mri_beh_data <-
+  merge(eeg_mri_beh_data, 
+        gjt_original_file[,c("part_id", "a_prime", "standard_score")],
+        by.x = "Participant.ID",
+        by.y = "part_id",
+        all.x = TRUE)
+
+eeg_mri_beh_data <-
+merge(eeg_mri_beh_data,
+      iascl_demo_all[,c("part_id", "summary_score", "final_score")],
+      by.x = "Participant.ID",
+      by.y = "part_id",
+      all.x = TRUE)
+
+colnames(eeg_mri_beh_data)[colnames(eeg_mri_beh_data) == "Participant.ID"] <- "part_id"
+
+demo_table_all <- 
+eeg_mri_beh_data[,c(1, 6, 31, 32, 33, 34, 7, 2, 4, 3)]
+
+demo_table_td <-
+demo_table_all[which(demo_table_all$group == "TD"),]
+
+demo_table_asd <-
+demo_table_all[which(demo_table_all$group == "ASD"),]
+
+write.csv(demo_table_td, "demo_table_td_iascl.csv")
+write.csv(demo_table_asd, "demo_table_asd_iascl.csv")
+write.csv(demo_table_all, "demo_table_all_iascl.csv")
+```
+
+
+# Task, group two-way Ancova controlling for age
+```{r}
+#Extract participants that have all SL task completed
+iascl_all_completed <- 
+  eeg_mri_beh_data[,c(1:7,11:12,17:18,20,35,22,23,26,27,37:38)]
+
+iascl_all_completed_acc <- iascl_all_completed[,c(1, 6, 2, 8, 9)]
+iascl_all_completed_slope <- iascl_all_completed[,c(1, 6, 2, 16, 17)]
+
+iascl_all_completed_acc<- melt(iascl_all_completed_acc, 
+                               id.vars = c("part_id", "group", "age_at_neuro_year"))
+
+iascl_all_completed_slope<- melt(iascl_all_completed_slope, 
+                               id.vars = c("part_id", "group", "age_at_neuro_year"))
+
+colnames(iascl_all_completed_acc)[colnames(iascl_all_completed_acc) == "variable"] <- "task"
+colnames(iascl_all_completed_acc)[colnames(iascl_all_completed_acc) == "value"] <- "accuracy"
+
+colnames(iascl_all_completed_slope)[colnames(iascl_all_completed_slope) == "variable"] <- "task"
+colnames(iascl_all_completed_slope)[colnames(iascl_all_completed_slope) == "value"] <- "rt_slope"
+#aov(accuracy~group*task + age+Error(subjid/task), data = data)
+acc_task_group_aov <- 
+aov(accuracy~group*task + age_at_neuro_year + Error(part_id/task), data = iascl_all_completed_acc)
+
+summary(acc_task_group_aov)
+
+rt_slope_task_group_aov <- 
+aov(rt_slope~group*task + age_at_neuro_year + Error(part_id/task), data = iascl_all_completed_slope)
+summary(rt_slope_task_group_aov)
+```
+
+
+# Gender Chi-square
+```{r}
+iascl_all_completed_gender_wide <- iascl_all_completed[,c("part_id", "group", "sex")]
+
+iascl_all_completed[,c(2:5, 8:19)] <- lapply(iascl_all_completed[,c(2:5, 8:19)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+iascl_all_completed_gender_long <- melt(iascl_all_completed_gender_wide, id.vars = c("part_id", "group"))
+
+gender_wide <- cast(iascl_all_completed_gender_long, group~value, length)
+
+# Chi-square on gender
+# p<0.05 tells us that they are not matched for gender between group
+print(gender_wide)
+
+print(chisq.test(gender_wide))
+
+```
+Gender is NOT matched between group.
+
+
+
+## Age difference between group
+```{r}
+td_age <- 
+  iascl_all_completed[which(iascl_all_completed$group == "TD"), 
+                       c("part_id", "group", "age_at_neuro_year")]
+
+td_age$age_at_neuro_month <- td_age$age_at_neuro_year *12
+
+asd_age <- 
+  iascl_all_completed[which(iascl_all_completed$group == "ASD"), 
+                       c("part_id", "group", "age_at_neuro_year")]
+
+asd_age$age_at_neuro_month <- asd_age$age_at_neuro_year *12
+
+library("pastecs")
+td_age_descrip_stat <- stat.desc(td_age)
+td_age_descrip_stat <- td_age_descrip_stat[c("nbr.val","mean", "std.dev"),"age_at_neuro_year"]
+td_age_descrip_stat <- data.frame(td_age_descrip_stat)
+td_age_descrip_stat <- cbind(c("n","mean", "std.dev"), td_age_descrip_stat)
+print(td_age_descrip_stat)
+
+asd_age_descrip_stat <- stat.desc(asd_age)
+asd_age_descrip_stat <- asd_age_descrip_stat[c("nbr.val","mean", "std.dev"),"age_at_neuro_year"]
+asd_age_descrip_stat <- data.frame(asd_age_descrip_stat)
+asd_age_descrip_stat <- cbind(c("n","mean", "std.dev"), asd_age_descrip_stat)
+print(asd_age_descrip_stat)
+
+#Test age difference between group, p <0.05 means age is significantly different between group
+print(t.test(td_age$age_at_neuro_year, asd_age$age_at_neuro_year))
+```
+
+Age IS significantly different between TD and ASD (for all in lab participants.)
+
+
+# Prep data for graphs, remove outliers
+```{r}
+
+iascl_sl_bar_all <- iascl_all_completed[,c(1:6, 8:11, 14:17)]
+
+
+#Remove outliners for accuracy data
+ssl_accurarcy_outlier <-
+iascl_sl_bar_all[which(iascl_sl_bar_all$accuracy_children_ssl_accuracies < 0.15), "part_id"]
+
+tsl_accurarcy_outlier <-
+iascl_sl_bar_all[which(iascl_sl_bar_all$accuracy_children_tsl_accuracies < 0.15), "part_id"]
+
+if(length(ssl_accurarcy_outlier) != 0) {
+  iascl_sl_bar_all[which(
+    iascl_sl_bar_all$part_id %in% ssl_accurarcy_outlier),
+  c("accuracy_children_ssl_accuracies")] <- NA
+}
+
+if(length(ssl_accurarcy_outlier) != 0) {
+  iascl_all_completed[which(
+    iascl_all_completed$part_id %in% ssl_accurarcy_outlier),
+  c("accuracy_children_ssl_accuracies")] <- NA
+}
+
+
+if(length(tsl_accurarcy_outlier) != 0) {
+  iascl_sl_bar_all[which(
+    iascl_sl_bar_all$part_id %in% tsl_accurarcy_outlier),
+  c("accuracy_children_tsl_accuracies")] <- NA
+}
+
+if(length(tsl_accurarcy_outlier) != 0) {
+  iascl_all_completed[which(
+    iascl_all_completed$part_id %in% tsl_accurarcy_outlier),
+  c("accuracy_children_tsl_accuracies")] <- NA
+}
+
+#Remove outliners for RT and RT slope data-----------------------------------------------------------------
+ssl_rt_hit_count <- read.csv("ssl_rt_hit_trial_count.csv")
+tsl_rt_hit_count <- read.csv("tsl_rt_hit_trial_count.csv")
+
+ssl_rt_hit_count <- 
+  ssl_rt_hit_count[which(ssl_rt_hit_count$part_id %in% iascl_sl_bar_all$part_id),]
+tsl_rt_hit_count <- 
+  tsl_rt_hit_count[which(tsl_rt_hit_count$part_id %in% iascl_sl_bar_all$part_id),]
+
+ssl_rt_outlier <- ssl_rt_hit_count[which(ssl_rt_hit_count$hit_trial_number < 6), "part_id"]
+tsl_rt_outlier <- tsl_rt_hit_count[which(tsl_rt_hit_count$hit_trial_number < 6), "part_id"]
+
+
+if(length(ssl_rt_outlier) != 0) {
+  iascl_sl_bar_all[which(
+    iascl_sl_bar_all$part_id %in% ssl_rt_outlier),
+  c("rt_children_ssl_indiv_rts",
+    "slope_children_ssl_indiv_rts_slope")] <- NA
+}
+
+if(length(ssl_rt_outlier) != 0) {
+  iascl_all_completed[which(
+    iascl_all_completed$part_id %in% ssl_rt_outlier),
+  c("rt_children_ssl_indiv_rts",
+    "slope_children_ssl_indiv_rts_slope")] <- NA
+}
+
+if(length(tsl_rt_outlier) != 0) {
+  iascl_sl_bar_all[which(
+    iascl_sl_bar_all$part_id %in% tsl_rt_outlier),
+  c("rt_children_tsl_indiv_rts",
+    "slope_children_tsl_indiv_rts_slope")] <- NA
+}
+
+
+if(length(tsl_rt_outlier) != 0) {
+  iascl_all_completed[which(
+    iascl_all_completed$part_id %in% tsl_rt_outlier),
+  c("rt_children_tsl_indiv_rts",
+    "slope_children_tsl_indiv_rts_slope")] <- NA
+}
+
+```
+
+These are removed outliers: 
+
+SSL RT and Slope < 6 hits: `r ssl_rt_outlier` 
+
+TSL RT and Slope < 6 hits: `r tsl_rt_outlier` 
+
+SSL Accuracy: `r ssl_accurarcy_outlier`
+
+TSL Accuracy: `r tsl_accurarcy_outlier`
+
+
+# Group SL analysis & KBITT, SCQ Descriptive Stat
+# T-test TD vs. ASD
+```{r}
+
+td_sl <- 
+  iascl_all_completed[which(iascl_all_completed$group == "TD"),]
+
+
+asd_sl <- 
+  iascl_all_completed[which(iascl_all_completed$group == "ASD"),]
+
+
+library("pastecs")
+td_kbit_scq_descrip_stat <- stat.desc(td_sl[,c(3:4,5)])
+td_kbit_scq_descrip_stat <- td_kbit_scq_descrip_stat[c("nbr.val","mean", "std.dev"),
+                                                     c("kbit_matrices_raw", "kbit_matrices_std", "scq_total")]
+print(td_kbit_scq_descrip_stat)
+
+
+asd_kbit_scq_descrip_stat <- stat.desc(asd_sl[,c(3:4,5)])
+asd_kbit_scq_descrip_stat <- asd_kbit_scq_descrip_stat[c("nbr.val","mean", "std.dev"),
+                                                     c("kbit_matrices_raw", "kbit_matrices_std", "scq_total")]
+print(asd_kbit_scq_descrip_stat)
+
+#p <0.05, TD and ASD are truly different
+#t.test(td_sl$accuracy_children_ssl_accuracies, asd_sl$accuracy_children_ssl_accuracies)
+
+t_test_multi_pair <- 
+  function(x,y){
+  test <- t.test(x,y)
+
+  data.frame(p_value = test$p.value,
+             df = test$parameter,
+             t_stat = test$statistic)
+  }
+
+
+#Results withOUT outliers
+sapply(intersect(colnames(td_sl),colnames(asd_sl))[c(8:11, 14:17)], 
+                 function(x) t_test_multi_pair(td_sl[,x], asd_sl[,x]))
+
+sapply(intersect(colnames(td_sl),colnames(asd_sl))[c(3:4, 5)], 
+                 function(x) t_test_multi_pair(td_sl[,x], asd_sl[,x]))
+
+```
+
+No group difference is seen for KBIT. 
+
+SSL Mean RT is significantly different between group (TD > ASD). No outliners in the in lab sample.
+
+SCQ significantly higher in ASD.
+
+
+
+# Ancova comparing between group for all measures
+```{r}
+
+ancova_bt_group <- 
+  function(x,y,z){
+  test <- aov(x~y + age_at_neuro_year, z)
+  summary(test)
+  }
+
+
+#Results with outliers
+sapply(colnames(iascl_all_completed)[c(8:11, 14:17)], 
+       function(x) ancova_bt_group(iascl_all_completed[,x], iascl_all_completed[,"group"], iascl_all_completed))
+
+```
+
+*Ancova controlling for age shows two groups are still significantly different in SSL mean RT.*
+Also, Age had an significant effect on TSL entropy (F = 6.4644, p = 0.01787). Age on TSL accuracy (F = 3.1870, p = 0.08687)
+
+
+# Accuracy against chance for TD and ASD
+```{r}
+t_test_against_chance <- 
+  function(x){
+  test <- t.test(x, mu=0.5, alternative= "greater")
+
+  data.frame(p_value = test$p.value,
+             df = test$parameter,
+             t_stat = test$statistic)
+  }
+
+#TD without outliers
+sapply(colnames(td_sl)[c(8:9)], 
+       function(x) t_test_against_chance(td_sl[,x]))
+
+#ASD without outliers
+sapply(colnames(asd_sl)[c(8:9)], 
+       function(x) t_test_against_chance(asd_sl[,x]))
+
+```
+
+TD: marginally significant above chance for SSL accuracy (t = 1.75, p = 0.051)
+    Significantly above chance for TSL accuracy (t = 2.55, p = 0.011)
+
+ASD: Not above chance for either.
+
+
+
+Ignore: Accuracy bar graph without outliers
+``` {r, include = FALSE}
+#Melt dataframe for bar plot
+iascl_sl_bar_all_long <- melt(iascl_sl_bar_all, id.vars=c("part_id", "group"))
+
+
+library("ggplot2")
+library("ggbeeswarm")
+library("data.table")
+library("plyr")
+
+
+iascl_sl_bar_acc <-
+  iascl_sl_bar_all_long[which(str_detect(
+    iascl_sl_bar_all_long$variable, "(?<=accuracy_children_)\\S{3}(?=_accuracies)")),]
+
+iascl_sl_bar_acc$variable <-
+revalue(iascl_sl_bar_acc$variable, c(#"accuracy_children_lsl_accuracies"="Letter",
+                                     #"accuracy_children_vsl_accuracies"="Image",
+                                     "accuracy_children_tsl_accuracies"="Tone",
+                                     "accuracy_children_ssl_accuracies"="Syllable"))
+
+iascl_sl_bar_acc$variable <- 
+  factor(iascl_sl_bar_acc$variable,levels = c(#"Image", 
+                                              #"Letter", 
+                                              "Tone", 
+                                              "Syllable"))
+
+iascl_sl_bar_acc <-
+  iascl_sl_bar_acc[order(iascl_sl_bar_acc$variable), ]
+
+iascl_sl_bar_acc$value <- 
+  as.numeric(as.character(iascl_sl_bar_acc$value))
+
+ggplot(iascl_sl_bar_acc, aes(x = variable, y = value)) +
+  geom_bar(
+    aes(fill = group),
+    stat = "summary",
+    fun.y = "mean",
+    position = position_dodge(width = 0.9),
+    width = 0.9
+  ) +
+  geom_beeswarm(
+    aes(fill = group),
+    dodge.width = 1,
+    cex = 1,
+    size = 0.8,
+    show.legend = FALSE
+  ) +
+  ylab("Accuracy") +
+  xlab("Task")
+
+```
+
+
+# Accuracy Line Plot (no outliers)
+```{r}
+detach(package:plyr)
+library(dplyr)
+library(ggplot2)
+
+#The group_by is strange in dplyr, n keeps changing when I change mutate labels
+# iascl_sl_bar_acc %>% 
+#   filter(value != "")  %>% 
+#   mutate(group = factor(group, labels = c("ASD", "TD")), 
+#          variable = factor(variable, labels = c("Tone", "Syllable"))) %>% 
+#   group_by(group, variable) %>%
+#   summarise(acc_mean = mean(value, na.rm = TRUE),
+#             acc_se = sd(value, na.rm = TRUE)/ sqrt(n()),
+#             n = n())
+
+#Descriptive Stats for TD Tone Accuracy
+library("pastecs")
+stat_desc <- 
+function(df,group,task) {
+  stat.desc(df[which(df$group == group & df$variable == task),])
+}
+
+td_tone <- stat_desc(iascl_sl_bar_acc, "TD", "Tone")
+td_syllable <- stat_desc(iascl_sl_bar_acc, "TD", "Syllable")
+asd_tone <- stat_desc(iascl_sl_bar_acc, "ASD", "Tone")
+asd_syllable <- stat_desc(iascl_sl_bar_acc, "ASD", "Syllable")
+ 
+extract_line_graph_stat <- function (x, group, task) {
+y <- x[c("nbr.val","mean", "SE.mean"),"value"]
+dim(y) <- c(3, 1)
+y <- t(y)
+colnames(y) <- c("n", "mean", "std_error")
+y <- data.frame(y)
+y$group <- group
+y$task <- task
+
+
+return(y)
+}
+
+td_tone_stat <- extract_line_graph_stat(td_tone, "TD", "Tone")
+td_syllable_stat <- extract_line_graph_stat(td_syllable, "TD", "Syllable")
+asd_tone_stat <- extract_line_graph_stat(asd_tone, "ASD", "Tone")
+asd_syllable_stat <- extract_line_graph_stat(asd_syllable, "ASD", "Syllable")
+
+acc_stat <- rbind(td_tone_stat, td_syllable_stat, asd_tone_stat, asd_syllable_stat)
+
+colnames(acc_stat)[colnames(acc_stat) == "group"] <- "Group"
+
+library(plyr)
+acc_stat$task <-
+revalue(acc_stat$task, c(#"entropy_children_lsl_entropy"="Letter",
+                                     #"entropy_children_vsl_entropy"="Image",
+                                     "Syllable"="Linguistic",
+                                     "Tone"="Non-linguistic"))
+
+pd <- position_dodge(width = 0.2)
+
+acc_stat %>%
+  ggplot(aes(x = task, y = mean, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group), position = pd, size = 1.8) +
+   geom_errorbar(aes(ymin = mean - std_error, ymax = mean + std_error), width = .1, position = pd) +
+     geom_point(aes(color = Group), size = 4, position = pd,show.legend = FALSE) + 
+          geom_point(size = 3, color = "white", position = pd) +
+      labs(title = "Behavioral Accuracy across Groups",
+         x = "SL Task",  # Change x-axis label
+         y = "Mean Accuracy") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(
+        plot.title = element_text(size=16, face="bold"),
+        axis.title.x = element_text(size=14, face="bold"),
+        axis.title.y = element_text(size=14, face="bold"),
+        axis.text=element_text(size=12, face = "bold")
+        ) +
+  theme(legend.text=element_text(size=14, face="bold"),
+        legend.title=element_text(size=15, face="bold")) +
+   theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) +
+  geom_hline(yintercept=0.5, color = "grey") +
+  geom_text(aes(x= 2.3, y = 0.505, label = paste0("chance", "-level")), size=5) +
+  geom_text(aes(x= 2.05, y = 0.64, label = paste0("*")), size=7) +
+  geom_text(aes(x= 1.05, y = 0.64, label = paste0("†")), size=7) 
+
+ggsave("behavioral_acc_across_group.png",
+       width = 15, height = 15, units = "cm")
+```
+
+
+
+Ignore: Entropy bar graph without outliers
+```{r, include = FALSE}
+
+library("ggplot2")
+library("ggbeeswarm")
+library("data.table")
+library("plyr")
+
+
+iascl_sl_bar_all_long <- melt(iascl_sl_bar_all, id.vars=c("part_id", "group"))
+
+
+iascl_sl_bar_entropy <-
+  iascl_sl_bar_all_long[which(
+    str_detect(iascl_sl_bar_all_long$variable, "(?<=entropy_children_)\\S{3}(?=_entropy)")),]
+
+iascl_sl_bar_entropy$variable <-
+revalue(iascl_sl_bar_entropy$variable, c(#"entropy_children_lsl_entropy"="Letter",
+                                     #"entropy_children_vsl_entropy"="Image",
+                                     "entropy_children_tsl_entropy"="Tone",
+                                     "entropy_children_ssl_entropy"="Syllable"))
+
+iascl_sl_bar_entropy$variable <- 
+  factor(iascl_sl_bar_entropy$variable,levels = c(#"Image", 
+                                                  #"Letter", 
+                                                  "Tone", 
+                                                  "Syllable"))
+
+iascl_sl_bar_entropy <-
+  iascl_sl_bar_entropy[order(iascl_sl_bar_entropy$variable), ]
+
+iascl_sl_bar_entropy$value <- 
+  as.numeric(as.character(iascl_sl_bar_entropy$value))
+
+ggplot(iascl_sl_bar_entropy, aes(x = variable, y = value)) +
+  geom_bar(
+    aes(fill = group),
+    stat = "summary",
+    fun.y = "mean",
+    position = position_dodge(width = 0.9),
+    width = 0.9
+  ) +
+  geom_beeswarm(
+    aes(fill = group),
+    dodge.width = 1,
+    cex = 1,
+    size = 0.8,
+    show.legend = FALSE
+  ) +
+  ylab("Entropy") +
+  xlab("Task")
+
+ 
+```
+
+
+# Entropy Line Plot (no outliers)
+```{r}
+detach(package:plyr)
+library(dplyr)
+library(ggplot2)
+
+library("pastecs")
+stat_desc <- 
+function(df,group,task) {
+  stat.desc(df[which(df$group == group & df$variable == task),])
+}
+
+td_tone <- stat_desc(iascl_sl_bar_entropy, "TD", "Tone")
+td_syllable <- stat_desc(iascl_sl_bar_entropy, "TD", "Syllable")
+asd_tone <- stat_desc(iascl_sl_bar_entropy, "ASD", "Tone")
+asd_syllable <- stat_desc(iascl_sl_bar_entropy, "ASD", "Syllable")
+ 
+extract_line_graph_stat <- function (x, group, task) {
+y <- x[c("nbr.val","mean", "SE.mean"),"value"]
+dim(y) <- c(3, 1)
+y <- t(y)
+colnames(y) <- c("n", "mean", "std_error")
+y <- data.frame(y)
+y$group <- group
+y$task <- task
+
+
+return(y)
+}
+
+td_tone_stat <- extract_line_graph_stat(td_tone, "TD", "Tone")
+td_syllable_stat <- extract_line_graph_stat(td_syllable, "TD", "Syllable")
+asd_tone_stat <- extract_line_graph_stat(asd_tone, "ASD", "Tone")
+asd_syllable_stat <- extract_line_graph_stat(asd_syllable, "ASD", "Syllable")
+
+entropy_stat <- rbind(td_tone_stat, td_syllable_stat, asd_tone_stat, asd_syllable_stat)
+
+pd <- position_dodge(width = 0.2)
+
+entropy_stat %>%
+  ggplot(aes(x = task, y = mean, group = group)) +
+  geom_line(aes(linetype = group), position = pd) +
+   geom_errorbar(aes(ymin = mean - std_error, ymax = mean + std_error), width = .1, position = pd) +
+     geom_point(size = 4, position = pd) + 
+   geom_point(size = 3, color = "white", position = pd) +
+   guides(linetype = guide_legend("Group")) +
+      labs(title = "Behavioral SL Task Entropy",
+         x = "Task",  # Change x-axis label
+         y = "Entropy") +
+  theme(plot.title = element_text(hjust = 0.5)) + #Center title
+   theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) 
+```
+
+
+# Mean RT bar graph without outliers
+```{r, include=F}
+library("ggplot2")
+library("ggbeeswarm")
+library("data.table")
+library("plyr")
+
+iascl_sl_bar_all_long <- melt(iascl_sl_bar_all, id.vars=c("part_id", "group"))
+
+
+iascl_sl_bar_rt <-
+  iascl_sl_bar_all_long[which(
+    str_detect(iascl_sl_bar_all_long$variable, "(?<=rt_children_)\\S{3}(?=_indiv_rts)")),]
+
+iascl_sl_bar_rt$variable <-
+revalue(iascl_sl_bar_rt$variable, c(#"rt_children_lsl_indiv_rts"="Letter",
+                                     #"rt_children_vsl_indiv_rts"="Image",
+                                     "rt_children_tsl_indiv_rts"="Tone",
+                                     "rt_children_ssl_indiv_rts"="Syllable"))
+
+iascl_sl_bar_rt$variable <- 
+  factor(iascl_sl_bar_rt$variable,levels = c(#"Image", 
+                                             #"Letter", 
+                                             "Tone", 
+                                             "Syllable"))
+
+iascl_sl_bar_rt <-
+  iascl_sl_bar_rt[order(iascl_sl_bar_rt$variable), ]
+
+
+iascl_sl_bar_rt$value <- 
+  as.numeric(as.character(iascl_sl_bar_rt$value))
+
+
+ggplot(iascl_sl_bar_rt, aes(x = variable, y = value)) +
+  geom_bar(
+    aes(fill = group),
+    stat = "summary",
+    fun.y = "mean",
+    position = position_dodge(width = 0.9),
+    width = 0.9
+  ) +
+  geom_beeswarm(
+    aes(fill = group),
+    dodge.width = 1,
+    cex = 1,
+    size = 0.8,
+    show.legend = FALSE
+  )
+
+ 
+```
+
+
+
+# Mean RT Line Plot (no outliers)
+```{r}
+detach(package:plyr)
+library(dplyr)
+library(ggplot2)
+
+library("pastecs")
+stat_desc <- 
+function(df,group,task) {
+  stat.desc(df[which(df$group == group & df$variable == task),])
+}
+
+td_tone <- stat_desc(iascl_sl_bar_rt, "TD", "Tone")
+td_syllable <- stat_desc(iascl_sl_bar_rt, "TD", "Syllable")
+asd_tone <- stat_desc(iascl_sl_bar_rt, "ASD", "Tone")
+asd_syllable <- stat_desc(iascl_sl_bar_rt, "ASD", "Syllable")
+ 
+extract_line_graph_stat <- function (x, group, task) {
+y <- x[c("nbr.val","mean", "SE.mean"),"value"]
+dim(y) <- c(3, 1)
+y <- t(y)
+colnames(y) <- c("n", "mean", "std_error")
+y <- data.frame(y)
+y$group <- group
+y$task <- task
+
+
+return(y)
+}
+
+td_tone_stat <- extract_line_graph_stat(td_tone, "TD", "Tone")
+td_syllable_stat <- extract_line_graph_stat(td_syllable, "TD", "Syllable")
+asd_tone_stat <- extract_line_graph_stat(asd_tone, "ASD", "Tone")
+asd_syllable_stat <- extract_line_graph_stat(asd_syllable, "ASD", "Syllable")
+
+rt_stat <- rbind(td_tone_stat, td_syllable_stat, asd_tone_stat, asd_syllable_stat)
+
+pd <- position_dodge(width = 0.2)
+
+rt_stat %>%
+  ggplot(aes(x = task, y = mean, group = group)) +
+  geom_line(aes(linetype = group), position = pd) +
+   geom_errorbar(aes(ymin = mean - std_error, ymax = mean + std_error), width = .1, position = pd) +
+     geom_point(size = 4, position = pd) + 
+   geom_point(size = 3, color = "white", position = pd) +
+   guides(linetype = guide_legend("Group")) +
+      labs(title = "Behavioral SL Task Mean Reaction Time",
+         x = "Task",  # Change x-axis label
+         y = "Mean Reaction Time (ms)") +
+  theme(plot.title = element_text(hjust = 0.5)) + #Center title
+   theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) 
+```
+
+
+
+# Scaled RT Slope bar graph without outliers 
+```{r, include=F}
+library("ggplot2")
+library("ggbeeswarm")
+library("data.table")
+library("plyr")
+
+iascl_sl_bar_all_long <- melt(iascl_sl_bar_all, id.vars=c("part_id", "group"))
+
+iascl_sl_bar_slope <-
+  iascl_sl_bar_all_long[which(
+    str_detect(iascl_sl_bar_all_long$variable, "(?<=slope_)\\S+")),]
+
+
+iascl_sl_bar_slope$variable <-
+revalue(iascl_sl_bar_slope$variable, c(#"slope_children_lsl_indiv_rts_slope"="Letter",
+                                     #"slope_children_vsl_indiv_rts_slope"="Image",
+                                     "slope_children_tsl_indiv_rts_slope"="Tone",
+                                     "slope_children_ssl_indiv_rts_slope"="Syllable"))
+
+iascl_sl_bar_slope$variable <- 
+  factor(iascl_sl_bar_slope$variable,levels = c(#"Image", 
+                                                #"Letter", 
+                                                "Tone", 
+                                                "Syllable"))
+
+iascl_sl_bar_slope <-
+  iascl_sl_bar_slope[order(iascl_sl_bar_slope$variable), ]
+
+iascl_sl_bar_slope$value <- 
+  as.numeric(as.character(iascl_sl_bar_slope$value))
+
+ggplot(iascl_sl_bar_slope, aes(x = variable, y = value)) +
+  geom_bar(
+    aes(fill = group),
+    stat = "summary",
+    fun.y = "mean",
+    position = position_dodge(width = 0.9),
+    width = 0.9
+  ) +
+  geom_beeswarm(
+    aes(fill = group),
+    dodge.width = 1,
+    cex = 1,
+    size = 0.8,
+    show.legend = FALSE
+  )
+ 
+```
+
+
+# RT Slope Line Plot (no outliers)
+```{r}
+detach(package:plyr)
+library(dplyr)
+library(ggplot2)
+
+library("pastecs")
+stat_desc <- 
+function(df,group,task) {
+  stat.desc(df[which(df$group == group & df$variable == task),])
+}
+
+td_tone <- stat_desc(iascl_sl_bar_slope, "TD", "Tone")
+td_syllable <- stat_desc(iascl_sl_bar_slope, "TD", "Syllable")
+asd_tone <- stat_desc(iascl_sl_bar_slope, "ASD", "Tone")
+asd_syllable <- stat_desc(iascl_sl_bar_slope, "ASD", "Syllable")
+ 
+extract_line_graph_stat <- function (x, group, task) {
+y <- x[c("nbr.val","mean", "SE.mean"),"value"]
+dim(y) <- c(3, 1)
+y <- t(y)
+colnames(y) <- c("n", "mean", "std_error")
+y <- data.frame(y)
+y$group <- group
+y$task <- task
+
+
+return(y)
+}
+
+td_tone_stat <- extract_line_graph_stat(td_tone, "TD", "Tone")
+td_syllable_stat <- extract_line_graph_stat(td_syllable, "TD", "Syllable")
+asd_tone_stat <- extract_line_graph_stat(asd_tone, "ASD", "Tone")
+asd_syllable_stat <- extract_line_graph_stat(asd_syllable, "ASD", "Syllable")
+
+slope_stat <- rbind(td_tone_stat, td_syllable_stat, asd_tone_stat, asd_syllable_stat)
+
+pd <- position_dodge(width = 0.2)
+
+colnames(slope_stat)[colnames(slope_stat) == "group"] <- "Group"
+
+library(plyr)
+
+
+slope_stat$task <-
+revalue(slope_stat$task, c(#"entropy_children_lsl_entropy"="Letter",
+                                     #"entropy_children_vsl_entropy"="Image",
+                                     "Syllable"="Linguistic",
+                                     "Tone"="Non-linguistic"))
+
+pd <- position_dodge(width = 0.2)
+slope_stat %>%
+  ggplot(aes(x = task, y = mean, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group), position = pd, size = 1.8) +
+   geom_errorbar(aes(ymin = mean - std_error, ymax = mean + std_error), width = .1, position = pd) +
+     geom_point(aes(color = Group), size = 4, position = pd,show.legend = FALSE) + 
+          geom_point(size = 3, color = "white", position = pd) +
+      labs(title = "Behavioral Reaction Time Slope across Groups",
+         x = "SL Task",  # Change x-axis label
+         y = "Reaction Time Slope (arbitrary unit/trial)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(
+        plot.title = element_text(size=16, face="bold"),
+        axis.title.x = element_text(size=14, face="bold"),
+        axis.title.y = element_text(size=14, face="bold"),
+        axis.text=element_text(size=12, face = "bold")
+        ) +
+  theme(legend.text=element_text(size=14, face="bold"),
+        legend.title=element_text(size=15, face="bold")) +
+   theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) +
+  geom_text(aes(x= 1, y = 0.015, label = paste0("†")), size=7) 
+ 
+ggsave(
+   "behavioral_slope_across_group.png",
+    width = 15, height = 15, units = "cm"
+)
+```
+
+
+## Behavioral Correlations
+```{r, include = FALSE}
+library("Hmisc")
+
+
+corr_beh_result <- rcorr(as.matrix(iascl_all_completed[,c(2, 4, 5, 12, 13, 8, 10, 14, 16, 9, 11, 15, 17)]), 
+                         type = c("pearson"))
+   
+corr_beh_result_across_task <- rcorr(as.matrix(iascl_all_completed[,c(2, 4, 5, 12, 13, 8, 9, 10, 11, 14, 15, 16, 17)]), type = c("pearson"))
+
+flattenCorrMatrix <- function(cormat, pmat, nmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  = (cormat)[ut],
+    p = pmat[ut],
+    n = nmat[ut]
+  )
+}
+
+
+
+beh_corr_result_pearson <- flattenCorrMatrix(corr_beh_result$r, corr_beh_result$P, corr_beh_result$n)
+
+beh_corr_result_pearson_task <- flattenCorrMatrix(corr_beh_result_across_task$r, 
+                                              corr_beh_result_across_task$P, 
+                                              corr_beh_result_across_task$n)
+
+beh_corr_result_pearson[,c(3:5)] <- round(beh_corr_result_pearson[,c(3:5)], 3)
+
+beh_corr_result_pearson_sig <- beh_corr_result_pearson[which(beh_corr_result_pearson$p <= 0.05),]
+
+
+write.csv(beh_corr_result_pearson_sig, "beh_corr_result_pearson_ssl_tsl_in_lab_sample.csv")
+
+print(beh_corr_result_pearson_sig)
+
+```
+
+
+# Heat Map
+```{r, include=F}
+
+library(plyr)
+beh_corr_result_pearson$row <-
+revalue(beh_corr_result_pearson$row, c("age_at_neuro_year"="Age", 
+                                        "kbit_matrices_std"="KBIT Standardized Score",
+                                        "scq_total" = "SCQ Total",
+                                        "accuracy_children_tsl_accuracies"="Tone Accuracy",
+                                        "accuracy_children_ssl_accuracies"="Syllable Accuracy",
+                                        "entropy_children_tsl_entropy"="Tone Entropy",
+                                        "entropy_children_ssl_entropy"="Syllable Entropy",
+                                        "rt_children_tsl_indiv_rts"="Tone Mean RT",
+                                        "rt_children_ssl_indiv_rts"="Syllable Mean RT",
+                                        "gjt_std_score_gjt_web"="GJT Standardized Score",
+                                        "a_prime" = "GJT Raw Score",
+                                        "slope_children_ssl_indiv_rts_slope"="Syllable RT Slope",
+                                        "slope_children_tsl_indiv_rts_slope"="Tone RT Slope"
+                                        ))
+
+beh_corr_result_pearson$column <-
+revalue(beh_corr_result_pearson$column, c("age_at_neuro_year"="Age", 
+                                        "kbit_matrices_std"="KBIT Standardized Score",
+                                        "scq_total" = "SCQ Total",
+                                        "accuracy_children_tsl_accuracies"="Tone Accuracy",
+                                        "accuracy_children_ssl_accuracies"="Syllable Accuracy",
+                                        "entropy_children_tsl_entropy"="Tone Entropy",
+                                        "entropy_children_ssl_entropy"="Syllable Entropy",
+                                        "rt_children_tsl_indiv_rts"="Tone Mean RT",
+                                        "rt_children_ssl_indiv_rts"="Syllable Mean RT",
+                                        "gjt_std_score_gjt_web"="GJT Standardized Score",
+                                        "a_prime" = "GJT Raw Score",
+                                        "slope_children_ssl_indiv_rts_slope"="Syllable RT Slope",
+                                        "slope_children_tsl_indiv_rts_slope"="Tone RT Slope"
+                                        ))
+
+
+
+beh_corr_result_pearson_task$column <-
+revalue(beh_corr_result_pearson_task$column, c("age_at_neuro_year"="Age", 
+                                        "kbit_matrices_std"="KBIT Standardized Score",
+                                        "scq_total" = "SCQ Total",
+                                        "accuracy_children_tsl_accuracies"="Tone Accuracy",
+                                        "accuracy_children_ssl_accuracies"="Syllable Accuracy",
+                                        "entropy_children_tsl_entropy"="Tone Entropy",
+                                        "entropy_children_ssl_entropy"="Syllable Entropy",
+                                        "rt_children_tsl_indiv_rts"="Tone Mean RT",
+                                        "rt_children_ssl_indiv_rts"="Syllable Mean RT",
+                                        "gjt_std_score_gjt_web"="GJT Standardized Score",
+                                        "a_prime" = "GJT Raw Score",
+                                        "slope_children_ssl_indiv_rts_slope"="Syllable RT Slope",
+                                        "slope_children_tsl_indiv_rts_slope"="Tone RT Slope"
+                                        ))
+
+
+beh_corr_result_pearson_task$row <-
+revalue(beh_corr_result_pearson_task$row, c("age_at_neuro_year"="Age", 
+                                        "kbit_matrices_std"="KBIT Standardized Score",
+                                        "scq_total" = "SCQ Total",
+                                        "accuracy_children_tsl_accuracies"="Tone Accuracy",
+                                        "accuracy_children_ssl_accuracies"="Syllable Accuracy",
+                                        "entropy_children_tsl_entropy"="Tone Entropy",
+                                        "entropy_children_ssl_entropy"="Syllable Entropy",
+                                        "rt_children_tsl_indiv_rts"="Tone Mean RT",
+                                        "rt_children_ssl_indiv_rts"="Syllable Mean RT",
+                                        "gjt_std_score_gjt_web"="GJT Standardized Score",
+                                        "a_prime" = "GJT Raw Score",
+                                        "slope_children_ssl_indiv_rts_slope"="Syllable RT Slope",
+                                        "slope_children_tsl_indiv_rts_slope"="Tone RT Slope"
+                                        ))
+
+beh_corr_result_pearson$column <- factor(
+  beh_corr_result_pearson$column,
+  levels =
+    c("Age",
+      "KBIT Standardized Score",
+      "SCQ Total",
+      "GJT Standardized Score",
+      "GJT Raw Score",
+      "Syllable Accuracy",
+      "Syllable Entropy",
+      "Syllable Mean RT",
+      "Syllable RT Slope",
+      "Tone Accuracy",
+      "Tone Entropy",
+      "Tone Mean RT",
+      "Tone RT Slope"
+    )
+)
+
+
+beh_corr_result_pearson$row <- factor(
+  beh_corr_result_pearson$row,
+  levels =
+    c("Age",
+      "KBIT Standardized Score",
+      "SCQ Total",
+      "GJT Standardized Score",
+      "GJT Raw Score",
+      "Syllable Accuracy",
+      "Syllable Entropy",
+      "Syllable Mean RT",
+      "Syllable RT Slope",
+      "Tone Accuracy",
+      "Tone Entropy",
+      "Tone Mean RT",
+      "Tone RT Slope"
+    )
+)
+
+
+beh_corr_result_pearson_task$column <- factor(
+  beh_corr_result_pearson_task$column,
+  levels =
+    c("Age",
+      "KBIT Standardized Score",
+      "SCQ Total",
+      "GJT Standardized Score",
+      "GJT Raw Score",
+      "Syllable Accuracy",
+      "Tone Accuracy",
+      "Syllable Entropy",
+      "Tone Entropy",
+      "Syllable Mean RT",
+      "Tone Mean RT",
+      "Syllable RT Slope",
+      "Tone RT Slope"
+    )
+)
+
+
+beh_corr_result_pearson_task$row <- factor(
+  beh_corr_result_pearson_task$row,
+  levels =
+    c("Age",
+      "KBIT Standardized Score",
+      "SCQ Total",
+      "GJT Standardized Score",
+      "GJT Raw Score",
+      "Syllable Accuracy",
+      "Tone Accuracy",
+      "Syllable Entropy",
+      "Tone Entropy",
+      "Syllable Mean RT",
+      "Tone Mean RT",
+      "Syllable RT Slope",
+      "Tone RT Slope"
+    )
+)
+
+heat_map_corr_data <-
+  beh_corr_result_pearson[order(beh_corr_result_pearson$row,
+                           beh_corr_result_pearson$column), ]
+heat_map_corr_data$cor <- round(heat_map_corr_data$cor, 2)
+heat_map_corr_data$p <- round(heat_map_corr_data$p, 2)
+
+heat_map_corr_data_task <-
+  beh_corr_result_pearson_task[order(beh_corr_result_pearson_task$row,
+                           beh_corr_result_pearson_task$column), ]
+heat_map_corr_data_task$cor <- round(heat_map_corr_data_task$cor, 2)
+heat_map_corr_data_task$p <- round(heat_map_corr_data_task$p, 2)
+
+```
+
+
+# Heat Map for R, P, N for behavioral correlations
+# Within Task, Across Measures
+```{r}
+
+#GGplot the heat map----------------------------------------------------------------------------------------------
+
+ggplot(data = heat_map_corr_data, aes(x = column, y = row, fill = cor)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(
+    low = "blue",
+    high = "red",
+    mid = "white",
+    midpoint = 0,
+    limit = c(-1, 1),
+    space = "Lab",
+    name = "pearson\nCorrelation r"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(
+    angle = 90,
+    vjust = 1,
+    size = 12,
+    hjust = 1
+  )) +
+  theme(axis.title.x = element_blank(),
+        axis.text.y = element_text (size = 12),
+        axis.title.y = element_blank()) +
+  coord_fixed() +
+  geom_text(aes(label = cor), color = "black", size = 2)
+
+
+ggplot(data = heat_map_corr_data, aes(x = column, y = row, fill = p)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(
+    low = "blue",
+    high = "red",
+    mid = "white",
+    midpoint = 0,
+    limit = c(0, 1),
+    space = "Lab",
+    name = "p-value"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(
+    angle = 90,
+    vjust = 1,
+    size = 12,
+    hjust = 1
+  )) +
+  theme(axis.title.x = element_blank(),
+        axis.text.y = element_text (size = 12),
+        axis.title.y = element_blank()) +
+  coord_fixed() +
+  geom_text(aes(label = p), color = "black", size = 2)
+
+
+ggplot(data = heat_map_corr_data, aes(x = column, y = row, fill = n)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(
+    low = "blue",
+    high = "red",
+    mid = "white",
+    midpoint = 0,
+    limit = c(0, 33),
+    space = "Lab",
+    name = "n"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(
+    angle = 90,
+    vjust = 1,
+    size = 12,
+    hjust = 1
+  )) +
+  theme(axis.title.x = element_blank(),
+        axis.text.y = element_text (size = 12),
+        axis.title.y = element_blank()) +
+  coord_fixed() +
+  geom_text(aes(label = n), color = "black", size = 3.5)
+```
+
+
+# Across Behavioral Tasks, Within Measure
+```{r}
+
+ggplot(data = heat_map_corr_data_task, aes(x = column, y = row, fill = cor)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(
+    low = "blue",
+    high = "red",
+    mid = "white",
+    midpoint = 0,
+    limit = c(-1, 1),
+    space = "Lab",
+    name = "pearson\nCorrelation r"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(
+    angle = 90,
+    vjust = 1,
+    size = 12,
+    hjust = 1
+  )) +
+  theme(axis.title.x = element_blank(),
+        axis.text.y = element_text (size = 12),
+        axis.title.y = element_blank()) +
+  coord_fixed() +
+  geom_text(aes(label = cor), color = "black", size = 2)
+
+
+ggplot(data = heat_map_corr_data_task, aes(x = column, y = row, fill = p)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(
+    low = "blue",
+    high = "red",
+    mid = "white",
+    midpoint = 0,
+    limit = c(0, 1),
+    space = "Lab",
+    name = "p-value"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(
+    angle = 90,
+    vjust = 1,
+    size = 12,
+    hjust = 1
+  )) +
+  theme(axis.title.x = element_blank(),
+        axis.text.y = element_text (size = 12),
+        axis.title.y = element_blank()) +
+  coord_fixed() +
+  geom_text(aes(label = p), color = "black", size = 2)
+
+
+
+```
+
+
+# Beh Corr Plots
+```{r}
+ggplot(data = iascl_all_completed,
+       aes(y= gjt_std_score_gjt_web, 
+           x = scq_total,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2") +
+   guides(linetype = guide_legend("Group")) +
+      labs(title = "Grammaticality Judgement Task and Social Communication Questionnaire",
+         y = "Grammaticality Judgement Standardized Score",  # Change x-axis label
+         x = "Social Communication Questionnaire") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  geom_text(aes(x = 20, y = 120, label = paste("rho =", "-0.76**")),color = "red",size=4)
+
+  
+
+ggplot(data = iascl_all_completed,
+       aes(y= a_prime, 
+           x = scq_total,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2") +
+   guides(linetype = guide_legend("Group")) +
+      labs(title = "Grammaticality Judgement Task and Social Communication Questionnaire",
+         y = "Grammaticality Judgement Raw Score",  # Change x-axis label
+         x = "Social Communication Questionnaire") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  geom_text(aes(x = 20, y = 1, label = paste("rho =", "-0.65*")),color = "red",size=4)
+
+
+ggplot(data = iascl_all_completed,
+       aes(x= a_prime, 
+           y = scq_total,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2") +
+   guides(linetype = guide_legend("Group")) +
+      labs(title = "Grammaticality Judgement Task and Social Communication Questionnaire",
+         x = "Grammaticality Judgement Raw Score",  # Change x-axis label
+         y = "Social Communication Questionnaire") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  geom_text(aes(y = 20, x = 0.95, label = paste("rho =", "-0.65*")),color = "red",size=4)
+
+
+ggplot(data = iascl_all_completed,
+       aes(x= a_prime, 
+           y = scq_total,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2") +
+   guides(linetype = guide_legend("Group")) +
+      labs(title = "Grammaticality Judgement Task and Social Communication Questionnaire",
+         x = "Grammaticality Judgement Raw Score",  # Change x-axis label
+         y = "Social Communication Questionnaire") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  geom_text(aes(y = 20, x = 0.95, label = paste("rho =", "-0.65*")),color = "red",size=4)
+
+```
+
+Ignore: ASD Beh Corr Plot
+```{r, include = FALSE, eval=FALSE}
+ggplot(asd_sl,
+       aes(x=accuracy_children_ssl_accuracies, y = accuracy_children_vsl_accuracies)) +
+  geom_point() 
+
+
+ggplot(asd_sl,
+       aes(x=accuracy_children_tsl_accuracies, y = accuracy_children_vsl_accuracies)) +
+  geom_point() 
+
+ggplot(asd_sl,
+       aes(x=entropy_children_ssl_entropy, y = slope_children_tsl_indiv_rts_slope)) +
+  geom_point()
+			
+ggplot(asd_sl,
+       aes(x=entropy_children_lsl_entropy, y = rt_children_tsl_indiv_rts)) +
+  geom_point()
+
+```
+
+
+
+#MRI T-test between group 
+
+```{r}
+iascl_beh_gray_matter_td[,c(2:10, 13:23)] <- 
+  lapply(iascl_beh_gray_matter_td[,c(2:10, 13:23)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+
+iascl_beh_gray_matter_asd[,c(2:10, 13:23)] <- 
+  lapply(iascl_beh_gray_matter_asd[,c(2:10, 13:23)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+
+iascl_beh_cor_thick_td[,c(2:10, 13:23)] <- 
+  lapply(iascl_beh_cor_thick_td[,c(2:10, 13:23)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+
+iascl_beh_cor_thick_asd[,c(2:10, 13:23)] <- 
+  lapply(iascl_beh_cor_thick_asd[,c(2:10, 13:23)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+
+iascl_beh_gray_matter[,c(2:10, 13:23)] <- 
+  lapply(iascl_beh_gray_matter[,c(2:10, 13:23)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+
+iascl_beh_cor_thick[,c(2:10, 13:23)] <- 
+  lapply(iascl_beh_cor_thick[,c(2:10, 13:23)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+
+#T test between group
+t_test_multi_pair <- 
+  function(x,y){
+  test <- t.test(x,y)
+
+  data.frame(p_value = test$p.value,
+             df = test$parameter,
+             t_stat = test$statistic)
+  }
+
+# GM T-test between group
+sapply(intersect(colnames(iascl_beh_gray_matter_td),colnames(iascl_beh_gray_matter_asd))[2:10], 
+                 function(x) t_test_multi_pair(iascl_beh_gray_matter_td[,x], iascl_beh_gray_matter_asd[,x]))
+
+
+
+# CT T-test between group
+sapply(intersect(colnames(iascl_beh_cor_thick_td),colnames(iascl_beh_cor_thick_asd))[2:10], 
+                 function(x) t_test_multi_pair(iascl_beh_cor_thick_td[,x], iascl_beh_cor_thick_asd[,x]))
+
+
+# ETIV T-test between group
+
+```
+
+*No significant difference between TD and ASD for Cortical thickness or Gray Matter.*
+
+
+# ETIV-Gray Matter Corr (Only 13 have ETIV + GM)
+```{r}
+etiv <- 
+read.csv("aseg_stats_etiv_measure.csv")
+
+library("stringr")
+
+etiv$Measure.volume <- str_extract(etiv$Measure.volume, "(?<=sub-)\\S{9}(?=/)")
+
+etiv$Measure.volume 
+ 
+partid1 <- substr(etiv$Measure.volume, start = 1, stop = 5)
+
+partid2 <- substr(etiv$Measure.volume, start = 6, stop = 6)
+
+partid3 <- substr(etiv$Measure.volume, start = 7, stop = 9)
+
+etiv$part_id <- paste(partid1, partid2, partid3, sep = "_")
+
+mri_etiv_gm_wide <- 
+merge(mri_gray_matter_wide, 
+      etiv[,c("part_id", "EstimatedTotalIntraCranialVol")],
+      by.x = "part_id", by.y = "part_id",
+      all.x = TRUE)
+
+etiv_with_group <-
+merge(iascl_beh_cor_thick, etiv[,c("part_id", "EstimatedTotalIntraCranialVol")],
+      by.x = "part_id", by.y="part_id",
+      all.x = TRUE)
+
+#T test for ETIV
+t.test(etiv_with_group[which(etiv_with_group$group == "TD"), "EstimatedTotalIntraCranialVol"], 
+       etiv_with_group[which(etiv_with_group$group == "ASD"), "EstimatedTotalIntraCranialVol"])
+
+
+mri_etiv_gm_corr <- rcorr(as.matrix(
+  mri_etiv_gm_wide[,c(2:11)]), type = c("pearson"))
+
+
+mri_etiv_gm_pearson_corr <- 
+  flattenCorrMatrix(mri_etiv_gm_corr$r, mri_etiv_gm_corr$P, mri_etiv_gm_corr$n)
+
+
+mri_etiv_gm_pearson_corr[,c(3:5)] <- 
+  round(mri_etiv_gm_pearson_corr[,c(3:5)], 3)
+
+mri_etiv_gm_pearson_corr <-
+  mri_etiv_gm_pearson_corr[which(mri_etiv_gm_pearson_corr$p <= 0.07),]
+
+
+print(mri_etiv_gm_pearson_corr)
+```
+
+*ETIV not significantly different between group.*
+
+LeftAngG, LeftIFG, LeftIFGorb, LeftMFG, LeftMidAntTemp are correlated with ETIV.
+
+
+
+# ETIV-Cortical Thickness Correlation (only 13 have ETIV plus Cortical Thickness)
+```{r}
+mri_etiv_ct_wide <- 
+merge(average_cor_thick_wide, 
+      etiv[,c("part_id", "EstimatedTotalIntraCranialVol")],
+      by.x = "part_id", by.y = "part_id",
+      all.x = TRUE)
+
+
+mri_etiv_ct_corr <- rcorr(as.matrix(
+  mri_etiv_ct_wide[,c(2:11)]), type = c("pearson"))
+
+
+mri_etiv_ct_pearson_corr <- 
+  flattenCorrMatrix(mri_etiv_ct_corr$r, mri_etiv_ct_corr$P, mri_etiv_ct_corr$n)
+
+
+mri_etiv_ct_pearson_corr[,c(3:5)] <- 
+  round(mri_etiv_ct_pearson_corr[,c(3:5)], 3)
+
+mri_etiv_ct_pearson_corr <-
+  mri_etiv_ct_pearson_corr[which(mri_etiv_ct_pearson_corr$p <= 0.07),]
+
+
+print(mri_etiv_ct_pearson_corr)
+
+```
+
+
+*Cortical thickness is not correlated with ETIV.*
+
+
+## MRI-Behavioral Corr (ASD + TD without behavioral outliers)
+
+
+# Gray Matter-Beh Corr (ASD + TD)
+```{r}
+iascl_beh_gray_matter_all <- rcorr(as.matrix(
+  iascl_beh_gray_matter[,c(2:10, 13:23)]), type = c("pearson"))
+
+
+iascl_beh_gray_matter_pearson_all <- 
+  flattenCorrMatrix(iascl_beh_gray_matter_all$r, iascl_beh_gray_matter_all$P, iascl_beh_gray_matter_all$n)
+
+
+iascl_beh_gray_matter_pearson_all[,c(3:5)] <- 
+  round(iascl_beh_gray_matter_pearson_all[,c(3:5)], 3)
+
+iascl_beh_gray_matter_pearson_all <-
+  iascl_beh_gray_matter_pearson_all[which(iascl_beh_gray_matter_pearson_all$p <= 0.05),]
+
+
+print(iascl_beh_gray_matter_pearson_all)
+
+write.csv(iascl_beh_gray_matter_pearson_all, "iascl_beh_gray_matter_pearson_all.csv")
+```
+
+
+
+
+
+Ignore: Gray Matter-Beh Corr TD Only
+```{r, include = FALSE, eval=F}
+iascl_beh_gray_matter_td <- rcorr(as.matrix(
+  iascl_beh_gray_matter_td[,c(2:10, 14:35)]), type = c("pearson"))
+
+
+iascl_beh_gray_matter_pearson_td <- 
+  flattenCorrMatrix(iascl_beh_gray_matter_td$r, iascl_beh_gray_matter_td$P, iascl_beh_gray_matter_td$n)
+
+
+iascl_beh_gray_matter_pearson_td[,c(3:5)] <- 
+  round(iascl_beh_gray_matter_pearson_td[,c(3:5)], 3)
+
+iascl_beh_gray_matter_pearson_td <-
+  iascl_beh_gray_matter_pearson_td[which(iascl_beh_gray_matter_pearson_td$p <= 0.05),]
+
+
+print(iascl_beh_gray_matter_pearson_td)
+
+```
+
+# Partial Correlations Controling for Age and IQ
+```{r}
+partial_corr_data <- 
+merge(iascl_beh_gray_matter, drive_checklist[,c("Participant.ID", "kbit_matrices_std")],
+      by.x = "part_id", by.y = "Participant.ID",
+      all.x = TRUE)
+
+partial_corr_data$kbit_matrices_std <- as.numeric(as.character(partial_corr_data$kbit_matrices_std))
+
+partial_corr_data_ssl <- subset(partial_corr_data, !is.na(rt_children_ssl_indiv_rts)) 
+partial_corr_data_tsl <- subset(partial_corr_data, !is.na(rt_children_tsl_indiv_rts)) 
+
+library("ppcor")
+partial_corr_tsl_result <- 
+  pcor.test(partial_corr_data_tsl$LeftMidPostTemp,
+            partial_corr_data_tsl$rt_children_tsl_indiv_rts,
+            partial_corr_data_tsl[,c("age_at_neuro_year","kbit_matrices_std")],method="pearson")
+partial_corr_tsl_result <- describe(partial_corr_tsl_result)
+
+partial_corr_ssl_result <- 
+  pcor.test(partial_corr_data_ssl$LeftMidPostTemp,
+            partial_corr_data_ssl$rt_children_ssl_indiv_rts,
+            partial_corr_data_ssl[,c("age_at_neuro_year","kbit_matrices_std")],method="pearson")
+partial_corr_ssl_result <- describe(partial_corr_ssl_result)
+
+
+write.csv(partial_corr_tsl_result, "partial_corr_tsl_result.csv")
+write.csv(partial_corr_ssl_result, "partial_corr_ssl_result.csv")
+
+
+
+library("psych")
+partial_cor_r <- partial.r(data=partial_corr_data[,-c(1,11, 12)], 
+                           x=c("LeftMidPostTemp", "rt_children_ssl_indiv_rts"),
+                           y=c("age_at_neuro_year", "kbit_matrices_std"), method = "pearson", use="pairwise")
+ 
+cp <- corr.p(partial_cor_r,n=11)
+print(cp, short = F)
+
+
+partial_cor_r_tsl <- partial.r(data=partial_corr_data[,-c(1,11, 12)], 
+                           x=c("LeftMidPostTemp", "rt_children_tsl_indiv_rts"),
+                           y=c("age_at_neuro_year", "kbit_matrices_std"), method = "pearson", use="pairwise")
+ 
+cp_tsl <- corr.p(partial_cor_r_tsl,n=10)
+print(cp_tsl, short = F)
+```
+
+
+Ignore: Gray Matter-Beh Corr ASD Only
+```{r, include=FALSE, eval=F}
+iascl_beh_gray_matter_asd <- rcorr(as.matrix(
+  iascl_beh_gray_matter_asd[,c(2:10, 14:35)]), type = c("pearson"))
+
+
+iascl_beh_gray_matter_pearson_asd <- 
+  flattenCorrMatrix(iascl_beh_gray_matter_asd$r, iascl_beh_gray_matter_asd$P, iascl_beh_gray_matter_asd$n)
+
+
+iascl_beh_gray_matter_pearson_asd[,c(3:5)] <- 
+  round(iascl_beh_gray_matter_pearson_asd[,c(3:5)], 3)
+
+iascl_beh_gray_matter_pearson_asd <-
+  iascl_beh_gray_matter_pearson_asd[which(iascl_beh_gray_matter_pearson_asd$p <= 0.05),]
+
+
+print(iascl_beh_gray_matter_pearson_asd)
+
+```
+
+
+
+## Avg Cortical Thickness-Beh Corr (ASD + TD)
+```{r}
+
+iascl_beh_cor_thick_pearson_all <- rcorr(as.matrix(
+  iascl_beh_cor_thick[,c(2:10, 13:23)]), type = c("pearson"))
+
+
+iascl_beh_cor_thick_pearson_all <- 
+  flattenCorrMatrix(iascl_beh_cor_thick_pearson_all$r,
+                    iascl_beh_cor_thick_pearson_all$P, 
+                    iascl_beh_cor_thick_pearson_all$n)
+
+
+iascl_beh_cor_thick_pearson_all[,c(3:5)] <- 
+  round(iascl_beh_cor_thick_pearson_all[,c(3:5)], 3)
+
+iascl_beh_cor_thick_pearson_all <-
+  iascl_beh_cor_thick_pearson_all[which(iascl_beh_cor_thick_pearson_all$p <= 0.05),]
+
+
+print(iascl_beh_cor_thick_pearson_all)
+write.csv(iascl_beh_cor_thick_pearson_all, "iascl_beh_cor_thick_pearson_all.csv")
+
+```
+
+
+
+
+
+
+Ignore: Avg Cortical Thickness-Beh Corr TD Only
+```{r, echo=FALSE, include=FALSE, eval=F}
+
+iascl_beh_cor_thick_pearson_td <- rcorr(as.matrix(
+  iascl_beh_cor_thick_td[,c(2:10, 14:35)]), type = c("pearson"))
+
+
+iascl_beh_cor_thick_pearson_td <- 
+  flattenCorrMatrix(iascl_beh_cor_thick_pearson_td$r,
+                    iascl_beh_cor_thick_pearson_td$P, 
+                    iascl_beh_cor_thick_pearson_td$n)
+
+
+iascl_beh_cor_thick_pearson_td[,c(3:5)] <- 
+  round(iascl_beh_cor_thick_pearson_td[,c(3:5)], 3)
+
+iascl_beh_cor_thick_pearson_td <-
+  iascl_beh_cor_thick_pearson_td[which(iascl_beh_cor_thick_pearson_td$p <= 0.05),]
+
+
+print(iascl_beh_cor_thick_pearson_td)
+
+```
+
+
+
+Ignore: Avg Cortical Thickness-Beh Corr ASD Only
+```{r, echo=FALSE, include=FALSE, eval=F}
+
+iascl_beh_cor_thick_pearson_asd <- rcorr(as.matrix(
+  iascl_beh_cor_thick_asd[,c(2:10, 14:35)]), type = c("pearson"))
+
+
+iascl_beh_cor_thick_pearson_asd <- 
+  flattenCorrMatrix(iascl_beh_cor_thick_pearson_asd$r,
+                    iascl_beh_cor_thick_pearson_asd$P, 
+                    iascl_beh_cor_thick_pearson_asd$n)
+
+
+iascl_beh_cor_thick_pearson_asd[,c(3:5)] <- 
+  round(iascl_beh_cor_thick_pearson_asd[,c(3:5)], 3)
+
+iascl_beh_cor_thick_pearson_asd <-
+  iascl_beh_cor_thick_pearson_asd[which(iascl_beh_cor_thick_pearson_asd$p <= 0.05),]
+
+
+print(iascl_beh_cor_thick_pearson_asd)
+
+```
+
+
+
+## MRI Gray Matter Corr Plots
+
+# SSL Mean RT: Negative Corr between SSL Mean RT and Gray Matter Volume
+```{r}
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(rt_children_ssl_indiv_rts)),
+       aes(x=rt_children_ssl_indiv_rts, 
+           y = LeftAngG,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+
+
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(rt_children_ssl_indiv_rts)),
+       aes(x=rt_children_ssl_indiv_rts, 
+           y = LeftMidPostTemp,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+
+iascl_beh_mri_corr_plot <-
+iascl_beh_gray_matter[, c("part_id",
+                          "LeftMidPostTemp", 
+                          "slope_children_ssl_indiv_rts_slope",
+                          "slope_children_tsl_indiv_rts_slope",
+                          "group")]
+
+
+iascl_beh_mri_corr_plot <- melt(iascl_beh_mri_corr_plot, id.vars=c("part_id", "group", "LeftMidPostTemp"))
+
+iascl_beh_mri_corr_plot[which(iascl_beh_mri_corr_plot$part_id == "blast_c_215"),
+                        "group"] <- "TD"
+
+
+iascl_beh_mri_corr_plot$variable <-
+revalue(iascl_beh_mri_corr_plot$variable, c(#"accuracy_children_lsl_accuracies"="Letter",
+                                     #"accuracy_children_vsl_accuracies"="Image",
+                                     "slope_children_tsl_indiv_rts_slope"="Non-linguistic",
+                                     "slope_children_ssl_indiv_rts_slope"="Linguistic"))
+
+colnames(iascl_beh_mri_corr_plot)[colnames(iascl_beh_mri_corr_plot) == "variable"] <- "Task"
+colnames(iascl_beh_mri_corr_plot)[colnames(iascl_beh_mri_corr_plot) == "group"] <- "Group"
+
+iascl_beh_mri_corr_plot$legend <- paste(iascl_beh_mri_corr_plot$Group, iascl_beh_mri_corr_plot$Task)
+
+library("stringr")
+iascl_beh_mri_corr_plot$unique_id <- str_extract(iascl_beh_mri_corr_plot$part_id, "(?<=blast_c_)\\S+")
+
+write.csv(iascl_beh_mri_corr_plot, "iascl_beh_mri_corr_plot_data.csv")
+
+library(ggpubr)
+library(plyr)
+
+iascl_beh_mri_corr_plot %>%
+ggplot(
+       aes(x=value, 
+           y = LeftMidPostTemp,
+           color = legend,
+           shape = legend
+           )) +
+  theme(legend.title = element_blank()) +
+  geom_point(size = 4) +
+   scale_shape_manual(values=c(16, 16, 17, 17))+
+  scale_color_manual(values = c("#756bb1", "#fec44f", "#756bb1", "#fec44f")) +
+   labs(title = "Grey Matter Volume Relationship with Behavioral Task \n",
+         y = bquote(bold("Left Posterior Middle Temporal Lobe GMV"~(mm^3))),  # Change x-axis label
+         x = "Reaction Time Slope (arbitrary unit/trial)") +
+  theme(plot.title = element_text(hjust = 0.23)) +
+  theme(
+        plot.title = element_text(size=16, face="bold"),
+        axis.title.x = element_text(size=14, face="bold"),
+        axis.title.y = element_text(size=14, face="bold"),
+        axis.text=element_text(size=12, face = "bold")
+        ) +
+  theme(legend.text=element_text(size=14, face="bold")) +
+   theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) +
+  geom_smooth(data = subset(iascl_beh_mri_corr_plot, Task == "Linguistic"),
+              aes(x=value, y=LeftMidPostTemp),
+              method=lm, se=FALSE, show.legend = F, inherit.aes = F, color = "#756bb1") +
+    geom_smooth(data = subset(iascl_beh_mri_corr_plot, Task == "Non-linguistic"),
+              aes(x=value, y=LeftMidPostTemp),
+              method=lm, se=FALSE, show.legend = F, inherit.aes = F, color = "#fec44f") +
+  stat_cor(data = subset(iascl_beh_mri_corr_plot, Task == "Linguistic"),
+              aes(x=value, y=LeftMidPostTemp), method = "pearson", label.x = -0.05, label.y = 1590,
+           inherit.aes = F, color = "#756bb1", size = 5) +
+    stat_cor(data = subset(iascl_beh_mri_corr_plot, Task == "Non-linguistic"),
+              aes(x=value, y=LeftMidPostTemp), method = "pearson", label.x = -0.05, label.y = 1550, 
+           inherit.aes = F, color = "#fec44f", size = 5) #+
+   #geom_text(aes(label = unique_id),hjust=0.5, vjust=0.5, color = "black")
+
+ggsave("iascl_beh_mri_slope_corr_plot.png",
+       width = 15, height = 15, units = "cm")
+
+```
+
+
+# MRI Behavioral correlation plot with text labels
+```{r}
+library(ggpubr)
+library(plyr)
+
+iascl_beh_mri_corr_plot_text <- iascl_beh_mri_corr_plot
+
+iascl_beh_mri_corr_plot_text$legend <- 
+  factor(iascl_beh_mri_corr_plot_text$legend,levels = c("ASD Linguistics", 
+                                              "TD Linguistics", 
+                                              "ASD Nonlinguistics", 
+                                              "TD Nonlinguistics"))
+
+iascl_sl_bar_acc <-
+  iascl_sl_bar_acc[order(iascl_sl_bar_acc$variable), ]
+
+
+
+iascl_beh_mri_corr_plot_text %>%
+ggplot(
+       aes(x=value, 
+           y = LeftMidPostTemp,
+           color = legend
+           #shape = legend
+           )) +
+  theme(legend.title = element_blank()) +
+  scale_fill_discrete(labels = c("A", "B", "Linguistics", "Non-Linguistics")) +
+  geom_point(size = 4) +
+   scale_shape_manual(values=c(16, 16))+
+  #scale_color_manual(values = c("#756bb1", "#fec44f", "#756bb1", "#fec44f")) +
+  #scale_color_manual(values = c("#756bb1", "#fec44f")) +
+   scale_colour_manual(labels = c("ASD", "ASD", "TD", "TD"),
+     values = c("#756bb1", "#756bb1", "#fec44f", "#fec44f")) +
+    #                   guide = guide_legend(override.aes = list(
+     #                    linetype = c(rep("blank", 2), "solid", "dotted"), 
+      #                   shape = c(rep(16, 2), NA, NA)))) +
+   labs(title = "Grey Matter Volume Relationship with Behavioral Task \n",
+         y = bquote(bold("Left Posterior Middle Temporal Lobe GMV"~(mm^3))),  # Change x-axis label
+         x = "Reaction Time Slope (arbitrary unit/trial)") +
+  theme(plot.title = element_text(hjust = 0.23)) +
+  theme(
+        plot.title = element_text(size=16, face="bold"),
+        axis.title.x = element_text(size=14, face="bold"),
+        axis.title.y = element_text(size=14, face="bold"),
+        axis.text=element_text(size=12, face = "bold")
+        ) +
+  theme(legend.text=element_text(size=14, face="bold")) +
+   theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) +
+  geom_smooth(data = subset(iascl_beh_mri_corr_plot, Task == "Linguistic"),
+              aes(x=value, y=LeftMidPostTemp), linetype = "solid",
+              method=lm, se=FALSE, show.legend = T, inherit.aes = F, color = "black") +
+    geom_smooth(data = subset(iascl_beh_mri_corr_plot, Task == "Non-linguistic"),
+              aes(x=value, y=LeftMidPostTemp), linetype = "dotted",
+              method=lm, se=FALSE, show.legend = T, inherit.aes = F, color = "black") +
+  #stat_cor(data = subset(iascl_beh_mri_corr_plot, Task == "Linguistic"),
+  #            aes(x=value, y=LeftMidPostTemp), method = "pearson", label.x = -0.05, label.y = 1590,
+   #        inherit.aes = F, color = "#756bb1", size = 5) +
+    #stat_cor(data = subset(iascl_beh_mri_corr_plot, Task == "Non-linguistic"),
+    #          aes(x=value, y=LeftMidPostTemp), method = "pearson", label.x = -0.05, label.y = 1550, 
+     #      inherit.aes = F, color = "#fec44f", size = 5) +
+   geom_text(aes(label = unique_id),hjust=0.8, vjust=0.8, color = "black", face = "bold", size =3) +
+  geom_text(aes(y = 1590, x = -0.05, label = paste("R =", "0.74*"), fontface = 3),color = "black",size=4) +
+  geom_text(aes(y = 1550, x = -0.05, label = paste("R =", "-0.71*"),  fontface = 3),color = "black",size=4)
+
+
+ggsave("iascl_beh_mri_slope_corr_plot_with_text.png",
+       width = 15, height = 15, units = "cm")
+
+```
+
+# TSL Mean RT: Positive Corr between TSL Mean RT and Gray Matter Volume
+```{r}
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(rt_children_tsl_indiv_rts)),
+       aes(x=rt_children_tsl_indiv_rts, 
+           y = LeftMidPostTemp,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+```
+
+
+# TSL Slope: Positive Corr between TSL RT Slope and Gray Matter Volume
+```{r}
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(slope_children_tsl_indiv_rts_slope)),
+       aes(x=slope_children_tsl_indiv_rts_slope, 
+           y = LeftAngG,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+
+
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(slope_children_tsl_indiv_rts_slope)),
+       aes(x=slope_children_tsl_indiv_rts_slope, 
+           y = LeftIFG,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+
+
+
+
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(slope_children_tsl_indiv_rts_slope)),
+       aes(x=slope_children_tsl_indiv_rts_slope, 
+           y = LeftIFGorb,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+
+
+
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(slope_children_tsl_indiv_rts_slope)),
+       aes(x=slope_children_tsl_indiv_rts_slope, 
+           y = LeftMFG,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+
+
+
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(slope_children_tsl_indiv_rts_slope)),
+       aes(x=slope_children_tsl_indiv_rts_slope, 
+           y = LeftMidPostTemp,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+
+
+
+ggplot(data = subset(iascl_beh_gray_matter, !is.na(slope_children_tsl_indiv_rts_slope)),
+       aes(x=slope_children_tsl_indiv_rts_slope, 
+           y = LeftPostTemp,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+```
+
+
+
+# MRI Cortical Thickness Corr Plots
+
+# SSL Mean RT: Negative Corr between SSL Mean RT and Cortical Thickness
+```{r}
+ggplot(data = subset(iascl_beh_cor_thick, !is.na(rt_children_ssl_indiv_rts)),
+       aes(x=rt_children_ssl_indiv_rts, 
+           y = LeftMidPostTemp,
+           color = group)) +
+  geom_point() + 
+  scale_fill_brewer(palette = "Set2")
+
+
+```
+
+
+
+# Gender MRI
+```{r}
+drive_list <- read.csv("drive_checklist.csv")
+
+drive_list <- drive_list[,c("Participant.ID", "Group", "Gender", "date.of.birth", 
+            "kbit_matrices_raw", "kbit_matrices_std", "date_of_lab_assessment", "date_of_mri" )]
+
+demo_mri <-
+merge(iascl_beh_cor_thick, drive_list,
+      by.x = "part_id", by.y = "Participant.ID",
+      all.x = TRUE)
+
+
+demo_mri_long <- melt(demo_mri, id.vars = c("part_id", "group"))
+
+demo_mri_gender_long <- demo_mri_long[which(demo_mri_long$variable == "Gender"),]
+
+demo_mri_gender_long <- subset(demo_mri_gender_long, part_id !=	"blast_c_215")
+
+add_row <- data.frame(matrix(ncol = 4, nrow = 1))
+colnames(add_row) <- colnames(demo_mri_gender_long)
+add_row$part_id <- "blast_c_215"
+add_row$group <- "TD"
+add_row$variable <- "Gender"
+add_row$value <- "F"
+
+demo_mri_gender_long <- rbind(demo_mri_gender_long, add_row)
+
+gender_mri_wide <- cast(demo_mri_gender_long, group~value, length)
+
+
+print(gender_mri_wide)
+
+print(chisq.test(gender_mri_wide))
+```
+
+
+Gender is matched in the MRI pariticipants.
+
+# KBITT MRI
+``` {r}
+demo_mri_kbitt_long <- demo_mri_long[which(
+  demo_mri_long$variable == "kbit_matrices_raw" | 
+    demo_mri_long$variable == "kbit_matrices_std"),]
+
+demo_mri_kbitt_long$value <- as.numeric(as.character(demo_mri_kbitt_long$value))
+
+demo_mri_kbitt_long[which(demo_mri_kbitt_long$part_id == "blast_c_215"), "group"] <- "TD"
+
+library("reshape")
+
+kbitt_mri_group_mean <- cast(demo_mri_kbitt_long, group~variable, "mean")
+
+print(kbitt_mri_group_mean)
+```
+
+
+
+
+
+
+# To Do: 
+-demo info for MRI - Age for in lab MRI appending.
+-Ancova for gender match - Done
+-Ancova for Whole brain? Still? No corr between etiv and CT and only one region significant in GM.
+-make the t-test results into a nice format please
