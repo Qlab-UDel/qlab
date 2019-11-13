@@ -20,6 +20,8 @@ rt_df = read.csv("blast_online_adult/breakdown/blast_online_adult_ssl_indiv_rts.
 colnames(accuracy_df)[colnames(accuracy_df)=="acc_id"] <- "subject"
 colnames(rt_df)[colnames(rt_df)=="par_id"] <- "subject"
 colnames(entropy_df)[colnames(entropy_df)=="part_id"] <- "subject"
+colnames(accuracy_df)[colnames(accuracy_df)=="subj_corr"] <- "accuracy"
+
 ```
 ### Merge Dataframes
 ```{r}
@@ -45,8 +47,7 @@ df<- df[!grepl("blast_a_030", df$subject),]
 df<- df[!grepl("blast_a_019", df$subject),]
 df<- df[!grepl("blast_a_022", df$subject),]
 df <- df[-c(18:39), ]
-df <- df[ -c(15,16,20:31,33) ]
+df <- df[ -c(15,20:33) ]
 
 write.csv(df, "/Volumes/data/projects/blast/data_summaries/adult_composite_in_lab_online.csv")
-
 ```
