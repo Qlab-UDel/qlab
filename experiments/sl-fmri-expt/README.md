@@ -1,9 +1,9 @@
 # BLAST
 ## Brain and Language Acquisition Study
 
-### This file overviews the task design and evolution of the BLAST project. 
+### This file overviews the task design and evolution of the BLAST project.
 
-#### Versions info 
+#### Versions info
 
 <b>four_task_fmri</b>:	this experiment has 4 tasks: VSL, SSL, TSL, and LSL. Each task is located in their corresponding folder. VSL and LSL takes about half an hour each while SSL and TSL takes about 20 minutes each. Each task include structured blocks and random blocks of the same type of stimuli.<br/>
 <b>dec2017_fmri</b>:	this experiment has 2 tasks: auditory and visual. Auditory is the combination of SSL and TSL, visual is the combination of TSL and SSL. There are 6 runs in each task.<br/>
@@ -25,14 +25,14 @@ The general overall task design of BLAST is an investigation into the interactio
     Modality Auditory Speech (SSL)	Tone (TSL)
              Visual   Letter (LSL)	Image (VSL)
 
-Within each condition (SSL, LSL, TSL, VSL), stimuli were presented in both a "structured" manner (contains statistical regularities) and presented at random (no statistical regularities) in different blocks. The structured condition contained "triplets": 
-  
-  - The structured blocks were composed of stimuli of the same type, the presentation order of which followed an embedded pattern of four unique triplets, so that the transitional probability within a triplet was 1 and between triplets was 0.25. 
- 
-  - Each structured block contained four repetitions of each of the four triplets and lasted 48 seconds total. 
- 
-  - In contrast with the structured blocks, the random blocks contained 12 unique images different from the structured blocks, ordered pseudo-randomly, so that there were no combinations of three stimulus that were repeated more than once. 
-  
+Within each condition (SSL, LSL, TSL, VSL), stimuli were presented in both a "structured" manner (contains statistical regularities) and presented at random (no statistical regularities) in different blocks. The structured condition contained "triplets":
+
+  - The structured mini-blocks were composed of stimuli of the same type, the presentation order of which followed an embedded pattern of four unique triplets, so that the transitional probability within a triplet was 1 and between triplets was 0.25.
+
+  - Each structured mini-block contained four (VSL) or eight (ASL) repetitions of each of the four triplets.
+
+  - In contrast with the structured blocks, the random blocks contained 12 unique images/sounds different from the structured blocks, ordered pseudo-randomly, so that there were no combinations of three stimulus that were repeated more than once.
+
   - The transitional probability between stimuli in the random blocks was 0.083.
 
 ### Stimuli
@@ -40,29 +40,28 @@ Within each condition (SSL, LSL, TSL, VSL), stimuli were presented in both a "st
 Twelve standalone alien cartoon images (Image) and twelve letter images (Letter) showing the same alien holding up twelve signs with capital letters written on them were constructed by a professional illustrator. No letter triplet contained any words, common acronyms, or initialisms.
 
 #### Auditory Statistical Learning (ASL)
-The auditory stimuli were constructed of twelve English syllables (pi,pu,pa,ti,tu.ta,di,du,da,bi,bu,ba) and twelve musical tones. 
+The auditory stimuli were constructed of twelve English syllables (pi,pu,pa,ti,tu.ta,di,du,da,bi,bu,ba) and twelve musical tones (F,G,D,G#,C#,B,C,F#,D#,E,A,A#).
 
 ### Design
-- Images were ordered in four 4.77-minute (VSL)/4.42-minute (ASL) streams, with each stream comprised of 3 structured and 3 random blocks randomly ordered (randomization described below), and a blank/silent block between structured and random blocks (total of 6 blank/silent blocks).
-- Visual stimuli were presented at the center of the screen for 120 msec
-- Auditory stimuli were presented through headphones for 60 msec
-- 48 triplets were presented per run in ASL/96 triplets per run for VSL
-- A total of 144 structured, 144 random, and 30 blank items were presented in one run of VSL/288 structured, 288 random, and 72 blank items were presented in one run of ASL.
+- Images were ordered in four 4.77-minute (VSL)/4.42-minute (ASL) streams, with each stream comprised of 3 structured and 3 random mini-blocks randomly ordered (randomization described below), and a resting block between two subsequent mini-blocks (total of 6 blank/silent blocks).
+- Visual stimuli SOA = 1000 msec
+- Auditory stimuli SOA = 480 msec
+- 96 triplets were presented per run in ASL and 48 triplets per run for VSL
+- A total of 144 structured, 144 random, and 30 blank items were presented in one run of VSL / 288 structured, 288 random, and 72 blank items were presented in one run of ASL.
 
 ### Procedure
-- Participants watched/listened to the two continuous streams of stimuli described above, while performing a target detection task. 
-- While viewing/listening the stream of stimuli, participants tracked a target stimulus, and were instructed to press a response pad when they saw/heard the target.  
-- Within each task, the participant tracked one target across triplet blocks and a different target across random blocks. The target was always the third stimulus in a triplet. 
-- The target for the random block was arbitrarily assigned. 
-- At the beginning of each block, the participant was reminded of the target. 
+- Participants watched/listened to the two continuous streams of stimuli described above, while performing a target detection task.
+- While viewing/listening the stream of stimuli, participants tracked a target stimulus, and were instructed to press a response button when they saw/heard the target.  
+- Within each task, the participant tracked one linguistic target and one non-linguistic target. The targets are also the third stimulus in one of the triplets of the corresponding domain. Targets (4 options for each of VSL, LSL, and SSL. but 2 options for TSL (see note)) are randomly assigned to each individual participants.
+- At the beginning of each mini-block, the participant was reminded of the target.
 - Response time was recorded.
 
 #### Pseudo-randomization
 - The order of tasks (ASL versus VSL) was pseudo-randomized across participants and can be found on the participant checklist
-- Within each task, there are four runs. Within each run are 6 blocks. The six blocks consist of 3 random & 3 structured streams. These are randomized within and across blocks. The order of randomization is determined by Psychopy selecting 1 of 6 possible orders for each block (e.g. for VSL run 1: visual_run1_1 versus visual_run1_4). These orders are stored in the experiment folder:
- 
+- Within each task, there are four runs. Within each run are 3 random and 3 structured mini-blocks, along with resting mini-blocks. These are randomized within and across blocks. The order of randomization is determined by Psychopy selecting 1 of 6 possible orders for each block (e.g. for VSL run 1: visual_run1_1 versus visual_run1_4). These orders are stored in the experiment folder:
+
 **AUDITORY**:/data/projects/blast/experiment/fmri_task/psychopy_files/shortened_fmri/scanner_stim_without_test_adult_ver/auditory/auditory_runN_N.xlsx>
 **VISUAL**:/data/projects/blast/experiment/fmri_task/psychopy_files/shortened_fmri/scanner_stim_without_test_adult_ver/visual/visual_runN_N.xlsx
 
-- In Runs 1 & 3, Tone & Letter conditions were always random while Speech & Image were always structured
-- In Runs 2 & 4, Tone & Letter conditions were always structured while Speech & Image were always random
+- In Runs 1 & 2, Tone & Letter conditions were always random while Speech & Image were always structured
+- In Runs 3 & 4, Tone & Letter conditions were always structured while Speech & Image were always random
