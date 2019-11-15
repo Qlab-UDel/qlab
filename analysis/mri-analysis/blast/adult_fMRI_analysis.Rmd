@@ -13,20 +13,34 @@ library(Hmisc); library (WRS2); library(lme4); library(lmerTest); library(plyr);
 ```{r}
 setwd("/Volumes/data/projects/blast/data_summaries/")
 ast_df = read.csv("blast_in_lab_adult/behavioral/blast_assessments_adult.csv")
-accuracy_df = read.csv("blast_online_adult/breakdown/blast_online_adult_ssl_accuracies.csv")
-entropy_df = read.csv("blast_online_adult/breakdown/blast_online_adult_ssl_entropy.csv")
-rt_df = read.csv("blast_online_adult/breakdown/blast_online_adult_ssl_indiv_rts.csv")
+SSL_accuracy_df = read.csv("blast_online_adult/breakdown/blast_online_adult_ssl_accuracies.csv")
+SSL_entropy_df = read.csv("blast_online_adult/breakdown/blast_online_adult_ssl_entropy.csv")
+SSL_rt_df = read.csv("blast_online_adult/breakdown/blast_online_adult_ssl_indiv_rts.csv")
 
-colnames(accuracy_df)[colnames(accuracy_df)=="acc_id"] <- "subject"
-colnames(rt_df)[colnames(rt_df)=="par_id"] <- "subject"
-colnames(entropy_df)[colnames(entropy_df)=="part_id"] <- "subject"
-colnames(accuracy_df)[colnames(accuracy_df)=="subj_corr"] <- "accuracy"
+colnames(SSL_accuracy_df)[colnames(SSL_accuracy_df)=="acc_id"] <- "subject"
+colnames(SSL_accuracy_df)[colnames(SSL_accuracy_df)=="subj_corr"] <- "SSL_accuracy"
 
+colnames(SSL_rt_df)[colnames(SSL_rt_df)=="par_id"] <- "subject"
+colnames(SSL_entropy_df)[colnames(SSL_entropy_df)=="part_id"] <- "subject"
+
+SSL_rt_df <- SSL_rt_df[ -c(5:18) ]
+
+TSL_accuracy_df = read.csv("blast_online_adult/breakdown/blast_online_adult_tsl_accuracies.csv")
+TSL_entropy_df = read.csv("blast_online_adult/breakdown/blast_online_adult_tsl_entropy.csv")
+TSL_rt_df = read.csv("blast_online_adult/breakdown/blast_online_adult_tsl_indiv_rts.csv")
+
+colnames(TSL_accuracy_df)[colnames(TSL_accuracy_df)=="acc_id"] <- "subject"
+colnames(TSL_accuracy_df)[colnames(TSL_accuracy_df)=="subj_corr"] <- "TSL_accuracy"
+colnames(TSL_entropy_df)[colnames(TSL_entropy_df)=="part_id"] <- "subject"
+colnames(TSL_rt_df)[colnames(TSL_rt_df)=="par_id"] <- "subject"
+
+in_scanner_df <- read.csv("blast_in_lab_adult/behavioral/adult_in_scanner_auditory_behavioral.csv")
+colnames(in_scanner_df)[colnames(in_scanner_df)=="auditory_part_id"] <- "subject"
 ```
 ### Merge Dataframes
 ```{r}
 require(plyr)
-df <- join_all(list(ast_df,accuracy_df,entropy_df,rt_df), by = 'subject', type = 'full')
+df <- join_all(list(ast_df,SSL_accuracy_df,SSL_entropy_df,SSL_rt_df, TSL_accuracy_df,TSL_entropy_df,TSL_rt_df, in_scanner_df), by = 'subject', type = 'full')
 ```
 
 ### Remove subjects NOT included in fMRI analysis
@@ -39,15 +53,29 @@ df<- df[!grepl("blast_a_014", df$subject),]
 df<- df[!grepl("blast_a_015", df$subject),]
 df<- df[!grepl("blast_a_016", df$subject),]
 df<- df[!grepl("blast_a_019", df$subject),]
-df<- df[!grepl("blast_a_022", df$subject),]
 df<- df[!grepl("blast_a_025", df$subject),]
 df<- df[!grepl("blast_a_026", df$subject),]
 df<- df[!grepl("blast_a_028", df$subject),]
 df<- df[!grepl("blast_a_030", df$subject),]
 df<- df[!grepl("blast_a_019", df$subject),]
-df<- df[!grepl("blast_a_022", df$subject),]
-df <- df[-c(18:39), ]
-df <- df[ -c(15,20:33) ]
+df <- df[-c(19:40), ]
+```
+
+### Merge rows of data for same subject (e.g. blast_a_015/021)
+```{r}
+library(dplyr)
+df$subject <- gsub ("/s(2)","", df$subject, fixed = TRUE)
+df<- df %>% group_by(subject) %>% 
+       summarise_all(funs(na.omit(.)[1]))
+df$subject <- as.factor(as.character(df$subject))
 
 write.csv(df, "/Volumes/data/projects/blast/data_summaries/adult_composite_in_lab_online.csv")
 ```
+
+### Load fMRI data and merge with current df
+```{r}
+mri_df = read.csv("merged_wholebrain_cope12_report.csv")
+df_mri_behav <- merge(df,mri_df,by="subject")
+```
+
+### Recode Copes into Tasks/Conditions
