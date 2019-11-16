@@ -232,18 +232,33 @@ summary {
 ##     rename, round_any</code></pre>
 <pre class="r"><code>setwd(&quot;/Volumes/data/projects/blast/data_summaries/&quot;)
 ast_df = read.csv(&quot;blast_in_lab_adult/behavioral/blast_assessments_adult.csv&quot;)
-accuracy_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_ssl_accuracies.csv&quot;)
-entropy_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_ssl_entropy.csv&quot;)
-rt_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_ssl_indiv_rts.csv&quot;)
+SSL_accuracy_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_ssl_accuracies.csv&quot;)
+SSL_entropy_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_ssl_entropy.csv&quot;)
+SSL_rt_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_ssl_indiv_rts.csv&quot;)
 
-colnames(accuracy_df)[colnames(accuracy_df)==&quot;acc_id&quot;] &lt;- &quot;subject&quot;
-colnames(rt_df)[colnames(rt_df)==&quot;par_id&quot;] &lt;- &quot;subject&quot;
-colnames(entropy_df)[colnames(entropy_df)==&quot;part_id&quot;] &lt;- &quot;subject&quot;
-colnames(accuracy_df)[colnames(accuracy_df)==&quot;subj_corr&quot;] &lt;- &quot;accuracy&quot;</code></pre>
+colnames(SSL_accuracy_df)[colnames(SSL_accuracy_df)==&quot;acc_id&quot;] &lt;- &quot;subject&quot;
+colnames(SSL_accuracy_df)[colnames(SSL_accuracy_df)==&quot;subj_corr&quot;] &lt;- &quot;SSL_accuracy&quot;
+
+colnames(SSL_rt_df)[colnames(SSL_rt_df)==&quot;par_id&quot;] &lt;- &quot;subject&quot;
+colnames(SSL_entropy_df)[colnames(SSL_entropy_df)==&quot;part_id&quot;] &lt;- &quot;subject&quot;
+
+SSL_rt_df &lt;- SSL_rt_df[ -c(5:18) ]
+
+TSL_accuracy_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_tsl_accuracies.csv&quot;)
+TSL_entropy_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_tsl_entropy.csv&quot;)
+TSL_rt_df = read.csv(&quot;blast_online_adult/breakdown/blast_online_adult_tsl_indiv_rts.csv&quot;)
+
+colnames(TSL_accuracy_df)[colnames(TSL_accuracy_df)==&quot;acc_id&quot;] &lt;- &quot;subject&quot;
+colnames(TSL_accuracy_df)[colnames(TSL_accuracy_df)==&quot;subj_corr&quot;] &lt;- &quot;TSL_accuracy&quot;
+colnames(TSL_entropy_df)[colnames(TSL_entropy_df)==&quot;part_id&quot;] &lt;- &quot;subject&quot;
+colnames(TSL_rt_df)[colnames(TSL_rt_df)==&quot;par_id&quot;] &lt;- &quot;subject&quot;
+
+in_scanner_df &lt;- read.csv(&quot;blast_in_lab_adult/behavioral/adult_in_scanner_auditory_behavioral.csv&quot;)
+colnames(in_scanner_df)[colnames(in_scanner_df)==&quot;auditory_part_id&quot;] &lt;- &quot;subject&quot;</code></pre>
 <div id="merge-dataframes" class="section level3">
 <h3>Merge Dataframes</h3>
 <pre class="r"><code>require(plyr)
-df &lt;- join_all(list(ast_df,accuracy_df,entropy_df,rt_df), by = 'subject', type = 'full')</code></pre>
+df &lt;- join_all(list(ast_df,SSL_accuracy_df,SSL_entropy_df,SSL_rt_df, TSL_accuracy_df,TSL_entropy_df,TSL_rt_df, in_scanner_df), by = 'subject', type = 'full')</code></pre>
 </div>
 <div id="remove-subjects-not-included-in-fmri-analysis" class="section level3">
 <h3>Remove subjects NOT included in fMRI analysis</h3>
@@ -255,17 +270,67 @@ df&lt;- df[!grepl(&quot;blast_a_014&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_015&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_016&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_019&quot;, df$subject),]
-df&lt;- df[!grepl(&quot;blast_a_022&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_025&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_026&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_028&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_030&quot;, df$subject),]
 df&lt;- df[!grepl(&quot;blast_a_019&quot;, df$subject),]
-df&lt;- df[!grepl(&quot;blast_a_022&quot;, df$subject),]
-df &lt;- df[-c(18:39), ]
-df &lt;- df[ -c(15,20:33) ]
+df &lt;- df[-c(19:40), ]</code></pre>
+</div>
+<div id="merge-rows-of-data-for-same-subject-e.g.blast_a_015021" class="section level3">
+<h3>Merge rows of data for same subject (e.g. blast_a_015/021)</h3>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## Warning: package 'dplyr' was built under R version 3.5.2</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:plyr':
+## 
+##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+##     summarize</code></pre>
+<pre><code>## The following objects are masked from 'package:Hmisc':
+## 
+##     src, summarize</code></pre>
+<pre><code>## The following object is masked from 'package:reshape':
+## 
+##     rename</code></pre>
+<pre><code>## The following objects are masked from 'package:pastecs':
+## 
+##     first, last</code></pre>
+<pre><code>## The following object is masked from 'package:nlme':
+## 
+##     collapse</code></pre>
+<pre><code>## The following object is masked from 'package:MASS':
+## 
+##     select</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>df$subject &lt;- gsub (&quot;/s(2)&quot;,&quot;&quot;, df$subject, fixed = TRUE)
+df&lt;- df %&gt;% group_by(subject) %&gt;% 
+       summarise_all(funs(na.omit(.)[1]))</code></pre>
+<pre><code>## Warning: funs() is soft deprecated as of dplyr 0.8.0
+## please use list() instead
+## 
+##   # Before:
+##   funs(name = f(.))
+## 
+##   # After: 
+##   list(name = ~ f(.))
+## This warning is displayed once per session.</code></pre>
+<pre class="r"><code>df$subject &lt;- as.factor(as.character(df$subject))
 
 write.csv(df, &quot;/Volumes/data/projects/blast/data_summaries/adult_composite_in_lab_online.csv&quot;)</code></pre>
+</div>
+<div id="load-fmri-data-and-merge-with-current-df" class="section level3">
+<h3>Load fMRI data and merge with current df</h3>
+<pre class="r"><code>mri_df = read.csv(&quot;merged_wholebrain_cope12_report.csv&quot;)
+df_mri_behav &lt;- merge(df,mri_df,by=&quot;subject&quot;)</code></pre>
+</div>
+<div id="recode-copes-into-tasksconditions" class="section level3">
+<h3>Recode Copes into Tasks/Conditions</h3>
 </div>
 
 
