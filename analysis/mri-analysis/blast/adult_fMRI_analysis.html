@@ -329,8 +329,215 @@ write.csv(df, &quot;/Volumes/data/projects/blast/data_summaries/adult_composite_
 <pre class="r"><code>mri_df = read.csv(&quot;merged_wholebrain_cope12_report.csv&quot;)
 df_mri_behav &lt;- merge(df,mri_df,by=&quot;subject&quot;)</code></pre>
 </div>
-<div id="recode-copes-into-tasksconditions" class="section level3">
-<h3>Recode Copes into Tasks/Conditions</h3>
+<div id="recode-copes-into-tasks" class="section level3">
+<h3>Recode Copes into Tasks</h3>
+<pre class="r"><code>df_mri_behav$mri_task &lt;- NA
+df_mri_behav$mri_task &lt;- ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'stats/tstat1', 'tonestr_rand', 
+                                ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'stats/zstat1', 'tonestr_rand', 
+                                       ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'thresh_zstat1', 'tonestr_rand', 
+                                              ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'stats/tstat2', 'speechstr_rand', 
+                                                     ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'stats/zstat2', 'speechstr_rand',
+                                                           ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'thresh_zstat2', 'speechstr_rand', 
+                                                                  ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'stats/tstat2', 'tonerand_str', 
+                                ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'stats/zstat2', 'tonerand_str', 
+                                       ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'thresh_zstat2', 'tonerand_str', 
+                                              ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'stats/tstat1', 'speechrand_str', 
+                                                     ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'stats/zstat1', 'speechrand_str',
+                                                           ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'thresh_zstat1', 'speechrand_str','null'))))))))))))</code></pre>
+</div>
+<div id="recode-copes-into-tasks-numeric" class="section level3">
+<h3>Recode Copes into Tasks Numeric</h3>
+<pre class="r"><code>df_mri_behav$mri_task_numeric &lt;- NA
+df_mri_behav$mri_task_numeric &lt;- ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'stats/tstat1', 0, 
+                                ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'stats/zstat1', 0, 
+                                       ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'thresh_zstat1', 0, 
+                                              ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'stats/tstat2', 1, 
+                                                     ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'stats/zstat2', 1,
+                                                           ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'thresh_zstat2', 1, 
+                                                                  ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'stats/tstat2', 2, 
+                                ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'stats/zstat2', 2, 
+                                       ifelse(df_mri_behav$cope == 1 &amp; df_mri_behav$stat == 'thresh_zstat2', 2, 
+                                              ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'stats/tstat1', 3, 
+                                                     ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'stats/zstat1', 3,
+                                                           ifelse(df_mri_behav$cope == 2 &amp; df_mri_behav$stat == 'thresh_zstat1', 3,'null'))))))))))))
+write.csv(df_mri_behav, &quot;/Volumes/data/projects/blast/data_summaries/adult_composite_in_lab_online.csv&quot;)</code></pre>
+</div>
+<div id="statistics" class="section level2">
+<h2>Statistics</h2>
+<div id="paired-samples-t-test" class="section level3">
+<h3>Paired Samples T-test</h3>
+<pre class="r"><code>df_mri_behav$mri_task_numeric &lt;- as.numeric(df_mri_behav$mri_task_numeric)
+
+df_mri_subset1 &lt;- subset(df_mri_behav, mri_task == &quot;tonestr_rand&quot; &amp; stat == &quot;stats/tstat1&quot;, select = subject:mri_task_numeric)
+df_mri_subset2 &lt;- subset(df_mri_behav, mri_task == &quot;speechstr_rand&quot; &amp; stat == &quot;stats/tstat2&quot;, select = subject:mri_task_numeric)
+df_mri_subset &lt;- rbind(df_mri_subset1,df_mri_subset2)
+
+t.test(df_mri_subset$mean, df_mri_subset$mri_task_numeric, paired = TRUE, alternative = &quot;two.sided&quot;)</code></pre>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  df_mri_subset$mean and df_mri_subset$mri_task_numeric
+## t = -4.4814, df = 35, p-value = 7.598e-05
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.8624811 -0.3246861
+## sample estimates:
+## mean of the differences 
+##              -0.5935836</code></pre>
+</div>
+<div id="correlation" class="section level3">
+<h3>Correlation</h3>
+<pre class="r"><code>tone.cor &lt;- cor.test(df_mri_subset1$mean, df_mri_subset1$nih_pvt_std, method = c(&quot;pearson&quot;))
+speech.cor &lt;- cor.test(df_mri_subset2$mean, df_mri_subset2$nih_pvt_std, method = c(&quot;pearson&quot;))
+tone.cor$p.value</code></pre>
+<pre><code>## [1] 0.4691252</code></pre>
+<pre class="r"><code>tone.cor$estimate</code></pre>
+<pre><code>##       cor 
+## 0.1822737</code></pre>
+<pre class="r"><code>speech.cor$p.value</code></pre>
+<pre><code>## [1] 0.7623602</code></pre>
+<pre class="r"><code>speech.cor$estimate</code></pre>
+<pre><code>##         cor 
+## -0.07667175</code></pre>
+</div>
+<div id="linear-regression" class="section level3">
+<h3>Linear Regression</h3>
+<pre class="r"><code>vocab.linearMod &lt;- lm(nih_pvt_std~ mri_task*mean, data=df_mri_subset) 
+summary(vocab.linearMod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = nih_pvt_std ~ mri_task * mean, data = df_mri_subset)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -21.453  -7.549   1.618   7.975  19.580 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)               112.4937     2.7108  41.498   &lt;2e-16 ***
+## mri_tasktonestr_rand        0.5908     3.9150   0.151    0.881    
+## mean                       -1.1833     3.8204  -0.310    0.759    
+## mri_tasktonestr_rand:mean   4.3978     5.8012   0.758    0.454    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 11.5 on 32 degrees of freedom
+## Multiple R-squared:  0.01955,    Adjusted R-squared:  -0.07237 
+## F-statistic: 0.2127 on 3 and 32 DF,  p-value: 0.8869</code></pre>
+<pre class="r"><code>IQ.linearMod &lt;- lm(kbit_matrices_std~ mri_task*mean, data=df_mri_subset) 
+summary(IQ.linearMod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = kbit_matrices_std ~ mri_task * mean, data = df_mri_subset)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -20.663  -8.675  -3.243   7.099  24.825 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)               103.7109     3.1832  32.581   &lt;2e-16 ***
+## mri_tasktonestr_rand        0.5892     4.5971   0.128    0.899    
+## mean                       -2.1317     4.4860  -0.475    0.638    
+## mri_tasktonestr_rand:mean   5.3094     6.8119   0.779    0.441    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 13.5 on 32 degrees of freedom
+## Multiple R-squared:  0.01871,    Adjusted R-squared:  -0.07329 
+## F-statistic: 0.2034 on 3 and 32 DF,  p-value: 0.8933</code></pre>
+<pre class="r"><code>df_mri_subset$ctopp_nwr_std &lt;- as.numeric(df_mri_subset$ctopp_nwr_std)
+ctopp.linearMod &lt;- lm(ctopp_nwr_std~ mri_task*mean, data=df_mri_subset) 
+summary(ctopp.linearMod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = ctopp_nwr_std ~ mri_task * mean, data = df_mri_subset)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.7261 -0.7337 -0.0501  1.2322  3.3466 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                7.72291    0.41305  18.697   &lt;2e-16 ***
+## mri_tasktonestr_rand      -0.06252    0.59653  -0.105    0.917    
+## mean                       0.12943    0.58212   0.222    0.825    
+## mri_tasktonestr_rand:mean -0.46945    0.88393  -0.531    0.599    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.752 on 32 degrees of freedom
+## Multiple R-squared:  0.009617,   Adjusted R-squared:  -0.08323 
+## F-statistic: 0.1036 on 3 and 32 DF,  p-value: 0.9574</code></pre>
+<pre class="r"><code>flanker.linearMod &lt;- lm(nih_flanker_std~ mri_task*mean, data=df_mri_subset) 
+summary(flanker.linearMod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = nih_flanker_std ~ mri_task * mean, data = df_mri_subset)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -24.659 -12.119  -1.406   4.600  73.551 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                 87.346      5.022  17.392   &lt;2e-16 ***
+## mri_tasktonestr_rand         0.114      7.253   0.016    0.988    
+## mean                        -8.061      7.078  -1.139    0.263    
+## mri_tasktonestr_rand:mean    8.452     10.747   0.786    0.437    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 21.31 on 32 degrees of freedom
+## Multiple R-squared:  0.03903,    Adjusted R-squared:  -0.05106 
+## F-statistic: 0.4332 on 3 and 32 DF,  p-value: 0.7307</code></pre>
+</div>
+<div id="glmer-model-does-not-converge" class="section level3">
+<h3>GLMER –model does not converge</h3>
+<pre class="r"><code>model.vocab&lt;- lmer(nih_pvt_std~ 1 + mri_task_numeric*mean + (1|subject),data = df_mri_subset)</code></pre>
+<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl =
+## control$checkConv, : Model failed to converge with max|grad| = 0.400872
+## (tol = 0.002, component 1)</code></pre>
+<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
+##  - Rescale variables?</code></pre>
+<pre><code>## Warning in as_lmerModLT(model, devfun): Model may not have converged with 1
+## eigenvalue close to zero: 5.8e-10</code></pre>
+<pre class="r"><code>summary(model.vocab)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+## lmerModLmerTest]
+## Formula: nih_pvt_std ~ 1 + mri_task_numeric * mean + (1 | subject)
+##    Data: df_mri_subset
+## 
+## REML criterion at convergence: -219.5
+## 
+## Scaled residuals: 
+##        Min         1Q     Median         3Q        Max 
+## -2.577e-07 -1.035e-07  1.381e-08  9.204e-08  2.577e-07 
+## 
+## Random effects:
+##  Groups   Name        Variance  Std.Dev. 
+##  subject  (Intercept) 6.746e+01 8.214e+00
+##  Residual             2.384e-12 1.544e-06
+## Number of obs: 36, groups:  subject, 18
+## 
+## Fixed effects:
+##                         Estimate Std. Error         df t value Pr(&gt;|t|)  
+## (Intercept)            1.124e+02  1.931e+00  9.911e-01    58.2   0.0113 *
+## mri_task_numeric      -5.201e-14  5.636e-07  9.911e-01     0.0   1.0000  
+## mean                   2.797e-13  1.240e-06  9.911e-01     0.0   1.0000  
+## mri_task_numeric:mean -4.968e-13  2.171e-06  9.911e-01     0.0   1.0000  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) mr_ts_ mean  
+## mr_tsk_nmrc  0.000              
+## mean         0.000 -0.408       
+## mr_tsk_nmr:  0.000  0.386 -0.943
+## convergence code: 0
+## Model failed to converge with max|grad| = 0.400872 (tol = 0.002, component 1)
+## Model is nearly unidentifiable: very large eigenvalue
+##  - Rescale variables?</code></pre>
 </div>
 
 
