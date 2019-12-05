@@ -78,4 +78,80 @@ mri_df = read.csv("merged_wholebrain_cope12_report.csv")
 df_mri_behav <- merge(df,mri_df,by="subject")
 ```
 
-### Recode Copes into Tasks/Conditions
+### Recode Copes into Tasks
+```{r}
+df_mri_behav$mri_task <- NA
+df_mri_behav$mri_task <- ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'stats/tstat1', 'tonestr_rand', 
+                                ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'stats/zstat1', 'tonestr_rand', 
+                                       ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'thresh_zstat1', 'tonestr_rand', 
+                                              ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'stats/tstat2', 'speechstr_rand', 
+                                                     ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'stats/zstat2', 'speechstr_rand',
+                                                           ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'thresh_zstat2', 'speechstr_rand', 
+                                                                  ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'stats/tstat2', 'tonerand_str', 
+                                ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'stats/zstat2', 'tonerand_str', 
+                                       ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'thresh_zstat2', 'tonerand_str', 
+                                              ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'stats/tstat1', 'speechrand_str', 
+                                                     ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'stats/zstat1', 'speechrand_str',
+                                                           ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'thresh_zstat1', 'speechrand_str','null'))))))))))))
+```
+
+### Recode Copes into Tasks Numeric
+```{r}
+df_mri_behav$mri_task_numeric <- NA
+df_mri_behav$mri_task_numeric <- ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'stats/tstat1', 0, 
+                                ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'stats/zstat1', 0, 
+                                       ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'thresh_zstat1', 0, 
+                                              ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'stats/tstat2', 1, 
+                                                     ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'stats/zstat2', 1,
+                                                           ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'thresh_zstat2', 1, 
+                                                                  ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'stats/tstat2', 2, 
+                                ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'stats/zstat2', 2, 
+                                       ifelse(df_mri_behav$cope == 1 & df_mri_behav$stat == 'thresh_zstat2', 2, 
+                                              ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'stats/tstat1', 3, 
+                                                     ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'stats/zstat1', 3,
+                                                           ifelse(df_mri_behav$cope == 2 & df_mri_behav$stat == 'thresh_zstat1', 3,'null'))))))))))))
+write.csv(df_mri_behav, "/Volumes/data/projects/blast/data_summaries/adult_composite_in_lab_online.csv")
+```
+
+## Statistics
+### Paired Samples T-test
+```{r eval=TRUE}
+df_mri_behav$mri_task_numeric <- as.numeric(df_mri_behav$mri_task_numeric)
+
+df_mri_subset1 <- subset(df_mri_behav, mri_task == "tonestr_rand" & stat == "stats/tstat1", select = subject:mri_task_numeric)
+df_mri_subset2 <- subset(df_mri_behav, mri_task == "speechstr_rand" & stat == "stats/tstat2", select = subject:mri_task_numeric)
+df_mri_subset <- rbind(df_mri_subset1,df_mri_subset2)
+
+t.test(df_mri_subset$mean, df_mri_subset$mri_task_numeric, paired = TRUE, alternative = "two.sided")
+```
+### Correlation
+```{r eval =TRUE}
+tone.cor <- cor.test(df_mri_subset1$mean, df_mri_subset1$nih_pvt_std, method = c("pearson"))
+speech.cor <- cor.test(df_mri_subset2$mean, df_mri_subset2$nih_pvt_std, method = c("pearson"))
+tone.cor$p.value
+tone.cor$estimate
+speech.cor$p.value
+speech.cor$estimate
+```
+
+### Linear Regression
+```{r eval=TRUE}
+vocab.linearMod <- lm(nih_pvt_std~ mri_task*mean, data=df_mri_subset) 
+summary(vocab.linearMod)
+
+IQ.linearMod <- lm(kbit_matrices_std~ mri_task*mean, data=df_mri_subset) 
+summary(IQ.linearMod)
+
+df_mri_subset$ctopp_nwr_std <- as.numeric(df_mri_subset$ctopp_nwr_std)
+ctopp.linearMod <- lm(ctopp_nwr_std~ mri_task*mean, data=df_mri_subset) 
+summary(ctopp.linearMod)
+
+flanker.linearMod <- lm(nih_flanker_std~ mri_task*mean, data=df_mri_subset) 
+summary(flanker.linearMod)
+```
+
+### GLMER --model does not converge
+```{r eval =TRUE}
+model.vocab<- lmer(nih_pvt_std~ 1 + mri_task_numeric*mean + (1|subject),data = df_mri_subset)
+summary(model.vocab)
+```
