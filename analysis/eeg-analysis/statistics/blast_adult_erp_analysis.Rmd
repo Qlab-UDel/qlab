@@ -8,7 +8,7 @@ output: html_document
 ## This code analyzes the BLAST projects' adult EEG data.
 
 ### Import libraries
-```{r, eval=TRUE}
+```{r}
 library(psych)
 library(readr)
 library(optimx)
@@ -25,7 +25,7 @@ library(ez)
 library(dplyr)
 ```
 ### Import data as dataframe
-```{r, eval=TRUE}
+```{r}
 setwd("/Volumes/data/projects/blast/adult_erp_manuscript/")
 df_corr=read.csv('blast_online_erp_adult_corr_data.csv')
 df_factor=read.csv('blast_adult_factor_analysis_n45.csv')
@@ -117,6 +117,21 @@ df_corr$High_Low_MMN = df_corr$High - df_corr$Low
 df_corr$Syllable = (df_early$Syllable_High_Short+df_early$Syllable_High_Long+df_early$Syllable_Low_Short+df_early$Syllable_Low_Long)/4
 df_corr$Voice = (df_early$Voice_High_Short+df_early$Voice_High_Long+df_early$Voice_Low_Short+df_early$Voice_Low_Long)/4
 df_corr$Voice_Syllable_MMN = df_corr$Voice - df_corr$Syllable
+
+Syll_High = (df_early$Syllable_High_Short+df_early$Syllable_High_Long)/2
+Syll_Low = (df_early$Syllable_Low_Short+df_early$Syllable_Low_Long)/2
+Voice_High = (df_early$Voice_High_Short+df_early$Voice_High_Long)/2
+Voice_Low = (df_early$Voice_Low_Short+df_early$Voice_Low_Long)/2
+
+Syll_Short = (df_early$Syllable_High_Short+df_early$Syllable_Low_Short)/2
+Syll_Long = (df_early$Syllable_High_Long+df_early$Syllable_Low_Long)/2
+Voice_Short = (df_early$Voice_High_Short+df_early$Voice_Low_Short)/2
+Voice_Long = (df_early$Voice_High_Long+df_early$Voice_Low_Long)/2
+
+df_corr$Syll_Local = (Syll_Short-Syll_Long)
+df_corr$Syll_Global = (Syll_High-Syll_Low)
+df_corr$Voice_Local = (Voice_Short-Voice_Long)
+df_corr$Voice_Global = (Voice_High-Voice_Low)
 ```
 
 ```{r, eval=TRUE}
@@ -135,13 +150,17 @@ df_corr$High_Low_MMN = as.numeric(df_corr$High_Low_MMN)
 df_corr$Syllable = as.numeric(df_corr$Syllable)
 df_corr$Voice = as.numeric(df_corr$Voice)
 df_corr$Voice_Syllable_MMN = as.numeric(df_corr$Voice_Syllable_MMN)
+df_corr$Syll_Local = as.numeric(df_corr$Syll_Local)
+df_corr$Syll_Global = as.numeric(df_corr$Syll_Global)
+df_corr$Voice_Local = as.numeric(df_corr$Voice_Local)
+df_corr$Voice_Global = as.numeric(df_corr$Voice_Global)
 ```
 
 ## Early Correlation 
 ### Run correlation matrix
 ```{r, echo=TRUE}
-#df_corr<- na.omit(df_corr)
-mycor_early <- rcorr(as.matrix(df_corr),type = "spearman")
+df_corr_early<- df_corr
+mycor_early <- rcorr(as.matrix(df_corr_early),type = "spearman")
 mycor_early$r #Pearsons R
 mycor_early$P #P values
 my_early_cor_p <- mycor_early$P
@@ -149,7 +168,7 @@ my_early_cor_r <- mycor_early$r
 ```
 
 ### Organizing correlation data for Late Time Window
-```{r, eval=TRUE}
+```{r}
 df_factor$Late = as.numeric(df_factor$Late)
 df_late = cast(df_factor,subject~Domain+Global+Local,value="Late")
 
@@ -164,6 +183,21 @@ df_corr$High_Low_MMN = df_corr$High - df_corr$Low
 df_corr$Syllable = (df_late$Syllable_High_Short+df_late$Syllable_High_Long+df_late$Syllable_Low_Short+df_late$Syllable_Low_Long)/4
 df_corr$Voice = (df_late$Voice_High_Short+df_late$Voice_High_Long+df_late$Voice_Low_Short+df_late$Voice_Low_Long)/4
 df_corr$Voice_Syllable_MMN = df_corr$Voice - df_corr$Syllable
+
+Syll_High = (df_late$Syllable_High_Short+df_late$Syllable_High_Long)/2
+Syll_Low = (df_late$Syllable_Low_Short+df_late$Syllable_Low_Long)/2
+Voice_High = (df_late$Voice_High_Short+df_late$Voice_High_Long)/2
+Voice_Low = (df_late$Voice_Low_Short+df_late$Voice_Low_Long)/2
+
+Syll_Short = (df_late$Syllable_High_Short+df_late$Syllable_Low_Short)/2
+Syll_Long = (df_late$Syllable_High_Long+df_late$Syllable_Low_Long)/2
+Voice_Short = (df_late$Voice_High_Short+df_late$Voice_Low_Short)/2
+Voice_Long = (df_late$Voice_High_Long+df_late$Voice_Low_Long)/2
+
+df_corr$Syll_Local = (Syll_Short-Syll_Long)
+df_corr$Syll_Global = (Syll_High-Syll_Low)
+df_corr$Voice_Local = (Voice_Short-Voice_Long)
+df_corr$Voice_Global = (Voice_High-Voice_Low)
 ```
 
 ```{r, eval=TRUE}
@@ -182,13 +216,17 @@ df_corr$High_Low_MMN = as.numeric(df_corr$High_Low_MMN)
 df_corr$Syllable = as.numeric(df_corr$Syllable)
 df_corr$Voice = as.numeric(df_corr$Voice)
 df_corr$Voice_Syllable_MMN = as.numeric(df_corr$Voice_Syllable_MMN)
+df_corr$Syll_Local = as.numeric(df_corr$Syll_Local)
+df_corr$Syll_Global = as.numeric(df_corr$Syll_Global)
+df_corr$Voice_Local = as.numeric(df_corr$Voice_Local)
+df_corr$Voice_Global = as.numeric(df_corr$Voice_Global)
 ```
 
 ## Late Correlation 
 ### Run correlation matrix
 ```{r, echo=TRUE}
-#df_corr<- na.omit(df_corr)
-mycor_late <- rcorr(as.matrix(df_corr),type = "spearman")
+df_corr_late <- df_corr
+mycor_late <- rcorr(as.matrix(df_corr_late),type = "spearman")
 mycor_late$r #Pearsons R
 mycor_late$P #P values
 my_late_cor_p <- mycor_late$P
@@ -266,17 +304,26 @@ ggplot() +
   theme(legend.position = "none")
 ```
 
-### Plotting the early correlation
+### Plotting the early correlations
 ```{r}
-ggplot(df_corr, aes(x=High_Low_MMN, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN", x="Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
+ggplot(df_corr_early, aes(x=High_Low_MMN, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN", x="Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
+```
+```{r}
+ggplot(df_corr_early, aes(x=Syll_Global, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN for Syllables", x="Syllable Only Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
+```
+```{r}
+ggplot(df_corr_early, aes(x=Syll_Global, y=mean_rt)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Mean RT & Global (p) MMN for Syllables", x="Syllable Only Global (p) MMN", y = "Mean Reaction Time") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
 ```
 
-### Plotting the late correlation
+### Plotting the late correlations
 ```{r}
-ggplot(df_corr, aes(x=Short, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL RT & Local (p)", x="Local (p) Short Only", y = "RT Slope") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
+ggplot(df_corr_late, aes(x=Short, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL RT & Local (p)", x="Local (p) Short Only", y = "RT Slope") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
 ```
 
-### Plotting the late correlation
 ```{r}
-ggplot(df_corr, aes(x=Short_Long_MMN, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL RT & Local (p) MMN", x="Local (p) MMN", y = "RT Slope") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
+ggplot(df_corr_late, aes(x=Short_Long_MMN, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL RT & Local (p) MMN", x="Local (p) MMN", y = "RT Slope") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
 ```
+```{r}
+ggplot(df_corr_late, aes(x=Voice_Global, y=entropy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Entropy & Global (p) MMN for Voice", x="Voice Only Global (p) MMN", y = "Entropy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=lm)
+```
+
