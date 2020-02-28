@@ -1,7 +1,7 @@
 #  SIT Reaction Time Analysis
 #  Violet Kozloff
 #  Adapted from extraction files produced by An Nguyen
-#  Last modified July 3rd, 2019
+#  Last modified January 22nd, 2020
 #  This script extracts mean reaction time and reaction time slope for statistical learning tasks involving structured and random triplets of letters and images
 #  NOTE: relevant columns have been pre-selected through sit_cleaning.R
 #  NOTE: Excludes any trials where participant responded to less than 50% of the targets (or responded to a different image than the target)
@@ -12,12 +12,12 @@
 # Prepare workspace ------------------------------------------------------------------------------------------------------
 
 # Install packages
-install.packages("reshape")
-install.packages("plyr")
-install.packages("corrplot")
-library("reshape")
-library("plyr")
-library("corrplot")
+# install.packages("reshape")
+# install.packages("plyr")
+# install.packages("corrplot")
+require("reshape")
+require("plyr")
+require("corrplot")
 
 # Set working directory
 setwd("/Volumes/data/projects/completed_projects/sit/analysis/")
@@ -148,7 +148,6 @@ vv_data$structured_targ <- gsub (".bmp", "", vv_data$structured_targ, ignore.cas
 # Separate random condition
 random_ll <- ll_data[ which(ll_data$condition== "R"),]
 
-
 ## Index the targets -----------------------------------------------
 
 # Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding stimulus ---------------------------------------------
@@ -189,17 +188,22 @@ this_trial_before <- NULL
 this_trial_num_before <- NULL
 trial_before_df <- NULL
 trial_num_before <- NULL
+this_target_item <- NULL
+target_item <- NULL
+group <- NULL
 
 # Isolate participants' response times.
 # Include rows when the participant responded to the stimulus preceding the target (i.e. any time that the participant pressed the button within one stimulus before the target)
-for(i in 1:nrow(random_ll_targets)) 
-{
+for(i in 1:nrow(random_ll_targets)) {
   # Isolate the ID number
   this_id <- random_ll_targets[i,]$part_id
   id <- append(id, paste(this_id))
   # Isolate the trial number
   this_trial_num <- random_ll_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
+  # Isolate the target
+  this_target_item <- random_ll_targets[i,]$random_targ
+  target_item <- append(target_item, paste(this_target_item))
   # Isolate the target's rt
   this_targ_rt <- random_ll_targets[i,]$l_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
@@ -216,6 +220,7 @@ for(i in 1:nrow(random_ll_targets))
   loop_before <- append(loop_before, preceding_loop) 
   preceding_rt <- this_trial_before$l_rt
   rt_before <- append (rt_before, preceding_rt)
+  group <- append(group, "same")
   # If the participant responded while the target was presented
   if (!is.na(random_ll_targets[i,] [,"l_rt"])){
     # Count their response time from the target stimulus
@@ -244,7 +249,7 @@ for(i in 1:nrow(random_ll_targets))
 }
 
 # Match id and response times
-random_ll_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+random_ll_extracted <- data.frame(id, trial, target_item, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
 
@@ -325,18 +330,13 @@ for(id in extracted_part_id){
   range <- append (range, (this_range[2]-this_range[1]))
 }
 
-number_rts
+length(number_rts)
 mean(number_rts)
 sd(number_rts)
 
 # Combine data for each participant
 rll <- data.frame(part_id, task, same_or_diff, test_phase, domain, type, mean_rt, range, upper_bound, lower_bound, rt_slope) 
 
-#Remove any points outside 2.5 stdev of the mean
-# lowerbound <- mean(rll$rt_slope) - 2.5*sd(rll$rt_slope)
-# upperbound <- mean(rll$rt_slope) + 2.5*sd(rll$rt_slope)
-# rll <- rll[rll$rt_slope>=lowerbound,]
-# rll <- rll[rll$rt_slope<=upperbound,]
 
 
 # ******************** CONDITION 2: RANDOM LV *******************
@@ -387,6 +387,9 @@ this_trial_before <- NULL
 this_trial_num_before <- NULL
 trial_before_df <- NULL
 trial_num_before <- NULL
+this_target_item <- NULL
+target_item <- NULL
+group <- NULL
 
 # Isolate participants' response times.
 # Include rows when the participant responded to the stimulus preceding the target (i.e. any time that the participant pressed the button within one stimulus before the target)
@@ -398,6 +401,9 @@ for(i in 1:nrow(random_lv_targets))
   # Isolate the trial number
   this_trial_num <- random_lv_targets[i,]$trialnum
   trial <- append(trial, paste(this_trial_num))
+  # Isolate the target
+  this_target_item <- random_lv_targets[i,]$random_targ
+  target_item <- append(target_item, paste(this_target_item))
   # Isolate the target's rt
   this_targ_rt <- random_lv_targets[i,]$v_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
@@ -415,6 +421,7 @@ for(i in 1:nrow(random_lv_targets))
   #loop_after <- append (loop_after, folvowing_loop)
   preceding_rt <- this_trial_before$v_rt
   rt_before <- append (rt_before, preceding_rt)
+  group <- append(group, "different")
   # If the participant responded while the target was presented
   if (!is.na(random_lv_targets[i,] [,"v_rt"])){
     # Count their response time from the target stimulus
@@ -443,7 +450,7 @@ for(i in 1:nrow(random_lv_targets))
 }
 
 # Match id and response times
-random_lv_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+random_lv_extracted <- data.frame(id, trial, target_item, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
 
@@ -527,11 +534,6 @@ number_rts
 mean(number_rts)
 sd(number_rts)
 
-#Remove any points outside 2.5 stdev of the mean
-# lowerbound <- mean(rlv$rt_slope) - 2.5*sd(rlv$rt_slope)
-# upperbound <- mean(rlv$rt_slope) + 2.5*sd(rlv$rt_slope)
-# rlv <- rlv[rlv$rt_slope>=lowerbound,]
-# rlv <- rlv[rlv$rt_slope<=upperbound,]
 
 
 
@@ -583,6 +585,10 @@ this_trial_before <- NULL
 this_trial_num_before <- NULL
 trial_before_df <- NULL
 trial_num_before <- NULL
+this_target_item <- NULL
+target_item <- NULL
+group <- NULL
+
 
 # Identify the rows when this condition's target was presented
 random_vl_targets <- random_vl[which(random_vl$random_targ==random_vl$image),]
@@ -597,6 +603,9 @@ for(i in 1:nrow(random_vl_targets))
   # Isolate the trial number
   this_trial_num <- random_vl_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
+  # Isolate the target
+  this_target_item <- random_vl_targets[i,]$random_targ
+  target_item <- append(target_item, paste(this_target_item))
   # Isolate the target's rt
   this_targ_rt <- random_vl_targets[i,]$l_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
@@ -614,6 +623,7 @@ for(i in 1:nrow(random_vl_targets))
   #loop_after <- append (loop_after, fovlowing_loop)
   preceding_rt <- this_trial_before$l_rt
   rt_before <- append (rt_before, preceding_rt)
+  group <- append(group, "different")
   # If the participant responded while the target was presented
   if (!is.na(random_vl_targets[i,] [,"l_rt"])){
     # Count their response time from the target stimulus
@@ -642,7 +652,7 @@ for(i in 1:nrow(random_vl_targets))
 }
 
 # Match id and response times
-random_vl_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+random_vl_extracted <- data.frame(id, trial, target_item, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
 
@@ -727,11 +737,6 @@ number_rts
 mean(number_rts)
 sd(number_rts)
 
-#Remove any points outside 2.5 stdev of the mean
-# lowerbound <- mean(rvl$rt_slope) - 2.5*sd(rvl$rt_slope)
-# upperbound <- mean(rvl$rt_slope) + 2.5*sd(rvl$rt_slope)
-# rvl <- rvl[rvl$rt_slope>=lowerbound,]
-# rvl <- rvl[rvl$rt_slope<=upperbound,]
 
 
 # for internal checking only: find mean rt_slope
@@ -783,6 +788,9 @@ this_trial_before <- NULL
 this_trial_num_before <- NULL
 trial_before_df <- NULL
 trial_num_before <- NULL
+this_target_item <- NULL
+target_item <- NULL
+group <- NULL
 
 # Identify the rows when this condition's target was presented
 random_vv_targets <- random_vv[which(random_vv$random_targ==random_vv$image),]
@@ -797,6 +805,9 @@ for(i in 1:nrow(random_vv_targets))
   # Isolate the trial number
   this_trial_num <- random_vv_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
+  # Isolate the target
+  this_target_item <- random_vv_targets[i,]$random_targ
+  target_item <- append(target_item, paste(this_target_item))
   # Isolate the target's rt
   this_targ_rt <- random_vv_targets[i,]$v_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
@@ -814,6 +825,7 @@ for(i in 1:nrow(random_vv_targets))
   #loop_after <- append (loop_after, fovvowing_loop)
   preceding_rt <- this_trial_before$v_rt
   rt_before <- append (rt_before, preceding_rt)
+  group <- append(group, "same")
   # If the participant responded while the target was presented
   if (!is.na(random_vv_targets[i,] [,"v_rt"])){
     # Count their response time from the target stimulus
@@ -842,7 +854,7 @@ for(i in 1:nrow(random_vv_targets))
 }
 
 # Match id and response times
-random_vv_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+random_vv_extracted <- data.frame(id, trial, target_item, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
 
@@ -933,12 +945,6 @@ length(number_rts)
 mean(number_rts)
 sd(number_rts)
 
-# Remove any points outside 2.5 stdev of the mean
-# lowerbound <- mean(rvv$rt_slope) - 2.5*sd(rvv$rt_slope)
-# upperbound <- mean(rvv$rt_slope) + 2.5*sd(rvv$rt_slope)
-# rvv <- rvv[rvv$rt_slope>=lowerbound,]
-# rvv <- rvv[rvv$rt_slope<=upperbound,]
-
 
 
 # ******************** CONDITION 5: STRUCTURED LL*******************
@@ -992,7 +998,9 @@ this_trial_before <- NULL
 this_trial_num_before <- NULL
 trial_before_df <- NULL
 trial_num_before <- NULL
-
+this_target_item <- NULL
+target_item <- NULL
+group <- NULL
 
 # Isolate participants' response times.
 # Include rows when the participant responded to the stimulus preceding the target (i.e. any time that the participant pressed the button within one stimulus before the target)
@@ -1004,6 +1012,9 @@ for(i in 1:nrow(structured_ll_targets))
   # Isolate the trial number
   this_trial_num <- structured_ll_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
+  # Isolate the target
+  this_target_item <- structured_ll_targets[i,]$structured_targ
+  target_item <- append(target_item, paste(this_target_item))
   # Isolate the target's rt
   this_targ_rt <- structured_ll_targets[i,]$l_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
@@ -1020,6 +1031,7 @@ for(i in 1:nrow(structured_ll_targets))
   loop_before <- append(loop_before, preceding_loop) 
   preceding_rt <- this_trial_before$l_rt
   rt_before <- append (rt_before, preceding_rt)
+  group <- append(group, "same")
   # If the participant responded while the target was presented
   if (!is.na(structured_ll_targets[i,] [,"l_rt"])){
     # Count their response time from the target stimulus
@@ -1048,7 +1060,7 @@ for(i in 1:nrow(structured_ll_targets))
 }
 
 # Match id and response times
-structured_ll_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+structured_ll_extracted <- data.frame(id, trial, target_item, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
@@ -1137,11 +1149,6 @@ number_rts
 mean(number_rts)
 sd(number_rts)
 
-#Remove any points outside 2.5 stdev of the mean
-# lowerbound <- mean(sll$rt_slope) - 2.5*sd(sll$rt_slope)
-# upperbound <- mean(sll$rt_slope) + 2.5*sd(sll$rt_slope)
-# sll <- sll[sll$rt_slope>=lowerbound,]
-# sll <- sll[sll$rt_slope<=upperbound,]
 
 # TEST: find mean rt_slope
 mean_sll_rt_slope <- mean (sll$rt_slope)
@@ -1197,6 +1204,9 @@ this_trial_before <- NULL
 this_trial_num_before <- NULL
 trial_before_df <- NULL
 trial_num_before <- NULL
+this_target_item <- NULL
+target_item <- NULL
+group <- NULL
 
 # Isolate participants' response times.
 # Include rows when the participant responded to the stimulus preceding the target (i.e. any time that the participant pressed the button within one stimulus before the target)
@@ -1208,6 +1218,9 @@ for(i in 1:nrow(structured_lv_targets))
   # Isolate the trial number
   this_trial_num <- structured_lv_targets[i,]$trialnum
   trial <- append(trial, paste(this_trial_num))
+  # Isolate the target
+  this_target_item <- structured_lv_targets[i,]$structured_targ
+  target_item <- append(target_item, paste(this_target_item))
   # Isolate the target's rt
   this_targ_rt <- structured_lv_targets[i,]$l_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
@@ -1225,6 +1238,7 @@ for(i in 1:nrow(structured_lv_targets))
   #loop_after <- append (loop_after, folvowing_loop)
   preceding_rt <- this_trial_before$l_rt
   rt_before <- append (rt_before, preceding_rt)
+  group <- append(group, "different")
   # If the participant responded while the target was presented
   if (!is.na(structured_lv_targets[i,] [,"l_rt"])){
     # Count their response time from the target stimulus
@@ -1253,7 +1267,7 @@ for(i in 1:nrow(structured_lv_targets))
 }
 
 # Match id and response times
-structured_lv_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+structured_lv_extracted <- data.frame(id, trial, target_item, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
@@ -1340,11 +1354,6 @@ length(number_rts)
 mean(number_rts)
 sd(number_rts)
 
-#Remove any points outside 2.5 stdev of the mean
-# lowerbound <- mean(slv$rt_slope) - 2.5*sd(slv$rt_slope)
-# upperbound <- mean(slv$rt_slope) + 2.5*sd(slv$rt_slope)
-# slv <- slv[slv$rt_slope>=lowerbound,]
-# slv <- slv[slv$rt_slope<=upperbound,]
 
 
 # TEST: find mean rt_slope
@@ -1360,8 +1369,10 @@ structured_vl <- vl_data[ which(vl_data$condition== "S"),]
 
 # Find all of the triplets presented
 structured_vl$triplet <- rep (do.call(paste, as.data.frame(t(matrix(structured_vl$image, 3)), stringsAsFactors=FALSE)), each = 3)
-
 structured_vl$triplet <- gsub("Alien", "", structured_vl$triplet)
+
+# Remove the mistaken 10-21-22 triplet
+structured_vl <- (dplyr::filter(structured_vl, triplet!="10 11 22"))
 
 # Identify the rows when this condition's target was presented
 structured_vl_targets <- structured_vl[which(structured_vl$structured_targ==structured_vl$image),]
@@ -1379,7 +1390,7 @@ for(id in list_part_id){
 svl_line_number <- data.frame(part_id, total_lines)
 # There should be 32 entries
 length(svl_line_number$part_id)
-# They should all contain 288 lines
+# They should all contain 276 lines = 288 - (4 triplets with "10 11 22" x 3 stimuli)
 svl_line_number$total_lines
 
 # Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding/ fovlowing stimulus ---------------------------------------------
@@ -1403,6 +1414,9 @@ this_trial_before <- NULL
 this_trial_num_before <- NULL
 trial_before_df <- NULL
 trial_num_before <- NULL
+this_target_item <- NULL
+target_item <- NULL
+group <- NULL
 
 # Identify the rows when this condition's target was presented
 structured_vl_targets <- structured_vl[which(structured_vl$structured_targ==structured_vl$image),]
@@ -1417,6 +1431,9 @@ for(i in 1:nrow(structured_vl_targets))
   # Isolate the trial number
   this_trial_num <- structured_vl_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
+  # Isolate the target
+  this_target_item <- structured_vl_targets[i,]$structured_targ
+  target_item <- append(target_item, paste(this_target_item))
   # Isolate the target's rt
   this_targ_rt <- structured_vl_targets[i,]$v_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
@@ -1434,6 +1451,7 @@ for(i in 1:nrow(structured_vl_targets))
   #loop_after <- append (loop_after, fovlowing_loop)
   preceding_rt <- this_trial_before$v_rt
   rt_before <- append (rt_before, preceding_rt)
+  group <- append(group, "different")
   # If the participant responded while the target was presented
   if (!is.na(structured_vl_targets[i,] [,"v_rt"])){
     # Count their response time from the target stimulus
@@ -1462,7 +1480,7 @@ for(i in 1:nrow(structured_vl_targets))
 }
 
 # Match id and response times
-structured_vl_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+structured_vl_extracted <- data.frame(id, trial, target_item, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
@@ -1476,7 +1494,7 @@ for(i in extracted_part_id){target_sum <- append(target_sum,sum(structured_vl_ex
 
 # TEST: This should be equal to 32
 length (target_sum)
-# TEST: This should contain a vector full of 24s
+# TEST: This should contain a vector full of 24s (if the target was not "Alien22") and 20s (if it was)
 target_sum
 
 
@@ -1493,7 +1511,8 @@ structured_vl_extracted <- structured_vl_extracted[!is.na(structured_vl_extracte
 
 # Calculate mean rt and rt_slope  -----------------------------------------------------------------------------------------------------
 
-#There are 24 targets for each participant. Some may have a low hit rate (responded to 12 targets or less)
+# Each participant should have seen 24 targets total (though some saw only 20).
+# Regardless, ome may have a low hit rate (responded to < 13 targets, ie. < half of the total targets they should have seen)
 low_hits<-NULL
 # Find people with a low hit rate
 for (id in extracted_part_id){
@@ -1550,15 +1569,7 @@ mean(number_rts)
 sd(number_rts)
 length(number_rts)
 
-#Remove any points outside 2.5 stdev of the mean
-# lowerbound <- mean(svl$rt_slope) - 2.5*sd(svl$rt_slope)
-#upperbound <- mean(svl$rt_slope) + 2.5*sd(svl$rt_slope)
-#svl <- svl[svl$rt_slope>=lowerbound,]
-#svl <- svl[svl$rt_slope<=upperbound,]
 
-
-# for internal checking only: find mean rt_slope
-mean_svl_rt_slope <- mean (slv$rt_slope)
 
 # TEST: find mean rt_slope
 mean_svl_rt_slope <- mean (svl$rt_slope)
@@ -1572,13 +1583,15 @@ mean_svl_rt_slope
 # Separate structured and structured conditions
 structured_vv <- vv_data[ which(vv_data$condition== "S"),]
 
-# Identify the rows when this condition's target was presented
-structured_vv_targets <- structured_vv[which(structured_vv$structured_targ==structured_vv$image),]
-
 # Find all of the triplets presented
 structured_vv$triplet <- rep (do.call(paste, as.data.frame(t(matrix(structured_vv$image, 3)), stringsAsFactors=FALSE)), each = 3)
-
 structured_vv$triplet <- gsub("Alien", "", structured_vv$triplet)
+
+# Remove the mistaken 10-21-22 triplet
+structured_vv <- (dplyr::filter(structured_vv, triplet!="10 11 22"))
+
+# Identify the rows when this condition's target was presented
+structured_vv_targets <- structured_vv[which(structured_vv$structured_targ==structured_vv$image),]
 
 # TEST: Create a data frame to check the number of lines per participant
 list_part_id <- unique(structured_vv_targets$part_id)
@@ -1591,7 +1604,7 @@ for(id in list_part_id){
 svv_line_number <- data.frame(part_id, total_lines)
 # There should be 32 entries (for the 32 participants)
 length(svv_line_number$part_id)
-# They should all contain 288 lines (for the lines per participant)
+# They should all contain 276 lines = 288 - (4 triplets with "10 11 22" x 3 stimuli)
 svv_line_number$total_lines
 # Identify response times to target stimuli. Include times when participant responded while target was displayed, or during preceding/ fovvowing stimulus ---------------------------------------------
 
@@ -1614,6 +1627,9 @@ this_trial_before <- NULL
 this_trial_num_before <- NULL
 trial_before_df <- NULL
 trial_num_before <- NULL
+this_target_item <- NULL
+target_item <- NULL
+group <- NULL
 
 # Isolate participants' response times.
 # Include rows when the participant responded to the stimulus preceding the target (i.e. any time that the participant pressed the button within one stimulus before the target)
@@ -1625,6 +1641,9 @@ for(i in 1:nrow(structured_vv_targets))
   # Isolate the trial number
   this_trial_num <- structured_vv_targets[i,]$trial_num
   trial <- append(trial, paste(this_trial_num))
+  # Isolate the target
+  this_target_item <- structured_vv_targets[i,]$structured_targ
+  target_item <- append(target_item, paste(this_target_item))
   # Isolate the target's rt
   this_targ_rt <- structured_vv_targets[i,]$v_rt
   target_rt <- append(target_rt, paste(this_targ_rt))
@@ -1641,6 +1660,7 @@ for(i in 1:nrow(structured_vv_targets))
   loop_before <- append(loop_before, preceding_loop) 
   preceding_rt <- this_trial_before$v_rt
   rt_before <- append (rt_before, preceding_rt)
+  group <- append(group, "same")
   # If the participant responded while the target was presented
   if (!is.na(structured_vv_targets[i,] [,"v_rt"])){
     # Count their response time from the target stimulus
@@ -1669,7 +1689,7 @@ for(i in 1:nrow(structured_vv_targets))
 }
 
 # Match id and response times
-structured_vv_extracted <- data.frame(id, trial, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
+structured_vv_extracted <- data.frame(id, trial, target_item, trial_num_before, loop, loop_before, target_rt, rt_before, rt_col)
 
 # Reindex the trial numbers for only trials with response times -----------------------------------------------------------------------------------------------------
 
@@ -1682,7 +1702,8 @@ for(i in extracted_part_id){target_sum <- append(target_sum,sum(structured_vv_ex
 
 # TEST: This should be equal to 32 (for the 32 participants)
 length (target_sum)
-# TEST: This should contain a vector full of 24s (for the 24 targets per participant)
+# TEST: This should contain a vector full of 24s (if the target was not "Alien22") and 20s (if it was)
+# note that sit_a_054's file is cut off midway through the activity and only saw 16 targets
 target_sum
 
 # For each participant, index the targets
@@ -1757,11 +1778,6 @@ length(number_rts)
 # Combine data for each participant
 svv <- data.frame(part_id, task, same_or_diff, test_phase, domain,type,mean_rt, range, upper_bound, lower_bound, rt_slope)
 
-#Remove any points outside 2.5 stdev of the mean
-#lowerbound <- mean(svv$rt_slope) - 2.5*sd(svv$rt_slope)
-#upperbound <- mean(svv$rt_slope) + 2.5*sd(svv$rt_slope)
-#svv <- svv[svv$rt_slope>=lowerbound,]
-#svv <- svv[svv$rt_slope<=upperbound,]
 
 # TEST: find mean rt_slope
 mean_svv_rt_slope <- mean (svv$rt_slope)
@@ -1774,6 +1790,9 @@ mean_svv_rt_slope
 # Bind conditions
 indiv_rt_slope<- data.frame(rbind(rll, rlv, rvl, rvv, sll, slv, svl, svv))
 
+write.csv(indiv_rt_slope, "/Volumes/data/projects/completed_projects/sit/analysis/summaries/sit_indiv_rt_slope.csv")
+
+
 sd_rll_rt_slope <- sd(rll$rt_slope)
 sd_rlv_rt_slope <- sd(rlv$rt_slope)
 sd_rvl_rt_slope <- sd(rvl$rt_slope)
@@ -1783,6 +1802,25 @@ sd_slv_rt_slope <- sd(slv$rt_slope)
 sd_svl_rt_slope <- sd(svl$rt_slope)
 sd_svv_rt_slope <- sd(svv$rt_slope)
 
+
+
+sd_slv_mean_rt <- sd(slv$mean_rt)
+mean_slv_mean_rt <- mean(slv$mean_rt)
+sd_rvl_mean_rt <- sd(rvl$mean_rt)
+mean_rvl_mean_rt <- mean(rvl$mean_rt)
+sd_svl_mean_rt <- sd(svl$mean_rt)
+mean_svl_mean_rt <- mean(svl$mean_rt)
+sd_rlv_mean_rt <- sd(rlv$mean_rt)
+mean_rlv_mean_rt <- mean(rlv$mean_rt)
+
+sd_svv_mean_rt <- sd(svv$mean_rt)
+mean_svv_mean_rt <- mean(svv$mean_rt)
+sd_rvv_mean_rt <- sd(rvv$mean_rt)
+mean_rvv_mean_rt <- mean(rvv$mean_rt)
+sd_rll_mean_rt <- sd(rll$mean_rt)
+mean_rll_mean_rt <- mean(rll$mean_rt)
+sd_sll_mean_rt <- sd(sll$mean_rt)
+mean_sll_mean_rt <- mean(sll$mean_rt)
 
 
 # Summarize rt_slope
@@ -1875,4 +1913,54 @@ group_rt_slope <- data.frame(cbind(task, mean_rand_rt_slope, mean_struct_rt_slop
 
 # Write rt slope data into a file
 write.csv(group_rt_slope, "/Volumes/data/projects/completed_projects/sit/analysis/summaries/sit_rt_slope_group.csv")
+
+# Write RT data for each individual target into one file
+random_ll_points <- dplyr::select(random_ll_extracted, id, target_item, target_rt, targ_index)
+random_ll_points$type <- "random"
+random_ll_points$domain <- "linguistic"
+random_ll_points$same_or_diff <- "same"
+
+random_lv_points <- dplyr::select(random_lv_extracted, id, target_item, target_rt, targ_index)
+random_lv_points$type <- "random"
+random_lv_points$domain <- "linguistic"
+random_lv_points$same_or_diff <- "different"
+
+random_vl_points <- dplyr::select(random_vl_extracted, id, target_item, target_rt, targ_index)
+random_vl_points$type <- "random"
+random_vl_points$domain <- "non-linguistic"
+random_vl_points$same_or_diff <- "different"
+
+random_vv_points <- dplyr::select(random_vv_extracted, id, target_item, target_rt, targ_index)
+random_vv_points$type <- "random"
+random_vv_points$domain <- "non-linguistic"
+random_vv_points$same_or_diff <- "same"
+
+structured_ll_points <- dplyr::select(structured_ll_extracted, id, target_item, target_rt, targ_index)
+structured_ll_points$type <- "structured"
+structured_ll_points$domain <- "linguistic"
+structured_ll_points$same_or_diff <- "same"
+
+structured_lv_points <- dplyr::select(structured_lv_extracted, id, target_item, target_rt, targ_index)
+structured_lv_points$type <- "structured"
+structured_lv_points$domain <- "non-linguistic"
+structured_lv_points$same_or_diff <- "different"
+
+structured_vl_points <- dplyr::select(structured_vl_extracted, id, target_item, target_rt, targ_index)
+structured_vl_points$type <- "structured"
+structured_vl_points$domain <- "linguistic"
+structured_vl_points$same_or_diff <- "different"
+
+structured_vv_points <- dplyr::select(structured_vv_extracted, id, target_item, target_rt, targ_index)
+structured_vv_points$type <- "structured"
+structured_vv_points$domain <- "non-linguistic"
+structured_vv_points$same_or_diff <- "same"
+
+
+# Combine group accuracies into one data frame
+indiv_rt_points <- data.frame(rbind(random_ll_points, random_lv_points, random_vv_points, random_vl_points, 
+                                    structured_ll_points, structured_lv_points, structured_vl_points, structured_vv_points))
+indiv_rt_points <- dplyr::rename(indiv_rt_points, rt = target_rt)
+indiv_rt_points <- dplyr::rename(indiv_rt_points, part_id = id)
+
+write.csv(indiv_rt_points, "/Volumes/data/projects/completed_projects/sit/analysis/summaries/indiv_rts.csv")
 

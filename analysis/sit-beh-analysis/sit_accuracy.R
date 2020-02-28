@@ -1,7 +1,7 @@
 #  SIT ACCURACY EXTRACTION
 #  Violet Kozloff
 #  Adapted from analysis scripts by An Nguyen
-#  Last modified October 4th, 2019
+#  Last modified January 7th, 2020
 #  This script finds two-alternative forced-choice task accuracies for statistical learning tasks involving structured and random triplets of letters and images
 #  NOTE: relevant columns have been pre-selected through sit_cleaning.R
 #  ****************************************************************************
@@ -14,13 +14,16 @@
 # Prepare workspace ------------------------------------------------------------------------------------------------------
 
 # Install packages
-install.packages("reshape")
-install.packages("dplyr")
-install.packages("corrplot")
-library ("plyr")
-library("reshape")
-library("dplyr")
-library("corrplot")
+# install.packages("reshape")
+# install.packages("tidyverse")
+# install.packages("corrplot")
+# install.packages("lmerTest")
+
+require ("lmerTest")
+require ("plyr")
+require("reshape")
+require("corrplot")
+require("tidyverse")
 
 # Remove objects in environment
 rm(list=ls())
@@ -82,9 +85,35 @@ for (file in vv_files)
 setwd("/Volumes/data/projects/completed_projects/sit/analysis")
 
 
-# ******************** FIND ACCURACY FOR LV FILES *************************
+# ******************** II. FIND ACCURACY FOR LV FILES *************************
 
-# Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
+# Figure out the target presented in each accuracy trial ####
+
+# Find all of the triplets and foils presented
+lv_data <- filter(lv_data, !is.na(triplet_position))
+lv_data$first3<-paste(lv_data$first2AFC, lv_data$second2AFC, lv_data$third2AFC)
+lv_data$first3 <- gsub (".png", "", lv_data$first3)
+lv_data$second3<-paste(lv_data$fourth2AFC, lv_data$fifth2AFC, lv_data$sixth2AFC)
+lv_data$second3 <- gsub (".png", "", lv_data$second3)
+
+# Find all the triplets
+
+lv_data$triplet <- NA
+lv_data[which(lv_data$triplet_position==3),]$triplet <- lv_data[which(lv_data$triplet_position==3),]$first3
+lv_data[which(lv_data$triplet_position==4),]$triplet <- lv_data[which(lv_data$triplet_position==4),]$second3
+
+# Find all the foils
+
+lv_data$foil <- NA
+lv_data[which(lv_data$triplet_position==4),]$foil <- lv_data[which(lv_data$triplet_position==4),]$first3
+lv_data[which(lv_data$triplet_position==3),]$foil <- lv_data[which(lv_data$triplet_position==3),]$second3
+
+lv_data$trial <- paste(lv_data$first3, lv_data$second3)
+
+lv_data <- dplyr::select(filter(lv_data, triplet!="D U G"), part_id, exp_name, trial, foil, triplet, corr_resp, triplet_position)
+
+
+# Create a single data frame with each participant's accuracy for each condition ####-----------------------------------------------------------------------------------------------------
 
 # List unique participant IDs for this condition
 list_part_id <- unique(lv_data$part_id)
@@ -121,7 +150,33 @@ View(indiv_lv_accuracies)
 # ******************** III. FIND ll ACCURACY *************************
 
 
-# Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
+# Figure out the target presented in each accuracy trial ####
+
+# Find all of the triplets and foils presented
+ll_data <- filter(ll_data, !is.na(triplet_position))
+ll_data$first3<-paste(ll_data$first2AFC, ll_data$second2AFC, ll_data$third2AFC)
+ll_data$first3 <- gsub (".png", "", ll_data$first3)
+ll_data$second3<-paste(ll_data$fourth2AFC, ll_data$fifth2AFC, ll_data$sixth2AFC)
+ll_data$second3 <- gsub (".png", "", ll_data$second3)
+
+# Find all the triplets
+
+ll_data$triplet <- NA
+ll_data[which(ll_data$triplet_position==3),]$triplet <- ll_data[which(ll_data$triplet_position==3),]$first3
+ll_data[which(ll_data$triplet_position==4),]$triplet <- ll_data[which(ll_data$triplet_position==4),]$second3
+
+# Find all the foils
+
+ll_data$foil <- NA
+ll_data[which(ll_data$triplet_position==4),]$foil <- ll_data[which(ll_data$triplet_position==4),]$first3
+ll_data[which(ll_data$triplet_position==3),]$foil <- ll_data[which(ll_data$triplet_position==3),]$second3
+
+ll_data$trial <- paste(ll_data$first3, ll_data$second3)
+
+ll_data <- dplyr::select(filter(ll_data, triplet!="D U G"), part_id, exp_name, trial, foil, triplet, corr_resp, triplet_position)
+
+
+# Create a single data frame with each participant's accuracy for each condition ###-----------------------------------------------------------------------------------------------------
 
 # List unique participant IDs for this condition
 list_part_id <- unique(ll_data$part_id)
@@ -158,7 +213,33 @@ length(indiv_ll_accuracies$part_id)
 # ******************** V. FIND VL ACCURACY *************************
 
 
-# Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
+ # Figure out the target presented in each accuracy trial ####
+ 
+ # Find all of the triplets and foils presented
+ vl_data <- filter(vl_data, !is.na(triplet_position))
+ vl_data$first3<-paste(vl_data$first2AFC, vl_data$second2AFC, vl_data$third2AFC)
+ vl_data$first3 <- gsub (".png", "", vl_data$first3)
+ vl_data$second3<-paste(vl_data$fourth2AFC, vl_data$fifth2AFC, vl_data$sixth2AFC)
+ vl_data$second3 <- gsub (".png", "", vl_data$second3)
+ 
+ # Find all the triplets
+ 
+ vl_data$triplet <- NA
+ vl_data[which(vl_data$triplet_position==3),]$triplet <- vl_data[which(vl_data$triplet_position==3),]$first3
+ vl_data[which(vl_data$triplet_position==4),]$triplet <- vl_data[which(vl_data$triplet_position==4),]$second3
+ 
+ # Find all the foils
+ 
+ vl_data$foil <- NA
+ vl_data[which(vl_data$triplet_position==4),]$foil <- vl_data[which(vl_data$triplet_position==4),]$first3
+ vl_data[which(vl_data$triplet_position==3),]$foil <- vl_data[which(vl_data$triplet_position==3),]$second3
+ 
+vl_data$trial <- paste(vl_data$first3, vl_data$second3)
+
+vl_data <- dplyr::select(filter(vl_data, triplet!="D U G"), part_id, exp_name, trial, foil, triplet, corr_resp, triplet_position)
+
+
+# Create a single data frame with each participant's accuracy for each condition ####-----------------------------------------------------------------------------------------------------
 
 # List unique participant IDs for this condition
 list_part_id <- unique(vl_data$part_id)
@@ -194,8 +275,33 @@ View(indiv_vl_accuracies)
 
 # ******************** IV. FIND vv ACCURACY *************************
 
+# Figure out the target presented in each accuracy trial ####
 
-# Create a single data frame with each participant's accuracy for each condition-----------------------------------------------------------------------------------------------------
+# Find all of the triplets and foils presented
+vv_data <- filter(vv_data, !is.na(triplet_position))
+vv_data$first3<-paste(vv_data$first2AFC, vv_data$second2AFC, vv_data$third2AFC)
+vv_data$first3 <- gsub (".png", "", vv_data$first3)
+vv_data$second3<-paste(vv_data$fourth2AFC, vv_data$fifth2AFC, vv_data$sixth2AFC)
+vv_data$second3 <- gsub (".png", "", vv_data$second3)
+
+# Find all the triplets
+
+vv_data$triplet <- NA
+vv_data[which(vv_data$triplet_position==3),]$triplet <- vv_data[which(vv_data$triplet_position==3),]$first3
+vv_data[which(vv_data$triplet_position==4),]$triplet <- vv_data[which(vv_data$triplet_position==4),]$second3
+
+# Find all the foils
+
+vv_data$foil <- NA
+vv_data[which(vv_data$triplet_position==4),]$foil <- vv_data[which(vv_data$triplet_position==4),]$first3
+vv_data[which(vv_data$triplet_position==3),]$foil <- vv_data[which(vv_data$triplet_position==3),]$second3
+
+vv_data$trial <- paste(vv_data$first3, vv_data$second3)
+
+vv_data <- dplyr::select(filter(vv_data, triplet!="D U G"), part_id, exp_name, trial, foil, triplet, corr_resp, triplet_position)
+
+
+# Create a single data frame with each participant's accuracy for each condition ####-----------------------------------------------------------------------------------------------------
 
 # List unique participant IDs for this condition
 list_part_id <- unique(vv_data$part_id)
@@ -226,6 +332,20 @@ length(indiv_vv_accuracies$part_id)
 
 # TEST: All entries should all have an accuracy value
 View(indiv_vv_accuracies)
+
+
+# Trial-by-trial analysis  ------------------------------------------------------------------------------------------------
+# Mixed-effects logistic regression: The dependent measure was whether the participant made a correct or incorrect response. 
+
+# Combine all tasks into one
+lmer_data <- rbind(vl_data, ll_data, lv_data, vv_data)
+# Add the group and stimulus type
+lmer_data$group <- if_else(lmer_data$exp_name=="ll" | lmer_data$exp_name=="vv", "same", "different", missing = NULL)
+lmer_data$stimulus_type <- if_else(lmer_data$exp_name=="ll" | lmer_data$exp_name=="lv", "letter", "image", missing = NULL)
+
+
+
+acc_lmer <- glmer(corr_resp ~ 1 + group * stimulus_type + (1 + stimulus_type|part_id) + (1| trial), family = binomial, data = lmer_data)
 
 
 # Summarize individual accuracies  ------------------------------------------------------------------------------------------------
