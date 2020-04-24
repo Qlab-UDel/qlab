@@ -1,0 +1,317 @@
+---
+title: "Prior Linguistic Experience Influences SL across Domains"
+author: "JM Schneider"
+date: "4/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,include=FALSE,echo=FALSE,warning=FALSE}
+#Loading library
+library(psych)
+library(readr)
+library(optimx)
+library(corrplot)
+library(reshape)
+library(reshape2)
+library(lmerTest)
+library(ggplot2)
+library(scales)
+library(ggbeeswarm)
+library(Hmisc)
+library(arm)
+library(ez)
+library(dplyr)
+library(tidyr)
+library(simr)
+library(dunn.test)
+library(likert)
+library(psych)
+library(ordinal)
+library(EMAtools)
+library(lme4)
+source("centerfactor.R")
+```
+
+## Import Data
+```{r,include=FALSE,echo=FALSE,warning=FALSE}
+hebtrial <- read.csv('/Users/julieschneider/Julie_Personal/Projects/HEB/R_scripts/heb_trial_clean_082819.csv')
+hebtrial$task = as.factor(as.character(hebtrial$task)) # 0 means nonlinguistic and 1 means linguistic task
+hebtrial$task_order = as.factor(as.character(hebtrial$task_order)) # 0 means nonlinguistic task comes first and 1 means linguistic task comes first
+hebtrial$trial_order = as.factor(as.character(hebtrial$trial_order)) # 0 means foil comes first and 1 means target comes first
+hebtrial$subject = as.factor(as.character(hebtrial$subject)) 
+hebtrial$trial = as.factor(as.character(hebtrial$trial)) 
+heb_only_trial<- hebtrial[which(hebtrial$language == "hebrew"),]
+eng_trial<- hebtrial[which(hebtrial$language == "english"),]
+eng_ling_trial<- eng_trial[which(eng_trial$task == 1),]
+eng_trial=droplevels(eng_trial)
+contrasts(eng_trial$trial)=centerfactor(eng_trial$trial)
+summary(eng_trial)
+
+hebindiv <- read.csv('/Users/julieschneider/Julie_Personal/Projects/HEB/R_scripts/HEB_Data.csv')
+hebindiv=hebindiv[is.na(hebindiv$accuracy)==0,]
+hebindiv=subset(hebindiv,subject!="a_005")
+hebindiv=subset(hebindiv,subject!="a_026")
+hebindiv=subset(hebindiv,subject!="a_035")
+hebindiv=subset(hebindiv,subject!="a_050")
+eng_indiv=subset(hebindiv,group=="English")
+heb_only_indiv=subset(hebindiv,group=="Hebrew")
+hebindiv_ling_eng<- eng_indiv[which(eng_indiv$Task == "Linguistic"),]
+```
+
+## English Speakers Only
+## 3.1 Performance on the linguistic and non-linguistic statistical learning task
+### Participants showed learning in both tasks and performed significantly above chance
+```{r}
+#hebindiv_eng<-hebindiv[which(hebindiv$group=="English"),]
+hebindiv_ling_eng<- eng_indiv[which(eng_indiv$Task == "Linguistic"),]
+hebindiv_nonling_eng<- eng_indiv[which(eng_indiv$Task == "Non-Linguistic"),]
+
+t.test(hebindiv_ling_eng$accuracy, mu=50, alternative = "greater")
+sd(hebindiv_ling_eng$accuracy)
+t.test(hebindiv_nonling_eng$accuracy, mu=50, alternative = "greater")
+sd(hebindiv_nonling_eng$accuracy)
+```
+### Identify number of participants who performed above chance
+```{r}
+hebindiv_ling_eng_accurate <- hebindiv_ling_eng[which(hebindiv_ling_eng$accuracy > 50),]
+length(unique(hebindiv_ling_eng_accurate$subject))
+hebindiv_nonling_eng_accurate <- hebindiv_nonling_eng[which(hebindiv_nonling_eng$accuracy > 50),]
+length(unique(hebindiv_nonling_eng_accurate$subject))
+```
+### LMEM in the English group based on the trial-by-trial data, with a forward building model strategy to compare models
+```{r}
+eng_trial<-eng_trial[-c(1:3)]
+fm1 <- lmer(trial_accuracy ~ 1 + task + (1|subject), REML = F, data = eng_trial)
+
+fm2 <- lmer(trial_accuracy ~ 1 + task + task_order + (1|subject), REML = F, data = eng_trial)
+
+AIC(fm1, fm2)
+BIC(fm1, fm2)
+
+dev0 <- -2*logLik(fm1) # deviance simpler model
+dev1 <- -2*logLik(fm2) # deviance complex model
+devdiff <- as.numeric(dev0-dev1) # difference in deviances
+dfdiff <- attr(dev1,"df")-attr(dev0,"df") # difference in params (using dfs)
+cat('Chi-square =', devdiff, '(df=', dfdiff,'), p =', 
+  pchisq(devdiff,dfdiff,lower.tail=FALSE))
+
+summary(fm1)
+#power<-powerSim(fm1, fixed("task"), nsim = 500)
+#power
+
+lme.dscore(fm1, eng_trial, "lme4")
+```
+
+## 3.2 The relationship between perceived familiarity and linguistic triplet recognition
+### Across the five triplet “words”, identify whether the familiarity rankings are marginally different
+```{r}
+# remove NA's
+hebrank=subset(hebindiv_ling_eng)
+hebrank=hebrank[c(11:15)]
+hebrank$Q1 = factor(hebrank$Q1,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+hebrank$Q2 = factor(hebrank$Q2,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+hebrank$Q3 = factor(hebrank$Q3,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+hebrank$Q4 = factor(hebrank$Q4,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+hebrank$Q5 = factor(hebrank$Q5,
+                       levels = c("0", "1", "2", "3", "4", "5"),
+                       ordered = TRUE)
+headTail(hebrank)
+summary(hebrank)
+results=likert(hebrank)
+summary(results)
+plot(results,
+     type="heat",
+           low.color = "white",
+           high.color = "red",
+           text.color = "black",
+           text.size = 4,
+           wrap = 50)
+```
+
+### test whether different items have different familiarity rankings
+```{r}
+hebrank=eng_indiv[c(1,11:15)]
+hebrank=melt(hebrank,id=1)
+colnames(hebrank)[2]="item"
+colnames(hebrank)[3]="ranking"
+kruskal.test(ranking ~ item,
+             data = hebrank)
+DT = dunn.test(hebrank$ranking,hebrank$item, method="bh")  
+```
+
+### Relationship between familiarity and accuracy at the individual level
+```{r}
+eng_ling_trial$fam_ratings<-as.numeric(eng_ling_trial$fam_ratings)
+cor.test(eng_ling_trial$trial_accuracy,eng_ling_trial$fam_ratings, method = "spearman")
+
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q1, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q2, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q3, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q4, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q5, method = "spearman")
+```
+
+### A generalized linear mixed-effects analysis with trial-by-trial perceived familiarity as the fixed effect, as well as random slopes for subject and question number.
+```{r}
+eng_ling_trial$fam_ratings=as.factor(as.character(eng_ling_trial$fam_ratings))
+contrasts(eng_ling_trial$fam_ratings)=centerfactor(eng_ling_trial$fam_ratings)
+
+fm1 <-  glmer(trial_accuracy~fam_ratings+(1|subject),family = binomial,data=eng_ling_trial)
+
+fm2 <-  glmer(trial_accuracy~fam_ratings+(1|subject)+(1|trial_number),family = binomial,data=eng_ling_trial)
+
+AIC(fm1, fm2)
+BIC(fm1, fm2)
+
+dev0 <- -2*logLik(fm1) # deviance simpler model
+dev1 <- -2*logLik(fm2) # deviance complex model
+devdiff <- as.numeric(dev0-dev1) # difference in deviances
+dfdiff <- attr(dev1,"df")-attr(dev0,"df") # difference in params (using dfs)
+cat('Chi-square =', devdiff, '(df=', dfdiff,'), p =', 
+  pchisq(devdiff,dfdiff,lower.tail=FALSE))
+
+summary(fm2)
+lme.dscore(fm2, eng_ling_trial, "lme4")
+```
+## 3.3 The relationship between native language proficiency and statistical learning 
+### Pearson's correlation between vocabulary and accuracy on each task
+```{r}
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$vocabulary, method = "pearson")
+cor.test(hebindiv_nonling_eng$accuracy,hebindiv_ling_eng$vocabulary, method = "pearson")
+```
+### Figure 1. The relationship between vocabulary and SL Accuracy across domains.
+```{r}
+colnames(eng_indiv)[8]="Task"
+ggplot() +
+  theme_classic(base_size = 20.0) +
+  xlab(label = 'Vocabulary (PVT)') +
+  ylab(label = 'Overall Accuracy') +
+  scale_x_continuous(breaks = pretty_breaks()) +
+  scale_y_continuous(breaks = pretty_breaks()) +
+  geom_point(aes(x = vocabulary,y = accuracy,colour = Task),data=eng_indiv, shape = 23, size = 3) +
+  geom_smooth(aes(x = vocabulary,y = accuracy,colour = Task),data=eng_indiv,method = lm,formula = 'y ~ x',se = FALSE)
+```
+## English and Hebrew Speakers 
+## 3.4 The effect of native language experience on SL ability across domains
+### Hebrew Participants showed learning in both tasks and performed significantly above chance
+```{r}
+#hebindiv_eng<-hebindiv[which(hebindiv$group=="English"),]
+hebindiv_ling_heb<- heb_only_indiv[which(heb_only_indiv$Task == "Linguistic"),]
+hebindiv_nonling_heb<- heb_only_indiv[which(heb_only_indiv$Task == "Non-Linguistic"),]
+
+t.test(hebindiv_ling_heb$accuracy, mu=50, alternative = "greater")
+sd(hebindiv_ling_heb$accuracy)
+t.test(hebindiv_nonling_heb$accuracy, mu=50, alternative = "greater")
+sd(hebindiv_nonling_heb$accuracy)
+```
+### Identify number of participants who performed above chance
+```{r}
+hebindiv_ling_heb_accurate <- hebindiv_ling_heb[which(hebindiv_ling_heb$accuracy > 50),]
+length(unique(hebindiv_ling_heb_accurate$subject))
+hebindiv_nonling_heb_accurate <- hebindiv_nonling_heb[which(hebindiv_nonling_heb$accuracy > 50),]
+length(unique(hebindiv_nonling_heb_accurate$subject))
+```
+### Testing the group by task interaction on a trial-by-trial basis 
+```{r}
+hebgroup.lmer <- glmer(trial_accuracy ~ 1 + language * task + (1|subject), family = binomial,control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)), data = hebtrial)
+summary(hebgroup.lmer)
+#power<-powerSim(hebgroup.lmer,fixed("language*task"), nsim = 200)
+#power
+
+lme.dscore(hebgroup.lmer, hebtrial, "lme4")
+```
+### Testing the correlation between linguistic and non-linguistic tasks for English Speakers
+```{r}
+hebindiv_eng<-hebindiv[which(hebindiv$group=="English"),]
+hebindiv_ling_eng<- hebindiv_eng[which(hebindiv_eng$Task == "Linguistic"),]
+hebindiv_nonling_eng<- hebindiv_eng[which(hebindiv_eng$Task == "Non-Linguistic"),]
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_nonling_eng$accuracy, method = "pearson")
+```
+
+### Testing the correlation between linguistic and non-linguistic tasks for Hebrew Speakers
+```{r}
+hebindiv_heb<-hebindiv[which(hebindiv$group=="Hebrew"),]
+hebindiv_ling_heb<- hebindiv_heb[which(hebindiv_heb$Task == "Linguistic"),]
+hebindiv_nonling_heb<- hebindiv_heb[which(hebindiv_heb$Task == "Non-Linguistic"),]
+cor.test(hebindiv_ling_heb$accuracy,hebindiv_nonling_heb$accuracy, method = "pearson")
+```
+### Internal consistency of trial data for English group
+```{r}
+myvars<- c("subject","language","task","trial", "trial_accuracy")
+trial_cronbach <- hebtrial[myvars]
+
+trial_cronbach_eng<-trial_cronbach[which(trial_cronbach$language=="english"),]
+trial_cronbach<-trial_cronbach_eng[which(trial_cronbach_eng$task== 1),]
+
+trial_cronbach_spread <- trial_cronbach %>% spread(trial,trial_accuracy,fill = NA, convert = FALSE)
+trial_cronbach_clean <- trial_cronbach_spread[ -c(1,2,3) ]
+
+#psych::alpha(trial_cronbach_clean,check.keys=TRUE)
+psych::alpha(trial_cronbach_clean, check.keys = TRUE)$total$std.alpha
+```
+
+### Internal consistency of trial data for Hebrew group
+```{r}
+myvars<- c("subject","language","task","trial", "trial_accuracy")
+trial_cronbach <- hebtrial[myvars]
+
+trial_cronbach_eng<-trial_cronbach[which(trial_cronbach$language=="hebrew"),]
+trial_cronbach<-trial_cronbach_eng[which(trial_cronbach_eng$task== 1),]
+
+trial_cronbach_spread <- trial_cronbach %>% spread(trial,trial_accuracy,fill = NA, convert = FALSE)
+trial_cronbach_clean <- trial_cronbach_spread[ -c(1,2,3) ]
+
+#psych::alpha(trial_cronbach_clean,check.keys=TRUE)
+psych::alpha(trial_cronbach_clean, check.keys = TRUE)$total$std.alpha
+
+```
+### Figure 2. Average SL accuracy in the linguistic and non-linguistic tasks for native Hebrew and English speakers.
+```{r}
+d <- hebindiv %>%
+       select(Task, group, accuracy) %>%  # select relevant variables
+       mutate(task = factor(Task, labels = c("Linguistic", "Non-linguistic")),
+              group = factor(group))
+
+head(d)
+d %>% 
+  group_by(task, group) %>%
+  summarise(accuracy_mean = mean(accuracy))
+sum_d <- d %>% 
+          group_by(task, group) %>%
+          summarise(accuracy_mean = mean(accuracy),
+                    se   = sd(accuracy)/sqrt(n()))
+sum_d
+```
+
+```{r}
+pd <- position_dodge(width = 0)
+sum_d %>%
+  ggplot(aes(x = task, y = accuracy_mean, group = group)) +
+    geom_line(aes(linetype = group), position = pd) +
+    geom_errorbar(aes(ymin = accuracy_mean - se, ymax = accuracy_mean + se),
+                  width = .1, position = pd) +
+    geom_point(size = 4, position = pd) +
+    geom_point(size = 3, color = "white", position = pd) + 
+    guides(linetype = guide_legend("Group")) +
+    labs(x = "Tasks",
+         y = "Overall Accuracy (%)") +
+  theme(
+    text=element_text(size=20),
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
