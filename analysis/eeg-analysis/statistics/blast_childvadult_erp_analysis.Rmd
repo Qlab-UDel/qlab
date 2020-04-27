@@ -1,0 +1,268 @@
+---
+title: "BLAST Child versus Adult ERP Data Analysis"
+author: "JM Schneider"
+date: "4/6/2020"
+output: html_document
+---
+
+## This code analyzes the BLAST projects' adult versus child EEG data.
+
+### Import libraries
+```{r loadlib, echo=T, results='hide', message=F, warning=F}
+library(psych)
+library(readr)
+library(optimx)
+library(corrplot)
+library(reshape)
+library(reshape2)
+library(lmerTest)
+library(ggplot2)
+library(scales)
+library(ggbeeswarm)
+library(Hmisc)
+library(arm)
+library(ez)
+library(dplyr)
+```
+
+### Import data
+```{r}
+setwd("/Users/julieschneider/Julie_Personal/Projects/BLAST/R/")
+df_adult=read.csv('blast_adult_factor_analysis_n45.csv')
+df_child=read.csv('blast_td_N22.csv')
+
+#df_adult <- subset(df_adult, select = -c(Early))
+df_overall <- rbind(df_adult,df_child)
+```
+
+### GLMER of Early ERP Data
+```{r, echo=TRUE}
+model<- lmer(Early~ 1 + Group*Domain*Global*Local + (1+(Global*Local)|subject),data = df_overall)
+summary(model)
+```
+### GLMER of Late ERP Data
+```{r, echo=TRUE}
+model<- lmer(Late~ 1 + Group*Domain*Global*Local + (1+(Global*Local)|subject),data = df_overall)
+summary(model)
+```
+### ANOVA of Early ERP Data
+```{r, echo=TRUE}
+early_blastANOVA <- ezANOVA(df_overall, Early, subject, between = Group, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
+early_blastANOVA
+```
+### ANOVA of Late ERP Data
+```{r, echo=TRUE}
+late_blastANOVA <- ezANOVA(df_overall, Late, subject, between = Group, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
+late_blastANOVA
+```
+
+## Plotting
+### Plotting Early Effects
+### Plotting Domain x Local Interaction
+```{r}
+d <- df_overall %>%
+       select(Early,Local,Domain) %>%  # select relevant variables
+       mutate(Local = factor(Local),
+              Global = factor(Domain))
+
+head(d)
+d %>% 
+  group_by(Local, Domain) %>%
+  summarise(Late_mean = mean(Early))
+sum_d <- d %>% 
+          group_by(Local, Domain) %>%
+          summarise(Early_mean = mean(Early),
+                    se   = sd(Early)/sqrt(n()))
+sum_d
+```
+
+```{r}
+pd <- position_dodge(width = 0)
+sum_d %>%
+  ggplot(aes(x = Domain, y = Early_mean, group = Local)) +
+    geom_line(aes(linetype = Local), position = pd) +
+    geom_errorbar(aes(ymin = Early_mean - se, ymax = Early_mean + se),
+                  width = .1, position = pd) +
+    geom_point(size = 4, position = pd) +
+    geom_point(size = 3, color = "white", position = pd) + 
+    guides(linetype = guide_legend("Local")) +
+    labs(x = "Domain",
+         y = "Average ERP Amplitude -- Early") +
+  theme(
+    text=element_text(size=20),
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
+### Plotting Group x Global Interaction
+```{r}
+d <- df_overall %>%
+       select(Early,Group,Global) %>%  # select relevant variables
+       mutate(Group = factor(Group),
+              Global = factor(Global))
+
+head(d)
+d %>% 
+  group_by(Group, Global) %>%
+  summarise(Early_mean = mean(Early))
+sum_d <- d %>% 
+          group_by(Group, Global) %>%
+          summarise(Early_mean = mean(Early),
+                    se   = sd(Early)/sqrt(n()))
+sum_d
+```
+
+```{r}
+pd <- position_dodge(width = 0)
+sum_d %>%
+  ggplot(aes(x = Global, y = Early_mean, group = Group)) +
+    geom_line(aes(linetype = Group), position = pd) +
+    geom_errorbar(aes(ymin = Early_mean - se, ymax = Early_mean + se),
+                  width = .1, position = pd) +
+    geom_point(size = 4, position = pd) +
+    geom_point(size = 3, color = "white", position = pd) + 
+    guides(linetype = guide_legend("Group")) +
+    labs(x = "Global",
+         y = "Average ERP Amplitude") +
+  theme(
+    text=element_text(size=20),
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
+### Main Effect of Global
+```{r}
+df_early = cast(df_overall,subject~Global,mean, value="Early")
+df_early_melt = melt(df_early,id=c("Low","High"))
+
+p <- ggplot(df_early_melt, aes(x=Global, y=value)) + 
+  geom_violin(trim=FALSE) + theme_classic()+ 
+  labs(title="Main Effect of Global (p)", y = "Mean ERP Amplitude") +
+  stat_summary(fun.data=mean_sdl,geom="pointrange", color="red") +
+    theme(plot.title = element_text(hjust = 0.5))
+p
+```
+
+### Main Effect of Group
+```{r}
+df_early = cast(df_overall,subject~Group,mean, value="Early")
+df_early_melt = melt(df_early,id=c("Child","Adult"))
+
+p <- ggplot(df_early_melt, aes(x=Group, y=value)) + 
+  geom_violin(trim=FALSE) + theme_classic()+ 
+  labs(title="Main Effect of Group", y = "Mean ERP Amplitude") +
+  stat_summary(fun.data=mean_sdl,geom="pointrange", color="red") +
+    theme(plot.title = element_text(hjust = 0.5))
+p
+```
+
+### Plotting Later Effects
+### Plotting Group x GLobal x Local Interaction
+### Decided to plot the Global x Local Interaction Within Each Age Group
+```{r}
+d <- df_adult %>%
+       select(Late,Local,Global) %>%  # select relevant variables
+       mutate(Local = factor(Local),
+              Global = factor(Global))
+
+head(d)
+d %>% 
+  group_by(Local, Global) %>%
+  summarise(Late_mean = mean(Late))
+sum_d <- d %>% 
+          group_by(Local, Global) %>%
+          summarise(Late_mean = mean(Late),
+                    se   = sd(Late)/sqrt(n()))
+sum_d
+```
+
+```{r}
+pd <- position_dodge(width = 0)
+adult_plot <- sum_d %>%
+  ggplot(aes(x = Global, y = Late_mean, group = Local)) +
+    geom_line(aes(linetype = Local), position = pd) +
+    geom_errorbar(aes(ymin = Late_mean - se, ymax = Late_mean + se),
+                  width = .1, position = pd) +
+    geom_point(size = 4, position = pd) +
+    geom_point(size = 3, color = "white", position = pd) + 
+    guides(linetype = guide_legend("Local")) +
+    labs(x = "Global",
+         y = "Average Adult ERP Amplitude") +
+  theme(
+    text=element_text(size=20),
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
+```{r}
+d <- df_child %>%
+       select(Late,Local,Global) %>%  # select relevant variables
+       mutate(Local = factor(Local),
+              Global = factor(Global))
+
+head(d)
+d %>% 
+  group_by(Local, Global) %>%
+  summarise(Late_mean = mean(Late))
+sum_d <- d %>% 
+          group_by(Local, Global) %>%
+          summarise(Late_mean = mean(Late),
+                    se   = sd(Late)/sqrt(n()))
+sum_d
+```
+```{r}
+pd <- position_dodge(width = 0)
+child_plot <- sum_d %>%
+  ggplot(aes(x = Global, y = Late_mean, group = Local)) +
+    geom_line(aes(linetype = Local), position = pd) +
+    geom_errorbar(aes(ymin = Late_mean - se, ymax = Late_mean + se),
+                  width = .1, position = pd) +
+    geom_point(size = 4, position = pd) +
+    geom_point(size = 3, color = "white", position = pd) + 
+    guides(linetype = guide_legend("Local")) +
+    labs(x = "Global",
+         y = "Average Child ERP Amplitude") +
+  theme(
+    text=element_text(size=20),
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
+```{r}
+layout(matrix(c(1),2))
+plot(adult_plot, main="Adult Global x Local")
+plot(child_plot, main="Child Global x Local")
+```
+### Main Effect of Global
+```{r}
+df_late = cast(df_overall,subject~Global,mean, value="Late")
+df_late_melt = melt(df_late,id=c("Low","High"))
+
+p <- ggplot(df_late_melt, aes(x=Global, y=value)) + 
+  geom_violin(trim=FALSE) + theme_classic()+ 
+  labs(title="Main Effect of Global (p)", y = "Mean ERP Amplitude") +
+  stat_summary(fun.data=mean_sdl,geom="pointrange", color="red") +
+    theme(plot.title = element_text(hjust = 0.5))
+p
+```
+
+### Main Effect of Group
+```{r}
+df_late = cast(df_overall,subject~Group,mean, value="Late")
+df_late_melt = melt(df_late,id=c("Child","Adult"))
+
+p <- ggplot(df_late_melt, aes(x=Group, y=value)) + 
+  geom_violin(trim=FALSE) + theme_classic()+ 
+  labs(title="Main Effect of Group", y = "Mean ERP Amplitude") +
+  stat_summary(fun.data=mean_sdl,geom="pointrange", color="red") +
+    theme(plot.title = element_text(hjust = 0.5))
+p
+```
