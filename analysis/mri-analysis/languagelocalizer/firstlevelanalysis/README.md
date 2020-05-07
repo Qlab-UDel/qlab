@@ -22,9 +22,12 @@ Step 1.
 - Make sure the three files listed above are completed correctly.
 
 Step 2. 
+- ssh into Sylvian. 
+- cd into the first level analysis folder.
 - In terminal, execute the first script *cp_firstleveldesign.sh*:
 ```sh bash_scripts/cp_firstleveldesign.sh```
 - This script should copy your existing design files into each subject's individual folder, then make changes within the design file so that data analyzed later is specific to that subject (e.g. copies general design to 002, then ensures all data loaded will be specific to 002)
+- Return to a Mac computer for the remaining analysis (cannot be run on Sylvian). 
 
 Step 3 (If this is your first run through ever, do this step. If it is not, skip to Step 4).
 - In terminal, edit the script *feat_firstlevel.sh*:
