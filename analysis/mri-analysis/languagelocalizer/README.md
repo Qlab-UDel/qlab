@@ -3,8 +3,8 @@ Developed and modified from Fedorenko Lab <http://web.mit.edu/evelina9/www/funcl
 
 ## Design of Task
 Participants are pseudo-randomly assigned to one of two runs and one of two lists:
-- Lists differ only in XX but do not influence data analysis
-- Orders differ in the onset of intact versus degraded speech
+- Lists specify the subset of materials to use. 
+- Orders differ in the onset of intact versus degraded speech.
 
 ### Event Onsets
 **Order 1 Intact/Order 2 Degraded**
