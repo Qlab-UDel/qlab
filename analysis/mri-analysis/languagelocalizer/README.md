@@ -35,3 +35,7 @@ Participants are pseudo-randomly assigned to one of two runs and one of two list
 |  168  	| 12.0316139577549 	| 1        	|
 |  252  	| 12.0316139577549 	| 1        	|
 
+(All event .txt files for first-level analyses can be found on the qigroup server under: in_scanner_behavioral/sl_raw_data/adult/alice_localizer/)
+
+## First-level MRI Analysis
+
