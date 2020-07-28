@@ -47,7 +47,12 @@ Step 4.
 - In terminal, execute the script *feat_firstlevel.sh*:
 ```sh bash_scripts/feat_firstlevel.sh```
 
-Step 5. 
+Step 5.
+- All files are located in the fmriprep directory and need to be moved to the first level directory.
+- Execute the scripts *mv_firstleveloutput.sh*:
+``` sh bash_scripts/mv_firstleveloutput.sh```
+
+Step 6. 
 - Once all first level feat analyses are run, we need to fix our registration (to understand why, listen to the pro: <https://mumfordbrainstats.tumblr.com/post/166054797696/feat-registration-workaround>)
 - Execute the script *correcting_reg.sh*:
 ```sh bash_scripts/correcting_reg.sh```
