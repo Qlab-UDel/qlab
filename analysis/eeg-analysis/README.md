@@ -60,3 +60,20 @@ If the script is successfully run, you should see the file named as **'subjectID
 
 ## Average individual ERPs together into group
 This portion of the script loads all the individual ERP files into ERPlab and averages them together to create a group ERP that may then be plotted. 
+
+# EEG Data Organization
+## rawdata
+All raw EEG data that is acquired is stored in this folder. Each subject has their own folder with 3 runs of data.
+
+## wkdir
+This directory includes the pre-processing of each subject's data. Each step in the above pre-processing pipeline produces a modified EEG file, which is stored here. Once again each subject has their own folder. 
+
+## txtdir
+Includes any text files produced in ERP Analyses, such as binlists and event lists. Each subject has their own folder, but the larger folder also contains the master binlister file (blast_current_binlist.txt) as well as text files to load ERP datasets for merging into a grand average ERP (load_erpset_blast_adults_remote_N45.txt is used to load all BLAST Adult subjects).
+
+## erpdir
+Each subject has their own folder which contains ERP files. Each of these files have raw EEG data sorted into bins. The main one in each subject's folder to use is blast_erp_3runs.erp.
+
+HOWEVER, the data we are using for all adult ERP analyses is located in the folder *blast_erp_filt_chanop*. This data includes additional bins and channel locations that are averaged together to provide individual difference measures of ERPs across a subset of averaged electrodes. The subjectID_3runs_filt_chanop.erp files represent ERP data to be loaded and analyzed in ERPlab. The blast_a_001_3runs_filt_chanop_MUT.erp represents data to be analyzed using the Mass Univariate Toolboix (MUT). 
+
+In the overarching folder (which contains each subject's folder) there are additional files. The blast_MUT_N45.GND file is the averaged group file for the Mass Univariate Toolbox. The adult_blast_N45.erp is the group averaged ERP file for ERPlab.
