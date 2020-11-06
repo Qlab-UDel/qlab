@@ -159,7 +159,7 @@ To start running the experiment, please run the following command. You need to c
 
 ```{r}
 run_locally(
-  # Change the path to your local/xslR folder. Please include "". (e.g. "Users/username/Downloads/local/sslR")
+  # Change the path to your local/xslR folder. Please include "". (e.g. "/Users/username/Downloads/local/sslR")
   path = "the path to your local/xslR folder",
   # Host defaults to 127.0.0.1 No need to change, but can be customized (see https://www.rplumber.io/ for more details)
   jspsychr_host = "127.0.0.1",
