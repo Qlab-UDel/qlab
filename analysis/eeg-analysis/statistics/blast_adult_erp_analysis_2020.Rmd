@@ -1,0 +1,515 @@
+---
+title: "Blast Adult ERP Analysis"
+author: "JM Schneider"
+date: "10/22/2019"
+output: html_document
+---
+
+## This code analyzes the BLAST projects' adult EEG data.
+
+### Import libraries
+```{r, echo=FALSE}
+library(psych);
+library(readr);
+library(optimx);
+library(corrplot);
+library(reshape);
+library(reshape2);
+library(lmerTest);
+library(ggplot2);
+library(scales);
+library(ggbeeswarm);
+library(Hmisc);
+library(arm);
+library(ez);
+library(dplyr);
+library(simr);
+```
+### Import data as dataframe
+```{r}
+setwd("/Volumes/data/projects/blast/adult_erp_manuscript/")
+df_corr=read.csv('blast_online_erp_adult_corr_data.csv')
+df_factor=read.csv('blast_adult_factor_analysis_n45.csv')
+```
+
+### GLMER of Early ERP Data
+```{r, echo=TRUE}
+model<- lmer(Early~ 1 + Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor)
+summary(model)
+
+#lme.dscore(model, df_factor, "lme4")
+```
+### GLMER of Late ERP Data
+```{r, echo=TRUE}
+model<- lmer(Late~ 1 + Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor)
+summary(model)
+```
+
+### ANOVA of Early ERP Data
+```{r, echo=TRUE}
+early_blastANOVA <- ezANOVA(df_factor, Early, subject, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
+early_blastANOVA
+```
+### ANOVA of Late ERP Data
+```{r, echo=TRUE}
+early_blastANOVA <- ezANOVA(df_factor, Late, subject, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
+early_blastANOVA
+```
+
+### Table of Means for Early ERP
+```{r, echo=TRUE}
+tapply(X = df_factor$Early, INDEX = list(df_factor$Global), FUN = mean)
+tapply(X = df_factor$Early, INDEX = list(df_factor$Local), FUN = mean)
+tapply(X = df_factor$Early, INDEX = list(df_factor$Domain), FUN = mean)
+```
+### Table of Means for Late ERP
+```{r, echo=TRUE}
+tapply(X = df_factor$Late, INDEX = list(df_factor$Global), FUN = mean)
+tapply(X = df_factor$Late, INDEX = list(df_factor$Local), FUN = mean)
+tapply(X = df_factor$Late, INDEX = list(df_factor$Domain), FUN = mean)
+```
+### Pairwise t-tests
+```{r, echo=TRUE}
+pairwise.t.test(df_factor$Early, df_factor$Domain, p.adj = 'bonferroni')
+pairwise.t.test(df_factor$Early, df_factor$Global, p.adj = 'bonferroni')
+pairwise.t.test(df_factor$Early, df_factor$Local, p.adj = 'bonferroni')
+pairwise.t.test(df_factor$Late, df_factor$Domain, p.adj = 'bonferroni')
+pairwise.t.test(df_factor$Late, df_factor$Global, p.adj = 'bonferroni')
+pairwise.t.test(df_factor$Late, df_factor$Local, p.adj = 'bonferroni')
+```
+
+#pairwise t-tests used to gauge interaction effect (breakdown of the interaction)
+```{r}
+blast_high<-df_factor[which(df_factor$Global=="High"),]
+blast_low<-df_factor[which(df_factor$Global=="Low"),]
+
+blast_short<-df_factor[which(df_factor$Local=="Short"),]
+blast_long<-df_factor[which(df_factor$Local=="Long"),]
+
+pairwise.t.test(blast_short$Late, blast_short$Global, p.adj = 'bonferroni')
+pairwise.t.test(blast_long$Late, blast_long$Global, p.adj = 'bonferroni')
+
+pairwise.t.test(blast_high$Late, blast_high$Local, p.adj = 'bonferroni')
+pairwise.t.test(blast_low$Late, blast_low$Local, p.adj = 'bonferroni')
+```
+
+## ttests
+```{r}
+## Change Late and Early to run ttests on different time windows
+df_ttest = cast(df_factor,subject~Domain+Global+Local,value="Late")
+
+df_ttest$Short = (df_ttest$Syllable_High_Short+df_ttest$Syllable_Low_Short+df_ttest$Voice_High_Short+df_ttest$Voice_Low_Short)/4
+df_ttest$Long = (df_ttest$Syllable_High_Long+df_ttest$Syllable_Low_Long+df_ttest$Voice_High_Long+df_ttest$Voice_Low_Long)/4
+
+df_ttest$High = (df_ttest$Syllable_High_Short+df_ttest$Syllable_High_Long+df_ttest$Voice_High_Short+df_ttest$Voice_High_Long)/4
+df_ttest$Low = (df_ttest$Syllable_Low_Short+df_ttest$Syllable_Low_Long+df_ttest$Voice_Low_Short+df_ttest$Voice_Low_Long)/4
+
+df_ttest$Syll_High = (df_ttest$Syllable_High_Short+df_ttest$Syllable_High_Long)/2
+df_ttest$Syll_Low = (df_ttest$Syllable_Low_Short+df_ttest$Syllable_Low_Long)/2
+df_ttest$Voice_High = (df_ttest$Voice_High_Short+df_ttest$Voice_High_Long)/2
+df_ttest$Voice_Low = (df_ttest$Voice_Low_Short+df_ttest$Voice_Low_Long)/2
+
+df_ttest$Syll_Short = (df_ttest$Syllable_High_Short+df_ttest$Syllable_Low_Short)/2
+df_ttest$Syll_Long = (df_ttest$Syllable_High_Long+df_ttest$Syllable_Low_Long)/2
+df_ttest$Voice_Short = (df_ttest$Voice_High_Short+df_ttest$Voice_Low_Short)/2
+df_ttest$Voice_Long = (df_ttest$Voice_High_Long+df_ttest$Voice_Low_Long)/2
+
+df_ttest$High_Short = (df_ttest$Syllable_High_Short+df_ttest$Voice_High_Short)/2
+df_ttest$Low_Short = (df_ttest$Syllable_Low_Short+df_ttest$Voice_Low_Short)/2
+df_ttest$High_Long = (df_ttest$Syllable_High_Long+df_ttest$Voice_High_Long)/2
+df_ttest$Low_Long = (df_ttest$Syllable_Low_Long+df_ttest$Voice_Low_Long)/2
+
+t.test(df_ttest$Short,df_ttest$Long,paired=TRUE)
+t.test(df_ttest$High, df_ttest$Low,paired=TRUE)
+t.test(df_ttest$Syll_Short, df_ttest$Syll_Long,paired=TRUE)
+t.test(df_ttest$Syll_High, df_ttest$Syll_Low,paired=TRUE)
+t.test(df_ttest$Voice_Short, df_ttest$Voice_Long,paired=TRUE)
+t.test(df_ttest$Voice_High, df_ttest$Voice_Low,paired=TRUE)
+
+t.test(df_ttest$High_Short, df_ttest$Low_Short,paired=TRUE)
+t.test(df_ttest$High_Short, df_ttest$High_Long,paired=TRUE)
+t.test(df_ttest$Low_Long, df_ttest$Low_Short,paired=TRUE)
+t.test(df_ttest$Low_Long, df_ttest$High_Long,paired=TRUE)
+
+```
+
+## Correlation Analysis
+
+This section is used to analyze the correlation between web-based SSL and BLAST ERP amplitudes.
+
+### Compare Correlation matrix and Factor matrix subjects
+```{r, eval=TRUE}
+df_factor_subset <- df_factor[1:45,]
+df_factor_subset$subject[!(df_factor_subset$subject %in% df_corr$subject)]
+df_corr$subject[!(df_corr$subject %in% df_factor_subset$subject)]
+```
+
+### Remove subjects that do not have SSL online data or do not have ERP data
+```{r, eval=TRUE}
+df_factor<- df_factor[!grepl("blast_a_012", df_factor$subject),]
+df_factor<- df_factor[!grepl("blast_a_020", df_factor$subject),]
+df_factor<- df_factor[!grepl("blast_a_027", df_factor$subject),]
+df_factor<- df_factor[!grepl("blast_a_029", df_factor$subject),]
+df_factor<- df_factor[!grepl("blast_a_031", df_factor$subject),]
+df_factor<- df_factor[!grepl("blast_a_036", df_factor$subject),]
+
+df_corr<- df_corr[!grepl("blast_a_017", df_corr$subject),]
+df_corr<- df_corr[!grepl("blast_a_032", df_corr$subject),]
+df_corr<- df_corr[!grepl("blast_a_035", df_corr$subject),]
+df_corr<- df_corr[!grepl("blast_a_040", df_corr$subject),]
+df_corr<- df_corr[!grepl("blast_a_052", df_corr$subject),]
+```
+
+### Organizing correlation data for Early time window
+```{r, eval=TRUE}
+df_factor$Early = as.numeric(df_factor$Early)
+
+df_early = cast(df_factor,subject~Domain+Global+Local,value="Early")
+
+df_corr$Short = (df_early$Syllable_High_Short+df_early$Syllable_Low_Short+df_early$Voice_High_Short+df_early$Voice_Low_Short)/4
+df_corr$Long = (df_early$Syllable_High_Long+df_early$Syllable_Low_Long+df_early$Voice_High_Long+df_early$Voice_Low_Long)/4
+df_corr$Short_Long_MMN = df_corr$Short - df_corr$Long
+
+df_corr$High = (df_early$Syllable_High_Short+df_early$Syllable_High_Long+df_early$Voice_High_Short+df_early$Voice_High_Long)/4
+df_corr$Low = (df_early$Syllable_Low_Short+df_early$Syllable_Low_Long+df_early$Voice_Low_Short+df_early$Voice_Low_Long)/4
+df_corr$High_Low_MMN = df_corr$Low - df_corr$High
+
+df_corr$Syllable = (df_early$Syllable_High_Short+df_early$Syllable_High_Long+df_early$Syllable_Low_Short+df_early$Syllable_Low_Long)/4
+df_corr$Voice = (df_early$Voice_High_Short+df_early$Voice_High_Long+df_early$Voice_Low_Short+df_early$Voice_Low_Long)/4
+df_corr$Voice_Syllable_MMN = df_corr$Voice - df_corr$Syllable
+
+Syll_High = (df_early$Syllable_High_Short+df_early$Syllable_High_Long)/2
+Syll_Low = (df_early$Syllable_Low_Short+df_early$Syllable_Low_Long)/2
+Voice_High = (df_early$Voice_High_Short+df_early$Voice_High_Long)/2
+Voice_Low = (df_early$Voice_Low_Short+df_early$Voice_Low_Long)/2
+
+Syll_Short = (df_early$Syllable_High_Short+df_early$Syllable_Low_Short)/2
+Syll_Long = (df_early$Syllable_High_Long+df_early$Syllable_Low_Long)/2
+Voice_Short = (df_early$Voice_High_Short+df_early$Voice_Low_Short)/2
+Voice_Long = (df_early$Voice_High_Long+df_early$Voice_Low_Long)/2
+
+df_corr$Syll_Local = (Syll_Long-Syll_Short)
+df_corr$Syll_Global = (Syll_Low-Syll_High)
+df_corr$Voice_Local = (Voice_Long-Voice_Short)
+df_corr$Voice_Global = (Voice_Low-Voice_High)
+
+df_corr$Global_long = ((df_early$Syllable_High_Long+df_early$Voice_High_Long)/2) - ((df_early$Syllable_Low_Long+df_early$Voice_Low_Long)/2)
+df_corr$Global_short = ((df_early$Syllable_High_Short+df_early$Voice_High_Short)/2) - ((df_early$Syllable_Low_Short+df_early$Voice_Low_Short)/2)
+df_corr$Local_high = ((df_early$Syllable_High_Long+df_early$Voice_High_Long)/2)-((df_early$Syllable_High_Short+df_early$Voice_High_Short)/2)
+df_corr$Local_low = ((df_early$Syllable_Low_Long+df_early$Voice_Low_Long)/2)-((df_early$Syllable_Low_Short+df_early$Voice_Low_Short)/2)
+```
+
+```{r, eval=TRUE}
+df_corr$subject = as.numeric(df_corr$subject)
+df_corr$accuracy = as.numeric(df_corr$accuracy)
+df_corr$mean_rt = as.numeric(df_corr$mean_rt)
+df_corr$scaled_rt_slope = as.numeric(df_corr$scaled_rt_slope)
+df_corr$entropy = as.numeric(df_corr$entropy)
+df_corr$vocab = as.numeric(df_corr$vocab)
+df_corr$Short = as.numeric(df_corr$Short)
+df_corr$Long = as.numeric(df_corr$Long)
+df_corr$Short_Long_MMN = as.numeric(df_corr$Short_Long_MMN)
+df_corr$High = as.numeric(df_corr$High)
+df_corr$Low = as.numeric(df_corr$Low)
+df_corr$High_Low_MMN = as.numeric(df_corr$High_Low_MMN)
+df_corr$Syllable = as.numeric(df_corr$Syllable)
+df_corr$Voice = as.numeric(df_corr$Voice)
+df_corr$Voice_Syllable_MMN = as.numeric(df_corr$Voice_Syllable_MMN)
+df_corr$Syll_Local = as.numeric(df_corr$Syll_Local)
+df_corr$Syll_Global = as.numeric(df_corr$Syll_Global)
+df_corr$Voice_Local = as.numeric(df_corr$Voice_Local)
+df_corr$Voice_Global = as.numeric(df_corr$Voice_Global)
+df_corr$Global_long = as.numeric(df_corr$Global_long)
+df_corr$Global_short = as.numeric(df_corr$Global_short)
+df_corr$Local_high = as.numeric(df_corr$Local_high)
+df_corr$Local_low = as.numeric(df_corr$Local_low)
+```
+
+## Early Correlation 
+### Run correlation matrix
+```{r, echo=TRUE}
+df_corr_early<- df_corr
+mycor_early <- rcorr(as.matrix(df_corr_early),type = "spearman")
+mycor_early$r #Pearsons R
+mycor_early$P #P values
+my_early_cor_p <- mycor_early$P
+my_early_cor_r <- mycor_early$r
+```
+
+### Organizing correlation data for Late Time Window
+```{r}
+df_factor$Late = as.numeric(df_factor$Late)
+df_late = cast(df_factor,subject~Domain+Global+Local,value="Late")
+
+df_corr$Short = (df_late$Syllable_High_Short+df_late$Syllable_Low_Short+df_late$Voice_High_Short+df_late$Voice_Low_Short)/4
+df_corr$Long = (df_late$Syllable_High_Long+df_late$Syllable_Low_Long+df_late$Voice_High_Long+df_late$Voice_Low_Long)/4
+df_corr$Short_Long_MMN = df_corr$Long-df_corr$Short
+
+df_corr$High = (df_late$Syllable_High_Short+df_late$Syllable_High_Long+df_late$Voice_High_Short+df_late$Voice_High_Long)/4
+df_corr$Low = (df_late$Syllable_Low_Short+df_late$Syllable_Low_Long+df_late$Voice_Low_Short+df_late$Voice_Low_Long)/4
+df_corr$High_Low_MMN = df_corr$Low-df_corr$High
+
+df_corr$Syllable = (df_late$Syllable_High_Short+df_late$Syllable_High_Long+df_late$Syllable_Low_Short+df_late$Syllable_Low_Long)/4
+df_corr$Voice = (df_late$Voice_High_Short+df_late$Voice_High_Long+df_late$Voice_Low_Short+df_late$Voice_Low_Long)/4
+df_corr$Voice_Syllable_MMN = df_corr$Voice - df_corr$Syllable
+
+Syll_High = (df_late$Syllable_High_Short+df_late$Syllable_High_Long)/2
+Syll_Low = (df_late$Syllable_Low_Short+df_late$Syllable_Low_Long)/2
+Voice_High = (df_late$Voice_High_Short+df_late$Voice_High_Long)/2
+Voice_Low = (df_late$Voice_Low_Short+df_late$Voice_Low_Long)/2
+
+Syll_Short = (df_late$Syllable_High_Short+df_late$Syllable_Low_Short)/2
+Syll_Long = (df_late$Syllable_High_Long+df_late$Syllable_Low_Long)/2
+Voice_Short = (df_late$Voice_High_Short+df_late$Voice_Low_Short)/2
+Voice_Long = (df_late$Voice_High_Long+df_late$Voice_Low_Long)/2
+
+df_corr$Syll_Local = (Syll_Long-Syll_Short)
+df_corr$Syll_Global = (Syll_Low-Syll_High)
+df_corr$Voice_Local = (Voice_Long-Voice_Short)
+df_corr$Voice_Global = (Voice_Low-Voice_High)
+
+df_corr$Global_long = ((df_late$Syllable_High_Long+df_late$Voice_High_Long)/2) - ((df_late$Syllable_Low_Long+df_late$Voice_Low_Long)/2)
+df_corr$Global_short = ((df_late$Syllable_High_Short+df_late$Voice_High_Short)/2) - ((df_late$Syllable_Low_Short+df_late$Voice_Low_Short)/2)
+df_corr$Local_high = ((df_late$Syllable_High_Long+df_late$Voice_High_Long)/2)- ((df_late$Syllable_High_Short+df_late$Voice_High_Short)/2)
+df_corr$Local_low = ((df_late$Syllable_Low_Long+df_late$Voice_Low_Long)/2)-((df_late$Syllable_Low_Short+df_late$Voice_Low_Short)/2)
+```
+
+```{r, eval=TRUE}
+df_corr$subject = as.numeric(df_corr$subject)
+df_corr$accuracy = as.numeric(df_corr$accuracy)
+df_corr$mean_rt = as.numeric(df_corr$mean_rt)
+df_corr$scaled_rt_slope = as.numeric(df_corr$scaled_rt_slope)
+df_corr$entropy = as.numeric(df_corr$entropy)
+df_corr$vocab = as.numeric(df_corr$vocab)
+df_corr$Short = as.numeric(df_corr$Short)
+df_corr$Long = as.numeric(df_corr$Long)
+df_corr$Short_Long_MMN = as.numeric(df_corr$Short_Long_MMN)
+df_corr$High = as.numeric(df_corr$High)
+df_corr$Low = as.numeric(df_corr$Low)
+df_corr$High_Low_MMN = as.numeric(df_corr$High_Low_MMN)
+df_corr$Syllable = as.numeric(df_corr$Syllable)
+df_corr$Voice = as.numeric(df_corr$Voice)
+df_corr$Voice_Syllable_MMN = as.numeric(df_corr$Voice_Syllable_MMN)
+df_corr$Syll_Local = as.numeric(df_corr$Syll_Local)
+df_corr$Syll_Global = as.numeric(df_corr$Syll_Global)
+df_corr$Voice_Local = as.numeric(df_corr$Voice_Local)
+df_corr$Voice_Global = as.numeric(df_corr$Voice_Global)
+df_corr$Global_long = as.numeric(df_corr$Global_long)
+df_corr$Global_short = as.numeric(df_corr$Global_short)
+df_corr$Local_high = as.numeric(df_corr$Local_high)
+df_corr$Local_low = as.numeric(df_corr$Local_low)
+```
+
+## Late Correlation 
+### Run correlation matrix
+```{r, echo=TRUE}
+df_corr_late <- df_corr
+mycor_late <- rcorr(as.matrix(df_corr_late),type = "spearman")
+mycor_late$r #Pearsons R
+mycor_late$P #P values
+my_late_cor_p <- mycor_late$P
+my_late_cor_r <- mycor_late$r
+```
+
+## Random Analyses
+### One Sample t-test of behavioral data
+```{r}
+t.test(df_corr$accuracy, mu = .50, alternative = "two.sided")
+t.test(df_corr$scaled_rt_slope, mu = 0, alternative = "two.sided")
+```
+
+### Specific Pairwise correlations (need to check these!)
+```{r}
+cor.test(df_corr$accuracy, df_corr$scaled_rt_slope,  method = "pearson", use = "complete.obs")
+# Be sure to run the corr matrix for the early time window
+cor.test(df_corr$Short_Long_MMN, df_corr$scaled_rt_slope,  method = "spearman", use = "complete.obs")
+
+# Be sure to run the corr matrix for the late time window
+r<-rcorr(df_corr$Global_long,df_corr$scaled_rt_slope,type = "spearman")
+r<-rcorr(df_corr$Global_short,df_corr$scaled_rt_slope,type = "spearman")
+r<-rcorr(df_corr$Local_high,df_corr$scaled_rt_slope,type = "spearman")
+r<-rcorr(df_corr$Local_low,df_corr$scaled_rt_slope,type = "spearman")
+
+r$r
+r$P
+```
+
+### Good and Poor Learners as determined by RT Slope
+```{r}
+good_learn<-df_corr[which(df_corr$scaled_rt_slope < 0),]
+poor_learn<-df_corr[which(df_corr$scaled_rt_slope > 0),]
+```
+
+## Now let's do some plotting!!
+
+### Violin plot of local main effect in early time window
+```{r}
+df_early_test = cast(df_factor,subject~Local,mean, value="Early")
+df_early_melt = melt(df_early_test,id=c("Short","Long"))
+
+p <- ggplot(df_early_melt, aes(x=Local, y=value)) + 
+  geom_violin(trim=FALSE) + theme_classic()+ 
+  labs(title="Main Effect of Local (p)", y = "Mean ERP Amplitude") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  stat_summary(fun.data=mean_sdl, 
+                 geom="pointrange", color="red")
+p
+```
+
+```{r}
+d <- df_early_melt
+
+d %>% 
+  group_by(Local) %>%
+  summarise(Early_mean = mean(value))
+sum_d <- d %>% 
+          group_by(Local) %>%
+          summarise(Early_mean = mean(value),
+                    se   = sd(value)/sqrt(n()))
+sum_d
+
+pd <- position_dodge(width = 0)
+sum_d %>%
+  ggplot(aes(x = Local, y = Early_mean)) +
+    geom_errorbar(aes(ymin = Early_mean - se, ymax = Early_mean + se),
+                  width = .1, position = pd) +
+    geom_point(size = 4, position = pd) +
+    geom_point(size = 3, color = "white", position = pd) + 
+    labs(x = "Local",
+         y = "Average ERP Amplitude") +
+  theme(
+    text=element_text(size=20),
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
+
+### plot the line graphs to illustrate interaction between Local and Global Interaction in Late Time Window
+```{r}
+d <- df_factor %>%
+       select(Late,Local,Global) %>%  # select relevant variables
+       mutate(Local = factor(Local),
+              Global = factor(Global))
+
+head(d)
+d %>% 
+  group_by(Local, Global) %>%
+  summarise(Late_mean = mean(Late))
+sum_d <- d %>% 
+          group_by(Local, Global) %>%
+          summarise(Late_mean = mean(Late),
+                    se   = sd(Late)/sqrt(n()))
+sum_d
+```
+
+```{r}
+pd <- position_dodge(width = 0)
+sum_d %>%
+  ggplot(aes(x = Global, y = Late_mean, group = Local)) +
+    geom_line(aes(linetype = Local), position = pd) +
+    geom_errorbar(aes(ymin = Late_mean - se, ymax = Late_mean + se),
+                  width = .1, position = pd) +
+    geom_point(size = 4, position = pd) +
+    geom_point(size = 3, color = "white", position = pd) + 
+    guides(linetype = guide_legend("Local")) +
+    labs(x = "Global",
+         y = "Average ERP Amplitude") +
+  theme(
+    text=element_text(size=20),
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
+
+### Plot the same interaction (Local and Global Interaction in Late Time Window) as a bar graph
+```{r, echo=FALSE}
+ggplot() +
+  theme_classic(base_size = 20.0) +
+  ggtitle("Interaction in Late Time Window") + theme(plot.title = element_text(hjust = 0.5)) +
+  ylab(label = 'ERP Amplitude') +
+  scale_y_continuous(breaks = pretty_breaks()) +
+  geom_bar(aes(y = Late, x = Global,fill =    as.factor(Global)),data=df_factor,colour="black",fun.data = mean_sdl,stat = 'summary') +
+  geom_beeswarm(aes(x = Global,y = Late),data=df_factor,dodge.width=0.9,cex=2.5) +
+  geom_errorbar(aes(y = Late, x = Global),data=df_factor,size = 0.3,width = 0.2,fun.y = function(x) mean(x),fun.ymin = function(x) mean(x) - sd(x)/sqrt(length(x)),fun.ymax = function(x) mean(x) + sd(x)/sqrt(length(x)) ,stat = 'summary')+
+  facet_wrap(facets = .~Local) +
+  scale_x_discrete(name = 'Global Probability',labels = c("High","Low"))+   
+  scale_fill_brewer(palette = 'Set2') +
+  theme(legend.position = "none")
+```
+
+### Plotting the early correlations (OLD)
+```{r}
+ggplot(df_corr_early, aes(x=High_Low_MMN, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN", x="Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
+```
+```{r}
+ggplot(df_corr_early, aes(x=Syll_Global, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN for Syllables", x="Syllable Only Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
+```
+
+```{r}
+ggplot(df_corr_early, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="RT Slope & Local (p) within Low Condition", x="Local (p) MMN within Low frequency Condition", y = "RT SLope") +   theme_classic() +
+theme(plot.title = element_text(hjust = 0.5))
+```
+```{r}
+ggplot(df_corr_early, aes(x=Syll_Global, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN for Syllables", x="Syllable Only Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
+```
+
+### Plotting the late correlations (OLD)
+```{r}
+ggplot(df_corr_late, aes(x=Short_Long_MMN, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="RT Slope & Local (p) MMN", x="Local (p) MMN", y = "RT Slope") + theme_classic()+ theme(plot.title = element_text(hjust = 0.5)) 
+```
+
+```{r}
+ggplot(df_corr_late, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="RT Slope & Local (p) within Low Condition", x="Local (p) MMN within Low frequency Condition", y = "RT SLope") +   theme_classic() +
+theme(plot.title = element_text(hjust = 0.5)) 
+```
+
+```{r}
+ggplot(df_corr_late, aes(x=Local_high, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="RT Slope & Local (p) within High Condition", x="Local (p) MMN within High frequency Condition", y = "RT SLope") +   theme_classic() +
+theme(plot.title = element_text(hjust = 0.5))
+```
+
+### Plot the same interaction (Local and Global Interaction in Late Time Window) based on learner ability as a line graph
+```{r, echo=FALSE}
+good_learn <- df_corr[which(df_corr$scaled_rt_slope < 0),]
+poor_learn <- df_corr[which(df_corr$scaled_rt_slope > 0),]
+
+df_factor_subset<-merge(poor_learn, df_factor, by = "subject", sort = TRUE)
+
+d <- df_factor_subset %>%
+       select(Late,Local,Global) %>%  # select relevant variables
+       mutate(Local = factor(Local),
+              Global = factor(Global))
+
+head(d)
+d %>% 
+  group_by(Local, Global) %>%
+  summarise(Late_mean = mean(Late))
+sum_d <- d %>% 
+          group_by(Local, Global) %>%
+          summarise(Late_mean = mean(Late),
+                    se   = sd(Late)/sqrt(n()))
+sum_d
+
+pd <- position_dodge(width = 0)
+sum_d %>%
+  ggplot(aes(x = Global, y = Late_mean, group = Local)) +
+    geom_line(aes(linetype = Local), position = pd) +
+    geom_errorbar(aes(ymin = Late_mean - se, ymax = Late_mean + se),
+                  width = .1, position = pd) +
+    geom_point(size = 4, position = pd) +
+    geom_point(size = 3, color = "white", position = pd) + 
+    guides(linetype = guide_legend("Local")) +
+    labs(x = "Global",
+         y = "Average ERP Amplitude") +
+  theme(
+    text=element_text(size=20),
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
