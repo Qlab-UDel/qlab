@@ -1,0 +1,493 @@
+<!doctype html>
+<html>
+  <head>
+  	<meta charset='utf-8'>
+
+    <title>TSL</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="jspsych-5.0.3/jspsych.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-single-stim.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-multi-stim-multi-response.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-call-function.js"></script>
+    <link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+
+  </head>
+  <body>
+
+  </body>
+  <script>
+
+ var ID = JSON.stringify(jsPsych.data.getURLVariable('subject'));
+console.log(ID);
+
+var timeline = [];
+var par_id = {
+    type: 'survey-text',
+    questions: ['Enter your participant ID'],
+    timing_post_trial: 1000
+};
+
+String.prototype.format = function () {
+    var i = 0, args = arguments;
+    return this.replace(/{}/g, function () {
+        return typeof args[i] != 'undefined' ? args[i++] : '';
+    });
+};
+
+//If the targets in the exposure and the test phase need to be randomized between sujects, please use this line and comment out the line below.
+//var cond_assign = jsPsych.randomization.sample(['lang1','lang2'],1)[0];
+
+var cond_assign = 'lang2';
+
+console.log(cond_assign);
+var datetime = jsPsych.startTime();
+
+if (cond_assign === 'lang1') {
+var targali = [1,2][Math.floor(Math.random()*2)];
+} else if (cond_assign === 'lang2'){
+var targali = [2,3][Math.floor(Math.random()*2)];
+}
+
+
+var send_targali = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tones/{}C.wav'.format(targali),
+    choices:['space'],
+    timing_response: -1,
+    response_ends_trial:true
+};
+var send_targaliA = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tones/{}A.wav'.format(targali),
+    choices:['space'],
+    timing_response: -1,
+    response_ends_trial:true
+}
+
+
+var use_space = {
+    type: 'text',
+    text: "We'll be listening to some sounds today, so before we start, please plug in headphones and make sure your volume isn't too loud or too quiet. Press space to move to the next instruction when you're ready!",
+    cont_key: ['space']
+};
+
+var instr2 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_1.wav',
+    prompt: "<p><center>Press the spacebar to begin.</center></p>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr3 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_2.wav',
+      prompt: "<p><center>Hi! We're going to listen to some alien folk music today.</center></p>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr4 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_3.wav',
+      prompt: "<p><center>This is Klaptoo</center></p> <img src='image/klaptoo.png' style='position:fixed;top:20%;left:42%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr5 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_4.wav',
+      prompt: "<p>Klaptoo is from Planet A. We're going to listen to some folk music from Klaptoo's planet!</p><img src='image/klaptoo.png' style='position:fixed;top:20%;left:42%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr6 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_5.wav',
+      prompt: "<p>Klaptoo is going to play his favorite note for your now. Listen carefully! Press space when you hear the note. <p><img src='image/klaptoo.png' style='position:fixed;top:20%;left:42%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr6_targ = {
+  type: 'audio-keyboard-response',
+  stimulus: 'tones/{}C.wav'.format(targali),
+  choices: ['space'],
+  timing_response: -1,
+  response_ends_trial: true
+};
+
+var instr6_targA = {
+  type: 'audio-keyboard-response',
+  stimulus: 'tones/{}A.wav'.format(targali),
+  choices: ['space'],
+  timing_response: -1,
+  response_ends_trial: true
+};
+
+var instr7 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_6.wav',
+      prompt: "<p>When you hear Klaptoo play his favorite note, press the space bar as soon as you can. Let's practice!</p><img src='image/klaptoo.png' style='position:fixed;top:20%;left:42%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+
+var instr7_targ = {
+  type: 'audio-keyboard-response',
+  stimulus: 'tones/{}C.wav'.format(targali),
+  choices: ['space'],
+  timing_response: -1,
+  response_ends_trial: true
+};
+
+var instr7_targA = {
+  type: 'audio-keyboard-response',
+  stimulus: 'tones/{}A.wav'.format(targali),
+  choices: ['space'],
+  timing_response: -1,
+  response_ends_trial: true
+};
+
+
+
+
+var instr8 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_24.wav',
+      prompt: "<p>Good job! Now Klaptoo is going to play six notes in a row. Press space when you hear his favorite note!</p><img src='image/klaptoo.png' style='position:fixed;top:20%;left:42%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+if (cond_assign === 'lang1') {
+    if (targali === 1) {
+        var six_tones = [
+        {'stimulus': 'tones/1B.wav'}, {'stimulus': 'tones/1A.wav'},
+        {'stimulus': 'tones/4C.wav'}, {'stimulus': 'tones/1C.wav'},
+        {'stimulus': 'tones/3B.wav'}, {'stimulus': 'tones/2A.wav'}];
+    } else if (targali === 2) {
+        var six_tones = [
+        {'stimulus': 'tones/2B.wav'}, {'stimulus': 'tones/3A.wav'},
+        {'stimulus': 'tones/4C.wav'}, {'stimulus': 'tones/2C.wav'},
+        {'stimulus': 'tones/3B.wav'}, {'stimulus': 'tones/1A.wav'}];
+    }
+} else if (cond_assign === 'lang2') {
+    if (targali === 2) {
+        var six_tones = [
+        {'stimulus': 'tones/1B.wav'}, {'stimulus': 'tones/1A.wav'},
+        {'stimulus': 'tones/4C.wav'}, {'stimulus': 'tones/2A.wav'},
+        {'stimulus': 'tones/3B.wav'}, {'stimulus': 'tones/2C.wav'}];
+    } else if (targali === 3) {
+        var six_tones = [
+        {'stimulus': 'tones/2B.wav'}, {'stimulus': 'tones/3C.wav'},
+        {'stimulus': 'tones/4C.wav'}, {'stimulus': 'tones/3A.wav'},
+        {'stimulus': 'tones/3B.wav'}, {'stimulus': 'tones/1A.wav'}];
+   }
+}
+
+var six_tone_sequence = {
+    type: 'audio-keyboard-response',
+    timeline: six_tones,
+    choices: ['space'],
+    timing_response: 460,
+    timing_post_trial: 20,
+    response_ends_trial: false,
+
+};
+
+
+var instr9 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_25.wav',
+      prompt: "<p>Did you hear it? The fourth note was Klaptoo's favorite note! Let's listen again</p><img src='image/klaptoo.png' style='position:fixed;top:20%;left:46%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr10 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/fixation_instr.wav',
+      prompt: "<p>Now just relax and enjoy Klaptoo's music! You don't have to watch the screen. Remember to press the spacebar whenever you hear Klaptoo's favorite note.</p><img src='image/klaptoo.png' style='position:fixed;top:20%;left:46%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr12 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_9.wav',
+      prompt: "<p><center>These two aliens are going to play some music. Sometimes the first one will play part of the Klaptoo's song. Sometimes the second one will play part of the Klaptoo's song. </center></p><img src='image/two_aliens.png' style='position:fixed;top:20%;left:15%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr13 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_10.wav',
+    prompt: "<p><center>Each time, pick what alien is playing Klaptoo's song. When it's the first alien, press the left arrow, when it's the second alien, press the right arrow. </center></p><img src='image/two_aliens.png' style='position:fixed;top:20%;left:15%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+if (cond_assign === 'lang1') {
+var seq1 = [4,5,6,1,2,3,10,11,12,7,8,9,1,2,3,7,8,9,10,11,12,4,5,6,1,2,3,
+            10,11,12,7,8,9,1,2,3,4,5,6,10,11,12,7,8,9,4,5,6,10,11,12,7,8,
+            9,1,2,3,4,5,6,10,11,12,1,2,3,7,8,9,10,11,12,7,8,9,4,5,6,1,2,3,
+            10,11,12,7,8,9,4,5,6,7,8,9,1,2,3,4,5,6,10,11,12,1,2,3,4,5,6,7,
+            8,9,4,5,6,7,8,9,1,2,3,10,11,12,4,5,6,7,8,9,10,11,12,1,2,3,4,5,
+            6,10,11,12,1,2,3,7,8,9,1,2,3,10,11,12,4,5,6,1,2,3,4,5,6,10,11,
+            12,7,8,9,10,11,12,1,2,3,7,8,9,4,5,6,1,2,3,4,5,6,10,11,12,7,8,
+            9,4,5,6,10,11,12,7,8,9,1,2,3,4,5,6,10,11,12,1,2,3,7,8,9,1,2,3,
+            10,11,12,7,8,9,4,5,6,7,8,9,4,5,6,1,2,3,10,11,12,7,8,9,10,11,12,
+            1,2,3,4,5,6,1,2,3,10,11,12,7,8,9,4,5,6,10,11,12,7,8,9,1,2,3,4,
+            5,6,1,2,3,10,11,12,7,8,9,4,5,6,4,5,6,1,2,3,10,11,12,7,8,9,1,2,3,
+            7,8,9,10,11,12,4,5,6,1,2,3,10,11,12,7,8,9,1,2,3,4,5,6,10,11,12,
+            7,8,9,4,5,6,10,11,12,7,8,9,1,2,3,4,5,6,10,11,12,1,2,3,7,8,9,10,
+            11,12,7,8,9,4,5,6,1,2,3,10,11,12,7,8,9,4,5,6,7,8,9,1,2,3,4,5,6,
+            10,11,12,1,2,3,4,5,6,7,8,9,4,5,6,7,8,9,1,2,3,10,11,12,4,5,6,7,
+            8,9,10,11,12,1,2,3,4,5,6,10,11,12,1,2,3,7,8,9,1,2,3,10,11,12,
+            4,5,6,1,2,3,4,5,6,10,11,12,7,8,9,10,11,12,1,2,3,7,8,9,4,5,6,1,
+            2,3,4,5,6,10,11,12,7,8,9,4,5,6,10,11,12,7,8,9,1,2,3,4,5,6,10,
+            11,12,1,2,3,7,8,9,1,2,3,10,11,12,7,8,9,4,5,6,7,8,9,4,5,6,1,2,3,
+            10,11,12,7,8,9,10,11,12,1,2,3,4,5,6,1,2,3,10,11,12,7,8,9,4,5,6,
+            10,11,12,7,8,9,1,2,3,4,5,6,1,2,3,10,11,12,7,8,9,4,5,6];
+} else if (cond_assign === 'lang2') {
+var seq1 = [8, 3, 10, 11, 6, 7, 8, 3, 10, 5, 12, 1, 2, 9, 4, 5, 12, 1, 11, 6, 7, 2, 9, 4, 8, 3, 10, 2, 9, 4, 5, 12, 1, 8, 3, 10, 11, 6, 7, 5, 12, 1, 2, 9, 4, 11, 6, 7, 8, 3, 10, 5, 12, 1, 11, 6, 7, 2, 9, 4, 8, 3, 10, 11, 6, 7, 2, 9, 4, 5, 12, 1, 8, 3, 10, 5, 12, 1, 11, 6, 7, 8, 3, 10, 2, 9, 4, 11, 6, 7, 2, 9, 4, 5, 12, 1, 8, 3, 10, 2, 9, 4, 11, 6, 7, 5, 12, 1, 8, 3, 10, 5, 12, 1, 2, 9, 4, 8, 3, 10, 11, 6, 7, 2, 9, 4, 8, 3, 10, 5, 12, 1, 2, 9, 4, 11, 6, 7, 8, 3, 10, 5, 12, 1, 11, 6, 7, 8, 3, 10, 5, 12, 1, 2, 9, 4, 11, 6, 7, 5, 12, 1, 8, 3, 10, 5, 12, 1, 11, 6, 7, 8, 3, 10, 2, 9, 4, 5, 12, 1, 11, 6, 7, 8, 3, 10, 2, 9, 4, 5, 12, 1, 8, 3, 10, 11, 6, 7, 2, 9, 4, 8, 3, 10, 5, 12, 1, 11, 6, 7, 2, 9, 4, 5, 12, 1, 8, 3, 10, 11, 6, 7, 2, 9, 4, 5, 12, 1, 8, 3, 10, 11, 6, 7, 2, 9, 4, 8, 3, 10, 5, 12, 1, 11, 6, 7, 2, 9, 4, 11, 6, 7, 8, 3, 10, 5, 12, 1, 2, 9, 4, 5, 12, 1, 8, 3, 10, 11, 6, 7, 2, 9, 4, 5, 12, 1, 2, 9, 4, 11, 6, 7, 8, 3, 10, 2, 9, 4, 11, 6, 7, 5, 12, 1, 8, 3, 10, 2, 9, 4, 11, 6, 7, 2, 9, 4, 5, 12, 1, 8, 3, 10, 11, 6, 7, 2, 9, 4, 5, 12, 1, 2, 9, 4, 8, 3, 10, 5, 12, 1, 11, 6, 7, 5, 12, 1, 2, 9, 4, 11, 6, 7, 8, 3, 10, 2, 9, 4, 5, 12, 1, 11, 6, 7, 5, 12, 1, 2, 9, 4, 11, 6, 7, 8, 3, 10, 11, 6, 7, 5, 12, 1, 2, 9, 4, 8, 3, 10, 2, 9, 4, 11, 6, 7, 8, 3, 10, 5, 12, 1, 11, 6, 7, 2, 9, 4, 8, 3, 10, 5, 12, 1, 11, 6, 7, 8, 3, 10, 2, 9, 4, 5, 12, 1, 11, 6, 7, 8, 3, 10, 5, 12, 1, 2, 9, 4, 8, 3, 10, 5, 12, 1, 11, 6, 7, 2, 9, 4, 11, 6, 7, 8, 3, 10, 2, 9, 4, 5, 12, 1, 11, 6, 7, 2, 9, 4, 8, 3, 10, 2, 9, 4, 5, 12, 1, 8, 3, 10, 11, 6, 7, 5, 12, 1, 2, 9, 4, 8, 3, 10, 11, 6, 7, 5, 12, 1, 2, 9, 4, 8, 3, 10, 11, 6, 7, 5, 12, 1, 11, 6, 7, 8, 3, 10, 2, 9, 4, 11, 6, 7, 8, 3, 10, 5, 12, 1, 11, 6, 7, 8, 3, 10, 5, 12, 1, 2, 9, 4, 11, 6, 7, 2, 9, 4, 5, 12, 1, 8, 3, 10, 5, 12, 1, 11, 6, 7, 2, 9, 4, 11, 6, 7, 8, 3, 10, 2, 9, 4, 5, 12, 1, 11, 6, 7, 8, 3, 10, 5, 12, 1, 2, 9, 4, 8, 3, 10]
+}
+
+var sounds = [];
+sounds['1'] = 'tones/1A.wav';
+sounds['2'] = 'tones/1B.wav';
+sounds['3'] = 'tones/1C.wav';
+sounds['4'] = 'tones/2A.wav';
+sounds['5'] = 'tones/2B.wav';
+sounds['6'] = 'tones/2C.wav';
+sounds['7'] = 'tones/3A.wav';
+sounds['8'] = 'tones/3B.wav';
+sounds['9'] = 'tones/3C.wav';
+sounds['10'] = 'tones/4A.wav';
+sounds['11'] = 'tones/4B.wav';
+sounds['12'] = 'tones/4C.wav';
+sounds['13'] = 'tones/silent.wav';
+
+var tone_block_1 = [];
+for (i=0; i<seq1.length; i++) {
+    tone_block_1.push({'stimulus': sounds[seq1[i]]});
+}
+
+var struct_block = {
+     type: 'audio-keyboard-response',
+     choices: ['space'],
+     timeline: tone_block_1,
+     prompt: '<p><center><h1>+</h1></center></p>',
+     timing_response: 460,
+     timing_post_trial: 20,
+     response_ends_trial: false,
+    }
+
+var instr11 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_8.wav',
+    prompt: "<p><center>Great, you did it!</center></p>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr12 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_9.wav',
+      prompt: "<p><center>Now look at these two aliens</center></p><img src='image/two_aliens.png' style='position:fixed;top:20%;left:38%;'>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+var instr13 = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/instr_10.wav',
+    prompt: "<p><center>One of these aliens is going to play music from Klaptoo's planet, and the other will not. Listen to both songs, and press the left arrow if the first song is the same as the music that Klaptoo made, and the right arrow if the second song is the same.</center></p>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+if (cond_assign === 'lang1') {
+var seq2 = [
+    13, 1, 2, [3,0], 10, 2, 6, 13, 4, 8, [12,0], 4, 5, 6, 13,
+    7, 11, [3,0], 1, 2, 3, 13, 1, 5, [9,0], 10, 11, 12, 13, 7,
+    8, [9,0], 7, 11, 3, 13, 1, 2, [3,0], 4, 8, 12, 13, 1, 5, [9,0],
+    10, 11, 12, 13, 4, 5, [6,0], 10, 2, 6, 13, 7, 8, [9,0], 4,
+    8, 12, 13, 1, 5, [9,0], 4, 5, 6, 13, 10, 11, [12,0], 7, 11,
+    3, 13, 10, 2, [6,0], 1, 2, 3, 13, 4, 5, [6,0], 4, 8, 12, 13,
+    1, 2, [3,0], 1, 5, 9, 13, 7, 11, [3,0], 7, 8, 9, 13, 4, 8, [12,0],
+    10, 11, 12, 13, 1, 2, [3,0], 10, 2, 6, 13, 7, 8, [9,0], 1, 5, 9,
+    13, 4, 8, [12,0], 4, 5, 6, 13, 10, 11, [12,0], 10, 2, 6, 13, 7, 11,
+    [3,0], 7, 8, 9, 13, 1, 5, [9,0], 1, 2, 3, 13, 10, 11, [12,0], 4, 8, 12,
+    13, 7, 11, [3,0], 4, 5, 6, 13, 1, 5, [9,0], 1, 2, 3, 13, 10, 2, [6,0],
+    7, 8, 9, 13, 10, 11, [12,0], 1, 5, 9, 13, 10, 2, [6,0], 4, 5, 6, 13,
+    10, 11, [12,0], 4, 8, 12, 13, 7, 11, [3,0], 4, 5, 6, 13, 7, 8, [9,0],
+    10, 2, 6, 13, 1, 2, [3,0], 7, 11, 3, 13
+]
+} else if (cond_assign === 'lang2'){
+var seq2 = [
+13, 5, 3, [7, 0], 11, 6, 7, 13, 2, 9, [4, 0], 2, 6, 1, 13, 8, 12, [4, 0], 8, 3, 10, 13, 5, 12, [1, 0], 11, 9, 10, 13, 8, 12, [4, 0], 2, 9, 4, 13, 8, 3, [10, 0], 2, 6, 1, 13, 11, 6, [7, 0], 2, 6, 1, 13, 5, 3, [7, 0], 5, 12, 1, 13, 11, 9, [10, 0], 2, 9, 4, 13, 5, 12, [1, 0], 2, 6, 1, 13, 5, 3, [7, 0], 8, 3, 10, 13, 2, 6, [1, 0], 11, 6, 7, 13, 5, 12, [1, 0], 8, 12, 4, 13, 11, 9, [10, 0], 11, 6, 7, 13, 8, 3, [10, 0], 11, 9, 10, 13, 2, 9, [4, 0], 8, 12, 4, 13, 11, 9, [10, 0], 8, 3, 10, 13, 11, 6, [7, 0], 5, 3, 7, 13, 2, 6, [1, 0], 5, 12, 1, 13, 2, 9, [4, 0], 11, 9, 10, 13, 8, 12, [4, 0], 11, 6, 7, 13, 5, 12, [1, 0], 5, 3, 7, 13, 5, 3, [7, 0], 2, 9, 4, 13, 8, 3, [10, 0], 8, 12, 4, 13, 2, 6, [1, 0], 2, 9, 4, 13, 8, 12, [4, 0], 5, 12, 1, 13, 8, 3, [10, 0], 5, 3, 7, 13, 11, 6, [7, 0], 11, 9, 10, 13, 2, 6, [1, 0], 8, 3, 10, 13, 11, 9, [10, 0], 5, 12, 1, 13, 11, 6, [7, 0], 8, 12, 4, 13, 2, 9, [4, 0], 5, 3, 7, 13
+]
+}
+var tone_block_2 = [];
+for (ii=0; ii<seq2.length; ii++) {
+    if (ii % 7 === 0 && ii !== 0 && seq2[ii] === 13) {
+        tone_block_2.push({'stimulus': 'tones/silent.wav',
+                          'prompt': 'If the first song is the same as some parts of klaptoos song, press the left arrow key; if the second song is the same as some parts of klaptoos song, press the right arrow key',
+                          'choices': [37,39],
+                          'timing_response': 1600000000,
+                          'timing_post_trial': 200,
+                          'response_ends_trial': true});
+    } else if (ii === 0) {
+        tone_block_2.push({'stimulus': 'tones/silent.wav',
+                          'prompt': '',
+                          'choices': [37,39],
+                          'timing_response': 200,
+                          'timing_post_trial': 200,
+                          'response_ends_trial': false});
+
+    } else if (seq2[ii][1] === 0){
+        tone_block_2.push({'stimulus': sounds[seq2[ii][0]],
+                          'response_ends_trial': false,
+                          'timing_response': 460,
+                          'timing_post_trial': 1000});
+
+    } else {
+        tone_block_2.push({'stimulus': sounds[seq2[ii]],
+			  'response_ends_trial': false,
+			  'timing_response': 460,
+			  'timing_post_trial': 20});
+
+   }
+}
+
+var send_time = {
+    type: 'call-function',
+    func: function () {var datetime = jsPsych.startTime(); return datetime;}
+};
+
+
+var forced_choice_block = {
+    type: 'audio-keyboard-response',
+    timeline: tone_block_2,
+    timing_response: 360,
+    timing_post_trial: 20,
+    response_ends_trial: false
+}
+
+var end = {
+    type: 'audio-keyboard-response',
+    stimulus: 'tone_instr/end_instr.wav',
+      prompt: "<p><center>Great!</center></p>",
+    response_ends_trial: true,
+    timing_response: 1000,
+    trial_duration: 1000,
+};
+console.log(ID==null);
+
+ if (ID == "null" | ID == null | ID == 'undefined') { timeline.push(par_id);
+}
+timeline.push(send_time);
+timeline.push(instr2);
+timeline.push(instr3);
+timeline.push(instr4);
+timeline.push(instr5);
+timeline.push(instr6);
+if (cond_assign === 'lang1') {
+timeline.push(instr6_targ);
+} else if (cond_assign === 'lang2') {
+timeline.push(instr6_targA)
+}
+timeline.push(instr7);
+if (cond_assign === 'lang1') {
+timeline.push(instr7_targ);
+} else if (cond_assign === 'lang2') {
+timeline.push(instr7_targA);
+}
+timeline.push(instr8);
+timeline.push(six_tone_sequence);
+timeline.push(instr9);
+timeline.push(six_tone_sequence);
+timeline.push(instr10);
+timeline.push(struct_block);
+timeline.push(instr11);
+timeline.push(instr12);
+timeline.push(instr13);
+timeline.push(forced_choice_block);
+timeline.push(end);
+
+
+
+if (cond_assign === 'lang1') {
+jsPsych.data.addProperties({
+        cond: cond_assign,
+        targ: '{}C'.format(targali),
+        ts: datetime
+});
+} else if (cond_assign === 'lang2') {
+jsPsych.data.addProperties({
+        cond: cond_assign,
+        targ: '{}A'.format(targali),
+        ts: datetime
+});
+}
+
+// From https://github.com/CrumpLab/jspsychr/blob/master/inst/rmarkdown/templates/jspsychr/skeleton/experiment/jspsychr/jspsychr.js
+  var jspsychr = {};
+  jspsychr.save_locally = function(filename) {
+    var data = jsPsych.data.dataAsCSV();
+    var file = filename;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'submit');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({filename: file, filedata: data}));
+  };
+
+
+/* start the experiment */
+jsPsych.init({
+    timeline: timeline,
+    fullscreen: false,
+    on_finish: function save_data(){
+     if (ID == "null" | ID == null | ID == 'undefined') {
+   	ID = jsPsych.data.getTrialsOfType('survey-text')[0].responses.match(/[a-zA-Z0-9]/g).join('').split(/Q0/)[1];
+
+    jsPsych.data.addProperties({
+            part_id: ID
+          });
+   	}
+
+    var filename = "{}_tsl.csv".format(ID);
+    jspsychr.save_locally(filename);
+
+
+    setTimeout(function() {
+      return window.location.replace('./continue.html');
+    }, 1500)
+
+
+   }
+});
+</script>
+</html>
