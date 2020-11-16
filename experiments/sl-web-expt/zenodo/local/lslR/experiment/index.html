@@ -1,0 +1,393 @@
+<!doctype html>
+<html>
+  <head>
+  	<meta charset='utf-8'>
+
+    <title>My experiment</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="jspsych-5.0.3/jspsych.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
+	  <script src="jspsych-5.0.3/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-single-audio.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-animation.js"></script>
+    <script src="jspsych-5.0.3/plugins/jspsych-single-stim.js"></script>
+    <link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    <script src="jspsych-5.0.3/plugins/jspsych-call-function.js"></script>
+    <link rel="stylesheet" href="jspsych-5.0.3/css/jspsych.css"></link>
+
+
+  </head>
+  <body>
+
+  </body>
+  <script>
+var ID = JSON.stringify(jsPsych.data.getURLVariable('subject'));
+console.log(ID);
+
+var par_id = {
+    type: 'survey-text',
+    questions: ['Enter your participant ID'],
+    timing_post_trial: 1000
+    };
+
+   String.prototype.format = function () {
+    var i = 0, args = arguments;
+    return this.replace(/{}/g, function () {
+        return typeof args[i] != 'undefined' ? args[i++] : '';
+    });
+    };
+
+
+//If the targets in the exposure and the test phase need to be randomized between sujects, please use this line and comment out the line below.
+//var cond_assign = jsPsych.randomization.sample(['lang1','lang2'],1)[0];
+var cond_assign = 'lang2';
+
+console.log(cond_assign);
+	var datetime = jsPsych.startTime();
+	var rand_targ = ['F','B','H','G'];
+	var rand_targ2 = ['A','C','E','H'];
+
+	var pick_targ = function(targType) {
+                    return targType[Math.floor(Math.random()*targType.length)];}
+
+	if (cond_assign === 'lang1') {
+		var target = pick_targ(rand_targ);
+	} else if (cond_assign === 'lang2') {
+		var target = pick_targ(rand_targ2);}
+
+	/* define instructions block */
+	   var instr1 = {
+    type: 'single-audio',
+    stimulus: 'sound/instr_1.wav',
+    prompt: "<p><center>Press the spacebar to begin.</center></p>",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+  };
+
+
+
+
+var datetime = jsPsych.startTime();
+
+var send_time = {
+    type: 'call-function',
+    func: function () {var datetime = jsPsych.startTime(); return datetime;}
+};
+
+	var instr2 = {
+    type: 'single-audio',
+    stimulus: 'sound/lsl_instr2.wav',
+      prompt: "<p><center>Hi there! We're going to watch a parade today.</center></p> ",
+    choices: ['space'],
+    timing_response: -1,
+    response_ends_trial: true
+};
+
+	var instr3 = {
+		type: 'single-audio',
+		stimulus: 'sound/lsl_instr3.wav',
+		  prompt: "<p><center>This is Klaptoo!</center></p> <img src='image/klaptoo.png' style='position:fixed;top:20%;left:42%;'>",
+		choices: ['space'],
+		timing_response: -1,
+		response_ends_trial: true
+	};
+
+	var instr4 = {
+		type: 'single-audio',
+		stimulus: 'sound/lsl_instr4.wav',
+		  prompt: "<p>Klaptoo is going to hold up signs for the parade. We need you to help us keep track of his favorite sign. We'll show you Klaptoo's favorite sign now.</p><img src='image/klaptoo.png' style='position:fixed;top:20%;left:42%;'>",
+		choices: ['space'],
+		timing_response: -1,
+		response_ends_trial: true
+	};
+
+    var target_image = 'image/image/{}.png'.format(target)
+
+    var targ = {
+	  type: 'single-stim',
+	  stimulus: target_image,
+	  choices: ['space'],
+	  timing_response: -1,
+	  response_ends_trial: true
+	};
+
+
+	var instr5a = {
+		type: 'single-audio',
+		stimulus: 'sound/lsl_instr5a.wav',
+		prompt: "<p>Klaptoo is going to show you many signs now. Remember, this is the special sign to keep track of. </p>",
+		choices: ['space'],
+		timing_response: -1,
+		response_ends_trial: true
+	};
+
+	var instr5b = {
+		type: 'single-audio',
+		stimulus: 'sound/lsl_instr5b.wav',
+		prompt: "<p>Klaptoo will show you one sign at a time on the screen. To keep track of Klaptoo's favorite sign, press the spacebar whenever you see it.</p>",
+		choices: ['space'],
+		timing_response: -1,
+		response_ends_trial: true
+	};
+
+
+
+	//reading the image file
+
+    	function textFileToArray(filename)
+	{
+   	 var reader = (window.XMLHttpRequest != null )
+               ? new XMLHttpRequest()
+               : new ActiveXObject("Microsoft.XMLHTTP");
+    	 reader.open("GET", filename, false );
+   	 reader.send( );
+   	 return reader.responseText.split('\n');
+	}
+
+	var blank = 'image/image/blank.png';
+	//check condition
+	if (cond_assign === 'lang1') {
+		var image = textFileToArray('S_fam_seq_1_blast.txt');}
+	else if (cond_assign === 'lang2') {
+		var image = textFileToArray('S_fam_seq_2_blast.txt');}
+
+
+	//putting the sound file into the experimental block
+	var trials = [];
+	for (var i = 0; i < image.length; i++) {
+		trials.push(image[i])
+                trials.push(image[i])
+                trials.push(image[i])
+                trials.push(image[i])
+		trials.push(blank);
+	}
+
+
+	var block = {
+	  type: 'animation',
+	  stimuli: trials,
+	  frame_time: 200,
+	  choices: ['space']
+	}
+
+
+	var instr6 = {
+	    type: 'single-audio',
+	    stimulus: 'sound/lsl_instr6.wav',
+	    prompt: "<p><center>Great job! Now we have a new task for you. Be sure to pay attention to the instructions.</center></p>",
+	    choices: ['space'],
+	    timing_response: -1,
+	    response_ends_trial: true
+	};
+
+	var instr7 = {
+	    type: 'single-audio',
+	    stimulus: 'sound/lsl_instr7.wav',
+	      prompt: "<p><center>Some signs always go together.</center></p> <img src='image/image/line_of_letters.png' style='position:fixed;top:30%;left:7%;'>",
+	    choices: ['space'],
+	    timing_response: -1,
+	    response_ends_trial: true
+	};
+
+	var instr8 = {
+	    type: 'single-audio',
+	    stimulus: 'sound/lsl_instr8.wav',
+	    prompt: "<p><center>Look carefully below. Can you see three signs that always go together?</center></p> <img src='image/image/line_of_letters.png' style='position:fixed;top:30%;left:7%;'>",
+	    choices: ['space'],
+	    timing_response: -1,
+	    response_ends_trial: true
+	    };
+            var instr9 = {
+	    type: 'single-audio',
+	    stimulus: 'sound/lsl_instr9.wav',
+	    prompt: "<p><center>These are the three signs that always go together</center></p> <img src='image/image/good_triplet.png' style='position:fixed;top:30%;left:35%;'>",
+	    choices: ['space'],
+	    timing_response: -1,
+	    response_ends_trial: true
+	    };
+
+
+	    var instr11a = {
+	    type: 'single-audio',
+	    stimulus: 'sound/lsl_instr11a.wav',
+	    prompt: "<p><center>You will see two groups of signs, one at a time. One group will have signs that always went together in the parade.  </center></p>",
+	    choices: ['space'],
+	    timing_response: -1,
+	    response_ends_trial: true
+	    }
+
+	    var instr11b = {
+	    type: 'single-audio',
+	    stimulus: 'sound/lsl_instr11b.wav',
+	    prompt: "<p><center>Sometimes the signs that always went together will be in the first group. Sometimes they will be in the second group.  </center></p>",
+	    choices: ['space'],
+	    timing_response: -1,
+	    response_ends_trial: true
+	    }
+
+	        var instr12 = {
+	    type: 'single-audio',
+	    stimulus: 'sound/lsl_instr12.wav',
+	    prompt: "<p><center>Your job is to decide which of the two groups Klaptoo always showed together during the parade. </center></p>",
+	    choices: ['space'],
+	    timing_response: -1,
+	    response_ends_trial: true
+	    }
+
+
+	//load all the img files for task 2
+	var img = [];
+	img['1'] = 'image/image/A.png';
+	img['2'] = 'image/image/B.png';
+	img['3'] = 'image/image/C.png';
+	img['4'] = 'image/image/D.png';
+	img['5'] = 'image/image/E.png';
+	img['6'] = 'image/image/F.png';
+	img['7'] = 'image/image/G.png';
+	img['8'] = 'image/image/H.png';
+	img['9'] = 'image/image/J.png';
+	img['10'] = 'image/image/K.png';
+	img['11'] = 'image/image/L.png';
+	img['12'] = 'image/image/M.png';
+	img['14'] = 'image/image/blank.png';
+
+	if (cond_assign === 'lang1') {
+	var forced_test = [14,1, 9, [6,0], 1, 10, 7, 13, 5, 11, [8,0], 12, 3, 8, 13, 12, 10, [2,0], 1, 10, 7, 13, 5, 9, [2,0], 5, 11, 8, 13, 12, 3, [8,0], 5, 11, 8, 13, 1, 9, [6,0], 12, 3, 8, 13, 4, 3, [7,0], 4, 11, 6, 13, 12, 3, [8,0], 4, 3, 7, 13, 5, 9, [2,0], 12, 10, 2, 13, 12, 3, [8,0], 12, 10, 2, 13, 5, 11, [8,0], 4, 11, 6, 13, 1, 10, [7,0], 1, 9, 6, 13, 5, 11, [8,0], 5, 9, 2, 13, 4, 3, [7,0], 5, 9, 2, 13, 1, 10, [7,0], 12, 10, 2, 13, 1, 10, [7,0], 5, 11, 8, 13, 12, 10, [2,0], 5, 9, 2, 13, 4, 3, [7,0], 12, 3, 8, 13, 5, 11, [8,0], 1, 10, 7, 13, 1, 9, [6,0], 4, 11, 6, 13, 5, 9, [2,0], 1, 9, 6, 13, 4, 3, [7,0], 1, 10, 7, 13, 12, 3, [8,0], 1, 9, 6, 13, 4, 11, [6,0], 1, 9, 6, 13, 1, 9, [6,0], 5, 9, 2, 13, 5, 9, [2,0], 4, 3, 7, 13, 4, 11, [6,0], 12, 10, 2, 13, 1, 10, [7,0], 4, 3, 7, 13, 12, 10, [2,0], 12, 3, 8, 13, 4, 11, [6,0], 4, 3, 7, 13, 4, 11, [6,0], 5, 11, 8, 13, 12, 10, [2,0], 4, 11, 6, 13]}
+	else if (cond_assign === 'lang2') {
+	var forced_test = [14, 7, 9, [1, 0], 6, 9, 8, 13, 11, 10, [1, 0], 6, 10, 3, 13, 6, 9, [8, 0], 11, 2, 5, 13, 12, 4, [8, 0], 12, 2, 3, 13, 7, 4, [5, 0], 11, 2, 5, 13, 12, 2, [3, 0], 7, 9, 1, 13, 12, 4, [8, 0], 11, 10, 1, 13, 7, 4, [5, 0], 6, 10, 3, 13, 12, 4, [8, 0], 7, 4, 5, 13, 6, 10, [3, 0], 6, 9, 8, 13, 11, 10, [1, 0], 11, 2, 5, 13, 7, 9, [1, 0], 7, 4, 5, 13, 12, 2, [3, 0], 6, 10, 3, 13, 11, 10, [1, 0], 7, 9, 1, 13, 11, 2, [5, 0], 7, 4, 5, 13, 12, 4, [8, 0], 6, 9, 8, 13, 12, 2, [3, 0], 11, 2, 5, 13, 7, 9, [1, 0], 12, 2, 3, 13, 6, 10, [3, 0], 7, 4, 5, 13, 6, 9, [8, 0], 12, 4, 8, 13, 6, 10, [3, 0], 12, 2, 3, 13, 11, 10, [1, 0], 12, 4, 8, 13, 11, 2, [5, 0], 6, 9, 8, 13, 6, 9, [8, 0], 7, 9, 1, 13, 7, 9, [1, 0], 11, 10, 1, 13, 6, 9, [8, 0], 6, 10, 3, 13, 7, 4, [5, 0], 12, 4, 8, 13, 11, 2, [5, 0], 12, 2, 3, 13, 11, 2, [5, 0], 11, 10, 1, 13, 7, 4, [5,0], 7, 9, 1, 13, 12, 2, [3, 0], 12, 4, 8, 13, 6, 10, [3, 0], 11, 10, 1, 13]}
+
+var img_block_2 = [];
+	for (ii=0; ii<forced_test.length; ii++) {
+	    if (ii !== 0 && forced_test[ii] === 13) {
+	        img_block_2.push({
+	      	 'stimulus': 'image/image/white.png',
+	                          'prompt': "<p><center>Which group went together? Press 1 for first and 2 for second.</center></p>",
+	                          'choices': ['1','2'],
+	                          'timing_response': 1600000000,
+	                          'timing_post_trial': 200,
+	                          'response_ends_trial': true});
+	    } else if (ii === 0) {
+	        img_block_2.push({'stimulus': 'image/image/white.png',
+	                          'prompt': '',
+	                          'choices': ['1','2'],
+	                          'timing_response': 200,
+	                          'timing_post_trial': 200,
+	                          'response_ends_trial': false});
+
+	    } else if (forced_test[ii][1] === 0){
+	        img_block_2.push({'stimulus':img[forced_test[ii][0]],
+	                          'response_ends_trial': false,
+	                          'timing_response': 460,
+	                          'timing_post_trial': 1000});
+
+	    } else {
+	        img_block_2.push({'stimulus':img[forced_test[ii]],
+				  'response_ends_trial': false,
+				  'timing_response': 660,
+				  'timing_post_trial': 100});
+
+	   }
+	}
+
+	var send_time = {
+	    type: 'call-function',
+	    func: function () {var datetime = jsPsych.startTime(); return datetime;}
+	};
+
+
+	var forced_choice_block = {
+	    type: 'single-stim',
+	    timeline: img_block_2,
+	    timing_response: 360,
+	    timing_post_trial: 20,
+	    response_ends_trial: false
+	}
+
+	var end = {
+	    type: 'single-audio',
+	    stimulus: 'sound/end_instr.wav',
+	    prompt: "Great!",
+            timing_response: 1000,
+            trial_duration: 1000,
+            response_ends_trial: true,
+	}
+
+
+	jsPsych.data.addProperties({
+	        cond: cond_assign,
+	        targ: '{}'.format(target),
+	        ts: datetime
+	});
+
+
+
+  /* create experiment timeline array */
+var timeline = [];
+if (ID == "null" | ID == 'undefined' | ID == null) {
+	timeline.push(par_id);}
+  timeline.push(send_time);
+  timeline.push(instr1);
+  timeline.push(instr2);
+  timeline.push(instr3);
+  timeline.push(instr4);
+  timeline.push(targ);
+  timeline.push(instr5a);
+  timeline.push(targ);
+  timeline.push(instr5b);
+  timeline.push(block);
+  timeline.push(instr6);
+  timeline.push(instr7);
+  timeline.push(instr8);
+  timeline.push(instr9);
+  timeline.push(instr11a);
+  timeline.push(instr11b);
+  timeline.push(forced_choice_block);
+  timeline.push(end);
+
+
+
+  jsPsych.data.addProperties({
+    cond: cond_assign,
+    targ: '{}'.format(target),
+    ts: datetime
+  });
+
+  // From https://github.com/CrumpLab/jspsychr/blob/master/inst/rmarkdown/templates/jspsychr/skeleton/experiment/jspsychr/jspsychr.js
+    var jspsychr = {};
+    jspsychr.save_locally = function(filename) {
+      var data = jsPsych.data.dataAsCSV();
+      var file = filename;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'submit');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({filename: file, filedata: data}));
+    };
+
+
+  /* start the experiment */
+  jsPsych.init({
+    timeline: timeline,
+      fullscreen: false,
+   on_finish: function save_data(){
+   if (ID == "null" | ID == null | ID == 'undefined') {
+   	ID = jsPsych.data.getTrialsOfType('survey-text')[0].responses.match(/[a-zA-Z0-9]/g).join('').split(/Q0/)[1];
+
+    jsPsych.data.addProperties({
+            part_id: ID
+          });
+  }
+
+    var filename = "{}_lsl.csv".format(ID);
+    jspsychr.save_locally(filename);
+
+
+  setTimeout(function() {
+      return window.location.replace('./continue.html');
+    }, 1500)
+
+
+   }
+});
+</script>
+</html>
