@@ -23,6 +23,7 @@ library(Hmisc);
 library(arm);
 library(ez);
 library(dplyr);
+library(lmerTest)
 library(simr);
 ```
 ### Import data as dataframe
@@ -463,8 +464,9 @@ ggplot(df_corr_late, aes(x=Short_Long_MMN, y=scaled_rt_slope)) + geom_point(size
 ```
 
 ```{r}
-ggplot(df_corr_late, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="RT Slope & Local (p) within Low Condition", x="Local (p) MMN within Low frequency Condition", y = "RT SLope") +   theme_classic() +
-theme(plot.title = element_text(hjust = 0.5)) 
+ggplot(df_corr_late, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(x="P3 Amplitude (uV)\nLocal(Low) - Local(High)", y = "Scaled RT SLope") +  geom_smooth(method = "loess", se=FALSE) + theme_classic(base_size = 20.0) +
+theme(plot.title = element_text(hjust = 0.5))
+
 ```
 
 ```{r}
@@ -512,4 +514,50 @@ sum_d %>%
     axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
     axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
   )
+```
+```{r, echo=FALSE}
+df_corr$learner = "fast"
+df_corr[which(df_corr$scaled_rt_slope > 0),]$learner="slow"
+df_corr$learner2 = "P3"
+df_corr[which(df_corr$Local_low < 0),]$learner2="LDN"
+df_corr$learner2 = as.factor(df_corr$learner2)
+summary(df_corr$learner)
+t.test(scaled_rt_slope~learner2,data = df_corr)
+t.test(accuracy~learner2,data = df_corr)
+
+ggplot() +
+  theme_classic(base_size = 20.0) +
+  #ggtitle('P3 size:Local(low) - Local(high)' + theme(plot.title = element_text(hjust = 0.5))) +
+  ylab(label = 'P3 Amplitude\nLocal(Low) - Local(High)') +
+  scale_y_continuous(breaks = pretty_breaks()) +
+  geom_bar(aes(y = Local_low, x = learner,fill =  as.factor(learner)),data=df_corr,colour="black",fun.data = mean_sdl,stat = 'summary') +
+  #geom_beeswarm(aes(x = learner,y = Local_low),data=df_corr,dodge.width=0.9,cex=2.5) +
+  geom_errorbar(aes(y = Local_low, x = learner),data=df_corr,size = 0.3,width = 0.2,fun.y = function(x) mean(x),fun.ymin = function(x) mean(x) - sd(x)/sqrt(length(x)),fun.ymax = function(x) mean(x) + sd(x)/sqrt(length(x)) ,stat = 'summary')+
+  scale_x_discrete(name = 'Learner Group',labels = c("Fast","Slow"))+   
+  scale_fill_brewer(palette = 'Set2')+
+  theme(legend.position = "none")
+
+ggplot() +
+  theme_classic(base_size = 20.0) +
+  #ggtitle('P3 size:Local(low) - Local(high)' + theme(plot.title = element_text(hjust = 0.5))) +
+  ylab(label = 'Accuracy') +
+  scale_y_continuous(breaks = pretty_breaks()) +
+  geom_bar(aes(y = accuracy, x = learner,fill =  as.factor(learner)),data=df_corr,colour="black",fun.data = mean_sdl,stat = 'summary') +
+  #geom_beeswarm(aes(x = learner,y = Local_low),data=df_corr,dodge.width=0.9,cex=2.5) +
+  geom_errorbar(aes(y = accuracy, x = learner),data=df_corr,size = 0.3,width = 0.2,fun.y = function(x) mean(x),fun.ymin = function(x) mean(x) - sd(x)/sqrt(length(x)),fun.ymax = function(x) mean(x) + sd(x)/sqrt(length(x)) ,stat = 'summary')+
+  scale_x_discrete(name = 'Learner Group',labels = c("Fast","Slow"))+   
+  scale_fill_brewer(palette = 'Set2')+
+  theme(legend.position = "none")
+
+ggplot() +
+  theme_classic(base_size = 20.0) +
+  #ggtitle('P3 size:Local(low) - Local(high)' + theme(plot.title = element_text(hjust = 0.5))) +
+  ylab(label = 'Scaled RT Slope') +
+  scale_y_continuous(breaks = pretty_breaks()) +
+  geom_bar(aes(y = scaled_rt_slope, x = learner2,fill =  as.factor(learner2)),data=df_corr,colour="black",fun.data = mean_sdl,stat = 'summary') +
+  geom_beeswarm(aes(x = learner2,y = scaled_rt_slope),data=df_corr,dodge.width=0.9,cex=2.5) +
+  geom_errorbar(aes(y = scaled_rt_slope, x = learner2),data=df_corr,size = 0.3,width = 0.2,fun.y = function(x) mean(x),fun.ymin = function(x) mean(x) - sd(x)/sqrt(length(x)),fun.ymax = function(x) mean(x) + sd(x)/sqrt(length(x)) ,stat = 'summary')+
+  scale_x_discrete(name = 'Learner Group',labels = c("LDN","P3"))+   
+  scale_fill_brewer(palette = 'Set2')+
+  theme(legend.position = "none")
 ```
