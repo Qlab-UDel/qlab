@@ -202,7 +202,8 @@ library(ez)
 library(dplyr)
 library(arm)
 library(tidyr)
-library(tidyverse)</code></pre>
+library(tidyverse)
+source(&quot;centerfactor.R&quot;)</code></pre>
 </div>
 <div id="load-heb-online-rating-data-output-as-dataframe" class="section level3">
 <h3>Load HEB Online Rating data output as dataframe</h3>
@@ -212,9 +213,9 @@ df_heb=read.csv('hebrew.csv')</code></pre>
 </div>
 <div id="rename-columns-to-words" class="section level3">
 <h3>Rename columns to words</h3>
-<pre class="r"><code>df_eng &lt;- df_eng %&gt;% rename(part_ID = Q4, gobuku = Q70_1, daropi = Q71_1, dabitu = Q68_1, bidapu = Q67_1, golatu = Q72_1, kubiro = Q73_1, pabiku = Q74_1, parodo = Q75_1, tibudo = Q76_1, tilapi = Q77_1, dukame = Q78_1, duloga = Q79_1, gedino = Q80_1, gekalu = Q81_1, kibano = Q82_1, kimuga = Q83_1, nadima = Q84_1, nalobi = Q85_1, tobalu = Q86_1, tomubi = Q87_1)
+<pre class="r"><code>df_eng &lt;- df_eng %&gt;% rename(part_ID = Q4, gobuku = Q70_1, daropi = Q71_1, dabitu = Q68_1, bidapu = Q67_1, golatu = Q72_1, kubiro = Q73_1, pabiku = Q74_1, parodo = Q75_1, tibudo = Q76_1, tilapi = Q77_1, dukame = Q78_1, duloga = Q79_1, gedino = Q80_1, gekalu = Q81_1, kibeno = Q82_1, kimuga = Q83_1, nadime = Q84_1, nalobi = Q85_1, tobelu = Q86_1, tomubi = Q87_1)
 
-df_heb &lt;- df_heb %&gt;% rename(part_ID = Q4, gobuku = Q70_1, daropi = Q71_1, dabitu = Q68_1, bidapu = Q67_1, golatu = Q72_1, kubiro = Q73_1, pabiku = Q74_1, parodo = Q75_1, tibudo = Q76_1, tilapi = Q77_1, dukame = Q78_1, duloga = Q79_1, gedino = Q80_1, gekalu = Q81_1, kibano = Q82_1, kimuga = Q83_1, nadima = Q84_1, nalobi = Q85_1, tobalu = Q86_1, tomubi = Q87_1)</code></pre>
+df_heb &lt;- df_heb %&gt;% rename(part_ID = Q4, gobuku = Q70_1, daropi = Q71_1, dabitu = Q68_1, bidapu = Q67_1, golatu = Q72_1, kubiro = Q73_1, pabiku = Q74_1, parodo = Q75_1, tibudo = Q76_1, tilapi = Q77_1, dukame = Q78_1, duloga = Q79_1, gedino = Q80_1, gekalu = Q81_1, kibeno = Q82_1, kimuga = Q83_1, nadime = Q84_1, nalobi = Q85_1, tobelu = Q86_1, tomubi = Q87_1)</code></pre>
 </div>
 <div id="compute-average-rating-on-each-english-and-hebrew-item-for-both-groups-of-speakers" class="section level3">
 <h3>Compute average rating on each English and Hebrew Item for both groups of Speakers</h3>
@@ -225,9 +226,9 @@ df_eng &lt;- mutate_all(df_eng, function(x) as.numeric(as.character(x)))</code><
 <pre class="r"><code>colMeans(df_eng)</code></pre>
 <pre><code>## part_ID     Q29  gobuku  daropi  dabitu  bidapu  golatu  kubiro  pabiku 
 ##      NA    1.00    1.86    2.72    2.74    2.40    2.60    2.92    2.26 
-##  parodo  tibudo  tilapi  dukame  duloga  gedino  gekalu  kibano  kimuga 
+##  parodo  tibudo  tilapi  dukame  duloga  gedino  gekalu  kibeno  kimuga 
 ##    2.86    2.42    2.62    2.18    2.00    2.40    2.04    2.46    1.90 
-##  nadima  nalobi  tobalu  tomubi FL_5_DO 
+##  nadime  nalobi  tobelu  tomubi FL_5_DO 
 ##    2.14    2.50    2.20    2.38      NA</code></pre>
 <pre class="r"><code>df_heb = df_heb[-1,]
 df_heb &lt;- mutate_all(df_heb, function(x) as.numeric(as.character(x)))</code></pre>
@@ -236,9 +237,9 @@ df_heb &lt;- mutate_all(df_heb, function(x) as.numeric(as.character(x)))</code><
 <pre class="r"><code>colMeans(df_heb)</code></pre>
 <pre><code>## part_ID     Q28     Q27  gobuku  daropi  dabitu  bidapu  golatu  kubiro 
 ##      NA    1.00   17.64    1.88    2.42    2.28    1.94    2.46    2.52 
-##  pabiku  parodo  tibudo  tilapi  dukame  duloga  gedino  gekalu  kibano 
+##  pabiku  parodo  tibudo  tilapi  dukame  duloga  gedino  gekalu  kibeno 
 ##    2.02    2.16    1.90    2.68    2.20    2.68    3.44    3.14    3.52 
-##  kimuga  nadima  nalobi  tobalu  tomubi FL_5_DO 
+##  kimuga  nadime  nalobi  tobelu  tomubi FL_5_DO 
 ##    3.30    2.96    3.04    3.26    2.76      NA</code></pre>
 </div>
 <div id="compute-average-overall-rating-for-english-and-hebrew-items-for-both-groups-of-speakers" class="section level3">
@@ -291,6 +292,152 @@ eng_heb_item_mean</code></pre>
 <pre><code>## [1] 2.22</code></pre>
 <pre class="r"><code>heb_heb_item_mean</code></pre>
 <pre><code>## [1] 3.022</code></pre>
+</div>
+<div id="are-the-heb-foils-rated-the-same-or-different-than-the-heb-targets-by-english-speakers" class="section level3">
+<h3>Are the HEB foils rated the same or different than the HEB targets by English speakers?</h3>
+<pre class="r"><code>df_eng$target_mean &lt;- rowMeans(subset(df_eng, select = c(&quot;dukame&quot;,&quot;gedino&quot;,&quot;kimuga&quot;,&quot;nalobi&quot;,&quot;tobelu&quot;)), na.rm = TRUE)
+df_eng$foil_mean &lt;- rowMeans(subset(df_eng, select = c(&quot;duloga&quot;, &quot;nadime&quot;, &quot;tomubi&quot;, &quot;gekalu&quot;,&quot;kibeno&quot;)), na.rm = TRUE)
+
+t.test(df_eng$target_mean,df_eng$foil_mean, paired = TRUE)</code></pre>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  df_eng$target_mean and df_eng$foil_mean
+## t = 0.31787, df = 49, p-value = 0.7519
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.1703015  0.2343015
+## sample estimates:
+## mean of the differences 
+##                   0.032</code></pre>
+<pre class="r"><code>target_mean = mean(df_eng$target_mean)
+foil_mean = mean(df_eng$foil_mean)
+target_mean</code></pre>
+<pre><code>## [1] 2.236</code></pre>
+<pre class="r"><code>foil_mean</code></pre>
+<pre><code>## [1] 2.204</code></pre>
+</div>
+<div id="are-the-heb-foils-rated-the-same-or-different-than-the-heb-targets-by-hebrew-speakers" class="section level3">
+<h3>Are the HEB foils rated the same or different than the HEB targets by Hebrew speakers?</h3>
+<pre class="r"><code>df_heb$target_mean &lt;- rowMeans(subset(df_heb, select = c(&quot;dukame&quot;,&quot;gedino&quot;,&quot;kimuga&quot;,&quot;nalobi&quot;,&quot;tobelu&quot;)), na.rm = TRUE)
+df_heb$foil_mean &lt;- rowMeans(subset(df_heb, select = c(&quot;duloga&quot;, &quot;nadime&quot;, &quot;tomubi&quot;, &quot;gekalu&quot;,&quot;kibeno&quot;)), na.rm = TRUE)
+
+t.test(df_heb$target_mean,df_heb$foil_mean, paired = TRUE)</code></pre>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  df_heb$target_mean and df_heb$foil_mean
+## t = 0.34032, df = 49, p-value = 0.7351
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.1765773  0.2485773
+## sample estimates:
+## mean of the differences 
+##                   0.036</code></pre>
+<pre class="r"><code>heb_target_mean = mean(df_heb$target_mean)
+heb_foil_mean = mean(df_heb$foil_mean)
+heb_target_mean</code></pre>
+<pre><code>## [1] 3.048</code></pre>
+<pre class="r"><code>heb_foil_mean</code></pre>
+<pre><code>## [1] 3.012</code></pre>
+</div>
+</div>
+<div id="does-the-english-speakers-rating-of-the-heb-targets-help-explaining-the-learnability-of-these-triplets" class="section level2">
+<h2>Does the English speakers’ rating of the HEB targets help explaining the learnability of these triplets?</h2>
+<div id="import-original-heb-dataset" class="section level3">
+<h3>Import original HEB Dataset</h3>
+<pre class="r"><code>hebtrial &lt;- read.csv('/Volumes/GoogleDrive/My Drive/Projects/HEB/R_scripts/heb_trial_clean_082819.csv')
+hebtrial$task = as.factor(as.character(hebtrial$task)) # 0 means nonlinguistic and 1 means linguistic task
+hebtrial$task_order = as.factor(as.character(hebtrial$task_order)) # 0 means nonlinguistic task comes first and 1 means linguistic task comes first
+hebtrial$trial_order = as.factor(as.character(hebtrial$trial_order)) # 0 means foil comes first and 1 means target comes first
+hebtrial$subject = as.factor(as.character(hebtrial$subject)) 
+hebtrial$trial = as.factor(as.character(hebtrial$trial)) 
+heb_only_trial&lt;- hebtrial[which(hebtrial$language == &quot;hebrew&quot;),]
+eng_trial&lt;- hebtrial[which(hebtrial$language == &quot;english&quot;),]
+eng_ling_trial&lt;- eng_trial[which(eng_trial$task == 1),]
+eng_trial=droplevels(eng_trial)
+contrasts(eng_trial$trial)=centerfactor(eng_trial$trial)
+summary(eng_trial)</code></pre>
+<pre><code>##       X.2              X.1               X             subject    
+##  Min.   :   1.0   Min.   :   1.0   Min.   :   1.0   1      :  50  
+##  1st Qu.: 663.2   1st Qu.: 663.2   1st Qu.: 663.2   10     :  50  
+##  Median :1325.5   Median :1325.5   Median :1325.5   11     :  50  
+##  Mean   :1325.5   Mean   :1325.5   Mean   :1325.5   12     :  50  
+##  3rd Qu.:1987.8   3rd Qu.:1987.8   3rd Qu.:1987.8   13     :  50  
+##  Max.   :2650.0   Max.   :2650.0   Max.   :2650.0   14     :  50  
+##                                                     (Other):2350  
+##     gender          age           language    task_order task    
+##  female:2050   Min.   :18.00   english:2650   0:1700     0:1325  
+##  male  : 600   1st Qu.:19.00                  1: 950     1:1325  
+##                Median :20.00                                     
+##                Mean   :21.06                                     
+##                3rd Qu.:21.00                                     
+##                Max.   :37.00                                     
+##                                                                  
+##      trial      trial_order trial_accuracy    fam_ratings   
+##  1      : 106   foil:1325   Min.   :0.0000   Min.   :0.000  
+##  10     : 106   word:1325   1st Qu.:0.0000   1st Qu.:0.000  
+##  11     : 106               Median :1.0000   Median :1.000  
+##  12     : 106               Mean   :0.5891   Mean   :1.298  
+##  13     : 106               3rd Qu.:1.0000   3rd Qu.:2.000  
+##  14     : 106               Max.   :1.0000   Max.   :5.000  
+##  (Other):2014                                NA's   :1325   
+##   trial_number 
+##  Min.   : 1    
+##  1st Qu.: 7    
+##  Median :13    
+##  Mean   :13    
+##  3rd Qu.:19    
+##  Max.   :25    
+##  NA's   :1325</code></pre>
+<pre class="r"><code>df&lt;- eng_ling_trial[which(eng_ling_trial$trial_order == &quot;word&quot;),]</code></pre>
+</div>
+<div id="add-web-based-familiarity-ratings-with-larger-original-heb-dataset" class="section level3">
+<h3>Add web based familiarity ratings with larger original HEB dataset</h3>
+<pre class="r"><code>df$web_ratings &lt;- ifelse(df$trial_number == 1 | df$trial_number == 2 | df$trial_number == 3 | df$trial_number == 4 | df$trial_number == 5, &quot;2.18&quot;, #DUKAME
+                          ifelse(df$trial_number == 6 | df$trial_number == 7 | df$trial_number == 8 | df$trial_number == 9 | df$trial_number == 10, &quot;2.40&quot;, #GEDINO
+                                 ifelse(df$trial_number == 11 | df$trial_number == 12 | df$trial_number == 13 | df$trial_number == 14 | df$trial_number == 15, &quot;1.90&quot;, #KIMUGA
+                                        ifelse(df$trial_number == 16 | df$trial_number == 17 | df$trial_number == 18 | df$trial_number == 19 | df$trial_number == 20, &quot;2.50&quot;, #NALOBI
+                                               ifelse(df$trial_number == 21 | df$trial_number == 22 | df$trial_number == 23 | df$trial_number == 24 | df$trial_number == 25, &quot;2.20&quot;,&quot;0&quot;))))) #TOBELU</code></pre>
+</div>
+<div id="a-generalized-linear-mixed-effects-analysis-with-trial-by-trial-perceived-familiarity-using-ratings-from-the-web-based-sample-as-the-fixed-effect-as-well-as-random-slopes-for-subject-and-question-number." class="section level3">
+<h3>A generalized linear mixed-effects analysis with trial-by-trial perceived familiarity (using ratings from the web-based sample) as the fixed effect, as well as random slopes for subject and question number.</h3>
+<pre class="r"><code>df$web_ratings=as.numeric(as.character(df$web_ratings))
+
+fm2 &lt;-  glmer(trial_accuracy~web_ratings+(1|subject)+(1|trial_number),family = binomial,data=df)</code></pre>
+<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl =
+## control$checkConv, : Model failed to converge with max|grad| = 0.00238957
+## (tol = 0.001, component 1)</code></pre>
+<pre class="r"><code>summary(fm2)</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## Formula: trial_accuracy ~ web_ratings + (1 | subject) + (1 | trial_number)
+##    Data: df
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##    887.4    905.5   -439.7    879.4      685 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -1.6880 -1.2571  0.6482  0.7174  0.8839 
+## 
+## Random effects:
+##  Groups       Name        Variance Std.Dev.
+##  subject      (Intercept) 0.07234  0.269   
+##  trial_number (Intercept) 0.05338  0.231   
+## Number of obs: 689, groups:  subject, 53; trial_number, 13
+## 
+## Fixed effects:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)  -0.2515     1.1400  -0.221    0.825
+## web_ratings   0.4126     0.5001   0.825    0.409
+## 
+## Correlation of Fixed Effects:
+##             (Intr)
+## web_ratings -0.995
+## convergence code: 0
+## Model failed to converge with max|grad| = 0.00238957 (tol = 0.001, component 1)</code></pre>
 </div>
 </div>
 
