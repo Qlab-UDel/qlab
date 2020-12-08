@@ -1,0 +1,79 @@
+---
+title: "HEB_Online_Rating"
+author: "JM Schneider"
+date: "12/8/2020"
+output: html_document
+---
+### Import libraries
+```{r loadlib, echo=T, results='hide', message=F, warning=F}
+library(psych)
+library(readr)
+library(optimx)
+library(corrplot)
+library(reshape)
+library(reshape2)
+library(lmerTest)
+library(ggplot2)
+library(scales)
+library(ggbeeswarm)
+library(Hmisc)
+library(arm)
+library(ez)
+library(dplyr)
+library(arm)
+library(tidyr)
+library(tidyverse)
+```
+
+### Load HEB Online Rating data output as dataframe
+
+```{r}
+setwd("/Volumes/data/projects/writing/heb/data_paper/data/")
+df_eng=read.csv('english.csv')
+df_heb=read.csv('hebrew.csv')
+```
+
+### Rename columns to words
+```{r}
+df_eng <- df_eng %>% rename(part_ID = Q4, gobuku = Q70_1, daropi = Q71_1, dabitu = Q68_1, bidapu = Q67_1, golatu = Q72_1, kubiro = Q73_1, pabiku = Q74_1, parodo = Q75_1, tibudo = Q76_1, tilapi = Q77_1, dukame = Q78_1, duloga = Q79_1, gedino = Q80_1, gekalu = Q81_1, kibano = Q82_1, kimuga = Q83_1, nadima = Q84_1, nalobi = Q85_1, tobalu = Q86_1, tomubi = Q87_1)
+
+df_heb <- df_heb %>% rename(part_ID = Q4, gobuku = Q70_1, daropi = Q71_1, dabitu = Q68_1, bidapu = Q67_1, golatu = Q72_1, kubiro = Q73_1, pabiku = Q74_1, parodo = Q75_1, tibudo = Q76_1, tilapi = Q77_1, dukame = Q78_1, duloga = Q79_1, gedino = Q80_1, gekalu = Q81_1, kibano = Q82_1, kimuga = Q83_1, nadima = Q84_1, nalobi = Q85_1, tobalu = Q86_1, tomubi = Q87_1)
+```
+
+
+### Compute average rating on each English and Hebrew Item for both groups of Speakers
+```{r}
+df_eng = df_eng[-1,]
+df_eng <- mutate_all(df_eng, function(x) as.numeric(as.character(x)))
+colMeans(df_eng)
+
+df_heb = df_heb[-1,]
+df_heb <- mutate_all(df_heb, function(x) as.numeric(as.character(x)))
+colMeans(df_heb)
+```
+
+### Compute average overall rating for English and Hebrew Items for both groups of Speakers
+```{r}
+df_eng$eng_item_mean <- rowMeans(subset(df_eng, select = c(3:12)), na.rm = TRUE)
+df_eng$heb_item_mean <- rowMeans(subset(df_eng, select = c(13:22)), na.rm = TRUE)
+df_heb$eng_item_mean <- rowMeans(subset(df_heb, select = c(3:12)), na.rm = TRUE)
+df_heb$heb_item_mean <- rowMeans(subset(df_heb, select = c(13:22)), na.rm = TRUE)
+```
+
+## Statistics
+### Do English and Hebrew speakers significantly differ in their ratings of English-like words?
+```{r}
+t.test(df_eng$eng_item_mean,df_heb$eng_item_mean, paired = TRUE)
+eng_eng_item_mean = mean(df_eng$eng_item_mean)
+heb_eng_item_mean = mean(df_heb$eng_item_mean)
+eng_eng_item_mean
+heb_eng_item_mean
+```
+### Do English and Hebrew speakers significantly differ in their ratings of Hebrew-like words?
+```{r}
+t.test(df_eng$heb_item_mean,df_heb$heb_item_mean, paired = TRUE)
+eng_heb_item_mean = mean(df_eng$heb_item_mean)
+heb_heb_item_mean = mean(df_heb$heb_item_mean)
+eng_heb_item_mean
+heb_heb_item_mean
+```
