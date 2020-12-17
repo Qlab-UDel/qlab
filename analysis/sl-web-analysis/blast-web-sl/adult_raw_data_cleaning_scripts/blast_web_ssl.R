@@ -385,7 +385,7 @@ if(! all(unique (total_rts) == correct_total_targets) & (! all(unique (total_rts
 targ_index <- NULL
 
 for (i in total_rts) 
-{targ_index <- append(targ_index, rep(1:i),1)}
+{targ_index <- append(targ_index, rep(1:i))}
 exp_targets$targ_index <- targ_index
 
 # Find reaction time slopes and mean reaction times and write them to NAS ------------------------------------
