@@ -1,0 +1,138 @@
+---
+title: "HEB_Online_Rating"
+author: "JM Schneider"
+date: "12/8/2020"
+output: html_document
+---
+### Import libraries
+```{r loadlib, echo=T, results='hide', message=F, warning=F}
+library(psych)
+library(readr)
+library(optimx)
+library(corrplot)
+library(reshape)
+library(reshape2)
+library(lmerTest)
+library(ggplot2)
+library(scales)
+library(ggbeeswarm)
+library(Hmisc)
+library(arm)
+library(ez)
+library(dplyr)
+library(arm)
+library(tidyr)
+library(tidyverse)
+source("centerfactor.R")
+```
+
+### Load HEB Online Rating data output as dataframe
+
+```{r}
+setwd("/Volumes/data/projects/writing/heb/data_paper/data/")
+df_eng=read.csv('english.csv')
+df_heb=read.csv('hebrew.csv')
+```
+
+### Rename columns to words
+```{r}
+df_eng <- df_eng %>% rename(part_ID = Q4, gobuku = Q70_1, daropi = Q71_1, dabitu = Q68_1, bidapu = Q67_1, golatu = Q72_1, kubiro = Q73_1, pabiku = Q74_1, parodo = Q75_1, tibudo = Q76_1, tilapi = Q77_1, dukame = Q78_1, duloga = Q79_1, gedino = Q80_1, gekalu = Q81_1, kibeno = Q82_1, kimuga = Q83_1, nadime = Q84_1, nalobi = Q85_1, tobelu = Q86_1, tomubi = Q87_1)
+
+df_heb <- df_heb %>% rename(part_ID = Q4, gobuku = Q70_1, daropi = Q71_1, dabitu = Q68_1, bidapu = Q67_1, golatu = Q72_1, kubiro = Q73_1, pabiku = Q74_1, parodo = Q75_1, tibudo = Q76_1, tilapi = Q77_1, dukame = Q78_1, duloga = Q79_1, gedino = Q80_1, gekalu = Q81_1, kibeno = Q82_1, kimuga = Q83_1, nadime = Q84_1, nalobi = Q85_1, tobelu = Q86_1, tomubi = Q87_1)
+```
+
+
+### Compute average rating on each English and Hebrew Item for both groups of Speakers
+```{r}
+df_eng = df_eng[-1,]
+df_eng <- mutate_all(df_eng, function(x) as.numeric(as.character(x)))
+colMeans(df_eng)
+
+df_heb = df_heb[-1,]
+df_heb <- mutate_all(df_heb, function(x) as.numeric(as.character(x)))
+colMeans(df_heb)
+```
+
+### Compute average overall rating for English and Hebrew Items for both groups of Speakers
+```{r}
+df_eng$eng_item_mean <- rowMeans(subset(df_eng, select = c(3:12)), na.rm = TRUE)
+df_eng$heb_item_mean <- rowMeans(subset(df_eng, select = c(13:22)), na.rm = TRUE)
+df_heb$eng_item_mean <- rowMeans(subset(df_heb, select = c(3:12)), na.rm = TRUE)
+df_heb$heb_item_mean <- rowMeans(subset(df_heb, select = c(13:22)), na.rm = TRUE)
+```
+
+## Statistics
+### Do English and Hebrew speakers significantly differ in their ratings of English-like words?
+```{r}
+t.test(df_eng$eng_item_mean,df_heb$eng_item_mean, paired = TRUE)
+eng_eng_item_mean = mean(df_eng$eng_item_mean)
+heb_eng_item_mean = mean(df_heb$eng_item_mean)
+eng_eng_item_mean
+heb_eng_item_mean
+```
+### Do English and Hebrew speakers significantly differ in their ratings of Hebrew-like words?
+```{r}
+t.test(df_eng$heb_item_mean,df_heb$heb_item_mean, paired = TRUE)
+eng_heb_item_mean = mean(df_eng$heb_item_mean)
+heb_heb_item_mean = mean(df_heb$heb_item_mean)
+eng_heb_item_mean
+heb_heb_item_mean
+```
+### Are the HEB foils rated the same or different than the HEB targets by English speakers?
+```{r}
+df_eng$target_mean <- rowMeans(subset(df_eng, select = c("dukame","gedino","kimuga","nalobi","tobelu")), na.rm = TRUE)
+df_eng$foil_mean <- rowMeans(subset(df_eng, select = c("duloga", "nadime", "tomubi", "gekalu","kibeno")), na.rm = TRUE)
+
+t.test(df_eng$target_mean,df_eng$foil_mean, paired = TRUE)
+target_mean = mean(df_eng$target_mean)
+foil_mean = mean(df_eng$foil_mean)
+target_mean
+foil_mean
+```
+
+### Are the HEB foils rated the same or different than the HEB targets by Hebrew speakers?
+```{r}
+df_heb$target_mean <- rowMeans(subset(df_heb, select = c("dukame","gedino","kimuga","nalobi","tobelu")), na.rm = TRUE)
+df_heb$foil_mean <- rowMeans(subset(df_heb, select = c("duloga", "nadime", "tomubi", "gekalu","kibeno")), na.rm = TRUE)
+
+t.test(df_heb$target_mean,df_heb$foil_mean, paired = TRUE)
+heb_target_mean = mean(df_heb$target_mean)
+heb_foil_mean = mean(df_heb$foil_mean)
+heb_target_mean
+heb_foil_mean
+```
+
+## Does the English speakers’ rating of the HEB targets help explaining the learnability of these triplets? 
+### Import original HEB Dataset
+```{r}
+hebtrial <- read.csv('/Volumes/GoogleDrive/My Drive/Projects/HEB/R_scripts/heb_trial_clean_082819.csv')
+hebtrial$task = as.factor(as.character(hebtrial$task)) # 0 means nonlinguistic and 1 means linguistic task
+hebtrial$task_order = as.factor(as.character(hebtrial$task_order)) # 0 means nonlinguistic task comes first and 1 means linguistic task comes first
+hebtrial$trial_order = as.factor(as.character(hebtrial$trial_order)) # 0 means foil comes first and 1 means target comes first
+hebtrial$subject = as.factor(as.character(hebtrial$subject)) 
+hebtrial$trial = as.factor(as.character(hebtrial$trial)) 
+heb_only_trial<- hebtrial[which(hebtrial$language == "hebrew"),]
+eng_trial<- hebtrial[which(hebtrial$language == "english"),]
+eng_ling_trial<- eng_trial[which(eng_trial$task == 1),]
+eng_trial=droplevels(eng_trial)
+contrasts(eng_trial$trial)=centerfactor(eng_trial$trial)
+summary(eng_trial)
+df<- eng_ling_trial[which(eng_ling_trial$trial_order == "word"),]
+```
+
+### Add web based familiarity ratings with larger original HEB dataset
+```{r}
+df$web_ratings <- ifelse(df$trial_number == 1 | df$trial_number == 2 | df$trial_number == 3 | df$trial_number == 4 | df$trial_number == 5, "2.18", #DUKAME
+                          ifelse(df$trial_number == 6 | df$trial_number == 7 | df$trial_number == 8 | df$trial_number == 9 | df$trial_number == 10, "2.40", #GEDINO
+                                 ifelse(df$trial_number == 11 | df$trial_number == 12 | df$trial_number == 13 | df$trial_number == 14 | df$trial_number == 15, "1.90", #KIMUGA
+                                        ifelse(df$trial_number == 16 | df$trial_number == 17 | df$trial_number == 18 | df$trial_number == 19 | df$trial_number == 20, "2.50", #NALOBI
+                                               ifelse(df$trial_number == 21 | df$trial_number == 22 | df$trial_number == 23 | df$trial_number == 24 | df$trial_number == 25, "2.20","0"))))) #TOBELU
+```
+
+### A generalized linear mixed-effects analysis with trial-by-trial perceived familiarity (using ratings from the web-based sample) as the fixed effect, as well as random slopes for subject and question number.
+```{r}
+df$web_ratings=as.numeric(as.character(df$web_ratings))
+
+fm2 <-  glmer(trial_accuracy~web_ratings+(1|subject)+(1|trial_number),family = binomial,data=df)
+summary(fm2)
+```
