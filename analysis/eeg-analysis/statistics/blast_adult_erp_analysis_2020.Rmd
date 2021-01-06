@@ -25,12 +25,25 @@ library(ez);
 library(dplyr);
 library(lmerTest)
 library(simr);
+library(dplyr)
 ```
 ### Import data as dataframe
 ```{r}
 setwd("/Volumes/data/projects/blast/adult_erp_manuscript/")
 df_corr=read.csv('blast_online_erp_adult_corr_data.csv')
+df_rt_slope=read.csv('blast_online_adult_ssl_indiv_rts.csv')
 df_factor=read.csv('blast_adult_factor_analysis_n45.csv')
+df_corr$mean_rt <- NULL
+df_corr$scaled_rt_slope <- NULL
+```
+
+```{r}
+df_rt_slope <- df_rt_slope %>% 
+  rename(
+    subject = par_id
+  )
+df_rt_slope = subset(df_rt_slope, select = c(subject,mean_rt,scaled_rt_slope) )
+df_corr <- merge(df_corr,df_rt_slope, by = "subject")
 ```
 
 ### GLMER of Early ERP Data
@@ -201,10 +214,8 @@ df_corr$Local_low = ((df_early$Syllable_Low_Long+df_early$Voice_Low_Long)/2)-((d
 ```
 
 ```{r, eval=TRUE}
-df_corr$subject = as.numeric(df_corr$subject)
 df_corr$accuracy = as.numeric(df_corr$accuracy)
 df_corr$mean_rt = as.numeric(df_corr$mean_rt)
-df_corr$scaled_rt_slope = as.numeric(df_corr$scaled_rt_slope)
 df_corr$entropy = as.numeric(df_corr$entropy)
 df_corr$vocab = as.numeric(df_corr$vocab)
 df_corr$Short = as.numeric(df_corr$Short)
@@ -224,6 +235,8 @@ df_corr$Global_long = as.numeric(df_corr$Global_long)
 df_corr$Global_short = as.numeric(df_corr$Global_short)
 df_corr$Local_high = as.numeric(df_corr$Local_high)
 df_corr$Local_low = as.numeric(df_corr$Local_low)
+df_corr$scaled_rt_slope = as.numeric(as.character(df_corr$scaled_rt_slope))
+df_corr$subject = as.numeric(df_corr$subject)
 ```
 
 ## Early Correlation 
@@ -279,7 +292,7 @@ df_corr$Local_low = ((df_late$Syllable_Low_Long+df_late$Voice_Low_Long)/2)-((df_
 df_corr$subject = as.numeric(df_corr$subject)
 df_corr$accuracy = as.numeric(df_corr$accuracy)
 df_corr$mean_rt = as.numeric(df_corr$mean_rt)
-df_corr$scaled_rt_slope = as.numeric(df_corr$scaled_rt_slope)
+df_corr$scaled_rt_slope = as.numeric(as.character(df_corr$scaled_rt_slope))
 df_corr$entropy = as.numeric(df_corr$entropy)
 df_corr$vocab = as.numeric(df_corr$vocab)
 df_corr$Short = as.numeric(df_corr$Short)
@@ -319,20 +332,17 @@ t.test(df_corr$accuracy, mu = .50, alternative = "two.sided")
 t.test(df_corr$scaled_rt_slope, mu = 0, alternative = "two.sided")
 ```
 
-### Specific Pairwise correlations (need to check these!)
+### Specific Pairwise correlations
 ```{r}
 cor.test(df_corr$accuracy, df_corr$scaled_rt_slope,  method = "pearson", use = "complete.obs")
 # Be sure to run the corr matrix for the early time window
 cor.test(df_corr$Short_Long_MMN, df_corr$scaled_rt_slope,  method = "spearman", use = "complete.obs")
 
 # Be sure to run the corr matrix for the late time window
-r<-rcorr(df_corr$Global_long,df_corr$scaled_rt_slope,type = "spearman")
-r<-rcorr(df_corr$Global_short,df_corr$scaled_rt_slope,type = "spearman")
-r<-rcorr(df_corr$Local_high,df_corr$scaled_rt_slope,type = "spearman")
-r<-rcorr(df_corr$Local_low,df_corr$scaled_rt_slope,type = "spearman")
-
-r$r
-r$P
+cor.test(df_corr$Global_long, df_corr$scaled_rt_slope,  method = "spearman")
+cor.test(df_corr$Global_short, df_corr$scaled_rt_slope,  method = "spearman")
+cor.test(df_corr$Local_high, df_corr$scaled_rt_slope,  method = "spearman")
+cor.test(df_corr$Local_low, df_corr$scaled_rt_slope,  method = "spearman")
 ```
 
 ### Good and Poor Learners as determined by RT Slope
@@ -451,8 +461,8 @@ ggplot(df_corr_early, aes(x=Syll_Global, y=accuracy)) + geom_point(size=3, color
 ```
 
 ```{r}
-ggplot(df_corr_early, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="RT Slope & Local (p) within Low Condition", x="Local (p) MMN within Low frequency Condition", y = "RT SLope") +   theme_classic() +
-theme(plot.title = element_text(hjust = 0.5))
+ggplot(df_corr_early, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Relationship between MMN and Learning", x="Early ERP Amplitude", y = "Speech SL (RT Slope)") +   theme_classic() +
+theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
 ```
 ```{r}
 ggplot(df_corr_early, aes(x=Syll_Global, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN for Syllables", x="Syllable Only Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
@@ -464,7 +474,7 @@ ggplot(df_corr_late, aes(x=Short_Long_MMN, y=scaled_rt_slope)) + geom_point(size
 ```
 
 ```{r}
-ggplot(df_corr_late, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(x="P3 Amplitude (uV)\nLocal(Low) - Local(High)", y = "Scaled RT SLope") +  geom_smooth(method = "loess", se=FALSE) + theme_classic(base_size = 20.0) +
+ggplot(df_corr_late, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(x="P3 Amplitude (uV)\nLocal (Low vs. High), Low Frequency ", y = "Speech SL (RT Slope)") +  geom_smooth(method = "loess", se=FALSE) + theme_classic(base_size = 20.0) +
 theme(plot.title = element_text(hjust = 0.5))
 
 ```
@@ -478,6 +488,7 @@ theme(plot.title = element_text(hjust = 0.5))
 ```{r, echo=FALSE}
 good_learn <- df_corr[which(df_corr$scaled_rt_slope < 0),]
 poor_learn <- df_corr[which(df_corr$scaled_rt_slope > 0),]
+df_factor$subject<-as.numeric(df_factor$subject)
 
 df_factor_subset<-merge(poor_learn, df_factor, by = "subject", sort = TRUE)
 
@@ -515,6 +526,7 @@ sum_d %>%
     axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
   )
 ```
+
 ```{r, echo=FALSE}
 df_corr$learner = "fast"
 df_corr[which(df_corr$scaled_rt_slope > 0),]$learner="slow"
@@ -522,13 +534,13 @@ df_corr$learner2 = "P3"
 df_corr[which(df_corr$Local_low < 0),]$learner2="LDN"
 df_corr$learner2 = as.factor(df_corr$learner2)
 summary(df_corr$learner)
-t.test(scaled_rt_slope~learner2,data = df_corr)
-t.test(accuracy~learner2,data = df_corr)
+t.test(scaled_rt_slope~learner,data = df_corr)
+t.test(accuracy~learner,data = df_corr)
 
 ggplot() +
   theme_classic(base_size = 20.0) +
   #ggtitle('P3 size:Local(low) - Local(high)' + theme(plot.title = element_text(hjust = 0.5))) +
-  ylab(label = 'P3 Amplitude\nLocal(Low) - Local(High)') +
+  ylab(label = 'P3 Amplitude\nLocal(Low vs. High),\n Low Frequency') +
   scale_y_continuous(breaks = pretty_breaks()) +
   geom_bar(aes(y = Local_low, x = learner,fill =  as.factor(learner)),data=df_corr,colour="black",fun.data = mean_sdl,stat = 'summary') +
   #geom_beeswarm(aes(x = learner,y = Local_low),data=df_corr,dodge.width=0.9,cex=2.5) +
@@ -561,3 +573,9 @@ ggplot() +
   scale_fill_brewer(palette = 'Set2')+
   theme(legend.position = "none")
 ```
+
+```{r}
+length(which(df_corr$scaled_rt_slope < 0))
+length(which(df_corr$scaled_rt_slope > 0))
+```
+
