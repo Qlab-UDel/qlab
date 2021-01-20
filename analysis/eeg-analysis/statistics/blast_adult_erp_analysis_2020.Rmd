@@ -31,7 +31,7 @@ library(dplyr)
 ```{r}
 setwd("/Volumes/data/projects/blast/adult_erp_manuscript/")
 df_corr=read.csv('blast_online_erp_adult_corr_data.csv')
-df_rt_slope=read.csv('blast_online_adult_ssl_indiv_rts_2.csv')
+df_rt_slope=read.csv('blast_online_adult_ssl_indiv_rts.csv')
 df_factor=read.csv('blast_adult_factor_analysis_n45.csv')
 df_corr$mean_rt <- NULL
 df_corr$scaled_rt_slope <- NULL
