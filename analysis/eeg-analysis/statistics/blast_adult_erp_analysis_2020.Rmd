@@ -39,7 +39,7 @@ df_corr$scaled_rt_slope <- NULL
 
 ```{r}
 df_rt_slope <- df_rt_slope %>% 
-  rename(
+  dplyr::rename(
     subject = par_id
   )
 df_rt_slope = subset(df_rt_slope, select = c(subject,mean_rt,scaled_rt_slope) )
@@ -48,14 +48,13 @@ df_corr <- merge(df_corr,df_rt_slope, by = "subject")
 
 ### GLMER of Early ERP Data
 ```{r, echo=TRUE}
-model<- lmer(Early~ 1 + Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor)
+model<- lmer(Early~ Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor,control = lmerControl(calc.derivs = FALSE))
 summary(model)
-
 #lme.dscore(model, df_factor, "lme4")
 ```
 ### GLMER of Late ERP Data
 ```{r, echo=TRUE}
-model<- lmer(Late~ 1 + Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor)
+model<- lmer(Late~ 1 + Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor,control = lmerControl(calc.derivs = FALSE))
 summary(model)
 ```
 
@@ -66,8 +65,8 @@ early_blastANOVA
 ```
 ### ANOVA of Late ERP Data
 ```{r, echo=TRUE}
-early_blastANOVA <- ezANOVA(df_factor, Late, subject, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
-early_blastANOVA
+late_blastANOVA <- ezANOVA(df_factor, Late, subject, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
+late_blastANOVA
 ```
 
 ### Table of Means for Early ERP
@@ -179,7 +178,6 @@ df_corr<- df_corr[!grepl("blast_a_052", df_corr$subject),]
 df_factor$Early = as.numeric(df_factor$Early)
 
 df_early = cast(df_factor,subject~Domain+Global+Local,value="Early")
-
 df_corr$Short = (df_early$Syllable_High_Short+df_early$Syllable_Low_Short+df_early$Voice_High_Short+df_early$Voice_Low_Short)/4
 df_corr$Long = (df_early$Syllable_High_Long+df_early$Syllable_Low_Long+df_early$Voice_High_Long+df_early$Voice_Low_Long)/4
 df_corr$Short_Long_MMN = df_corr$Short - df_corr$Long
@@ -236,15 +234,15 @@ df_corr$Global_short = as.numeric(df_corr$Global_short)
 df_corr$Local_high = as.numeric(df_corr$Local_high)
 df_corr$Local_low = as.numeric(df_corr$Local_low)
 df_corr$scaled_rt_slope = as.numeric(as.character(df_corr$scaled_rt_slope))
-df_corr$subject = as.numeric(df_corr$subject)
+#df_corr$subject = as.numeric(df_corr$subject)
 ```
 
 ## Early Correlation 
 ### Run correlation matrix
 ```{r, echo=TRUE}
 df_corr_early<- df_corr
-mycor_early <- rcorr(as.matrix(df_corr_early),type = "spearman")
-mycor_early$r #Pearsons R
+mycor_early <- rcorr(as.matrix(df_corr_early[,3:24]),type = "spearman")
+mycor_early$r #Spearman Rho
 mycor_early$P #P values
 my_early_cor_p <- mycor_early$P
 my_early_cor_r <- mycor_early$r
@@ -319,7 +317,7 @@ df_corr$Local_low = as.numeric(df_corr$Local_low)
 ```{r, echo=TRUE}
 df_corr_late <- df_corr
 mycor_late <- rcorr(as.matrix(df_corr_late),type = "spearman")
-mycor_late$r #Pearsons R
+mycor_late$r #Spearman Rho
 mycor_late$P #P values
 my_late_cor_p <- mycor_late$P
 my_late_cor_r <- mycor_late$r
