@@ -62,9 +62,32 @@ df_heb$heb_item_mean <- rowMeans(subset(df_heb, select = c(13:22)), na.rm = TRUE
 ```
 
 ## Statistics
+### Omnibus ANOVA: Do English & Hebrew speakers significantly differ in their ratings of Hebrew and English words?
+```{r}
+df_heb = subset(df_heb, select = -c(Q27,Q28))
+df_eng = subset(df_eng, select = -c(Q29))
+df_heb$group <- rep("heb",nrow(df_heb))
+df_eng$group <- rep("eng",nrow(df_eng))
+
+df_omni<-rbind(df_eng,df_heb)
+df_omni<-subset(df_omni, select = c(heb_item_mean,eng_item_mean,group))
+df_omni$part_ID <- 1:100
+
+library(reshape2)
+df_omni <- melt(df_omni, id.vars=c("group","part_ID"),
+    value.name = "item_mean")
+library(rstatix)
+res.aov <- anova_test(
+  data = df_omni, dv = item_mean, wid = part_ID,
+  between = group, within = variable
+  )
+get_anova_table(res.aov)
+```
+
 ### Do English and Hebrew speakers significantly differ in their ratings of English-like words?
 ```{r}
-t.test(df_eng$eng_item_mean,df_heb$eng_item_mean, paired = TRUE)
+t.test(df_eng$eng_item_mean,df_heb$eng_item_mean, alternative = "two.sided", var.equal = TRUE)
+
 eng_eng_item_mean = mean(df_eng$eng_item_mean)
 heb_eng_item_mean = mean(df_heb$eng_item_mean)
 eng_eng_item_mean
@@ -72,11 +95,14 @@ heb_eng_item_mean
 ```
 ### Do English and Hebrew speakers significantly differ in their ratings of Hebrew-like words?
 ```{r}
-t.test(df_eng$heb_item_mean,df_heb$heb_item_mean, paired = TRUE)
+t.test(df_eng$heb_item_mean,df_heb$heb_item_mean, alternative = "two.sided", var.equal = TRUE)
+
 eng_heb_item_mean = mean(df_eng$heb_item_mean)
 heb_heb_item_mean = mean(df_heb$heb_item_mean)
 eng_heb_item_mean
 heb_heb_item_mean
+sd(df_eng$heb_item_mean)
+sd(df_heb$heb_item_mean)
 ```
 ### Are the HEB foils rated the same or different than the HEB targets by English speakers?
 ```{r}
