@@ -162,3 +162,27 @@ df$web_ratings=as.numeric(as.character(df$web_ratings))
 fm2 <-  glmer(trial_accuracy~web_ratings+(1|subject)+(1|trial_number),family = binomial,data=df)
 summary(fm2)
 ```
+## Does accuracy significantly differ across ratings? No.
+```{r}
+m1 = lm(trial_accuracy~web_ratings,data=df)
+summary(m1)
+
+m1 = lm(trial_accuracy~fam_ratings,data=df)
+summary(m1)
+```
+
+
+## Are the target words rated differently?
+```{r}
+library(dunn.test)
+df_merge<-rbind(df_eng,df_heb)
+webrank=df_merge[c(1,12, 14, 17, 19,20)]
+webrank$part_ID<-1:100
+
+webrank=melt(webrank,id=1)
+colnames(webrank)[2]="item"
+colnames(webrank)[3]="ranking"
+kruskal.test(ranking ~ item,
+             data = webrank)
+DT = dunn.test(webrank$ranking,webrank$item, method="bh")      # Adjusts p-values for multiple comparisons;
+```
