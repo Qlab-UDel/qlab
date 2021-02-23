@@ -1,0 +1,57 @@
+---
+title: "scq_current_scoring"
+author: "Jojo Hu"
+date: "2/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+scq <- read.csv("SCQ Score Report From RedCap")
+
+scq <- 
+  scq[,!colnames(scq) %in% c("redcap_event_name", "redcap_repeat_instrument", "redcap_repeat_instance",
+                             "scq_6d58ed_complete", "scq_relation_with_child_4682f2",
+                             "scq_other_relation_491134")]
+
+# Filter out incomplete responses (if the first question in SCQ is NA)
+# To Do: add in more sophisticated filters (e.g., questions 2 - 7 can be NAs)
+scq <- subset(scq, !is.na(child_phrases_97b7f8))
+
+# Rename columns
+colnames(scq) <- c("part_id", "scq_web_date", as.character(1:40))
+
+# Code the responses for score calculation, 1 is "Yes" 0 is "No"
+scq[,c(as.character(c(2, 9, 19:40)))] <-
+  lapply(scq[,c(as.character(c(2, 9, 19:40)))], 
+         function(x) {
+           ifelse(x == 1, 0, 1) # Question 2, 9, and 19 to 40 scored as 0 when 1 ("Yes") is selected
+         })
+
+scq[,c(as.character(c(3:8, 10:18)))] <-
+  lapply(scq[,c(as.character(c(3:8, 10:18)))], 
+         function(x) {
+           ifelse(x == 1, 1, 0) # Question 2, 9, and 19 to 40 scored as 0 when 1 ("Yes") is selected
+         })
+
+# Sum SCQ totoal scores based on the response to Question 1
+q1Yes <- scq[which(scq$`1` == 1),]
+q1No <- scq[which(scq$`1` == 0),]
+  
+q1Yes$scq_total <- rowSums(q1Yes[,c(as.character(2:40))])
+
+q1No$scq_total <- rowSums(q1No[,c(as.character(8:40))])
+    
+scq_total <- rbind(q1Yes, q1No)
+
+scq_total$scq_rsid  <- rowSums(scq_total[,c(as.character(c(9, 10, 19, 26:33, 36:37, 39:40)))])
+
+scq_total$scq_cd <- rowSums(scq_total[,c(as.character(c(2:6, 20:25, 34:35)))])
+
+scq_total$scq_rrspb <- rowSums(scq_total[,c(as.character(c(7:8, 11:16)))])
+
+# write.csv(scq_total, "scq_total_redcap.csv")
+```
