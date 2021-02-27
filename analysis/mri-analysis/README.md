@@ -2,7 +2,6 @@
 
 ## All the analysis are currently conducted on the sylvian server.
 * All the dicoms files should be saved at `/home/nas/projects/{projectname}/dicoms/`
-* The EP2D_DIFF_SMS_ABCD_TENSOR_* series are not currently convertable by heudiconv. Please mv this folder to ./tensor/{subj}/.
 * All the nifti files should be saved at `/home/qigroup/Documents/projects/{projectname}/bids/` which is regularly backed up to our nas server.
 
 ## Transfer dicoms to be converted to nifti, to correct folder:
@@ -23,8 +22,7 @@ cd /data
 ### run the conversion
 ## anything in all caps must be edited
 ```
-rm -r -f /data/niftis/*
-heudiconv -d /data/data/mri/imaging/dicoms/{subject}/*/*/*.IMA -s SUBJECTID -f /home/qigroup/Documents/projects/PROJECTNAME/conversion/PROJECTNAME_heuristics.py -c dcm2niix -b -o /data/bids
+heudiconv -d /data/data/mri/imaging/dicoms/{subject}/*/*/*.IMA -s SUBJECTID -f /data/conversion/PROJECTNAME_heuristics.py -c dcm2niix -b -o /data/data/bids
 ```
 If this is the first time you are running heudiconv, the first step is to run a dry pass (no conversion), which will stack and group the dicoms into series.
 ```
