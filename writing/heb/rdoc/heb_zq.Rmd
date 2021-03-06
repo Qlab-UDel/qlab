@@ -42,6 +42,9 @@ eng_trial=droplevels(eng_trial)
 contrasts(eng_trial$trial)=centerfactor(eng_trial$trial)
 summary(eng_trial)
 ```
+
+
+
 ### Multi-level modeling in the English group based on the trial-by-trial data: fixed effects of task order (linguistic first or second), trial order (target or foil first), task (linguistic or non-linguistic), and trial (order of the test trials 1-25). Including task into random slope results in a non-converging model.
 * no effect of task order
 * significant effect of task
@@ -52,6 +55,7 @@ summary(eng_trial)
 eng.lmer <- glmer(trial_accuracy ~ 1 + task_order + task + trial_order + trial + gender + (1|subject), family = binomial, control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)), data = eng_trial)
 summary(eng.lmer)
 ```
+
 ```{r}
 eng.lmer <- glmer(trial_accuracy ~ 1 + task_order + task + (1|subject), family = binomial, control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)), data = eng_trial)
 summary(eng.lmer)
@@ -98,7 +102,7 @@ hist(eng_ling_indiv$familiarity)
 ```
 
 ```{r}
-m1 = lm(accuracy~familiarity,data=eng_indiv[eng_indiv$task=="Linguistic",])
+m1 = lm(accuracy~fam_ratings,data=eng_trial[eng_trial$task=="Linguistic",])
 summary(m1)
 ```
 
