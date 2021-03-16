@@ -29,7 +29,7 @@ library(dplyr)
 ```
 ### Import data as dataframe
 ```{r}
-setwd("/Volumes/data/projects/blast/adult_erp_manuscript/")
+#setwd("/Volumes/data/projects/blast/adult_erp_manuscript/")
 df_corr=read.csv('blast_online_erp_adult_corr_data.csv')
 df_rt_slope=read.csv('blast_online_adult_ssl_indiv_rts.csv')
 df_factor=read.csv('blast_adult_factor_analysis_n45.csv')
@@ -46,15 +46,16 @@ df_rt_slope = subset(df_rt_slope, select = c(subject,mean_rt,scaled_rt_slope) )
 df_corr <- merge(df_corr,df_rt_slope, by = "subject")
 ```
 
-### GLMER of Early ERP Data
+### LMER of Early ERP Data
 ```{r, echo=TRUE}
+df_factor$Local = relevel(df_factor$Local,"Short")
 model<- lmer(Early~ Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor,control = lmerControl(calc.derivs = FALSE))
 summary(model)
 #lme.dscore(model, df_factor, "lme4")
 ```
 ### GLMER of Late ERP Data
 ```{r, echo=TRUE}
-model<- lmer(Late~ 1 + Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor,control = lmerControl(calc.derivs = FALSE))
+model<- lmer(Late~ Domain*Global*Local + (1+(Global*Local)|subject),data = df_factor,control = lmerControl(calc.derivs = FALSE))
 summary(model)
 ```
 
@@ -88,10 +89,10 @@ blast_low<-df_factor[which(df_factor$Global=="Low"),]
 blast_short<-df_factor[which(df_factor$Local=="Short"),]
 blast_long<-df_factor[which(df_factor$Local=="Long"),]
 
-pairwise.t.test(blast_short$Late, blast_short$Global, p.adj = 'bonferroni')
+pairwise.t.test(blast_short$Late, blast_short$Global, p.adj = 'bonferroni') #significant
 pairwise.t.test(blast_long$Late, blast_long$Global, p.adj = 'bonferroni')
 
-pairwise.t.test(blast_high$Late, blast_high$Local, p.adj = 'bonferroni')
+pairwise.t.test(blast_high$Late, blast_high$Local, p.adj = 'bonferroni') #significant
 pairwise.t.test(blast_low$Late, blast_low$Local, p.adj = 'bonferroni')
 ```
 
@@ -165,17 +166,18 @@ df_corr<- df_corr[!grepl("blast_a_025", df_corr$subject),]
 ```
 
 ### Organizing correlation data for Early time window
+## all the global effects were defined as (Low - High); all the local effects were defined as (Long - Short)
 ```{r, eval=TRUE}
 df_factor$Early = as.numeric(df_factor$Early)
 
 df_early = cast(df_factor,subject~Domain+Global+Local,value="Early")
 df_corr$Short = (df_early$Syllable_High_Short+df_early$Syllable_Low_Short+df_early$Voice_High_Short+df_early$Voice_Low_Short)/4
 df_corr$Long = (df_early$Syllable_High_Long+df_early$Syllable_Low_Long+df_early$Voice_High_Long+df_early$Voice_Low_Long)/4
-df_corr$Short_Long_MMN = df_corr$Short - df_corr$Long
+df_corr$Long_Short_MMN = df_corr$Long - df_corr$Short
 
 df_corr$High = (df_early$Syllable_High_Short+df_early$Syllable_High_Long+df_early$Voice_High_Short+df_early$Voice_High_Long)/4
 df_corr$Low = (df_early$Syllable_Low_Short+df_early$Syllable_Low_Long+df_early$Voice_Low_Short+df_early$Voice_Low_Long)/4
-df_corr$High_Low_MMN = df_corr$Low - df_corr$High
+df_corr$Low_High_MMN = df_corr$Low - df_corr$High
 
 df_corr$Syllable = (df_early$Syllable_High_Short+df_early$Syllable_High_Long+df_early$Syllable_Low_Short+df_early$Syllable_Low_Long)/4
 df_corr$Voice = (df_early$Voice_High_Short+df_early$Voice_High_Long+df_early$Voice_Low_Short+df_early$Voice_Low_Long)/4
@@ -196,8 +198,8 @@ df_corr$Syll_Global = (Syll_Low-Syll_High)
 df_corr$Voice_Local = (Voice_Long-Voice_Short)
 df_corr$Voice_Global = (Voice_Low-Voice_High)
 
-df_corr$Global_long = ((df_early$Syllable_High_Long+df_early$Voice_High_Long)/2) - ((df_early$Syllable_Low_Long+df_early$Voice_Low_Long)/2)
-df_corr$Global_short = ((df_early$Syllable_High_Short+df_early$Voice_High_Short)/2) - ((df_early$Syllable_Low_Short+df_early$Voice_Low_Short)/2)
+df_corr$Global_long =  ((df_early$Syllable_Low_Long+df_early$Voice_Low_Long)/2) - ((df_early$Syllable_High_Long+df_early$Voice_High_Long)/2)
+df_corr$Global_short = ((df_early$Syllable_Low_Short+df_early$Voice_Low_Short)/2) - ((df_early$Syllable_High_Short+df_early$Voice_High_Short)/2)
 df_corr$Local_high = ((df_early$Syllable_High_Long+df_early$Voice_High_Long)/2)-((df_early$Syllable_High_Short+df_early$Voice_High_Short)/2)
 df_corr$Local_low = ((df_early$Syllable_Low_Long+df_early$Voice_Low_Long)/2)-((df_early$Syllable_Low_Short+df_early$Voice_Low_Short)/2)
 ```
@@ -209,10 +211,10 @@ df_corr$entropy = as.numeric(df_corr$entropy)
 df_corr$vocab = as.numeric(df_corr$vocab)
 df_corr$Short = as.numeric(df_corr$Short)
 df_corr$Long = as.numeric(df_corr$Long)
-df_corr$Short_Long_MMN = as.numeric(df_corr$Short_Long_MMN)
+df_corr$Long_Short_MMN = as.numeric(df_corr$Long_Short_MMN)
 df_corr$High = as.numeric(df_corr$High)
 df_corr$Low = as.numeric(df_corr$Low)
-df_corr$High_Low_MMN = as.numeric(df_corr$High_Low_MMN)
+df_corr$Low_High_MMN = as.numeric(df_corr$Low_High_MMN)
 df_corr$Syllable = as.numeric(df_corr$Syllable)
 df_corr$Voice = as.numeric(df_corr$Voice)
 df_corr$Voice_Syllable_MMN = as.numeric(df_corr$Voice_Syllable_MMN)
@@ -240,17 +242,18 @@ my_early_cor_r <- mycor_early$r
 ```
 
 ### Organizing correlation data for Late Time Window
+## all the global effects were defined as (Low - High); all the local effects were defined as (Long - Short)
 ```{r}
 df_factor$Late = as.numeric(df_factor$Late)
 df_late = cast(df_factor,subject~Domain+Global+Local,value="Late")
 
 df_corr$Short = (df_late$Syllable_High_Short+df_late$Syllable_Low_Short+df_late$Voice_High_Short+df_late$Voice_Low_Short)/4
 df_corr$Long = (df_late$Syllable_High_Long+df_late$Syllable_Low_Long+df_late$Voice_High_Long+df_late$Voice_Low_Long)/4
-df_corr$Short_Long_MMN = df_corr$Long-df_corr$Short
+df_corr$Long_Short_MMN = df_corr$Long-df_corr$Short
 
 df_corr$High = (df_late$Syllable_High_Short+df_late$Syllable_High_Long+df_late$Voice_High_Short+df_late$Voice_High_Long)/4
 df_corr$Low = (df_late$Syllable_Low_Short+df_late$Syllable_Low_Long+df_late$Voice_Low_Short+df_late$Voice_Low_Long)/4
-df_corr$High_Low_MMN = df_corr$Low-df_corr$High
+df_corr$Low_High_MMN = df_corr$Low-df_corr$High
 
 df_corr$Syllable = (df_late$Syllable_High_Short+df_late$Syllable_High_Long+df_late$Syllable_Low_Short+df_late$Syllable_Low_Long)/4
 df_corr$Voice = (df_late$Voice_High_Short+df_late$Voice_High_Long+df_late$Voice_Low_Short+df_late$Voice_Low_Long)/4
@@ -271,8 +274,8 @@ df_corr$Syll_Global = (Syll_Low-Syll_High)
 df_corr$Voice_Local = (Voice_Long-Voice_Short)
 df_corr$Voice_Global = (Voice_Low-Voice_High)
 
-df_corr$Global_long = ((df_late$Syllable_High_Long+df_late$Voice_High_Long)/2) - ((df_late$Syllable_Low_Long+df_late$Voice_Low_Long)/2)
-df_corr$Global_short = ((df_late$Syllable_High_Short+df_late$Voice_High_Short)/2) - ((df_late$Syllable_Low_Short+df_late$Voice_Low_Short)/2)
+df_corr$Global_long =  ((df_late$Syllable_Low_Long+df_late$Voice_Low_Long)/2) - ((df_late$Syllable_High_Long+df_late$Voice_High_Long)/2)
+df_corr$Global_short = ((df_late$Syllable_Low_Short+df_late$Voice_Low_Short)/2) - ((df_late$Syllable_High_Short+df_late$Voice_High_Short)/2)
 df_corr$Local_high = ((df_late$Syllable_High_Long+df_late$Voice_High_Long)/2)- ((df_late$Syllable_High_Short+df_late$Voice_High_Short)/2)
 df_corr$Local_low = ((df_late$Syllable_Low_Long+df_late$Voice_Low_Long)/2)-((df_late$Syllable_Low_Short+df_late$Voice_Low_Short)/2)
 ```
@@ -289,7 +292,7 @@ df_corr$Long = as.numeric(df_corr$Long)
 df_corr$Short_Long_MMN = as.numeric(df_corr$Short_Long_MMN)
 df_corr$High = as.numeric(df_corr$High)
 df_corr$Low = as.numeric(df_corr$Low)
-df_corr$High_Low_MMN = as.numeric(df_corr$High_Low_MMN)
+df_corr$Low_High_MMN = as.numeric(df_corr$Low_High_MMN)
 df_corr$Syllable = as.numeric(df_corr$Syllable)
 df_corr$Voice = as.numeric(df_corr$Voice)
 df_corr$Voice_Syllable_MMN = as.numeric(df_corr$Voice_Syllable_MMN)
@@ -344,6 +347,7 @@ poor_learn<-df_corr[which(df_corr$scaled_rt_slope > 0),]
 
 
 ### plot the line graphs to illustrate interaction between Local and Global Interaction in Late Time Window
+- Julie, I suggest plot the within-subject error bars for visualization (following Morey(2008):http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#understanding-within-subjects-error-bars) [I haven't done that yet]
 ```{r}
 d <- df_factor %>%
        select(Late,Local,Global) %>%  # select relevant variables
