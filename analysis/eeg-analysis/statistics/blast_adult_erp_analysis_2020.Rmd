@@ -58,17 +58,6 @@ model<- lmer(Late~ 1 + Domain*Global*Local + (1+(Global*Local)|subject),data = d
 summary(model)
 ```
 
-### ANOVA of Early ERP Data
-```{r, echo=TRUE}
-early_blastANOVA <- ezANOVA(df_factor, Early, subject, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
-early_blastANOVA
-```
-### ANOVA of Late ERP Data
-```{r, echo=TRUE}
-late_blastANOVA <- ezANOVA(df_factor, Late, subject, within = .(Domain,Local,Global), type = 3, detailed = TRUE)
-late_blastANOVA
-```
-
 ### Table of Means for Early ERP
 ```{r, echo=TRUE}
 tapply(X = df_factor$Early, INDEX = list(df_factor$Global), FUN = mean)
@@ -165,12 +154,14 @@ df_factor<- df_factor[!grepl("blast_a_027", df_factor$subject),]
 df_factor<- df_factor[!grepl("blast_a_029", df_factor$subject),]
 df_factor<- df_factor[!grepl("blast_a_031", df_factor$subject),]
 df_factor<- df_factor[!grepl("blast_a_036", df_factor$subject),]
+df_factor<- df_factor[!grepl("blast_a_025", df_factor$subject),]
 
 df_corr<- df_corr[!grepl("blast_a_017", df_corr$subject),]
 df_corr<- df_corr[!grepl("blast_a_032", df_corr$subject),]
 df_corr<- df_corr[!grepl("blast_a_035", df_corr$subject),]
 df_corr<- df_corr[!grepl("blast_a_040", df_corr$subject),]
 df_corr<- df_corr[!grepl("blast_a_052", df_corr$subject),]
+df_corr<- df_corr[!grepl("blast_a_025", df_corr$subject),]
 ```
 
 ### Organizing correlation data for Early time window
@@ -332,15 +323,15 @@ t.test(df_corr$scaled_rt_slope, mu = 0, alternative = "two.sided")
 
 ### Specific Pairwise correlations
 ```{r}
-cor.test(df_corr$accuracy, df_corr$scaled_rt_slope,  method = "pearson", use = "complete.obs")
+cor.test(df_corr$accuracy, df_corr$scaled_rt_slope,  method = "pearson")
 # Be sure to run the corr matrix for the early time window
-cor.test(df_corr$Short_Long_MMN, df_corr$scaled_rt_slope,  method = "spearman", use = "complete.obs")
+cor.test(df_corr$Short_Long_MMN, df_corr$scaled_rt_slope,  method = "spearman", exact = FALSE)
 
 # Be sure to run the corr matrix for the late time window
-cor.test(df_corr$Global_long, df_corr$scaled_rt_slope,  method = "spearman")
-cor.test(df_corr$Global_short, df_corr$scaled_rt_slope,  method = "spearman")
-cor.test(df_corr$Local_high, df_corr$scaled_rt_slope,  method = "spearman")
-cor.test(df_corr$Local_low, df_corr$scaled_rt_slope,  method = "spearman")
+cor.test(df_corr$Global_long, df_corr$scaled_rt_slope,  method = "spearman", exact = FALSE)
+cor.test(df_corr$Global_short, df_corr$scaled_rt_slope,  method = "spearman", exact = FALSE)
+cor.test(df_corr$Local_high, df_corr$scaled_rt_slope,  method = "spearman", exact = FALSE)
+cor.test(df_corr$Local_low, df_corr$scaled_rt_slope,  method = "spearman", exact = FALSE)
 ```
 
 ### Good and Poor Learners as determined by RT Slope
@@ -351,49 +342,6 @@ poor_learn<-df_corr[which(df_corr$scaled_rt_slope > 0),]
 
 ## Now let's do some plotting!!
 
-### Violin plot of local main effect in early time window
-```{r}
-df_early_test = cast(df_factor,subject~Local,mean, value="Early")
-df_early_melt = melt(df_early_test,id=c("Short","Long"))
-
-p <- ggplot(df_early_melt, aes(x=Local, y=value)) + 
-  geom_violin(trim=FALSE) + theme_classic()+ 
-  labs(title="Main Effect of Local (p)", y = "Mean ERP Amplitude") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  stat_summary(fun.data=mean_sdl, 
-                 geom="pointrange", color="red")
-p
-```
-
-```{r}
-d <- df_early_melt
-
-d %>% 
-  group_by(Local) %>%
-  summarise(Early_mean = mean(value))
-sum_d <- d %>% 
-          group_by(Local) %>%
-          summarise(Early_mean = mean(value),
-                    se   = sd(value)/sqrt(n()))
-sum_d
-
-pd <- position_dodge(width = 0)
-sum_d %>%
-  ggplot(aes(x = Local, y = Early_mean)) +
-    geom_errorbar(aes(ymin = Early_mean - se, ymax = Early_mean + se),
-                  width = .1, position = pd) +
-    geom_point(size = 4, position = pd) +
-    geom_point(size = 3, color = "white", position = pd) + 
-    labs(x = "Local",
-         y = "Average ERP Amplitude") +
-  theme(
-    text=element_text(size=20),
-    panel.background = element_rect(fill = "white"),         # Set plot background to white
-    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
-    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
-    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
-  )
-```
 
 ### plot the line graphs to illustrate interaction between Local and Global Interaction in Late Time Window
 ```{r}
@@ -434,37 +382,14 @@ sum_d %>%
   )
 ```
 
-### Plot the same interaction (Local and Global Interaction in Late Time Window) as a bar graph
-```{r, echo=FALSE}
-ggplot() +
-  theme_classic(base_size = 20.0) +
-  ggtitle("Interaction in Late Time Window") + theme(plot.title = element_text(hjust = 0.5)) +
-  ylab(label = 'ERP Amplitude') +
-  scale_y_continuous(breaks = pretty_breaks()) +
-  geom_bar(aes(y = Late, x = Global,fill =    as.factor(Global)),data=df_factor,colour="black",fun.data = mean_sdl,stat = 'summary') +
-  geom_beeswarm(aes(x = Global,y = Late),data=df_factor,dodge.width=0.9,cex=2.5) +
-  geom_errorbar(aes(y = Late, x = Global),data=df_factor,size = 0.3,width = 0.2,fun.y = function(x) mean(x),fun.ymin = function(x) mean(x) - sd(x)/sqrt(length(x)),fun.ymax = function(x) mean(x) + sd(x)/sqrt(length(x)) ,stat = 'summary')+
-  facet_wrap(facets = .~Local) +
-  scale_x_discrete(name = 'Global Probability',labels = c("High","Low"))+   
-  scale_fill_brewer(palette = 'Set2') +
-  theme(legend.position = "none")
-```
 
 ### Plotting the early correlations (OLD)
-```{r}
-ggplot(df_corr_early, aes(x=High_Low_MMN, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN", x="Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
-```
-```{r}
-ggplot(df_corr_early, aes(x=Syll_Global, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN for Syllables", x="Syllable Only Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
-```
 
 ```{r}
-ggplot(df_corr_early, aes(x=Local_low, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Relationship between MMN and Learning", x="Early ERP Amplitude", y = "Speech SL (RT Slope)") +   theme_classic() +
+ggplot(df_corr_early, aes(x=Short_Long_MMN, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Relationship between MMN and Learning", x="MMN Amplitude (uV)\nLocal Probability", y = "Speech SL (RT Slope)") +   theme_classic() +
 theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
 ```
-```{r}
-ggplot(df_corr_early, aes(x=Syll_Global, y=accuracy)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="Distributional SL Accuracy & Global (p) MMN for Syllables", x="Syllable Only Global (p) MMN", y = "SL Accuracy") + theme(plot.title = element_text(hjust = 0.5)) + geom_smooth(method=loess)
-```
+
 
 ### Plotting the late correlations (OLD)
 ```{r}
@@ -477,10 +402,6 @@ theme(plot.title = element_text(hjust = 0.5))
 
 ```
 
-```{r}
-ggplot(df_corr_late, aes(x=Local_high, y=scaled_rt_slope)) + geom_point(size=3, color="navy blue", shape=19) + labs(title="RT Slope & Local (p) within High Condition", x="Local (p) MMN within High frequency Condition", y = "RT SLope") +   theme_classic() +
-theme(plot.title = element_text(hjust = 0.5))
-```
 
 ### Plot the same interaction (Local and Global Interaction in Late Time Window) based on learner ability as a line graph
 ```{r, echo=FALSE}
@@ -567,6 +488,18 @@ ggplot() +
   geom_bar(aes(y = scaled_rt_slope, x = learner2,fill =  as.factor(learner2)),data=df_corr,colour="black",fun.data = mean_sdl,stat = 'summary') +
   geom_beeswarm(aes(x = learner2,y = scaled_rt_slope),data=df_corr,dodge.width=0.9,cex=2.5) +
   geom_errorbar(aes(y = scaled_rt_slope, x = learner2),data=df_corr,size = 0.3,width = 0.2,fun.y = function(x) mean(x),fun.ymin = function(x) mean(x) - sd(x)/sqrt(length(x)),fun.ymax = function(x) mean(x) + sd(x)/sqrt(length(x)) ,stat = 'summary')+
+  scale_x_discrete(name = 'Learner Group',labels = c("LDN","P3"))+   
+  scale_fill_brewer(palette = 'Set2')+
+  theme(legend.position = "none")
+
+ggplot() +
+  theme_classic(base_size = 20.0) +
+  #ggtitle('P3 size:Local(low) - Local(high)' + theme(plot.title = element_text(hjust = 0.5))) +
+  ylab(label = 'Accuracy') +
+  scale_y_continuous(breaks = pretty_breaks()) +
+  geom_bar(aes(y = accuracy, x = learner2,fill =  as.factor(learner2)),data=df_corr,colour="black",fun.data = mean_sdl,stat = 'summary') +
+  geom_beeswarm(aes(x = learner2,y = accuracy),data=df_corr,dodge.width=0.9,cex=2.5) +
+  geom_errorbar(aes(y = accuracy, x = learner2),data=df_corr,size = 0.3,width = 0.2,fun.y = function(x) mean(x),fun.ymin = function(x) mean(x) - sd(x)/sqrt(length(x)),fun.ymax = function(x) mean(x) + sd(x)/sqrt(length(x)) ,stat = 'summary')+
   scale_x_discrete(name = 'Learner Group',labels = c("LDN","P3"))+   
   scale_fill_brewer(palette = 'Set2')+
   theme(legend.position = "none")
