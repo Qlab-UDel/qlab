@@ -36,14 +36,18 @@ hebtrial$task = as.factor(as.character(hebtrial$task)) # 0 means nonlinguistic a
 hebtrial$task_order = as.factor(as.character(hebtrial$task_order)) # 0 means nonlinguistic task comes first and 1 means linguistic task comes first
 hebtrial$trial_order = as.factor(as.character(hebtrial$trial_order)) # 0 means foil comes first and 1 means target comes first
 hebtrial$subject = as.factor(as.character(hebtrial$subject)) 
-hebtrial$trial = as.factor(as.character(hebtrial$trial)) 
 eng_trial<- hebtrial[which(hebtrial$language == "english"),]
 eng_trial=droplevels(eng_trial)
-contrasts(eng_trial$trial)=centerfactor(eng_trial$trial)
 summary(eng_trial)
 ```
 
-
+```{r}
+eng_ling_trial$triplet <- ifelse(eng_ling_trial$trial_number == 1 | eng_ling_trial$trial_number == 2 | eng_ling_trial$trial_number == 3 | eng_ling_trial$trial_number == 4 | eng_ling_trial$trial_number == 5, "2", #DUKAME
+                          ifelse(eng_ling_trial$trial_number == 6 | eng_ling_trial$trial_number == 7 | eng_ling_trial$trial_number == 8 | eng_ling_trial$trial_number == 9 | eng_ling_trial$trial_number == 10, "1", #GEDINO
+                                 ifelse(eng_ling_trial$trial_number == 11 | eng_ling_trial$trial_number == 12 | eng_ling_trial$trial_number == 13 | eng_ling_trial$trial_number == 14 | eng_ling_trial$trial_number == 15, "3", #KIMUGA
+                                        ifelse(eng_ling_trial$trial_number == 16 | eng_ling_trial$trial_number == 17 | eng_ling_trial$trial_number == 18 | eng_ling_trial$trial_number == 19 | eng_ling_trial$trial_number == 20, "4", #NALOBI
+                                               ifelse(eng_ling_trial$trial_number == 21 | eng_ling_trial$trial_number == 22 | eng_ling_trial$trial_number == 23 | eng_ling_trial$trial_number == 24 | eng_ling_trial$trial_number == 25, "5","0"))))) #TOBELU
+```
 
 ### Multi-level modeling in the English group based on the trial-by-trial data: fixed effects of task order (linguistic first or second), trial order (target or foil first), task (linguistic or non-linguistic), and trial (order of the test trials 1-25). Including task into random slope results in a non-converging model.
 * no effect of task order
@@ -115,23 +119,35 @@ ggplot() +
   ylab(label = 'Overall Accuracy') +
   scale_x_continuous(breaks = pretty_breaks()) +
   scale_y_continuous(breaks = pretty_breaks()) +
-  geom_point(aes(x = vocabulary,y = accuracy,colour = Task),data=eng_indiv, shape = 23, size = 3) +
+  scale_colour_brewer(palette = 'Set2') +
+  geom_point(aes(x = vocabulary,y = accuracy,colour = Task),data=eng_indiv, size = 3) +
   geom_smooth(aes(x = vocabulary,y = accuracy,colour = Task),data=eng_indiv,method = lm,formula = 'y ~ x',se = FALSE)
 ```
 
 ```{r}
 eng_ling_trial=subset(eng_trial,task=="1")
-eng_ling_trial$fam_ratings=as.factor(as.character(eng_ling_trial$fam_ratings))
-contrasts(eng_ling_trial$fam_ratings)=centerfactor(eng_ling_trial$fam_ratings)
-m1 = glmer(trial_accuracy~fam_ratings+(1|subject),family = binomial,data=eng_ling_trial)
+#eng_ling_trial$fam_ratings=as.factor(as.character(eng_ling_trial$fam_ratings))
+#contrasts(eng_ling_trial$fam_ratings)=centerfactor(eng_ling_trial$fam_ratings)
+m1 = glmer(trial_accuracy~fam_ratings+(1+fam_ratings|subject)+(1+fam_ratings|triplet),family = binomial,data=eng_ling_trial)
 summary(m1)
+```
+- melt the dataset to analyze the effect of familiarity rating on item's learnability
+```{r}
+eng_ling_item = cast(eng_ling_trial,subject+triplet~., value = "trial_accuracy",sum)
+colnames(eng_ling_item)[3] = "sum"
+eng_ling_item$item_acc = eng_ling_item$sum/5
+eng_ling_item$triplet = as.factor(eng_ling_item$triplet)
+m1 = aov(item_acc~triplet,data=eng_ling_item)
+summary(m1)
+pairwise.t.test(eng_ling_item$item_acc, eng_ling_item$triplet, p.adj = "none")
 ```
 
 ### Testing the correlation between vocabulary and each word's familiarity
 ```{r}
 hebindiv_asl<-hebindiv[which(hebindiv$group=="English"),]
 hebindiv_ling_eng<- hebindiv_asl[which(hebindiv_asl$task == "Linguistic"),]
-
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$familiarity, method = "spearman")
+cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Average.English.Likeness, method = "spearman")
 cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q1, method = "spearman")
 cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q2, method = "spearman")
 cor.test(hebindiv_ling_eng$accuracy,hebindiv_ling_eng$Q3, method = "spearman")
@@ -150,19 +166,19 @@ hebrank=subset(hebrank,subject!="a_002")
 hebrank=subset(hebrank,subject!="a_035")
 hebrank=hebrank[c(11:15)]
 hebrank$Q1 = factor(hebrank$Q1,
-                       levels = c("0", "1", "2", "3", "4", "5"),
+                       levels = c("0", "1", "2", "3", "4", "5", "6"),
                        ordered = TRUE)
 hebrank$Q2 = factor(hebrank$Q2,
-                       levels = c("0", "1", "2", "3", "4", "5"),
+                       levels = c("0", "1", "2", "3", "4", "5", "6"),
                        ordered = TRUE)
 hebrank$Q3 = factor(hebrank$Q3,
-                       levels = c("0", "1", "2", "3", "4", "5"),
+                       levels = c("0", "1", "2", "3", "4", "5", "6"),
                        ordered = TRUE)
 hebrank$Q4 = factor(hebrank$Q4,
-                       levels = c("0", "1", "2", "3", "4", "5"),
+                       levels = c("0", "1", "2", "3", "4", "5", "6"),
                        ordered = TRUE)
 hebrank$Q5 = factor(hebrank$Q5,
-                       levels = c("0", "1", "2", "3", "4", "5"),
+                       levels = c("0", "1", "2", "3", "4", "5", "6"),
                        ordered = TRUE)
 headTail(hebrank)
 summary(hebrank)
@@ -177,6 +193,19 @@ plot(results,
            wrap = 50)
 ```
 ### test whether different items have different familiarity rankings: Q4 is significantly different from Q3, and marginally from Q2 and Q5.
+```{r}
+library(dunn.test)
+hebrank=subset(hebindiv_ling_eng,subject!="a_050")
+hebrank=subset(hebrank,subject!="a_002")
+hebrank=subset(hebrank,subject!="a_035")
+hebrank=hebrank[c(1,11:15)]
+hebrank=melt(hebrank,id=1)
+colnames(hebrank)[2]="item"
+colnames(hebrank)[3]="ranking"
+kruskal.test(ranking ~ item,
+             data = hebrank)
+DT = dunn.test(hebrank$ranking,hebrank$item, method="none")      # Adjusts p-values for multiple comparisons;
+```
 ```{r}
 library(dunn.test)
 hebrank=subset(hebindiv_ling_eng,subject!="a_050")
@@ -228,6 +257,18 @@ ggplot() +
   geom_beeswarm(aes(x = group,y = accuracy),data=hebindiv,dodge.width=0.9,cex=2.5) +
   facet_wrap(facets = ~task) +
   scale_x_discrete(name = 'task')+   
+  scale_fill_brewer(palette = 'Set2') +
+  theme(legend.position = "none")
+```
+### plot the bar graphs to illustrate task effect
+```{r}
+ggplot() +
+  theme_classic(base_size = 20.0) +
+  ylab(label = 'Overall Accuracy (%)') +
+  scale_y_continuous(breaks = pretty_breaks()) +
+  geom_bar(aes(y = accuracy, x = Task,fill = as.factor(Task)),data=eng_indiv,colour="black",fun.data = mean_sdl,stat = 'summary') +
+  geom_beeswarm(aes(x = Task,y = accuracy),data=eng_indiv,dodge.width=0.9,cex=2.5) +
+  scale_x_discrete(name = 'Task')+   
   scale_fill_brewer(palette = 'Set2') +
   theme(legend.position = "none")
 ```
