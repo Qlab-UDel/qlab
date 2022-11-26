@@ -1,0 +1,320 @@
+---
+title: "internal_consistency"
+author: "Jojo Hu"
+date: "4/3/2020"
+output: html_document
+---
+
+
+Load by trial accuracy data
+
+```{r}
+# Load by trial accuracy data
+input_path <- 
+  "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/acc_by_trial"
+
+input_path2 <- "/Users/jojohu/Documents/Qlab/spoli/data_summaries/breakdown/acc_by_trial"
+
+# Read in file with group information
+group <- read.csv("/Users/jojohu/Documents/Qlab/bucld_2019_followup/online_demo_all.csv")
+
+acclist <-
+  list.files(path = input_path,
+             pattern = "*by_trial.csv", full.names = T)
+
+acclistSPL <-
+  list.files(path = input_path2,
+             pattern = "*by_trial.csv", full.names = T)
+
+
+library("stringr")
+
+tname <- str_extract(basename(acclist), "(?<=blast_)\\S{3}")
+
+tnameSPL <- str_extract(basename(acclistSPL), "(?<=spoli_)\\S{3}")
+
+acc_trial <- lapply(acclist, read.csv)
+
+acc_trialSPL <- lapply(acclistSPL, read.csv)
+
+for (i in 1:length(acc_trial)) {
+  acc_trial[[i]]$task <-tname[i]
+}
+
+acc_trial <- do.call(rbind, acc_trial)
+
+acc_trial <- acc_trial[,!names(acc_trial) %in% "X"]
+
+
+for (i in 1:length(acc_trialSPL)) {
+  acc_trialSPL[[i]]$task <-tnameSPL[i]
+}
+
+acc_trialSPL <- do.call(rbind, acc_trialSPL)
+
+acc_trialSPL <- acc_trialSPL[,!names(acc_trialSPL) %in% "X"]
+
+acc_trial <- rbind(acc_trial, acc_trialSPL)
+
+acc_trial <-
+  merge(acc_trial, 
+      group[c("part_id", "group")],
+      by.x = "subj",
+      by.y = "part_id",
+      all.x = T)
+
+
+acc_trial$corr <- as.factor(acc_trial$corr)
+acc_trial$subj <- as.factor(acc_trial$subj)
+acc_trial$task <- as.factor(acc_trial$task)
+acc_trial$group <- as.factor(acc_trial$group)
+
+acc <- acc_trial
+```
+
+
+
+# Identify participants using different designs of the SL tasks
+```{r}
+library(stringr)
+
+#List the SL files after June 11th, 2019 with counterbalanced target-foils in the test phase
+#List the files that are not counterbalanced which are collected before June 11th, 2019
+extractDesign <- 
+function(filename) {
+  input_path <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/")
+  input_path4 <- ("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data")
+
+  #Since June 11th 2019, the test phase of all SL tasks have been changed to a balanced design
+  #New answer keys should be used
+  input_path2 <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/counterbalance_2afc_sl_data/")
+  input_path5 <- ("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data/counterbalance_2afc_sl_data/")
+  # List all files
+  all <- list.files(path = input_path, pattern = filename)
+  allSpoli <- list.files(path = input_path4, pattern = filename)
+  all <- append(all, allSpoli)
+
+  # List balanced files, extract participant id
+  bal <- list.files(path = input_path2, pattern = filename)
+  balSpoli <- list.files(path = input_path5, pattern = filename)
+  bal <- append(bal, balSpoli)
+  
+  bal_id <- str_extract(bal, "\\S+(?=.csv)")
+  bal_id <- data.frame(bal_id, fix.empty.names = F)
+  bal_id$version <- "balanced"
+  
+  # List unbalanced files, extract participant ids
+  unbal <- all[!(all %in% bal)]
+  unbal_id <- str_extract(unbal, "\\S+(?=.csv)")
+  unbal_id <- data.frame(unbal_id, fix.empty.names = F)
+  unbal_id$version <- "unbalanced"
+  
+  id <- rbind(bal_id, unbal_id)
+  
+  return(id)
+}
+
+```
+
+```{r}
+lslID <- extractDesign("*lsl.csv")
+sslID <- extractDesign("*ssl.csv")
+vslID <- extractDesign("*vsl.csv")
+tslID <- extractDesign("*tsl.csv")
+
+allID <- rbind(vslID, lslID, sslID, tslID)
+
+colnames(allID) <- c("subjTask", "version")
+
+# LSL is special. Also load LSL with predictable answers.
+input_path3 <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/predictable_lsl/")
+
+predLSL <- list.files(path = input_path3, pattern = "*.lsl.csv")
+predLSL <- str_extract(predLSL, "\\S+(?=.csv)")
+predLSL <- data.frame(predLSL)
+predLSL$version <- "predictable"
+
+colnames(predLSL) <- c("subjTask", "version")
+
+allID <- rbind(allID, predLSL)
+
+allID$subj <- str_extract(allID$subjTask, "\\S+(?=_\\S+)")
+
+allID$task <- str_extract(allID$subjTask, "(?<=\\S{5}_c_\\S{3}_)\\S{3}")
+
+allID <- allID[!colnames(allID) %in% "subjTask"]
+
+acc <- merge(acc, allID, by = c("subj", "task"), all.x = T)
+```
+
+
+
+# Load participant subset
+```{r}
+subsample <- read.csv("/Users/jojohu/Documents/Qlab/manuscript_jndd/allSLData.csv")
+acc <- acc[which(acc$subj %in% subsample$part_id),]
+tdAcc <- acc[which(acc$group == "ASD"),]
+# tdAcc <- acc[which(acc$group == "TD"),]
+```
+
+
+```{r}
+# manuscript_subj <- read.csv("/Users/jojohu/Documents/Qlab/manuscript/allSLData.csv")
+# 
+# tdAcc <- tdAcc[which(tdAcc$subj %in% manuscript_subj$part_id),]
+
+# unique(acc$subj)
+
+# unique(jove_subj$part_id)
+
+# setdiff(unique(jove_subj$part_id), unique(tdAcc$subj))
+# setdiff(unique(tdAcc$subj), unique(jove_subj$part_id))
+```
+
+
+
+# Count participants using different designs
+```{r}
+
+# tdAcc <- acc[which(acc$group == "ASD"),]
+
+tdAcc <- tdAcc[,c("subj", "corr", "task", "trial_order", "key", "ans", "version")]
+
+tdAcc <- tdAcc[with(tdAcc, order(subj, task, trial_order)),]
+
+library(reshape2)
+
+tdVersion <- dcast(subj +trial_order~ task, data = tdAcc, value.var = "version")
+
+library(dplyr)
+tdAcc %>%
+  group_by(task, version) %>%
+  summarise_at(c("trial_order"), funs(n = n()/32))
+```
+
+
+# Calculate Alpha by task
+```{r}
+library(reshape2)
+
+tdAccWd <- dcast(subj +trial_order~ task, data = tdAcc, value.var = "corr")
+
+sslunbal <- filter(tdAcc, task == "ssl" & version == "unbalanced")
+
+sslunbal <- unique(sslunbal$subj)
+
+sslbal <- filter(tdAcc, task == "ssl" & version == "balanced")
+
+sslbal <- unique(sslbal$subj)
+
+lsl <- tdAccWd[,c(1,2,3)]
+
+ssl <- tdAccWd[, c(1, 2, 4)]
+
+sslunbal <- ssl[which(ssl$subj %in% sslunbal),]
+
+sslbal <- ssl[which(ssl$subj %in% sslbal),]
+
+tsl <- tdAccWd[, c(1, 2, 5)]
+
+vsl <- tdAccWd[, c(1, 2, 6)]
+
+
+
+sslAcc <- dcast(subj~trial_order, data = ssl, value.var = "ssl")
+sslAcc <- sslAcc[,-1]
+
+
+sslAccUnbal <- dcast(subj~trial_order, data = sslunbal, value.var = "ssl")
+sslAccUnbal <- sslAccUnbal[,-1]
+
+
+sslAccBal <- dcast(subj~trial_order, data = sslbal, value.var = "ssl")
+sslAccBbal <- sslAccBal[,-1]
+
+lslAcc <- dcast(subj~trial_order, data = lsl, value.var = "lsl")
+lslAcc <- lslAcc[,-1]
+
+tslAcc <- dcast(subj~trial_order, data = tsl, value.var = "tsl")
+tslAcc <- tslAcc[,-1]
+
+
+vslAcc <- dcast(subj~trial_order, data = vsl, value.var = "vsl")
+vslAcc <- vslAcc[,-1]
+
+# This function only works for removing empty columns
+# noNAcol <-
+# function(df) {
+# df <- Filter(function(x)!all(is.na(x)), df)
+# return(df)
+# }
+# 
+# 
+# 
+# vslAcc <- noNAcol(vslAcc)
+# lslAcc <- noNAcol(lslAcc)
+# tslAcc <- noNAcol(tslAcc)
+# sslAcc <- noNAcol(sslAcc)
+
+# Remove empty rows
+noNArow <- 
+function(df) {
+  df <- df[!apply(is.na(df) | df == "", 1, all),]
+  return(df)
+}
+  
+vslAcc <- noNArow(vslAcc)
+lslAcc <- noNArow(lslAcc)
+tslAcc <- noNArow(tslAcc)
+sslAcc <- noNArow(sslAcc)
+
+vslAcc <- mutate_all(vslAcc, function(x) as.numeric(as.character(x)))
+lslAcc <- mutate_all(lslAcc, function(x) as.numeric(as.character(x)))
+tslAcc <- mutate_all(tslAcc, function(x) as.numeric(as.character(x)))
+sslAcc <- mutate_all(sslAcc, function(x) as.numeric(as.character(x)))
+sslAccUnbal <- mutate_all(sslAccUnbal, function(x) as.numeric(as.character(x)))
+sslAccBal <- mutate_all(sslAccBal, function(x) as.numeric(as.character(x)))
+
+
+head(lslAcc)
+head(sslAcc)
+
+
+library(psych)
+
+
+psych::alpha(vslAcc)
+psych::alpha(lslAcc)
+psych::alpha(tslAcc)
+psych::alpha(sslAcc)
+
+# psych::splitHalf(lslAcc, check.keys = F)
+```
+
+# SSL Reliability Specified
+```{r}
+psych::alpha(sslAccUnbal)
+print(sslunbal)
+
+
+psych::alpha(sslAccBal)
+print(sslbal)
+```
+
+# Split Half Reliability
+```{r}
+baseRsplitHalf <- function(df) {
+  score_e <- rowMeans(df[, c(TRUE, FALSE)], na.rm = T)  # with even items
+  score_o <- rowMeans(df[, c(FALSE, TRUE)], na.rm = T)  # with odd items
+
+  r <- cor(score_e, score_o)
+
+  r <- (2 * r) / (1 + r)
+
+  return(r)
+}
+baseRsplitHalf(vslAcc)
+baseRsplitHalf(lslAcc)
+baseRsplitHalf(tslAcc)
+baseRsplitHalf(sslAcc)
+```

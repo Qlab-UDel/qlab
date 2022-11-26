@@ -1,0 +1,182 @@
+{
+  "Name":"BLAST_child_mri_processing",
+  "BIDSModelVersion":"1.0",
+  "Description":"this current version is our first fitlins model set up specifically to test our pipeline on first level processing of ASL data. It will be expanded to VSL data and other levels of analysis once set",
+  "Input":{
+    "task": "vsl"
+  },
+  "Nodes":[
+    {
+      "Level": "Run",
+      "Name": "run",
+      "GroupBy":["run", "subject"],
+      "Transformations":{
+        "Transformer":"pybids-transforms-v1",
+        "Instructions":[
+          {
+            "Name": "Factor",
+            "Input":[
+                    "stimuli",
+                    "condition"
+                 ]
+          },
+          {
+            "Name": "And",
+            "Input":[
+              "stimuli.image",
+              "condition.R"
+            ],
+            "Output":[
+              "rand_image"
+            ]
+          },
+          {
+            "Name": "And",
+            "Input":[
+              "stimuli.image",
+              "condition.S"
+            ],
+            "Output":[
+              "str_image"
+            ]
+          },
+          {
+            "Name": "And",
+            "Input":[
+              "stimuli.letter",
+              "condition.R"
+            ],
+            "Output":[
+              "rand_letter"
+            ]
+          },
+          {
+            "Name": "And",
+            "Input":[
+              "stimuli.letter",
+              "condition.S"
+            ],
+            "Output":[
+              "str_letter"
+            ]
+          },
+          {
+            "Name": "Copy",
+            "Input":[
+              "stimuli.rest"
+            ],
+            "Output":[
+              "rest"
+            ]
+          },
+          {
+            "Name": "Convolve",
+            "Input":[
+              "rand_image",
+              "str_image",
+              "rand_letter",
+              "str_letter",
+              "rest"
+            ],
+            "Model":"spm"
+          }
+        ]
+      },
+      "Model":{
+        "Type": "glm",
+        "X":[
+          "rand_image",
+          "str_image",
+          "rand_letter",
+          "str_letter",
+          "rest",
+          "framewise_displacement",
+          "trans_x",
+          "trans_y",
+          "trans_z",
+          "rot_x",
+          "rot_y",
+          "rot_z",
+          "a_comp_cor_00",
+          "a_comp_cor_01",
+          "a_comp_cor_02",
+          "a_comp_cor_03",
+          "a_comp_cor_04",
+          "a_comp_cor_05",
+          1
+        ]
+      },
+      "Contrasts":[
+        {
+          "Name": "rand_image_v_rest",
+          "ConditionList":[
+            "rand_image",
+            "rest"
+          ],
+          "Weights":[
+            1,
+            -1
+          ],
+	  "Test":"t"
+        },
+        {
+          "Name": "str_image_v_rest",
+          "ConditionList":[
+            "str_image",
+            "rest"
+          ],
+          "Weights":[
+            1,
+            -1
+          ],
+	  "Test":"t"
+        },
+        {
+          "Name": "rand_letter_v_rest",
+          "ConditionList":[
+            "rand_letter",
+            "rest"
+          ],
+          "Weights":[
+            1,
+            -1
+          ],
+	  "Test":"t"
+        },
+        {
+          "Name": "str_letter_v_rest",
+          "ConditionList":[
+            "str_letter",
+            "rest"
+          ],
+          "Weights":[
+            1,
+            -1
+          ],
+	  "Test":"t"
+        }
+      ]
+    },
+    {
+      "Level": "Subject",
+      "Name": "subject",
+      "GroupBy": ["subject", "contrast"],
+      "Model": {
+        "Type": "Meta",
+        "X": [1]
+      },
+      "DummyContrasts": {
+        "Test": "t"
+      }
+    }
+  ],
+  "Edges":[
+      {
+         "Source":"run",
+         "Destination":"subject",
+	 "Filter": {
+	   "participant_id": ["sub-blastc059"]
+	}
+      }
+   ]
+}

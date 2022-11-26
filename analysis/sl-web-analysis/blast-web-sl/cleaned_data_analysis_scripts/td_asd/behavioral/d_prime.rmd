@@ -1,0 +1,1600 @@
+---
+title: "d_prime"
+author: "Jojo Hu"
+date: "10/29/2021"
+output: html_document
+---
+
+# Extract Exposure Phase for each of the SL tasks from blast behavioral online data
+TO DO: Extraction of exposure phase is taken from each of the SL task cleaning script (need to be improved on runtime)
+
+
+## LSL Extract Exposure Phase (taken from blast_web_lsl_rt_analysis.R)
+```{r}
+input_path <- "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child_lsl_clean/predictable_lsl/"
+input_path2 <- "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child_lsl_clean/"
+output_path <- "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/"
+
+# input_path <- "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult_lsl_clean/predictable_lsl/"
+# input_path2 <- "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult_lsl_clean/"
+# output_path <- "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult/breakdown/"
+
+#Include all data from predictable 2 alternative force choice and random 2 afc
+#RT slope and Mean RT are only analyzed for the online but not the offline portion of the task
+lsl_files <- list.files(path = input_path, pattern = "*lsl.csv")
+lsl_files2 <- list.files(path = input_path2, pattern = "*lsl.csv")
+lsl_files <- append(lsl_files, lsl_files2)
+
+lsl_all <- NULL
+loop_index = 0
+
+for (file in lsl_files) {
+  loop_index = loop_index + 1
+  if(file %in% lsl_files2) {
+  lsl <- read.csv(paste0(input_path2, file))
+  } else {
+    lsl <- read.csv(paste0(input_path, file))
+  }
+  #put in participant ID for each file
+  lsl$par_id <-
+  str_extract(as.character(file), "\\S+(?=.csv)")
+  
+  # Identify preceding and following stimuli
+  #The column has to be character type for the append function to work
+ lsl$stim_disp <- as.character(lsl$stim_disp)
+ 
+ lsl$two_stim_before <-
+    append(NA, (append(NA, head(
+      lsl$stim_disp, -2
+    )))) 
+  lsl$prev_stim <-
+    append(NA, (head(lsl$stim_disp, -1)))
+  lsl$next_stim <-
+    append(lsl$stim_disp[-1], NA)
+  lsl$two_stim_later <-
+    append(append((tail(
+      lsl$stim_disp, -2
+    )), NA), NA)
+  
+  # Combine data from current file
+  lsl_all <- rbind(lsl_all, lsl)
+}
+
+# Extract the row numbers for all lines in which the stimulus is the target--------------------
+
+# Check if the lsl cleaning script was done correctly.If correct, then the keypress time ("col1") should not be earlier than the stimulus display time ("time").
+# No removed_wrong_keypress_time should be found.
+
+removed_wrong_keypress_time <- which(lsl_all[,"col1"] < lsl_all[, "time"])
+lsl_all[removed_wrong_keypress_time, "col1"] <- NA
+print(lsl_all[removed_wrong_keypress_time, c(1:8)])
+
+
+# For participants that saw 800ms letter image and 200ms, make the blank responses as its preceding letter image responses---------------
+
+# Calculate stimulus duration, extract the participant IDs with 200ms blank
+duration <-
+  lsl_all %>%
+  group_by(par_id) %>%
+  mutate(stim_duration = time - lag(time))
+# Match the stim duration to the stimuli (the dplyr lag function outputs stim duration one row off, and thus calculated the wrong duration when the row is between participants)
+lsl_all$stim_duration <- append(duration$stim_duration[-1], NA)
+# Extract IDs that have blanks around 200ms (i.e., if the participant has around 287 trials with blanks of 200ms)
+short_blank <- 
+  lsl_all %>%
+  group_by(par_id) %>%
+  filter(stim_disp == "blank") %>%
+  filter(stim_duration <250 & stim_duration > 0)  %>%
+  group_by(par_id) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n > 200)
+
+blast_short_blank <- short_blank
+
+emptyList <- list()
+# Recalculate RTs for participants with blanks of 200ms, make blank responses target responses
+for (i in 1:length(short_blank$par_id)) {
+  
+  short_blankID <- short_blank$par_id[i]
+  thisIDdf <- lsl_all[which(lsl_all$par_id %in% short_blankID),]
+  
+  # Make sure the DF is arranged by stimulus onset time
+  thisIDdf <-
+    thisIDdf %>%
+    arrange(par_id, time)
+  
+  # Create a column for three stimuli after the current trial stimulus
+  three_stim_before <- append(NA, as.character(thisIDdf$two_stim_before[-length(thisIDdf$two_stim_before)]))
+  thisIDdf <- cbind(thisIDdf, three_stim_before)
+  thisIDdf$three_stim_before <- as.character(thisIDdf$three_stim_before)
+  
+  # Create a column for keypress before and keypress after the current trial keypress
+  keypress_next <- append(as.character(thisIDdf$col2[-1]), NA)
+  thisIDdf <- cbind(thisIDdf, keypress_next)
+  keypress_prev <- append(NA, as.character(thisIDdf$col2[-length(thisIDdf$col2)]))
+  thisIDdf <- cbind(thisIDdf, keypress_prev)
+  
+  # Find the blank responses that do not have a response immediately before to the preceding letter and count this as a response to the preceding letter
+  thisIDdf <- 
+    thisIDdf %>%
+    mutate(rt_for_preceding = ifelse(!is.na(col2) & is.na(keypress_prev) & col2 == "blank",
+                             thisIDdf$col1, NA))
+  
+  # Move the blank RT up to the preceding letter trial
+  thisIDdf$rt_for_preceding <- append(thisIDdf$rt_for_preceding[-1], NA)
+  
+  # Get the stimulus displayed for the moved-up blank RTs
+  thisIDdf <- 
+    thisIDdf %>%
+    mutate(stim_blank = ifelse(is.na(col2) & !is.na(rt_for_preceding),
+                               stim_disp, NA))
+  
+  # Combine the blank responses and the letter responses
+  thisIDdf$col2 <- coalesce(thisIDdf$col2, thisIDdf$stim_blank)
+  thisIDdf$col1 <- coalesce(thisIDdf$col1, thisIDdf$rt_for_preceding)
+  emptyList[[i]] <- thisIDdf
+}
+
+lsl_more <- do.call(rbind, emptyList)
+
+if(length(which(!lsl_all$par_id %in% lsl_more$par_id)) != 0) {
+  lsl_all <- rbind(lsl_all[which(!lsl_all$par_id %in% lsl_more$par_id),], lsl_more[,c(colnames(lsl_all))])
+} else {
+  lsl_all <- lsl_more[,c(colnames(lsl_all))]
+}
+```
+
+
+```{r}
+blastLE <- lsl_all
+```
+
+
+## LSL Extract Exposure Phase (taken from spoli_web_lsl_rt_analysis.R)
+```{r}
+#LSL RT Slope Analysis ----------------------------------------------
+# input_path <- "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child_lsl_clean/predictable_lsl/"
+input_path2 <- "/Users/jojohu/Documents/Qlab/spoli/data_summaries/spoli_online_child_lsl_clean/"
+output_path <- "/Users/jojohu/Documents/Qlab/spoli/data_summaries/breakdown/"
+
+#Include all data from predictable 2 alternative force choice and random 2 afc
+#RT slope and Mean RT are only analyzed for the online but not the offline portion of the task
+lsl_files <- list.files(path = input_path2, pattern = "*lsl.csv")
+
+
+lsl_all <- NULL
+loop_index = 0
+
+for (file in lsl_files) {
+  loop_index = loop_index + 1
+ 
+  lsl <- read.csv(paste0(input_path2, file))
+  
+  #put in participant ID for each file
+  lsl$par_id <-
+  str_extract(as.character(file), "\\S+(?=.csv)")
+  
+  # Identify preceding and following stimuli
+  #The column has to be character type for the append function to work
+ lsl$stim_disp <- as.character(lsl$stim_disp)
+ 
+ lsl$two_stim_before <-
+    append(NA, (append(NA, head(
+      lsl$stim_disp, -2
+    )))) 
+  lsl$prev_stim <-
+    append(NA, (head(lsl$stim_disp, -1)))
+  lsl$next_stim <-
+    append(lsl$stim_disp[-1], NA)
+  lsl$two_stim_later <-
+    append(append((tail(
+      lsl$stim_disp, -2
+    )), NA), NA)
+  
+  # Combine data from current file
+  lsl_all <- rbind(lsl_all, lsl)
+}
+
+# Extract the row numbers for all lines in which the stimulus is the target--------------------
+
+# Check if the lsl cleaning script was done correctly.If correct, then the keypress time ("col1") should not be earlier than the stimulus display time ("time").
+# No removed_wrong_keypress_time should be found.
+
+removed_wrong_keypress_time <- which(lsl_all[,"col1"] < lsl_all[, "time"])
+lsl_all[removed_wrong_keypress_time, "col1"] <- NA
+print(lsl_all[removed_wrong_keypress_time, c(1:8)])
+
+
+# For participants that saw 800ms letter image and 200ms, make the blank responses as its preceding letter image responses---------------
+
+# Calculate stimulus duration, extract the participant IDs with 200ms blank
+duration <-
+  lsl_all %>%
+  group_by(par_id) %>%
+  mutate(stim_duration = time - lag(time))
+# Match the stim duration to the stimuli (the dplyr lag function outputs stim duration one row off, and thus calculated the wrong duration when the row is between participants)
+lsl_all$stim_duration <- append(duration$stim_duration[-1], NA)
+# Extract IDs that have blanks around 200ms (i.e., if the participant has around 287 trials with blanks of 200ms)
+short_blank <- 
+  lsl_all %>%
+  group_by(par_id) %>%
+  filter(stim_disp == "blank") %>%
+  filter(stim_duration <250 & stim_duration > 0)  %>%
+  group_by(par_id) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n > 200)
+
+spoli_short_blank <- short_blank
+
+emptyList <- list()
+# Recalculate RTs for participants with blanks of 200ms, make blank responses target responses
+for (i in 1:length(short_blank$par_id)) {
+  
+  short_blankID <- short_blank$par_id[i]
+  thisIDdf <- lsl_all[which(lsl_all$par_id %in% short_blankID),]
+  
+  # Make sure the DF is arranged by stimulus onset time
+  thisIDdf <-
+    thisIDdf %>%
+    arrange(par_id, time)
+  
+  # Create a column for three stimuli after the current trial stimulus
+  three_stim_before <- append(NA, as.character(thisIDdf$two_stim_before[-length(thisIDdf$two_stim_before)]))
+  thisIDdf <- cbind(thisIDdf, three_stim_before)
+  thisIDdf$three_stim_before <- as.character(thisIDdf$three_stim_before)
+  
+  # Create a column for keypress before and keypress after the current trial keypress
+  keypress_next <- append(as.character(thisIDdf$col2[-1]), NA)
+  thisIDdf <- cbind(thisIDdf, keypress_next)
+  keypress_prev <- append(NA, as.character(thisIDdf$col2[-length(thisIDdf$col2)]))
+  thisIDdf <- cbind(thisIDdf, keypress_prev)
+  
+  # Find the blank responses that do not have a response immediately before to the preceding letter and count this as a response to the preceding letter
+  thisIDdf <- 
+    thisIDdf %>%
+    mutate(rt_for_preceding = ifelse(!is.na(col2) & is.na(keypress_prev) & col2 == "blank",
+                             thisIDdf$col1, NA))
+  
+  # Move the blank RT up to the preceding letter trial
+  thisIDdf$rt_for_preceding <- append(thisIDdf$rt_for_preceding[-1], NA)
+  
+  # Get the stimulus displayed for the moved-up blank RTs
+  thisIDdf <- 
+    thisIDdf %>%
+    mutate(stim_blank = ifelse(is.na(col2) & !is.na(rt_for_preceding),
+                               stim_disp, NA))
+  
+  # Combine the blank responses and the letter responses
+  thisIDdf$col2 <- coalesce(thisIDdf$col2, thisIDdf$stim_blank)
+  thisIDdf$col1 <- coalesce(thisIDdf$col1, thisIDdf$rt_for_preceding)
+  emptyList[[i]] <- thisIDdf
+}
+
+lsl_more <- do.call(rbind, emptyList)
+
+if(length(which(!lsl_all$par_id %in% lsl_more$par_id)) != 0) {
+  lsl_all <- rbind(lsl_all[which(!lsl_all$par_id %in% lsl_more$par_id),], lsl_more[,c(colnames(lsl_all))])
+} else {
+  lsl_all <- lsl_more[,c(colnames(lsl_all))]
+}
+```
+
+
+```{r}
+spoliLE <- lsl_all
+```
+
+# Clean Letter SL tasks exposure phase
+```{r}
+lslE <- rbind(blastLE, spoliLE)
+
+lslEAll <- lslE
+
+short_blank_all <- rbind(blast_short_blank, spoli_short_blank)
+```
+
+# Calculate Letter SL hits
+```{r}
+lslE <- lslE[which(lslE$par_id %in% unique(short_blank_all$par_id)),]
+
+lslE <-
+  lslE %>%
+  filter(stim_disp != "blank") 
+
+# Create previous and next keypresses
+bindKeypress <- 
+  function(taskDF, idCol, responseCol) {
+    emptyList2 <- list()
+  
+  for (i in 1:length(unique(taskDF[,idCol]))) {
+    
+    presentID <- unique(taskDF[,idCol])[i]
+    presentDF <- taskDF[which(taskDF[,idCol] %in% presentID),]
+    
+    keypress_prev <- append(NA, as.character(presentDF[,responseCol][-length(presentDF[,responseCol])]))
+    presentDF <- cbind(presentDF, keypress_prev)
+    
+    keypress_next <- append(as.character(presentDF[,responseCol][-1]), NA)
+    presentDF <- cbind(presentDF, keypress_next)
+    
+    emptyList2[[i]] <- presentDF
+  }
+    return(emptyList2)
+}
+
+lslED <- do.call(rbind, bindKeypress(lslE, "par_id", "col2"))
+
+identical(lslE, lslED[,c(colnames(lslE))])
+
+lslED <- 
+  lslED %>%
+  mutate(hit_during = ifelse(!is.na(col2) & stim_disp == target & col2 == stim_disp & is.na(keypress_prev), "hit_during", NA),
+         hit_before = ifelse(!is.na(keypress_prev) & stim_disp == target, "hit_before", NA),
+         hit_after = ifelse(!is.na(keypress_next) & stim_disp == target & is.na(hit_before) & is.na(hit_during), "hit_after", NA),
+         miss = ifelse(is.na(col2) & stim_disp == target & is.na(hit_before) & is.na(hit_during) & is.na(hit_after), "miss", NA),
+         false_alarm = ifelse(!is.na(col2) & stim_disp != target & 
+                                is.na(hit_before) & is.na(hit_during) & 
+                                is.na(hit_after) & is.na(miss), 
+                              # & two_stim_before != target & two_stim_later != target,
+                              "false_alarm", NA),
+         corr_rej = ifelse(is.na(col2) & stim_disp != target & is.na(hit_before) & is.na(hit_during) & is.na(hit_after) & is.na(false_alarm), "corr_rej", NA)
+         )
+```
+
+
+```{r}
+# if the false alarm is right before a hit_before or hit_after (the antipatory keypress and delayed keypress are keypresses for the target, not for the previous or following non-target stimulus), then change that to correct rejection
+
+# Create previous and next keypresses
+bindHit <- 
+  function(taskDF, idCol, responseCol) {
+    oneOffHit <- list()
+  for (i in 1:length(unique(taskDF[,idCol]))) {
+    
+    presentID <- unique(taskDF[,idCol])[i]
+    presentDF <- taskDF[which(taskDF[,idCol] %in% presentID),]
+    
+    hit_before_next <- append(as.character(presentDF[,"hit_before"][-1]), NA)
+    presentDF <- cbind(presentDF, hit_before_next)
+    
+    hit_after_prev <- append(NA, as.character(presentDF[,"hit_after"][-length(presentDF[,"hit_after"])]))
+    presentDF <- cbind(presentDF, hit_after_prev)
+    
+  
+    oneOffHit[[i]] <- presentDF
+  }
+    return(oneOffHit)
+}
+
+lslED <- do.call(rbind, bindHit(lslED, "par_id", "col2"))
+
+lslED$corr_rej <- ifelse((!is.na(lslED$hit_before_next) | !is.na(lslED$hit_after_prev)) & !is.na(lslED$false_alarm), "corr_rej", lslED$corr_rej)
+
+lslED$false_alarm <- ifelse((!is.na(lslED$hit_before_next) | !is.na(lslED$hit_after_prev)) & !is.na(lslED$false_alarm), NA, lslED$false_alarm)
+
+lslED_short <- lslED
+```
+
+
+```{r}
+# For longer blank versions, just don't filter out blanks, and do everything the same
+lslE_long <- lslEAll[which(!lslEAll$par_id %in% unique(short_blank_all$par_id)),]
+
+lslED_long <- do.call(rbind, bindKeypress(lslE_long, "par_id", "col2"))
+
+
+lslED_long <- 
+  lslED_long %>%
+  mutate(hit_during = ifelse(!is.na(col2) & stim_disp == target & col2 == stim_disp & is.na(keypress_prev), "hit_during", NA),
+         hit_before = ifelse(!is.na(keypress_prev) & stim_disp == target, "hit_before", NA),
+         hit_after = ifelse(!is.na(keypress_next) & stim_disp == target & is.na(hit_before) & is.na(hit_during), "hit_after", NA),
+         miss = ifelse(is.na(col2) & stim_disp == target & is.na(hit_before) & is.na(hit_during) & is.na(hit_after), "miss", NA),
+         false_alarm = ifelse(!is.na(col2) & stim_disp != target & 
+                                is.na(hit_before) & is.na(hit_during) & 
+                                is.na(hit_after) & is.na(miss), 
+                              # & two_stim_before != target & two_stim_later != target,
+                              "false_alarm", NA),
+         corr_rej = ifelse(is.na(col2) & stim_disp != target & is.na(hit_before) & is.na(hit_during) & is.na(hit_after) & is.na(false_alarm), "corr_rej", NA)
+         )
+
+lslED_long <- do.call(rbind, bindHit(lslED_long, "par_id", "col2"))
+
+lslED_long$corr_rej <- ifelse((!is.na(lslED_long$hit_before_next) | !is.na(lslED_long$hit_after_prev)) & !is.na(lslED_long$false_alarm), "corr_rej", lslED_long$corr_rej)
+
+lslED_long$false_alarm <- ifelse((!is.na(lslED_long$hit_before_next) | !is.na(lslED_long$hit_after_prev)) & !is.na(lslED_long$false_alarm), NA, lslED_long$false_alarm)
+
+
+# Drop blanks in the long blank Letter SL condition too, because any keypresses during the long blanks cannot be considered as a false alarm or correct rejection, we consider hits in 1 SOA before and 1 SOA after the target, but blanks are not signals, considering them as FA or CR doesn't seem to be a valid choice.
+lslED_long <-
+  lslED_long %>%
+  filter(stim_disp != "blank") 
+
+lslED <- rbind(lslED_short, lslED_long)
+# Check to see the data frame is still right after adding hits/ miss/ FA/ CR
+nrow(lslED)*2 == nrow(lslEAll)
+```
+
+
+```{r}
+lsl_prime <- 
+  lslED %>%
+  group_by(par_id) %>%
+  dplyr::summarise(across(c("hit_before", "hit_during", "hit_after", "miss", "false_alarm", "corr_rej"), list(n = ~ sum(!is.na(.))))) %>%
+  mutate(hit_n = hit_before_n + hit_during_n + hit_after_n,
+         target = hit_n + miss_n,
+         distractors = corr_rej_n + false_alarm_n) %>%
+  mutate(d_prime = qnorm((hit_before_n + hit_during_n + hit_after_n) / (hit_before_n + hit_during_n + hit_after_n + miss_n)) - 
+  qnorm(false_alarm_n / (false_alarm_n + corr_rej_n)))
+
+library(psycho)
+ 
+auto_dprime <- psycho::dprime(
+  n_hit = lsl_prime$hit_n,
+  n_fa = lsl_prime$false_alarm_n,
+  n_targets = 24,
+  n_distractors = 264,
+  adjusted = FALSE
+)
+
+sl_aprime <- auto_dprime$aprime
+
+lsl_prime <- cbind(lsl_prime, auto_dprime$dprime)
+lsl_prime <- cbind(lsl_prime, sl_aprime)
+
+identical(lsl_prime$d_prime, lsl_prime$`auto_dprime$dprime`)
+```
+
+
+
+## VSL Extract Exposure Phase (taken from blast_web_vsl.R)
+```{r}
+# Set directory
+setwd("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child")
+#Input path
+input_path <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/")
+#Since June 11th 2019, the test phase of all SL tasks have been changed to a balanced design
+#New answer keys should be used
+input_path2 <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/counterbalance_2afc_sl_data/")
+# Output path
+output_path <- ("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/")
+# output_path <- ("/Volumes/data-1/projects/blast/data_summaries/blast_online_child/")
+
+
+
+# Ask user for input on how many files are expected (i.e. how many participants are there?)
+#correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
+
+# List input files
+vsl_files <- list.files(pattern="*vsl.csv")
+
+# # Confirm that all files are present. If not, alert user
+# if(length(vsl_files)!=correct_total_files){
+#   stop(print(paste("Found", length(vsl_files), "files. You indicated that there are", correct_total_files, "participants. Please check files in folder against the qlab_participant_checklist.")))
+# }
+
+
+# Initialize variable to hold data
+vsl <- NULL
+
+# Extract relevant data and combine it
+for (file in vsl_files){
+  # Select only relevant columns
+  extracted_data <- read.csv(file)[c("rt", "targ","key_press", "stimulus")]  
+  # Create a column populated with the participant ID based on the file name
+  extracted_data["part_id"] <- substr(basename(file), 1, 11)
+  # Change target and stimulus to string
+  extracted_data["targ"] <- as.character(extracted_data$targ)
+  extracted_data["stimulus"] <- as.character(extracted_data$stimulus)
+  
+  #To Do: make it consistent across all tasks
+  #Change these to be consistent across lsl and vsl
+  colnames(extracted_data)[colnames(extracted_data)=="rt"] <- "press_time"
+  colnames(extracted_data)[colnames(extracted_data)=="targ"] <- "target"
+  
+  # Standardize stimulus names and types
+  extracted_data$stimulus<- tolower(gsub(".jpg","", extracted_data$stimulus))
+  extracted_data$stimulus<- tolower(gsub(".png","", extracted_data$stimulus))
+  extracted_data$stimulus<- gsub("../../images/","",extracted_data$stimulus)
+  extracted_data$press_time<-as.numeric(extracted_data$press_time)
+  # Identify blank keypresses
+  extracted_data[which(extracted_data$press_time==-1),]$press_time<-NA
+  # Identify preceding and following stimuli
+  extracted_data$prev_stim <- append(NA, (head(extracted_data$stimulus, -1)))
+  extracted_data$next_stim <- append(extracted_data$stimulus[-1], NA)
+  vsl <-rbind(vsl,extracted_data)
+}
+
+# List all the participants
+all_ids<- unique(vsl$part_id)
+
+
+# Calculate and summarize true reaction times ------------------------------------------------------------
+
+# Set boundaries for the exposure phase
+library("stringr")
+
+loop_index = 0 
+exp_phase <- list()
+
+for (id in all_ids) { 
+  loop_index = loop_index +1
+  this_id_vsl <- vsl[which(vsl$part_id %in% id),]
+  exp_phase_start <- which(str_detect(this_id_vsl$stimulus, "vsl_instr7.wav$")) + 1
+  exp_phase_end <- which(str_detect(this_id_vsl$stimulus, "vsl_audio/lsl_instr6.wav$")) - 1
+  exp_phase_this_id <- this_id_vsl[exp_phase_start:exp_phase_end,]
+  exp_phase_this_id$trial_index <- NULL
+  exp_phase_this_id$trial_index <- seq(from=1, to=length(exp_phase_this_id$part_id), by=1)
+  # Extract exposure phase
+  exp_phase[[loop_index]] <- exp_phase_this_id
+}
+
+exp_phase <- do.call(rbind, exp_phase)
+
+```
+
+```{r}
+blastVE <- exp_phase
+```
+
+## VSL Extract Exposure Phase (taken from spoli_web_vsl.R)
+```{r}
+# Set directory
+setwd("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data")
+#Input path
+input_path <- ("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data/")
+#Since June 11th 2019, the test phase of all SL tasks have been changed to a balanced design
+#New answer keys should be used
+input_path2 <- ("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data/counterbalance_2afc_sl_data/")
+# Output path
+output_path <- ("/Users/jojohu/Documents/Qlab/spoli/data_summaries/breakdown/")
+# output_path <- ("/Volumes/data-1/projects/blast/data_summaries/blast_online_child/")
+
+
+
+# Ask user for input on how many files are expected (i.e. how many participants are there?)
+#correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
+
+# List input files
+vsl_files <- list.files(pattern="*vsl.csv")
+
+# # Confirm that all files are present. If not, alert user
+# if(length(vsl_files)!=correct_total_files){
+#   stop(print(paste("Found", length(vsl_files), "files. You indicated that there are", correct_total_files, "participants. Please check files in folder against the qlab_participant_checklist.")))
+# }
+
+
+# Initialize variable to hold data
+vsl <- NULL
+
+# Extract relevant data and combine it
+for (file in vsl_files){
+  # Select only relevant columns
+  extracted_data <- read.csv(file)[c("rt", "targ","key_press", "stimulus")]  
+  # Create a column populated with the participant ID based on the file name
+  extracted_data["part_id"] <- substr(basename(file), 1, 11)
+  # Change target and stimulus to string
+  extracted_data["targ"] <- as.character(extracted_data$targ)
+  extracted_data["stimulus"] <- as.character(extracted_data$stimulus)
+  
+  #To Do: make it consistent across all tasks
+  #Change these to be consistent across lsl and vsl
+  colnames(extracted_data)[colnames(extracted_data)=="rt"] <- "press_time"
+  colnames(extracted_data)[colnames(extracted_data)=="targ"] <- "target"
+  
+  # Standardize stimulus names and types
+  extracted_data$stimulus<- tolower(gsub(".jpg","", extracted_data$stimulus))
+  extracted_data$stimulus<- tolower(gsub(".png","", extracted_data$stimulus))
+  extracted_data$stimulus<- gsub("../../images/","",extracted_data$stimulus)
+  extracted_data$press_time<-as.numeric(extracted_data$press_time)
+  # Identify blank keypresses
+  extracted_data[which(extracted_data$press_time==-1),]$press_time<-NA
+  # Identify preceding and following stimuli
+  extracted_data$prev_stim <- append(NA, (head(extracted_data$stimulus, -1)))
+  extracted_data$next_stim <- append(extracted_data$stimulus[-1], NA)
+  vsl <-rbind(vsl,extracted_data)
+}
+
+# List all the participants
+all_ids<- unique(vsl$part_id)
+
+
+# Calculate and summarize true reaction times ------------------------------------------------------------
+
+# Set boundaries for the exposure phase
+library("stringr")
+
+loop_index = 0 
+exp_phase <- list()
+
+for (id in all_ids) { 
+  loop_index = loop_index +1
+  this_id_vsl <- vsl[which(vsl$part_id %in% id),]
+  exp_phase_start <- which(str_detect(this_id_vsl$stimulus, "vsl_instr7.wav$")) + 1
+  exp_phase_end <- which(str_detect(this_id_vsl$stimulus, "vsl_audio/lsl_instr6.wav$")) - 1
+  exp_phase_this_id <- this_id_vsl[exp_phase_start:exp_phase_end,]
+  exp_phase_this_id$trial_index <- NULL
+  exp_phase_this_id$trial_index <- seq(from=1, to=length(exp_phase_this_id$part_id), by=1)
+  # Extract exposure phase
+  exp_phase[[loop_index]] <- exp_phase_this_id
+}
+
+exp_phase <- do.call(rbind, exp_phase)
+
+```
+
+```{r}
+spoliVE <- exp_phase
+```
+
+```{r}
+vslE <- rbind(blastVE, spoliVE)
+
+# Recalculate RTs for participants with blanks of 200ms, make blank responses target responses
+vslED <- do.call(rbind, bindKeypress(vslE, "part_id", "press_time"))
+
+identical(vslE, vslED[,c(colnames(vslE))])
+
+vslED <- 
+  vslED %>%
+  mutate(hit_during = ifelse(!is.na(press_time) & stimulus == target & is.na(keypress_prev), "hit_during", NA),
+         hit_before = ifelse(!is.na(keypress_prev) & stimulus == target, "hit_before", NA),
+         hit_after = ifelse(!is.na(keypress_next) & stimulus == target & is.na(hit_before) & is.na(hit_during), "hit_after", NA),
+         miss = ifelse(is.na(press_time) & stimulus == target & is.na(hit_before) & is.na(hit_during) & is.na(hit_after), "miss", NA),
+         false_alarm = ifelse(!is.na(press_time) & stimulus != target & 
+                                is.na(hit_before) & is.na(hit_during) & 
+                                is.na(hit_after) & is.na(miss), 
+                              # & prev_stim != target & next_stim != target,
+                              "false_alarm", NA),
+         corr_rej = ifelse(is.na(press_time) & stimulus != target & is.na(hit_before) & is.na(hit_during) & is.na(hit_after) & is.na(false_alarm), "corr_rej", NA)
+         )
+
+vslED <- do.call(rbind, bindHit(vslED, "part_id", "press_time"))
+
+vslED$corr_rej <- ifelse((!is.na(vslED$hit_before_next) | !is.na(vslED$hit_after_prev)) & !is.na(vslED$false_alarm), "corr_rej", vslED$corr_rej)
+
+vslED$false_alarm <- ifelse((!is.na(vslED$hit_before_next) | !is.na(vslED$hit_after_prev)) & !is.na(vslED$false_alarm), NA, vslED$false_alarm)
+```
+
+
+```{r}
+vsl_prime <- 
+  vslED %>%
+  group_by(part_id) %>%
+  dplyr::summarise(across(c("hit_before", "hit_during", "hit_after", "miss", "false_alarm", "corr_rej"), list(n = ~ sum(!is.na(.))))) %>%
+  mutate(hit_n = hit_before_n + hit_during_n + hit_after_n,
+         target = hit_n + miss_n,
+         distractors = corr_rej_n + false_alarm_n) %>%
+  mutate(d_prime = qnorm((hit_before_n + hit_during_n + hit_after_n) / (hit_before_n + hit_during_n + hit_after_n + miss_n)) - 
+  qnorm(false_alarm_n / (false_alarm_n + corr_rej_n)))
+
+library(psycho)
+ 
+auto_dprime <- psycho::dprime(
+  n_hit = vsl_prime$hit_n,
+  n_fa = vsl_prime$false_alarm_n,
+  n_targets = 24,
+  n_distractors = 264,
+  adjusted = FALSE
+)
+
+sl_aprime <- auto_dprime$aprime
+
+vsl_prime <- cbind(vsl_prime, auto_dprime$dprime)
+vsl_prime <- cbind(vsl_prime, sl_aprime)
+
+identical(vsl_prime$d_prime, vsl_prime$`auto_dprime$dprime`)
+```
+
+
+## SSL Extract Exposure Phase (taken from blast_web_ssl.R)
+```{r}
+library("reshape")
+
+setwd("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child")
+
+input_path <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/")
+
+# Extract data from files ------------------------------------------------------------
+
+# Ask user for input on how many files are expected (i.e. how many participants are there?)
+#correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
+
+# List input files
+ssl_files <- list.files(pattern="*ssl.csv")
+
+# Confirm that all files are present. If not, alert user
+# if(length(ssl_files)!=correct_total_files) {
+#   stop(print(
+#     paste(
+#       "Found",
+#       length(ssl_files),
+#       "files. You indicated that there are",
+#       correct_total_files,
+#       "participants. Please check files in folder against the qlab_participant_checklist."
+#     )
+#   ))
+# }
+
+# Initialize variable to hold data
+ssl <- NULL
+
+# Extract relevant data and combine it
+for (file in ssl_files) {
+  # Select only relevant columns
+  extracted_data <-
+    read.csv(file)[c("rt", "trial_index", "targ", "key_press", "stimulus")]
+  # Create a column populated with the participant ID based on the file name
+  extracted_data["part_id"] <- substr(basename(file), 1, 11)
+  # Change target and stimulus to string
+  extracted_data["targ"] <- as.character(extracted_data$targ)
+  extracted_data["stimulus"] <-
+    as.character(extracted_data$stimulus)
+  # The keypress value recorded as "rt" in the raw files is not the true reaction time. Rename the column. See below for details on how to use this value.
+  colnames(extracted_data)[colnames(extracted_data) == "rt"] <-
+    "press_time"
+  # Standardize stimulus names and types
+  extracted_data$stimulus <-
+    gsub(".wav", "", extracted_data$stimulus)
+  extracted_data$stimulus <-
+    gsub("sound/", "", extracted_data$stimulus)
+  extracted_data$press_time <- as.numeric(extracted_data$press_time)
+  # Identify blank keypresses
+  extracted_data[which(extracted_data$press_time == -1000),]$press_time <-
+    NA
+  # Identify preceding and following stimuli
+  extracted_data$two_stim_before <-
+    append(NA, (append(NA, head(
+      extracted_data$stimulus, -2
+    ))))
+  extracted_data$prev_stim <-
+    append(NA, (head(extracted_data$stimulus, -1)))
+  extracted_data$next_stim <-
+    append(extracted_data$stimulus[-1], NA)
+  extracted_data$two_stim_later <-
+    append(append((tail(
+      extracted_data$stimulus, -2
+    )), NA), NA)
+  # Combine data from current file
+  ssl <- rbind(ssl, extracted_data)
+}
+
+#RT analysis--------------------------------------------------------------------------------------------------------------
+# Calculate true keypress times.
+# NOTE: There is a 100 ms pause at the beginning of the trial, between when the trial starts and when the stimulus appears. 
+# Keypresses recorded during the 100 ms pause are actually responses to the previous stimulus.
+# These help figure out how many negative values were used in calculating a keypress, versus how many were from a second keypress for the same stimulus
+
+calculated <-NULL
+removed <- NULL
+negatives <- 0
+
+for (i in 2:length(ssl$press_time)) {
+  # Identify negative keypress values following NAs. Use them to calculate the preceding stimuli's response times
+  #380+100+negative RT time = real RT for the NA trial
+  if (ssl[i, ]$press_time < 0 &
+      is.na(ssl[i - 1, ]$press_time) & !is.na(ssl[i, ]$press_time)) {
+    ssl[i - 1, ]$press_time <- 480 + (ssl[i, ]$press_time)
+    calculated <-
+      append(calculated, (paste(i, ":", ssl[i, ]$press_time)))
+    ssl[i, ]$press_time <- NA
+    negatives <- negatives + 1
+  }
+  
+  # Identify negative keypress values following valid keypresses. Remove the duplicates.
+  else if (ssl[i,]$press_time <0 & !is.na(ssl[i-1,]$press_time) & !is.na(ssl[i,]$press_time)){
+    removed <- append(removed, (paste(i, ":", ssl[i,]$press_time)))
+    ssl[i,]$press_time<- NA
+    negatives <- negatives +1
+  }
+}
+
+# List all the participants
+all_ids<- unique(ssl$part_id)
+
+
+# Calculate and summarize true reaction times ------------------------------------------------------------
+
+# Set boundaries for the exposure phase. These correspond to the first and last trial numbers
+# NOTE: Due to some variation between files, include the lowest and highest trial numbers across all files
+
+exp_phase_start <-10
+exp_phase_end <-585
+
+# Extract exposure phase
+exp_phase <- ssl[which(ssl$trial_index<=exp_phase_end & ssl$trial_index>=exp_phase_start),]
+
+# Remove extra instructions present in some files
+exp_phase <- exp_phase[!(exp_phase$stimulus=="ssl_instr7"),]
+exp_phase <- exp_phase[!(exp_phase$stimulus=="ssl_instr8"),]
+
+# Internal check: Make sure that there are 575 or 576 stimuli per participant
+# Note: Some early SSL files previously only had 575 stimuli, so there could be 575 or 576 targets.
+# Initialize variables
+total_stimuli <- NULL
+# Find the number of stimuli for each participant
+for(check_id in unique(exp_phase$part_id)){
+# TO DO: return this at the end
+  total_stimuli <- append(total_stimuli, length(which(exp_phase$part_id==check_id)))}
+stimulus_check <- (cbind(all_ids, total_stimuli))
+
+# Identify participants with too few/many targets and alert user if present
+# NOTE: For SSL specifically, the 575 or 576 is an acceptable number of stimuli because an earlier version of the task only have 575.
+if((! all(unique (total_stimuli) == c(575, 576))) & (! all(unique (total_stimuli) == c(576, 575)))){
+  # Create error message alerting user
+  print(" The following participant(s) has an incorrect number of extracted trials:")
+  # List the participants with the wrong number of targets
+  print(paste("", stimulus_check[which(total_stimuli!="576"&total_stimuli!="575")]))
+  print(" Please check the number of targets in the following input files.")
+  print(" If the participant saw too few or too many stimuli, exclude them from analysis and alert the lab member maintaining bluehost.")
+  print(" If the wrong number of stimuli was extracted, adjust the values of exp_phase_start and exp_phase_end.")
+  # Open a new window showing the user the number of targets for each participant
+  View(stimulus_check)
+  stop()}
+
+# Make sure that no extra stimuli from the instructions phases carried over into the exposure phase at the beginning/ end of the block
+for(id in unique(exp_phase$part_id)){
+  # Find the exposure phase for this participant
+  this_exp_phase <- exp_phase[(which(exp_phase$part_id==id)),]
+  # Find the highest and lowest trials from this participant
+  this_first_trial <- min(this_exp_phase$trial_index)
+  this_last_trial <- max(this_exp_phase$trial_index)
+  # for the first 2 exposure trials for this participant, remove any stimuli that came from two trials before (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial),]$two_stim_before <- NA
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial+1),]$two_stim_before <- NA
+  # for the first exposure trial for this participant, remove any stimuli that came from the previous trial (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial),]$prev_stim <- NA
+  # for the last exposure trial for this participant, remove any stimuli that came from the following trial (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$next_stim <- NA
+  # for the last 2 exposure trials for this participant, remove any stimuli that came from two trials before (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==(this_last_trial-1)),]$two_stim_later <- NA
+  this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$two_stim_later <- NA
+  # Update the exposure phase with the corrected data
+  exp_phase[(which(exp_phase$part_id==id)),] <- this_exp_phase
+}
+
+
+# Extract the row numbers for all lines in which the stimulus is the target
+#Why does this command work here but not in lsl and vsl? How come only the target for the pariticipant is extracted?
+targets <- which(exp_phase$targ==exp_phase$stimulus)
+
+# Set the number of targets expected per participant
+# Note: Some early SSL files previously only had 575 stimuli, so the final target was cut off. For this reason, there could be 47 or 48 targets.
+correct_total_targets <- c(48, 47)
+
+# Internal check: Make sure that there are the right number of targets per participant
+# Initialize variables
+target_rows <-(exp_phase[targets,])
+total_targets <- NULL
+# Find the number of targets for each participant
+for(check_id in unique(exp_phase$part_id)){
+  total_targets <- append(total_targets, length(which(target_rows$part_id==check_id)))}
+target_check <- (cbind(all_ids, total_targets))
+
+# Identify participants with too few/many targets and alert user if present
+# NOTE: There may be only files with 48 targets, or some with 47 and others with 48, depednding on your dataset
+if(! all(unique (total_targets) == correct_total_targets) & (! all(unique (total_targets) == 48)) ){
+  # Create error message alerting user
+  print(" The following participant(s) has an incorrect number of extracted targets:")
+  # List the participants with the wrong number of targets
+  print(paste("", target_check[which(total_targets!=correct_total_targets)]))
+  print(" Please check the number of targets in the following input files.")
+  print(" If the participant saw too few or too many targets, exclude them from analysis and alert the lab member maintaining bluehost.")
+  print(" If the wrong number of targets was extracted, adjust exp_phase_start + exp_phase_end.")
+  # Open a new window showing the user the number of targets for each participant
+  View(target_check)
+  stop()}
+```
+
+```{r}
+blastSE <- exp_phase
+```
+
+
+## SSL Extract Exposure Phase (taken from spoli_web_ssl.R)
+```{r}
+setwd("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data")
+
+input_path <- ("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data/")
+
+# Extract data from files ------------------------------------------------------------
+
+# Ask user for input on how many files are expected (i.e. how many participants are there?)
+#correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
+
+# List input files
+ssl_files <- list.files(pattern="*ssl.csv")
+
+# Confirm that all files are present. If not, alert user
+# if(length(ssl_files)!=correct_total_files) {
+#   stop(print(
+#     paste(
+#       "Found",
+#       length(ssl_files),
+#       "files. You indicated that there are",
+#       correct_total_files,
+#       "participants. Please check files in folder against the qlab_participant_checklist."
+#     )
+#   ))
+# }
+
+# Initialize variable to hold data
+ssl <- NULL
+
+# Extract relevant data and combine it
+for (file in ssl_files) {
+  # Select only relevant columns
+  extracted_data <-
+    read.csv(file)[c("rt", "trial_index", "targ", "key_press", "stimulus")]
+  # Create a column populated with the participant ID based on the file name
+  extracted_data["part_id"] <- substr(basename(file), 1, 11)
+  # Change target and stimulus to string
+  extracted_data["targ"] <- as.character(extracted_data$targ)
+  extracted_data["stimulus"] <-
+    as.character(extracted_data$stimulus)
+  # The keypress value recorded as "rt" in the raw files is not the true reaction time. Rename the column. See below for details on how to use this value.
+  colnames(extracted_data)[colnames(extracted_data) == "rt"] <-
+    "press_time"
+  # Standardize stimulus names and types
+  extracted_data$stimulus <-
+    gsub(".wav", "", extracted_data$stimulus)
+  extracted_data$stimulus <-
+    gsub("sound/", "", extracted_data$stimulus)
+  extracted_data$press_time <- as.numeric(extracted_data$press_time)
+  # Identify blank keypresses
+  extracted_data[which(extracted_data$press_time == -1000),]$press_time <-
+    NA
+  # Identify preceding and following stimuli
+  extracted_data$two_stim_before <-
+    append(NA, (append(NA, head(
+      extracted_data$stimulus, -2
+    ))))
+  extracted_data$prev_stim <-
+    append(NA, (head(extracted_data$stimulus, -1)))
+  extracted_data$next_stim <-
+    append(extracted_data$stimulus[-1], NA)
+  extracted_data$two_stim_later <-
+    append(append((tail(
+      extracted_data$stimulus, -2
+    )), NA), NA)
+  # Combine data from current file
+  ssl <- rbind(ssl, extracted_data)
+}
+
+#RT analysis--------------------------------------------------------------------------------------------------------------
+# Calculate true keypress times.
+# NOTE: There is a 100 ms pause at the beginning of the trial, between when the trial starts and when the stimulus appears. 
+# Keypresses recorded during the 100 ms pause are actually responses to the previous stimulus.
+# These help figure out how many negative values were used in calculating a keypress, versus how many were from a second keypress for the same stimulus
+
+calculated <-NULL
+removed <- NULL
+negatives <- 0
+
+for (i in 2:length(ssl$press_time)) {
+  # Identify negative keypress values following NAs. Use them to calculate the preceding stimuli's response times
+  #380+100+negative RT time = real RT for the NA trial
+  if (ssl[i, ]$press_time < 0 &
+      is.na(ssl[i - 1, ]$press_time) & !is.na(ssl[i, ]$press_time)) {
+    ssl[i - 1, ]$press_time <- 480 + (ssl[i, ]$press_time)
+    calculated <-
+      append(calculated, (paste(i, ":", ssl[i, ]$press_time)))
+    ssl[i, ]$press_time <- NA
+    negatives <- negatives + 1
+  }
+  
+  # Identify negative keypress values following valid keypresses. Remove the duplicates.
+  else if (ssl[i,]$press_time <0 & !is.na(ssl[i-1,]$press_time) & !is.na(ssl[i,]$press_time)){
+    removed <- append(removed, (paste(i, ":", ssl[i,]$press_time)))
+    ssl[i,]$press_time<- NA
+    negatives <- negatives +1
+  }
+}
+
+# List all the participants
+all_ids<- unique(ssl$part_id)
+
+
+# Calculate and summarize true reaction times ------------------------------------------------------------
+
+# Set boundaries for the exposure phase. These correspond to the first and last trial numbers
+# NOTE: Due to some variation between files, include the lowest and highest trial numbers across all files
+
+exp_phase_start <-10
+exp_phase_end <-585
+
+# Extract exposure phase
+exp_phase <- ssl[which(ssl$trial_index<=exp_phase_end & ssl$trial_index>=exp_phase_start),]
+
+# Remove extra instructions present in some files
+exp_phase <- exp_phase[!(exp_phase$stimulus=="ssl_instr7"),]
+exp_phase <- exp_phase[!(exp_phase$stimulus=="ssl_instr8"),]
+
+# Internal check: Make sure that there are 575 or 576 stimuli per participant
+# Note: Some early SSL files previously only had 575 stimuli, so there could be 575 or 576 targets.
+# Initialize variables
+total_stimuli <- NULL
+# Find the number of stimuli for each participant
+for(check_id in unique(exp_phase$part_id)){
+# TO DO: return this at the end
+  total_stimuli <- append(total_stimuli, length(which(exp_phase$part_id==check_id)))}
+stimulus_check <- (cbind(all_ids, total_stimuli))
+
+# Identify participants with too few/many targets and alert user if present
+# NOTE: For SSL specifically, the 575 or 576 is an acceptable number of stimuli because an earlier version of the task only have 575.
+if((! all(unique (total_stimuli) == c(575, 576))) & (! all(unique (total_stimuli) == c(576, 575)))){
+  # Create error message alerting user
+  print(" The following participant(s) has an incorrect number of extracted trials:")
+  # List the participants with the wrong number of targets
+  print(paste("", stimulus_check[which(total_stimuli!="576"&total_stimuli!="575")]))
+  print(" Please check the number of targets in the following input files.")
+  print(" If the participant saw too few or too many stimuli, exclude them from analysis and alert the lab member maintaining bluehost.")
+  print(" If the wrong number of stimuli was extracted, adjust the values of exp_phase_start and exp_phase_end.")
+  # Open a new window showing the user the number of targets for each participant
+  View(stimulus_check)
+  stop()}
+
+# Make sure that no extra stimuli from the instructions phases carried over into the exposure phase at the beginning/ end of the block
+for(id in unique(exp_phase$part_id)){
+  # Find the exposure phase for this participant
+  this_exp_phase <- exp_phase[(which(exp_phase$part_id==id)),]
+  # Find the highest and lowest trials from this participant
+  this_first_trial <- min(this_exp_phase$trial_index)
+  this_last_trial <- max(this_exp_phase$trial_index)
+  # for the first 2 exposure trials for this participant, remove any stimuli that came from two trials before (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial),]$two_stim_before <- NA
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial+1),]$two_stim_before <- NA
+  # for the first exposure trial for this participant, remove any stimuli that came from the previous trial (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial),]$prev_stim <- NA
+  # for the last exposure trial for this participant, remove any stimuli that came from the following trial (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$next_stim <- NA
+  # for the last 2 exposure trials for this participant, remove any stimuli that came from two trials before (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==(this_last_trial-1)),]$two_stim_later <- NA
+  this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$two_stim_later <- NA
+  # Update the exposure phase with the corrected data
+  exp_phase[(which(exp_phase$part_id==id)),] <- this_exp_phase
+}
+
+
+# Extract the row numbers for all lines in which the stimulus is the target
+#Why does this command work here but not in lsl and vsl? How come only the target for the pariticipant is extracted?
+targets <- which(exp_phase$targ==exp_phase$stimulus)
+
+# Set the number of targets expected per participant
+# Note: Some early SSL files previously only had 575 stimuli, so the final target was cut off. For this reason, there could be 47 or 48 targets.
+correct_total_targets <- c(48, 47)
+
+# Internal check: Make sure that there are the right number of targets per participant
+# Initialize variables
+target_rows <-(exp_phase[targets,])
+total_targets <- NULL
+# Find the number of targets for each participant
+for(check_id in unique(exp_phase$part_id)){
+  total_targets <- append(total_targets, length(which(target_rows$part_id==check_id)))}
+target_check <- (cbind(all_ids, total_targets))
+
+# Identify participants with too few/many targets and alert user if present
+# NOTE: There may be only files with 48 targets, or some with 47 and others with 48, depednding on your dataset
+if(! all(unique (total_targets) == correct_total_targets) & (! all(unique (total_targets) == 48)) ){
+  # Create error message alerting user
+  print(" The following participant(s) has an incorrect number of extracted targets:")
+  # List the participants with the wrong number of targets
+  print(paste("", target_check[which(total_targets!=correct_total_targets)]))
+  print(" Please check the number of targets in the following input files.")
+  print(" If the participant saw too few or too many targets, exclude them from analysis and alert the lab member maintaining bluehost.")
+  print(" If the wrong number of targets was extracted, adjust exp_phase_start + exp_phase_end.")
+  # Open a new window showing the user the number of targets for each participant
+  View(target_check)
+  stop()}
+```
+
+```{r}
+spoliSE <- exp_phase
+```
+
+```{r}
+sslE <- rbind(blastSE, spoliSE)
+```
+
+
+```{r}
+# Recalculate RTs for participants with blanks of 200ms, make blank responses target responses
+sslED <- do.call(rbind, bindKeypress(sslE, "part_id", "press_time"))
+
+identical(sslE, sslED[,c(colnames(sslE))])
+
+sslED <- 
+  sslED %>%
+  mutate(hit_during = ifelse(!is.na(press_time) & stimulus == targ & is.na(keypress_prev), "hit_during", NA),
+         hit_before = ifelse(!is.na(keypress_prev) & stimulus == targ, "hit_before", NA),
+         hit_after = ifelse(!is.na(keypress_next) & stimulus == targ & is.na(hit_before) & is.na(hit_during), "hit_after", NA),
+         miss = ifelse(is.na(press_time) & stimulus == targ & is.na(hit_before) & is.na(hit_during) & is.na(hit_after), "miss", NA),
+         false_alarm = ifelse(!is.na(press_time) & stimulus != targ  
+                              & is.na(hit_before) & is.na(hit_during) 
+                              & is.na(hit_after) & is.na(miss), 
+                              # & prev_stim != targ & next_stim != targ,
+                              "false_alarm", NA),
+         corr_rej = ifelse(is.na(press_time) & stimulus != targ & is.na(hit_before) & is.na(hit_during) & is.na(hit_after) & is.na(false_alarm), "corr_rej", NA)
+         )
+
+sslED <- do.call(rbind, bindHit(sslED, "part_id", "press_time"))
+
+sslED$corr_rej <- ifelse((!is.na(sslED$hit_before_next) | !is.na(sslED$hit_after_prev)) & !is.na(sslED$false_alarm), "corr_rej", sslED$corr_rej)
+
+sslED$false_alarm <- ifelse((!is.na(sslED$hit_before_next) | !is.na(sslED$hit_after_prev)) & !is.na(sslED$false_alarm), NA, sslED$false_alarm)
+```
+
+```{r}
+ssl_prime <- 
+  sslED %>%
+  group_by(part_id) %>%
+  dplyr::summarise(across(c("hit_before", "hit_during", "hit_after", "miss", "false_alarm", "corr_rej"), list(n = ~ sum(!is.na(.))))) %>%
+  mutate(hit_n = hit_before_n + hit_during_n + hit_after_n,
+         target = hit_n + miss_n,
+         distractors = corr_rej_n + false_alarm_n) %>%
+  mutate(d_prime = qnorm((hit_before_n + hit_during_n + hit_after_n) / (hit_before_n + hit_during_n + hit_after_n + miss_n)) - 
+  qnorm(false_alarm_n / (false_alarm_n + corr_rej_n)))
+
+library(psycho)
+ 
+auto_dprime <- psycho::dprime(
+  n_hit = ssl_prime$hit_n,
+  n_fa = ssl_prime$false_alarm_n,
+  n_targets = ssl_prime$target,
+  n_distractors = ssl_prime$distractors,
+  # n_targets = ssl_prime$hit_n + ssl_prime$miss_n,
+  # n_distractors = ssl_prime$false_alarm_n + ssl_prime$corr_rej_n,
+  adjusted = FALSE
+)
+
+sl_aprime <- auto_dprime$aprime
+
+ssl_prime <- cbind(ssl_prime, auto_dprime$dprime)
+ssl_prime <- cbind(ssl_prime, sl_aprime)
+
+identical(ssl_prime$d_prime , ssl_prime$`auto_dprime$dprime`)
+ssl_prime[which(ssl_prime$d_prime != ssl_prime$`auto_dprime$dprime`),]
+```
+
+
+## TSL Extract Exposure Phase (taken from blast_web_ssl.R)
+```{r}
+setwd("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child")
+
+#Input path
+input_path <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/")
+#Since June 11th 2019, the test phase of all SL tasks have been changed to a balanced design
+#New answer keys should be used
+input_path2 <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/counterbalance_2afc_sl_data/")
+
+
+
+# Extract data from files ------------------------------------------------------------
+
+# Ask user for input on how many files are expected (i.e. how many participants are there?)
+#correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
+
+# List input files
+tsl_files <- list.files(pattern="*tsl.csv")
+
+# Confirm that all files are present. If not, alert user
+#if(length(tsl_files)!=correct_total_files){
+#  stop(print(paste("Found", length(tsl_files), "files. You indicated that there are", correct_total_files, "participants. Please check files in folder against the qlab_participant_checklist.")))
+#}
+
+# Initialize variable to hold data
+tsl <- NULL
+
+# Extract relevant data and combine it
+for (file in tsl_files){
+  # Select only relevant columns
+  extracted_data <- read.csv(file)[c("rt", "trial_index", "targ","key_press", "stimulus")]  
+  # Create a column populated with the participant ID based on the file name
+  extracted_data["part_id"] <- substr(basename(file), 1, 11)
+  # Change target and stimulus to string
+  extracted_data["targ"] <- as.character(extracted_data$targ)
+  extracted_data["stimulus"] <- as.character(extracted_data$stimulus)
+  # The keypress value recorded as "rt" in the raw files is not the true reaction time. Rename the column. See below for details on how to use this value.
+  colnames(extracted_data)[colnames(extracted_data)=="rt"] <- "press_time"
+  # Standardize stimulus names and types
+  extracted_data$stimulus<- gsub(".wav","", extracted_data$stimulus)
+  extracted_data$stimulus<- gsub("../../tones/","",extracted_data$stimulus)
+  extracted_data$press_time<-as.numeric(extracted_data$press_time)
+  # Identify blank keypresses
+  extracted_data[which(extracted_data$press_time==-1000),]$press_time<-NA
+  # Identify preceding and following stimuli
+  extracted_data$two_stim_before <- append(NA, (append(NA, head(extracted_data$stimulus, -2))))
+  extracted_data$prev_stim <- append(NA, (head(extracted_data$stimulus, -1)))
+  extracted_data$next_stim <- append(extracted_data$stimulus[-1], NA)
+  extracted_data$two_stim_later <- append(append((tail(extracted_data$stimulus, -2)), NA), NA)
+  # Combine data from current file
+  tsl<-rbind(tsl,extracted_data)
+}
+
+#RT analysis---------------------------------------------------------------------------------------------------------------------
+# Calculate true keypress times.--------------------------------------------------------------------------------------------------
+# NOTE: There is a 100 ms pause at the beginning of the trial, between when the trial starts and when the stimulus appears. 
+# Keypresses recorded during the 100 ms pause are actually responses to the previous stimulus.
+# These help figure out how many negative values were used in calculating a keypress, versus how many were from a second keypress for the same stimulus
+
+calculated <-NULL
+removed <- NULL
+negatives <- 0
+
+for (i in 2:length(tsl$press_time)){
+  
+  # Identify negative keypress values following NAs. Use them to calculate the preceding stimuli's response times
+  if (tsl[i,]$press_time <0 & is.na(tsl[i-1,]$press_time) & !is.na(tsl[i,]$press_time)){
+    tsl[i-1,]$press_time <-480+(tsl[i,]$press_time)
+     calculated <- append(calculated, (paste(i, ":", tsl[i,]$press_time)))
+    tsl[i,]$press_time<- NA
+     negatives <- negatives +1}
+
+  # Identify negative keypress values following valid keypresses. Remove the duplicates.
+  else if (tsl[i,]$press_time <0 & !is.na(tsl[i-1,]$press_time) & !is.na(tsl[i,]$press_time)){
+     removed <- append(removed, (paste(i, ":", tsl[i,]$press_time)))
+    tsl[i,]$press_time<- NA
+    negatives <- negatives +1
+    }
+  }
+
+# List all the participants
+all_ids<- unique(tsl$part_id)
+
+
+# Calculate and summarize true reaction times ------------------------------------------------------------
+
+# Set boundaries for the exposure phase. These correspond to the first and last trial numbers
+# NOTE: Due to some variation between files, include the lowest and highest trial numbers across all files
+exp_phase_start <-23
+exp_phase_end <-599
+
+# Extract exposure phase
+exp_phase <- tsl[which(tsl$trial_index<=exp_phase_end & tsl$trial_index>=exp_phase_start),]
+
+# Remove extra instructions present in some files
+exp_phase <- exp_phase[!(exp_phase$stimulus=="../../tone_instr/instr_8"),]
+exp_phase <- exp_phase[!(exp_phase$stimulus=="../../tone_instr/fixation_instr"),]
+
+# Internal check: Make sure that there are 576 stimuli per participant
+# Initialize variables
+total_stimuli <- NULL
+# Find the number of stimuli for each participant
+for(check_id in unique(exp_phase$part_id)){
+  total_stimuli <- append(total_stimuli, length(which(exp_phase$part_id==check_id)))}
+stimulus_check <- (cbind(all_ids, total_stimuli))
+
+# Identify participants with too few/many targets and alert user if present
+if(! all(unique (total_stimuli) == "576")){
+  # Create error message alerting user
+  print(" The following participant(s) has an incorrect number of extracted trials:")
+  # List the participants with the wrong number of targets
+  print(paste("", stimulus_check[which(total_stimuli!="576")]))
+  print(" Please check the number of targets in the following input files.")
+  print(" If the participant saw too few or too many stimuli, exclude them from analysis and alert the lab member maintaining bluehost.")
+  print(" If the wrong number of stimuli was extracted, adjust the values of exp_phase_start and exp_phase_end.")
+  # Open a new window showing the user the number of targets for each participant
+  View(stimulus_check)
+  stop()}
+
+# Make sure that no extra stimuli from the instructions phases carried over into the exposure phase at the beginning/ end of the block
+for(id in unique(exp_phase$part_id)){
+  # Find the exposure phase for this participant
+  this_exp_phase <- exp_phase[(which(exp_phase$part_id==id)),]
+  # Find the highest and lowest trials from this participant
+  this_first_trial <- min(this_exp_phase$trial_index)
+  this_last_trial <- max(this_exp_phase$trial_index)
+  # for the first 2 exposure trials for this participant, remove any stimuli that came from two trials before (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial),]$two_stim_before <- NA
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial+1),]$two_stim_before <- NA
+  # for the first exposure trial for this participant, remove any stimuli that came from the previous trial (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial),]$prev_stim <- NA
+  # for the last exposure trial for this participant, remove any stimuli that came from the following trial (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$next_stim <- NA
+  # for the last 2 exposure trials for this participant, remove any stimuli that came from two trials before (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==(this_last_trial-1)),]$two_stim_later <- NA
+  this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$two_stim_later <- NA
+  # Update the exposure phase with the corrected data
+  exp_phase[(which(exp_phase$part_id==id)),] <- this_exp_phase
+  }
+
+# Extract the row numbers for all lines in which the stimulus is the target
+targets <- which(exp_phase$targ==exp_phase$stimulus)
+
+# TO DO: Add this to SSL, LSL, VS
+# Set the number of targets expected per participant
+correct_total_targets <- 48
+
+# Internal check: Make sure that there are the right number of targets per participant
+# Initialize variables
+target_rows <-(exp_phase[targets,])
+total_targets <- NULL
+# Find the number of targets for each participant
+for(check_id in unique(exp_phase$part_id)){
+  total_targets <- append(total_targets, length(which(target_rows$part_id==check_id)))}
+target_check <- (cbind(all_ids, total_targets))
+
+# Identify participants with too few/many targets and alert user if present
+if(! all(unique (total_targets) == correct_total_targets)){
+      # Create error message alerting user
+      print(" The following participant(s) has an incorrect number of extracted targets:")
+      # List the participants with the wrong number of targets
+      print(paste("", target_check[which(total_targets!=correct_total_targets)]))
+      print(" Please check the number of targets in the following input files.")
+      print(" If the participant saw too few or too many targets, exclude them from analysis and alert the lab member maintaining bluehost.")
+      print(" If the wrong number of targets was extracted, adjust exp_phase_start + exp_phase_end.")
+      # Open a new window showing the user the number of targets for each participant
+      View(target_check)
+      stop()}
+```
+
+
+```{r}
+blastTE <- exp_phase
+```
+
+
+## TSL Extract Exposure Phase (taken from spoli_web_ssl.R)
+```{r}
+setwd("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data")
+
+#Input path
+input_path <- ("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data/")
+#Since June 11th 2019, the test phase of all SL tasks have been changed to a balanced design
+#New answer keys should be used
+input_path2 <- ("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data/counterbalance_2afc_sl_data/")
+
+
+
+# Ask user for input on how many files are expected (i.e. how many participants are there?)
+#correct_total_files <- as.integer(readline("How many total participants should there be for this file type? Enter this into the console. If you are not sure, check the qlab_participant_checklist.   "))
+
+# List input files
+tsl_files <- list.files(pattern="*tsl.csv")
+
+# Confirm that all files are present. If not, alert user
+#if(length(tsl_files)!=correct_total_files){
+#  stop(print(paste("Found", length(tsl_files), "files. You indicated that there are", correct_total_files, "participants. Please check files in folder against the qlab_participant_checklist.")))
+#}
+
+# Initialize variable to hold data
+tsl <- NULL
+
+# Extract relevant data and combine it
+for (file in tsl_files){
+  # Select only relevant columns
+  extracted_data <- read.csv(file)[c("rt", "trial_index", "targ","key_press", "stimulus")]  
+  # Create a column populated with the participant ID based on the file name
+  extracted_data["part_id"] <- substr(basename(file), 1, 11)
+  # Change target and stimulus to string
+  extracted_data["targ"] <- as.character(extracted_data$targ)
+  extracted_data["stimulus"] <- as.character(extracted_data$stimulus)
+  # The keypress value recorded as "rt" in the raw files is not the true reaction time. Rename the column. See below for details on how to use this value.
+  colnames(extracted_data)[colnames(extracted_data)=="rt"] <- "press_time"
+  # Standardize stimulus names and types
+  extracted_data$stimulus<- gsub(".wav","", extracted_data$stimulus)
+  extracted_data$stimulus<- gsub("../../tones/","",extracted_data$stimulus)
+  extracted_data$press_time<-as.numeric(extracted_data$press_time)
+  # Identify blank keypresses
+  extracted_data[which(extracted_data$press_time==-1000),]$press_time<-NA
+  # Identify preceding and following stimuli
+  extracted_data$two_stim_before <- append(NA, (append(NA, head(extracted_data$stimulus, -2))))
+  extracted_data$prev_stim <- append(NA, (head(extracted_data$stimulus, -1)))
+  extracted_data$next_stim <- append(extracted_data$stimulus[-1], NA)
+  extracted_data$two_stim_later <- append(append((tail(extracted_data$stimulus, -2)), NA), NA)
+  # Combine data from current file
+  tsl<-rbind(tsl,extracted_data)
+}
+
+#RT analysis---------------------------------------------------------------------------------------------------------------------
+# Calculate true keypress times.--------------------------------------------------------------------------------------------------
+# NOTE: There is a 100 ms pause at the beginning of the trial, between when the trial starts and when the stimulus appears. 
+# Keypresses recorded during the 100 ms pause are actually responses to the previous stimulus.
+# These help figure out how many negative values were used in calculating a keypress, versus how many were from a second keypress for the same stimulus
+
+calculated <-NULL
+removed <- NULL
+negatives <- 0
+
+for (i in 2:length(tsl$press_time)){
+  
+  # Identify negative keypress values following NAs. Use them to calculate the preceding stimuli's response times
+  if (tsl[i,]$press_time <0 & is.na(tsl[i-1,]$press_time) & !is.na(tsl[i,]$press_time)){
+    tsl[i-1,]$press_time <-480+(tsl[i,]$press_time)
+     calculated <- append(calculated, (paste(i, ":", tsl[i,]$press_time)))
+    tsl[i,]$press_time<- NA
+     negatives <- negatives +1}
+
+  # Identify negative keypress values following valid keypresses. Remove the duplicates.
+  else if (tsl[i,]$press_time <0 & !is.na(tsl[i-1,]$press_time) & !is.na(tsl[i,]$press_time)){
+     removed <- append(removed, (paste(i, ":", tsl[i,]$press_time)))
+    tsl[i,]$press_time<- NA
+    negatives <- negatives +1
+    }
+  }
+
+# List all the participants
+all_ids<- unique(tsl$part_id)
+
+
+# Calculate and summarize true reaction times ------------------------------------------------------------
+
+# Set boundaries for the exposure phase. These correspond to the first and last trial numbers
+# NOTE: Due to some variation between files, include the lowest and highest trial numbers across all files
+exp_phase_start <-23
+exp_phase_end <-599
+
+# Extract exposure phase
+exp_phase <- tsl[which(tsl$trial_index<=exp_phase_end & tsl$trial_index>=exp_phase_start),]
+
+# Remove extra instructions present in some files
+exp_phase <- exp_phase[!(exp_phase$stimulus=="../../tone_instr/instr_8"),]
+exp_phase <- exp_phase[!(exp_phase$stimulus=="../../tone_instr/fixation_instr"),]
+
+# Internal check: Make sure that there are 576 stimuli per participant
+# Initialize variables
+total_stimuli <- NULL
+# Find the number of stimuli for each participant
+for(check_id in unique(exp_phase$part_id)){
+  total_stimuli <- append(total_stimuli, length(which(exp_phase$part_id==check_id)))}
+stimulus_check <- (cbind(all_ids, total_stimuli))
+
+# Identify participants with too few/many targets and alert user if present
+if(! all(unique (total_stimuli) == "576")){
+  # Create error message alerting user
+  print(" The following participant(s) has an incorrect number of extracted trials:")
+  # List the participants with the wrong number of targets
+  print(paste("", stimulus_check[which(total_stimuli!="576")]))
+  print(" Please check the number of targets in the following input files.")
+  print(" If the participant saw too few or too many stimuli, exclude them from analysis and alert the lab member maintaining bluehost.")
+  print(" If the wrong number of stimuli was extracted, adjust the values of exp_phase_start and exp_phase_end.")
+  # Open a new window showing the user the number of targets for each participant
+  View(stimulus_check)
+  stop()}
+
+# Make sure that no extra stimuli from the instructions phases carried over into the exposure phase at the beginning/ end of the block
+for(id in unique(exp_phase$part_id)){
+  # Find the exposure phase for this participant
+  this_exp_phase <- exp_phase[(which(exp_phase$part_id==id)),]
+  # Find the highest and lowest trials from this participant
+  this_first_trial <- min(this_exp_phase$trial_index)
+  this_last_trial <- max(this_exp_phase$trial_index)
+  # for the first 2 exposure trials for this participant, remove any stimuli that came from two trials before (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial),]$two_stim_before <- NA
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial+1),]$two_stim_before <- NA
+  # for the first exposure trial for this participant, remove any stimuli that came from the previous trial (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_first_trial),]$prev_stim <- NA
+  # for the last exposure trial for this participant, remove any stimuli that came from the following trial (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$next_stim <- NA
+  # for the last 2 exposure trials for this participant, remove any stimuli that came from two trials before (during the previous instruction block)
+  this_exp_phase[which(this_exp_phase$trial==(this_last_trial-1)),]$two_stim_later <- NA
+  this_exp_phase[which(this_exp_phase$trial==this_last_trial),]$two_stim_later <- NA
+  # Update the exposure phase with the corrected data
+  exp_phase[(which(exp_phase$part_id==id)),] <- this_exp_phase
+  }
+
+# Extract the row numbers for all lines in which the stimulus is the target
+targets <- which(exp_phase$targ==exp_phase$stimulus)
+
+# TO DO: Add this to SSL, LSL, VS
+# Set the number of targets expected per participant
+correct_total_targets <- 48
+
+# Internal check: Make sure that there are the right number of targets per participant
+# Initialize variables
+target_rows <-(exp_phase[targets,])
+total_targets <- NULL
+# Find the number of targets for each participant
+for(check_id in unique(exp_phase$part_id)){
+  total_targets <- append(total_targets, length(which(target_rows$part_id==check_id)))}
+target_check <- (cbind(all_ids, total_targets))
+
+# Identify participants with too few/many targets and alert user if present
+if(! all(unique (total_targets) == correct_total_targets)){
+      # Create error message alerting user
+      print(" The following participant(s) has an incorrect number of extracted targets:")
+      # List the participants with the wrong number of targets
+      print(paste("", target_check[which(total_targets!=correct_total_targets)]))
+      print(" Please check the number of targets in the following input files.")
+      print(" If the participant saw too few or too many targets, exclude them from analysis and alert the lab member maintaining bluehost.")
+      print(" If the wrong number of targets was extracted, adjust exp_phase_start + exp_phase_end.")
+      # Open a new window showing the user the number of targets for each participant
+      View(target_check)
+      stop()}
+```
+
+
+```{r}
+spoliTE <- exp_phase
+```
+
+
+```{r}
+tslE <- rbind(blastTE, spoliTE)
+```
+
+
+```{r}
+# Recalculate RTs for participants with blanks of 200ms, make blank responses target responses
+tslED <- do.call(rbind, bindKeypress(tslE, "part_id", "press_time"))
+
+identical(tslE, tslED[,c(colnames(tslE))])
+
+tslED <- 
+  tslED %>%
+  mutate(hit_during = ifelse(!is.na(press_time) & stimulus == targ & is.na(keypress_prev), "hit_during", NA),
+         hit_before = ifelse(!is.na(keypress_prev) & stimulus == targ, "hit_before", NA),
+         hit_after = ifelse(!is.na(keypress_next) & stimulus == targ & is.na(hit_before) & is.na(hit_during), "hit_after", NA),
+         miss = ifelse(is.na(press_time) & stimulus == targ & is.na(hit_before) & is.na(hit_during) & is.na(hit_after), "miss", NA),
+         false_alarm = ifelse(!is.na(press_time) & stimulus != targ  
+                              & is.na(hit_before) & is.na(hit_during) 
+                              & is.na(hit_after) & is.na(miss), 
+                              # & prev_stim != targ & next_stim != targ,
+                              "false_alarm", NA),
+         corr_rej = ifelse(is.na(press_time) & stimulus != targ & is.na(hit_before) & is.na(hit_during) & is.na(hit_after) & is.na(false_alarm), "corr_rej", NA)
+         )
+
+tslED <- do.call(rbind, bindHit(tslED, "part_id", "press_time"))
+
+tslED$corr_rej <- ifelse((!is.na(tslED$hit_before_next) | !is.na(tslED$hit_after_prev)) & !is.na(tslED$false_alarm), "corr_rej", tslED$corr_rej)
+
+tslED$false_alarm <- ifelse((!is.na(tslED$hit_before_next) | !is.na(tslED$hit_after_prev)) & !is.na(tslED$false_alarm), NA, tslED$false_alarm)
+```
+
+```{r}
+tsl_prime <- 
+  tslED %>%
+  group_by(part_id) %>%
+  dplyr::summarise(across(c("hit_before", "hit_during", "hit_after", "miss", "false_alarm", "corr_rej"), list(n = ~ sum(!is.na(.))))) %>%
+  mutate(hit_n = hit_before_n + hit_during_n + hit_after_n,
+         target = hit_n + miss_n,
+         distractors = corr_rej_n + false_alarm_n) %>%
+  mutate(d_prime = qnorm((hit_before_n + hit_during_n + hit_after_n) / (hit_before_n + hit_during_n + hit_after_n + miss_n)) - 
+  qnorm(false_alarm_n / (false_alarm_n + corr_rej_n)))
+
+library(psycho)
+ 
+auto_dprime <- psycho::dprime(
+  n_hit = tsl_prime$hit_n,
+  n_fa = tsl_prime$false_alarm_n,
+  n_targets = tsl_prime$target,
+  n_distractors = tsl_prime$distractors,
+  # n_targets = tsl_prime$hit_n + tsl_prime$miss_n,
+  # n_distractors = tsl_prime$false_alarm_n + tsl_prime$corr_rej_n,
+  adjusted = FALSE
+)
+
+sl_aprime <- auto_dprime$aprime
+
+tsl_prime <- cbind(tsl_prime, auto_dprime$dprime)
+tsl_prime <- cbind(tsl_prime, sl_aprime)
+
+identical(tsl_prime$d_prime , tsl_prime$`auto_dprime$dprime`)
+tsl_prime[which(tsl_prime$d_prime != tsl_prime$`auto_dprime$dprime`),]
+
+# https://stats.stackexchange.com/questions/134779/d-prime-with-100-hit-rate-probability-and-0-false-alarm-probability
+```
+
+```{r}
+lsl_prime$task <- "lsl"
+vsl_prime$task <- "vsl"
+ssl_prime$task <- "ssl"
+tsl_prime$task <- "tsl"
+
+colnames(lsl_prime)[which(names(lsl_prime) == "par_id")] <- "part_id"
+lsl_prime$part_id <- gsub("_lsl", "", lsl_prime$part_id)
+
+d_prime <- rbind(lsl_prime, vsl_prime, ssl_prime, tsl_prime)
+
+# write.csv(d_prime, "/Users/jojohu/Documents/Qlab/manuscript_jndd/d_prime.csv", row.names = F)
+# write.csv(d_prime, "/Users/jojohu/Documents/Qlab/manuscript_development/d_prime.csv", row.names = F)
+```
+
+
+
+# Save by-trial hits
+```{r}
+lslED$part_id <- str_remove(lslED$par_id, "_lsl")
+d_prime_by_trial <- dplyr::bind_rows(lslED, vslED, sslED , tslED)
+
+# write.csv(d_prime_by_trial, "/Users/jojohu/Documents/Qlab/manuscript_development/d_prime_all_trial_td_asd.csv", row.names = F)
+```

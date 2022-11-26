@@ -1,0 +1,269 @@
+---
+title: "rt_trial_count_target_combined.rmd"
+author: "Jojo Hu"
+date: "12/3/2020"
+output: html_document
+---
+# List Path to adult and children data
+```{r}
+#Input path
+blast_path1 <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child")
+#input_path <- ("/Volumes/data/projects/spoli/raw_sl_data/")
+#Since June 11th 2019, the test phase of all SL tasks have been changed to a balanced design
+
+blast_path2 <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_child/predictable_lsl")
+
+spoli_path1 <- ("/Users/jojohu/Documents/Qlab/spoli/raw_sl_data")
+
+adult_path1 <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_adult")
+
+adult_path2 <- ("/Users/jojohu/Documents/Qlab/blast_online_data/online_sl/blast_adult/predictable_lsl")
+```
+
+# Extract the web SL exposure phase target for each task and each participant
+```{r}
+library(stringr)
+
+slBlast <- list.files(path=blast_path1, pattern="*sl.csv", full.names = T)
+lslBlast <- list.files(path=blast_path2, pattern="*sl.csv", full.names = T)
+
+slBlast <- append(slBlast, lslBlast)
+
+slSpoli <- list.files(path=spoli_path1, pattern="*sl.csv", full.names = T)
+
+slAdult <- list.files(path=adult_path1, pattern="*sl.csv", full.names = T)
+lslAdult <- list.files(path=adult_path2, pattern="*sl.csv", full.names = T)
+
+slAdult <- append(slAdult, lslAdult)
+
+slBlastDF <- lapply(slBlast, read.csv)
+slSpoliDF <- lapply(slSpoli, read.csv)
+slAdultDF <- lapply(slAdult, read.csv)
+
+loop_index = 0
+targ <- list()
+
+targ_extract <-
+  function(DF, file_list) { 
+    for (i in 1:length(file_list)) {
+      
+        loop_index = loop_index + 1
+      
+        part_id <- str_extract(basename(file_list[i]), "\\S{5}_\\S{1}_\\S{3}")
+        task <- str_extract(basename(file_list[i]),  "\\S{3}(?=.csv)")
+  
+        targ[[i]] <- unique(DF[[i]][,c("targ")])
+        targ[[i]] <- data.frame(targ[[i]])
+        colnames(targ[[i]]) <- "targ"
+  
+        targ[[i]][,"part_id"] <- part_id
+        targ[[i]][,"task"] <- task
+    }
+    return(targ)
+  }
+
+targBlast <- targ_extract(slBlastDF, slBlast)
+targSpoli <- targ_extract(slSpoliDF, slSpoli)
+targAdult <- targ_extract(slAdultDF, slAdult)
+
+targBlast <- do.call(rbind, targBlast)
+targSpoli <- do.call(rbind, targSpoli)
+targAdult <- do.call(rbind, targAdult)
+
+targAll <- rbind(targBlast, targSpoli, targAdult)
+
+write.csv(targAll, "/Users/jojohu/Documents/Qlab/manuscript_development/sl_target.csv")
+```
+
+# SSL RT Hit Trial Count
+```{r}
+ssl_rt_by_trialBL <-
+  read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/rt_by_trial/blast_ssl_rt_by_trial.csv")
+
+ssl_rt_by_trialSP <-
+  read.csv("/Users/jojohu/Documents/Qlab/spoli/data_summaries/breakdown/rt_by_trial/spoli_ssl_rt_by_trial.csv")
+
+ssl_rt_by_trialAD <-
+  read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult/breakdown/rt_by_trial/blast_ssl_rt_by_trial.csv")
+
+loop_index = 0
+hit_trial_count <- list()
+id <- list()
+
+ssl_rt_count <- 
+  function(DF) {
+    for (i in unique(DF$id)) {
+      loop_index = loop_index + 1
+      current_id_data <- DF[which(DF$id == i),]
+      hit_trial_count[loop_index] <- length(which(current_id_data$reaction_time != ""))
+      id[loop_index] <- i
+      }
+
+hit_trial_number <- do.call(rbind, hit_trial_count)
+part_id <- do.call(rbind, id)
+
+ssl_rt_hit_trial_count <- cbind(part_id, hit_trial_number)
+colnames(ssl_rt_hit_trial_count) <- c("part_id", "hit_trial_number")
+ssl_rt_hit_trial_count <- data.frame(ssl_rt_hit_trial_count)
+ssl_rt_hit_trial_count$hit_trial_number <- 
+  as.numeric(as.character(ssl_rt_hit_trial_count$hit_trial_number))
+
+return(ssl_rt_hit_trial_count)
+}
+
+ssl_rt_hit_trial_countBL <- ssl_rt_count(ssl_rt_by_trialBL)
+ssl_rt_hit_trial_countSP <- ssl_rt_count(ssl_rt_by_trialSP)
+ssl_rt_hit_trial_countAD <- ssl_rt_count(ssl_rt_by_trialAD)
+
+
+ssl_rt_hit_trial_count <- 
+  rbind(ssl_rt_hit_trial_countBL, ssl_rt_hit_trial_countSP, ssl_rt_hit_trial_countAD)
+
+write.csv(ssl_rt_hit_trial_count,
+          "/Users/jojohu/Documents/Qlab/manuscript_development/ssl_rt_hit_trial_count.csv")
+```
+
+# TSL RT Hit Trial Count
+```{r}
+#-------------------------
+tsl_rt_by_trialBL <-
+  read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/rt_by_trial/blast_tsl_rt_by_trial.csv")
+
+tsl_rt_by_trialSP <-
+  read.csv("/Users/jojohu/Documents/Qlab/spoli/data_summaries/breakdown/rt_by_trial/spoli_tsl_rt_by_trial.csv")
+
+tsl_rt_by_trialAD <-
+  read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult/breakdown/rt_by_trial/blast_tsl_rt_by_trial.csv")
+
+loop_index = 0
+hit_trial_count <- list()
+id <- list()
+
+tsl_rt_count <- 
+  function(DF) {
+    for (i in unique(DF$id)) {
+  loop_index = loop_index + 1
+  current_id_data <- DF[which(DF$id == i),]
+  hit_trial_count[loop_index] <- length(which(current_id_data$reaction_time != ""))
+  id[loop_index] <- i
+}
+
+hit_trial_number <- do.call(rbind, hit_trial_count)
+part_id <- do.call(rbind, id)
+
+tsl_rt_hit_trial_count <- cbind(part_id, hit_trial_number)
+colnames(tsl_rt_hit_trial_count) <- c("part_id", "hit_trial_number")
+tsl_rt_hit_trial_count <- data.frame(tsl_rt_hit_trial_count)
+tsl_rt_hit_trial_count$hit_trial_number <- 
+  as.numeric(as.character(tsl_rt_hit_trial_count$hit_trial_number))
+
+return(tsl_rt_hit_trial_count)
+}
+
+tsl_rt_hit_trial_countBL <- tsl_rt_count(tsl_rt_by_trialBL)
+tsl_rt_hit_trial_countSP <- tsl_rt_count(tsl_rt_by_trialSP)
+tsl_rt_hit_trial_countAD <- tsl_rt_count(tsl_rt_by_trialAD)
+
+tsl_rt_hit_trial_count <- 
+  rbind(tsl_rt_hit_trial_countBL, tsl_rt_hit_trial_countSP, tsl_rt_hit_trial_countAD)
+
+write.csv(tsl_rt_hit_trial_count, "/Users/jojohu/Documents/Qlab/manuscript_development/tsl_rt_hit_trial_count.csv")
+
+```
+
+# VSL RT Hit Trial Count
+```{r}
+vsl_rt_by_trialBL <-
+  read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/rt_by_trial/blast_vsl_rt_by_trial.csv")
+
+vsl_rt_by_trialSP <-
+  read.csv("/Users/jojohu/Documents/Qlab/spoli/data_summaries/breakdown/rt_by_trial/spoli_vsl_rt_by_trial.csv")
+
+vsl_rt_by_trialAD <-
+  read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult/breakdown/rt_by_trial/blast_vsl_rt_by_trial.csv")
+
+loop_index = 0
+hit_trial_count <- list()
+id <- list()
+
+vsl_rt_count <-
+function(DF) {
+for (i in unique(DF$id)) {
+  loop_index = loop_index + 1
+  current_id_data <- DF[which(DF$id == i),]
+  hit_trial_count[loop_index] <- length(which(current_id_data$reaction_time != ""))
+  id[loop_index] <- i
+}
+
+hit_trial_number <- do.call(rbind, hit_trial_count)
+part_id <- do.call(rbind, id)
+
+vsl_rt_hit_trial_count <- cbind(part_id, hit_trial_number)
+colnames(vsl_rt_hit_trial_count) <- c("part_id", "hit_trial_number")
+vsl_rt_hit_trial_count <- data.frame(vsl_rt_hit_trial_count)
+vsl_rt_hit_trial_count$hit_trial_number <- 
+  as.numeric(as.character(vsl_rt_hit_trial_count$hit_trial_number))
+
+return(vsl_rt_hit_trial_count)
+}
+
+vsl_rt_hit_trial_countBL <- vsl_rt_count(vsl_rt_by_trialBL)
+vsl_rt_hit_trial_countSP <- vsl_rt_count(vsl_rt_by_trialSP)
+vsl_rt_hit_trial_countAD <- vsl_rt_count(vsl_rt_by_trialAD)
+
+vsl_rt_hit_trial_count <- 
+  rbind(vsl_rt_hit_trial_countBL, vsl_rt_hit_trial_countSP, vsl_rt_hit_trial_countAD)
+
+write.csv(vsl_rt_hit_trial_count, "/Users/jojohu/Documents/Qlab/manuscript_development/vsl_rt_hit_trial_count.csv")
+```
+
+# LSL RT Hit Trial Count
+```{r}
+library("stringr")
+lsl_rt_by_trialBL <-
+  read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/rt_by_trial/blast_lsl_rt_by_trial.csv")
+
+lsl_rt_by_trialSP <-
+  read.csv("/Users/jojohu/Documents/Qlab/spoli/data_summaries/breakdown/rt_by_trial/spoli_lsl_rt_by_trial.csv")
+
+lsl_rt_by_trialAD <-
+  read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult/breakdown/rt_by_trial/blast_lsl_rt_by_trial.csv")
+
+
+loop_index = 0
+hit_trial_count <- list()
+id <- list()
+
+lsl_rt_count <-
+function(DF) {
+for (i in unique(DF$id)) {
+  loop_index = loop_index + 1
+  current_id_data <- DF[which(DF$id == i),]
+  hit_trial_count[loop_index] <- length(which(current_id_data$reaction_time != ""))
+  id[loop_index] <- i
+}
+
+hit_trial_number <- do.call(rbind, hit_trial_count)
+part_id <- do.call(rbind, id)
+
+lsl_rt_hit_trial_count <- cbind(part_id, hit_trial_number)
+colnames(lsl_rt_hit_trial_count) <- c("part_id", "hit_trial_number")
+lsl_rt_hit_trial_count <- data.frame(lsl_rt_hit_trial_count)
+lsl_rt_hit_trial_count$hit_trial_number <- 
+  as.numeric(as.character(lsl_rt_hit_trial_count$hit_trial_number))
+
+lsl_rt_hit_trial_count$part_id <- str_extract(lsl_rt_hit_trial_count$part_id, "\\S+(?=_lsl)")
+
+return(lsl_rt_hit_trial_count)
+}
+
+lsl_rt_hit_trial_countBL <- lsl_rt_count(lsl_rt_by_trialBL)
+lsl_rt_hit_trial_countSP <- lsl_rt_count(lsl_rt_by_trialSP)
+lsl_rt_hit_trial_countAD <- lsl_rt_count(lsl_rt_by_trialAD)
+
+lsl_rt_hit_trial_count<- 
+  rbind(lsl_rt_hit_trial_countBL, lsl_rt_hit_trial_countSP, lsl_rt_hit_trial_countAD)
+
+write.csv(lsl_rt_hit_trial_count, "/Users/jojohu/Documents/Qlab/manuscript_development/lsl_rt_hit_trial_count.csv")
+
+```
