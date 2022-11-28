@@ -1,0 +1,3555 @@
+---
+title: "manuscript_analysis"
+author: "Jojo Hu"
+date: "12/03/2020"
+output: html_document
+---
+
+
+## Manuscript Analysis 2021 Behavioral Development Analysis (08/06/2020)
+
+
+``` {r}
+setwd("/Users/jojohu/Documents/Qlab/manuscript_development")
+```
+
+# To Do: automate calculation for web-based age 
+
+
+#Clean Data
+```{r,echo=FALSE}
+#Read in demographic data
+demo_all <- read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/demographic_data/online_demo_all.csv")
+#Read in adult demographic data
+demo_adult <- read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/demographic_data/adult_demo.csv")
+#Read in GJT data 
+gjt <- read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/gjt_score.csv")
+#Read in analyzed behavioral data
+blast_data_list <- 
+  list.files(path = "/Users/jojohu/Documents/Qlab/manuscript_development",
+             pattern = "*blast_all.csv", full.names = T)
+
+adult_data_list <-
+  list.files(path = "/Users/jojohu/Documents/Qlab/manuscript_development",
+             pattern = "*adult.csv", full.names = T)
+
+blast_data <- lapply(blast_data_list, read.csv)
+
+adult_data <- lapply(adult_data_list, read.csv)
+
+#Seperate mean rt and rt slope data into two dataframes
+blast_data[[4]] <- blast_data[[3]][,c("X", "par_id", "mean_rt", "task")]
+blast_data[[5]] <- blast_data[[3]][,c("X", "par_id", "scaled_rt_slope", "task")]
+blast_data[[3]] <- blast_data[[3]][,c("X", "par_id", "mean_rt", "scaled_rt_slope", "task")]
+
+adult_data[[4]] <- adult_data[[3]][,c("X", "par_id", "mean_rt", "task")]
+adult_data[[5]] <- adult_data[[3]][,c("X", "par_id", "scaled_rt_slope", "task")]
+
+#Rbind Blast and Spoli data for each measure------------------------------------------------------------------------------
+blast_td_adult_data <- list()
+
+for (i in 1:length(blast_data)) {
+blast_td_adult_data[[i]] <- 
+ rbind(blast_data[[i]], adult_data[[i]])
+}
+#Select only Accuracy data, reformat column names and add in which measure it is into a new column
+blast_td_adult_acc <- blast_td_adult_data[[1]][,c("X", "acc_id", "subj_corr", "task")]
+blast_td_adult_acc$measure <- "accuracy"
+colnames(blast_td_adult_acc)[colnames(blast_td_adult_acc) == "subj_corr"] <- "value"
+colnames(blast_td_adult_acc)[colnames(blast_td_adult_acc) == "acc_id"] <- "part_id"
+
+#Select only Entropy data, reformat column names and add in which measure it is into a new column
+blast_td_adult_entropy <- blast_td_adult_data[[2]][,c("X", "part_id", "mean_entropy", "task")]
+blast_td_adult_entropy$measure <- "entropy"
+colnames(blast_td_adult_entropy)[colnames(blast_td_adult_entropy) == "mean_entropy"] <- "value"
+
+#Select only Mean RT data, reformat column names and add in which measure it is into a new column
+library("stringr")
+
+blast_td_adult_rt <- blast_td_adult_data[[4]][,c("X", "par_id", "mean_rt", "task")]
+blast_td_adult_rt$measure <- "rt"
+
+blast_td_adult_rt$par_id <- as.character(blast_td_adult_rt$par_id)
+
+blast_td_adult_rt[which(str_detect(blast_td_adult_rt$task, 
+                                   "children_lsl_indiv_rts|adult_lsl_indiv_rts")), "par_id"] <-
+  str_extract(blast_td_adult_rt[which(str_detect(
+    blast_td_adult_rt$task, "children_lsl_indiv_rts|adult_lsl_indiv_rts")), "par_id"], "\\S+(?=_lsl)")
+  
+colnames(blast_td_adult_rt)[colnames(blast_td_adult_rt) == "mean_rt"] <- "value"
+colnames(blast_td_adult_rt)[colnames(blast_td_adult_rt) == "par_id"] <- "part_id"
+
+#Select only RT Slope data, reformat column names and add in which measure it is into a new column
+blast_td_adult_slope <- blast_td_adult_data[[5]][,c("X", "par_id", "scaled_rt_slope", "task")]
+blast_td_adult_slope$measure <- "slope"
+
+blast_td_adult_slope$par_id <- as.character(blast_td_adult_slope$par_id)
+
+blast_td_adult_slope[which(
+  str_detect(blast_td_adult_slope$task, "children_lsl_indiv_rts|adult_lsl_indiv_rts")), "par_id"] <-
+  str_extract(blast_td_adult_slope[which(str_detect(blast_td_adult_slope$task, "children_lsl_indiv_rts|adult_lsl_indiv_rts")), "par_id"], "\\S+(?=_lsl)")
+
+blast_td_adult_slope$task <- paste0(blast_td_adult_slope$task, "_slope")
+
+colnames(blast_td_adult_slope)[colnames(blast_td_adult_slope) == "scaled_rt_slope"] <- "value"
+colnames(blast_td_adult_slope)[colnames(blast_td_adult_slope) == "par_id"] <- "part_id"
+
+#Format GJT data
+gjt$measure <- "gjt_std_score"
+gjt$task <- "gjt_web"
+gjt$X <- seq(from = 1, to = length(gjt$part_id), by = 1)
+colnames(gjt)[colnames(gjt) == "standard_score"] <- "value"
+
+blast_td_adult_gjt <- gjt[,c("X", "part_id", "value", "task", "measure")]
+
+#Rbind all measures into long form
+blast_td_adult_data_long <- rbind(blast_td_adult_acc, 
+                                  blast_td_adult_entropy, 
+                                  blast_td_adult_rt, 
+                                  blast_td_adult_slope, 
+                                  blast_td_adult_gjt)
+
+blast_td_adult_data_long$value <- as.numeric(as.character(blast_td_adult_data_long$value))
+```
+
+## All behavioral data prep
+
+## Create a wide format of the concatenated data
+```{r}
+#Make all measures into wide form by participant and measure
+library("reshape")
+library("data.table")
+library("dplyr")
+
+blast_adult_long <- blast_td_adult_data_long[which(str_detect(blast_td_adult_data_long$part_id, "blast_a")),]
+
+blast_adult_wide <- cast(blast_adult_long, part_id~measure+task)
+
+blast_child_long <- blast_td_adult_data_long[which(str_detect(blast_td_adult_data_long$part_id,
+                                                                 "blast_c|spoli_c")),]
+
+blast_data_wide <- cast(blast_child_long, part_id~measure+task)
+
+# Remove blast_c_081 (consented, excluded, nonverbal)
+if(length(which(blast_data_wide$part_id %in% "blast_c_081")) != 0) {
+blast_data_wide <-
+  blast_data_wide[-which(
+    blast_data_wide$part_id %in% "blast_c_081"),] 
+}
+
+library(plyr)
+
+colnames(blast_data_wide) <- revalue(colnames(blast_data_wide), 
+                                     c("accuracy_children_lsl_random_2afc_accuracies" = "lsl_random_2afc_acc",
+                                     "accuracy_lsl_predictable_2afc_accuracies"="lsl_predictable_2afc_acc",
+                                     "accuracy_children_vsl_accuracies"="vsl_acc",
+                                     "accuracy_children_tsl_accuracies"="tsl_acc",
+                                     "accuracy_children_ssl_accuracies"="ssl_acc",
+                                     "entropy_children_lsl_predictable_entropy" = "lsl_predictable_ent",
+                                     "entropy_children_lsl_randomized_entropy" = "lsl_randomized_ent",
+                                     "entropy_children_ssl_entropy" = "ssl_ent",
+                                     "entropy_children_tsl_entropy" = "tsl_ent",
+                                     "entropy_children_vsl_entropy" = "vsl_ent",
+                                    #"entropy_children_lsl_entropy" = "lsl_ent",
+                                     "gjt_std_score_gjt_web" = "gjt_std", 
+                                     "rt_children_lsl_indiv_rts" = "lsl_rt",
+                                     "rt_children_ssl_indiv_rts" = "ssl_rt",
+                                     "rt_children_tsl_indiv_rts" = "tsl_rt",
+                                     "rt_children_vsl_indiv_rts" = "vsl_rt",
+                                     "slope_children_lsl_indiv_rts_slope" = "lsl_slope",
+                                     "slope_children_ssl_indiv_rts_slope" = "ssl_slope",
+                                     "slope_children_tsl_indiv_rts_slope" = "tsl_slope",
+                                     "slope_children_vsl_indiv_rts_slope" = "vsl_slope"))
+```
+
+
+# Merge demographic data for children
+```{r, include = F}
+
+#Extract relevant demo information
+gender_group_info <- demo_all[,c("part_id", "group", "gender", "age_at_web_month", "age_at_web_year")]
+#Merge all demo data with sl measures
+blast_data_wide <-
+  merge(gender_group_info, blast_data_wide,
+      by.x = "part_id", by.y = "part_id",
+      all.y = TRUE)
+ 
+
+blast_data_wide$lsl_random_2afc_acc <-
+as.numeric(as.character(blast_data_wide$lsl_random_2afc_acc))
+
+blast_data_wide$lsl_predictable_2afc_acc <-
+as.numeric(as.character(blast_data_wide$lsl_predictable_2afc_acc))
+
+blast_data_wide$lsl_predictable_ent <-
+as.numeric(as.character(blast_data_wide$lsl_predictable_ent))
+
+blast_data_wide$lsl_randomized_ent <-
+as.numeric(as.character(blast_data_wide$lsl_randomized_ent))
+
+
+blast_data_wide$lsl_acc <-
+  coalesce(blast_data_wide$lsl_random_2afc_acc,
+           blast_data_wide$lsl_predictable_2afc_acc)
+
+blast_data_wide$lsl_ent <-
+  coalesce(blast_data_wide$lsl_predictable_ent,
+           blast_data_wide$lsl_randomized_ent)
+```
+
+## Extract only TD in the children data
+```{r}
+blast_data_wide <- blast_data_wide[which(blast_data_wide$group == "TD"),]
+```
+
+
+# Merge demographic data and assessment data for adults 
+(Adult ages were calculated from EEG data collection date as EEG was collected almost simultaneously as web SL data)
+(SCQ not collected for adults)
+```{r, include = F}
+demo_adult <- read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/demographic_data/adult_demo.csv")
+
+demo_adult <- demo_adult[,c("Participant.ID", "Group", "Gender", "Age", "date.of.birth", "date_eeg_collection", 
+                            "kbit_matrices_raw", "kbit_matrices_std")]
+
+colnames(demo_adult) <- c("part_id", "group", "gender", "age_at_web_month", "dob", "date_eeg_collection",
+                          "kbit_matrices_raw", "kbit_matrices_std")
+
+demo_adult$age_at_web_year <- demo_adult$age_at_web_month/12
+
+blast_adult_wide <-
+  merge(demo_adult, blast_adult_wide,
+      by.x = "part_id", by.y = "part_id",
+      all.y = TRUE)
+
+
+blast_adult_wide[,which(str_detect(colnames(blast_adult_wide), 
+                                            "accuracy|slope|entropy|indiv_rts|age|kbit"))] <- 
+  lapply(blast_adult_wide[,which(str_detect(colnames(blast_adult_wide), 
+                                            "accuracy|slope|entropy|indiv_rts|age|kbit"))], 
+         function(x) {
+           if (is.factor(x))
+             as.numeric(as.character(x))
+           else 
+             x
+           })
+
+
+colnames(blast_adult_wide) <- revalue(colnames(blast_adult_wide), 
+                                           c("accuracy_adult_lsl_random_2afc_accuracies" = "lsl_random_2afc_acc",
+                                    "accuracy_adult_lsl_predictable_2afc_accuracies"="lsl_predictable_2afc_acc",
+                                     "accuracy_adult_vsl_accuracies"="vsl_acc",
+                                     "accuracy_adult_tsl_accuracies"="tsl_acc",
+                                     "accuracy_adult_ssl_accuracies"="ssl_acc",
+                                    # "accuracy_adult_lsl_accuracies" = "lsl_acc",
+                                     "entropy_adult_lsl_predictable_entropy" = "lsl_predictable_ent",
+                                     "entropy_adult_lsl_randomized_entropy" = "lsl_randomized_ent",
+                                     "entropy_adult_ssl_entropy" = "ssl_ent",
+                                     "entropy_adult_tsl_entropy" = "tsl_ent",
+                                     "entropy_adult_vsl_entropy" = "vsl_ent",
+                                     # "entropy_adult_lsl_entropy" = "lsl_ent",
+                                     "rt_adult_lsl_indiv_rts" = "lsl_rt",
+                                     "rt_adult_ssl_indiv_rts" = "ssl_rt",
+                                     "rt_adult_tsl_indiv_rts" = "tsl_rt",
+                                     "rt_adult_vsl_indiv_rts" = "vsl_rt",
+                                     "slope_adult_lsl_indiv_rts_slope" = "lsl_slope",
+                                     "slope_adult_ssl_indiv_rts_slope" = "ssl_slope",
+                                     "slope_adult_tsl_indiv_rts_slope" = "tsl_slope",
+                                     "slope_adult_vsl_indiv_rts_slope" = "vsl_slope"))
+
+blast_adult_wide$lsl_acc <-
+  coalesce(blast_adult_wide$lsl_predictable_2afc_acc,
+           blast_adult_wide$lsl_random_2afc_acc)
+
+
+blast_adult_wide$lsl_ent <-
+  coalesce(blast_adult_wide$lsl_predictable_ent,
+           blast_adult_wide$lsl_randomized_ent)
+
+blast_adult_wide <- 
+  blast_adult_wide[which( 
+         blast_adult_wide$tsl_acc != "" |
+         blast_adult_wide$ssl_acc != "" |
+         blast_adult_wide$vsl_acc != "" |
+         blast_adult_wide$lsl_acc != ""),]
+```
+
+# Merge assessment data for children (more data prep for children)
+```{r, include = FALSE}
+#Extract participants that have SOME SL task completed
+allData <- 
+  blast_data_wide[which( 
+         blast_data_wide$tsl_acc != "" |
+         blast_data_wide$ssl_acc != "" |
+         blast_data_wide$vsl_acc != "" |
+         blast_data_wide$lsl_acc != ""),]
+
+#Remove blast_c_011 who has not given consent, cannot analyze. 198 has no demo info and has only one SL task completed
+
+if(length(which(allData$part_id == "blast_c_011")) != 0) {
+  allData <- allData[-which(allData$part_id == "blast_c_011"),]
+}
+
+if(length(which(allData$part_id == "blast_c_198")) != 0) {
+  allData <-
+    allData[-which(allData$part_id == "blast_c_198"), ]
+}
+
+if(length(which(allData$part_id == "blast_c_224")) != 0) {
+  # Add group info for blast_c_224, redcap is not updated. Only TD with this ID has data.
+  allData[which(allData$part_id == "blast_c_224"), "group"] <- "TD"
+}
+
+drive_checklist <- read.csv("/Users/jojohu/Documents/Qlab/bucld_2019_followup/drive_checklist.csv")
+
+in_lab_assessment <-
+  drive_checklist[,c("Participant.ID", "kbit_matrices_raw", "kbit_matrices_std", "scq_total")]
+
+
+allData <-
+  merge(allData, in_lab_assessment,
+      by.x = "part_id", by.y = "Participant.ID",
+      all.x = TRUE)
+
+scq_redcap <- 
+  read.csv("/Users/jojohu/Documents/Qlab/bucld_2019_followup/scq_total_redcap.csv")[,c(
+    "part_id", "scq_total", "scq_web_date")]
+
+colnames(scq_redcap) <- c("part_id", "scq_redcap", "scq_total_date")
+
+allData <-
+merge(allData, scq_redcap, by.x = "part_id", by.y = "part_id", all.x = T)
+
+allData$scq_redcap <- as.factor(allData$scq_redcap)
+
+allData$scq_total <- coalesce(allData$scq_total, allData$scq_redcap)
+
+# GJT scores
+gjt_original_file <- read.csv("/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/gjt_score.csv")
+
+allData <-
+  merge(allData, gjt_original_file[,c("part_id", "a_prime", "standard_score")],
+      by.x = "part_id", by.y = "part_id",
+      all.x = TRUE)
+
+# CTOPP
+ctopp <- read.csv("/Users/jojohu/Downloads/all_ctopp - Sheet1.csv")[,c("part_id", "nonword_raw", "nonword_std")]
+nonword_drive <- drive_checklist[,c("Participant.ID", "ctopp_nwr_raw", "ctopp_nwr_std")]
+colnames(nonword_drive) <- c("part_id", "nonword_raw", "nonword_std")
+ctopp <- rbind(ctopp, nonword_drive)
+
+ctopp$nonword_raw  <- as.numeric(as.character(ctopp$nonword_raw))
+ctopp$nonword_std  <- as.numeric(as.character(ctopp$nonword_std))
+
+allData <- 
+  merge(allData, ctopp, by.x = "part_id", by.y = "part_id", all.x = TRUE)
+
+
+allData[,which(str_detect(colnames(allData), 
+                                            "_acc|_slope|_ent|_rt|age_at|kbit|scq|rbs_r"))] <- 
+  lapply(allData[,which(str_detect(colnames(allData), 
+                                            "_acc|_slope|_ent|_rt|age|kbit|scq|rbs_r"))], 
+         function(x) {
+           if (is.factor(x))
+             as.numeric(as.character(x))
+           else 
+             x
+           })
+```
+
+# RSR Clean
+```{r}
+rsrh <- read.csv("/Users/jojohu/Documents/Qlab/bucld_2019_followup/rsr_home.csv")
+rsrlab <- read.csv("/Users/jojohu/Documents/Qlab/bucld_2019_followup/rsr_lab.csv")
+
+  
+rsrh[,c(3:4)] <- 
+  lapply(rsrh[,c(3:4)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+colnames(rsrh)[3:4] <- c("rsr_home_raw", "rsr_home_standard")
+
+rsrlab[,c(3:4)] <- 
+  lapply(rsrlab[,c(3:4)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+colnames(rsrlab)[3:4] <- c("rsr_lab_raw", "rsr_lab_standard")
+
+rsr <- merge(rsrh[,c(1,3,4)], rsrlab[,c(1,3,4)], all = T)
+
+# Merge RSR scores from the drive checklist
+drive_rsr <- drive_checklist[,c("Participant.ID", "rsr_home_raw", "rsr_home_standard", "rsr_lab_raw", "rsr_lab_standard")]
+
+drive_rsr[,c(2:5)] <- 
+  lapply(drive_rsr[,c(2:5)], function(x) {
+  if (is.factor(x))
+    as.numeric(as.character(x))
+  else
+    x
+})
+
+
+colnames(drive_rsr)[which(colnames(drive_rsr) == "Participant.ID")] <- "participant.id"
+
+# # write.csv(drive_rsr, "RA_check_RSR_entry_drive.csv")
+
+# Check whether the drive entries for RSR are correct. Some do not seem to be accurate. If correct, will use merge instead of manual adding below.
+rd <- drive_rsr[which(drive_rsr$participant.id %in% 
+                        setdiff(drive_rsr$participant.id, rsr$participant.id)),]
+
+rsr <-rbind(rsr, rd)
+```
+
+```{r}
+spoli_rsr <- read.csv("/Users/jojohu/Downloads/RSR Online Home Scores  - spoli scores (rsr_rsr1).csv", stringsAsFactors = F)[,c(1:4)]
+blast_rsr <- read.csv("/Users/jojohu/Downloads/RSR Online Home Scores  - blast scores (rsr_rsr1).csv",  stringsAsFactors = F)[,c(1:4)]
+rsr_online <- rbind(spoli_rsr, blast_rsr)
+
+rsr_online$raw.score <- as.numeric(rsr_online$raw.score)
+rsr_online$standard <- as.numeric(rsr_online$standard)
+rsr_online$participant.id <- tolower(rsr_online$participant.id)
+
+rsr_online <- rsr_online[,c("participant.id", "raw.score", "standard")]
+
+# rsr_online <- rsr_online[which(rsr_online$participant.id %in% 
+#                                  setdiff(rsr_online$participant.id, rsr$participant.id)), 
+#                          c("participant.id", "raw.score", "standard")]
+
+colnames(rsr_online) <- c("participant.id", "rsr_home_raw", "rsr_home_standard")
+rsr_online$rsr_lab_raw <- NA
+rsr_online$rsr_lab_standard <- NA
+
+rsr <- rbind(rsr, rsr_online)
+
+rsr <- 
+  rsr %>%
+  filter(!is.na(rsr_home_raw) | !is.na(rsr_home_standard) | !is.na(rsr_lab_raw) | !is.na(rsr_lab_standard))
+
+rsr <- rsr[-which(duplicated(rsr)),]
+
+rsr$rsr_home_raw <- as.numeric(as.character(rsr$rsr_home_raw))
+rsr$rsr_home_standard <- as.numeric(as.character(rsr$rsr_home_standard))
+rsr$rsr_lab_raw <- as.numeric(as.character(rsr$rsr_lab_raw))
+rsr$rsr_lab_standard <- as.numeric(as.character(rsr$rsr_lab_standard))
+
+dupID <- rsr[which(duplicated(rsr$participant.id)),]
+
+rsr[which(rsr$participant.id %in% dupID$participant.id),]
+
+# coalesce by row:
+# Supply lists by splicing them into dots:
+coalesce_by_column <- function(df) {
+  return(dplyr::coalesce(!!! as.list(df)))
+}
+rsr <- 
+  rsr %>%
+  group_by(participant.id) %>%
+  summarise_all(coalesce_by_column)
+```
+
+# Merge RSR data
+```{r}
+allData <- 
+  merge(allData, rsr, by.x = "part_id", by.y = "participant.id", all.x = TRUE)
+
+# How many people have RSR
+allData$rsr_raw <- coalesce(allData$rsr_home_raw, allData$rsr_lab_raw)
+allData$rsr_std <- coalesce(allData$rsr_home_standard, allData$rsr_lab_standard)
+# When there are 2 scores from both home and lab, home is prioritized as more people have rsr from home
+```
+
+
+
+# Only include individuals with more than 3 SL tasks; all analyses below change
+```{r}
+countThreeTask <- function(df, group) {
+  threeTaskCount <- rowSums(!is.na(df[which(df$group == group),
+                                      c("vsl_acc", 
+                                        "lsl_acc",
+                                        "tsl_acc", 
+                                        "ssl_acc")]))
+  return(threeTaskCount)
+}
+
+
+allData$taskCount <- as.data.frame(countThreeTask(allData, "TD"))[,1]
+blast_adult_wide$taskCount <- as.data.frame(countThreeTask(blast_adult_wide, "adult"))[,1]
+
+allData <- allData[which(allData$taskCount > 2),]
+blast_adult_wide <- blast_adult_wide[which(blast_adult_wide$taskCount > 2),]
+
+
+```
+
+
+# Children Gender Chi-square
+```{r}
+allData_gender_wide <- allData[,c("part_id", "group", "gender")]
+
+nrow(allData_gender_wide)
+
+allData_gender_long <- melt(allData_gender_wide, id.vars = c("part_id", "group"))
+
+gender_wide <- cast(allData_gender_long, group~value, length)
+
+# Chi-square on gender
+# p<0.05 tells us that they are not matched for gender between group
+print(gender_wide)
+
+allData[,c("part_id", "group")]
+
+29+25
+29+15
+```
+
+# Adult Gender Chi-square
+```{r}
+adult_gender <- blast_adult_wide[,c("part_id", "group", "gender")]
+
+adult_gender <- melt(adult_gender, id.vars = c("part_id", "group"))
+
+gender_wide_adult <- cast(adult_gender, group~value, length)
+
+# Chi-square on gender
+# p<0.05 tells us that they are not matched for gender between group
+print(gender_wide_adult)
+
+gender_wide <- rbind(gender_wide, gender_wide_adult)
+
+print(chisq.test(gender_wide_adult))
+
+blast_adult_wide[,c("part_id", "group")]
+```
+
+## Age
+```{r}
+library(dplyr)
+allData$age_at_web_year <- as.numeric(as.character(allData$age_at_web_year))
+allData$age_at_web_year <- allData$age_at_web_month/12
+
+allData %>%
+  group_by(group) %>%
+  dplyr::summarise(mean_age = mean(age_at_web_year), SD = sd(age_at_web_year), min = min(age_at_web_year), max = max(age_at_web_year)) %>%
+  mutate_if(is.numeric, round, 2)
+
+blast_adult_wide %>%
+  group_by(group) %>%
+  dplyr::summarise(mean_age = mean(age_at_web_year), SD = sd(age_at_web_year), min = min(age_at_web_year), max = max(age_at_web_year)) %>%
+  mutate_if(is.numeric, round, 2)
+  
+
+hist(allData$age_at_web_year)
+hist(blast_adult_wide$age_at_web_year)
+```
+
+
+# Remove outliers for RT and RT slope 
+```{r}
+# D prime from adults and SPOLI
+dp_adult <- read.csv("/Users/jojohu/Documents/Qlab/manuscript_development/d_prime.csv")
+# D prime from TD and  SPOLI
+dp <- read.csv("/Users/jojohu/Documents/Qlab/manuscript_jndd/d_prime.csv")
+
+dp <- rbind(dp_adult, dp)
+
+dp <- dp[-which(duplicated(dp)),]
+# Extract D prime outliers
+dp <- dp[!colnames(dp) %in% "X"]
+
+dp <- 
+  dp[which(dp$part_id %in% append(as.character(blast_adult_wide$part_id), as.character(allData$part_id))),]
+
+dp[which(str_detect(dp$part_id, "blast_c")), "group"] <- "TD"
+dp[which(str_detect(dp$part_id, "blast_a")), "group"] <- "adult"
+
+dp_outlier <-
+  dp %>%
+  group_by(task, group) %>%
+  filter(sl_aprime < (mean(sl_aprime) - 3*sd(sl_aprime))) %>%
+  dplyr::select(part_id, group, task)
+
+dp_outlier <- 
+  dp_outlier[which(dp_outlier$part_id %in% append(as.character(blast_adult_wide$part_id), as.character(allData$part_id))),]
+
+# TD d-prime outliers
+print(dp_outlier[which(dp_outlier$part_id %in% allData$part_id),])
+# Adult d-prime outliers
+print(dp_outlier[which(dp_outlier$part_id %in% blast_adult_wide$part_id),])
+```
+
+
+
+## Preprocess by trial RT data, remove the RT Slope outliers
+```{r, include = F}
+input_path5 <-
+  "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/rt_by_trial"
+
+input_path6 <-
+  "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult/breakdown/rt_by_trial"
+
+rtlist <-
+  list.files(path = input_path5,
+             pattern = "*by_trial.csv", full.names = T)
+
+rtlistAd <-
+  list.files(path = input_path6,
+             pattern = "*by_trial.csv", full.names = T)
+
+library("stringr")
+
+fname <- str_extract(basename(rtlist), "(?<=blast_)\\S{3}")
+fnameAd <- str_extract(basename(rtlistAd), "(?<=blast_)\\S{3}")
+
+
+rt_trial <- lapply(rtlist, read.csv)
+rt_trialAd <- lapply(rtlistAd, read.csv)
+
+for (i in 1:length(rt_trial)) {
+  rt_trial[[i]]$task <-fname[i]
+}
+
+for (i in 1:length(rt_trialAd)) {
+  rt_trialAd[[i]]$task <-fnameAd[i]
+}
+
+for (i in 2:length(rt_trial)) {
+  rt_trial[[i]] <- rt_trial[[i]][,-6]
+}
+
+for (i in 2:length(rt_trialAd)) {
+  rt_trialAd[[i]] <- rt_trialAd[[i]][,-6]
+}
+
+rt_trial[[1]]$id <- str_extract(rt_trial[[1]]$id, "\\S+(?=_lsl)")
+rt_trialAd[[1]]$id <- str_extract(rt_trialAd[[1]]$id, "\\S+(?=_lsl)")
+
+rt_trial <- do.call(rbind, rt_trial)
+rt_trialAd <- do.call(rbind, rt_trialAd)
+
+rt_trial <- rt_trial[,!names(rt_trial) %in% "X"]
+rt_trialAd <- rt_trialAd[,!names(rt_trialAd) %in% "X"]
+```
+
+## Change dataset for outlier removal for RT by trial analysis 
+```{r}
+rt_trial <- rt_trial[which(rt_trial$id %in% allData$part_id),]
+rt_trialAd <- rt_trialAd[which(rt_trialAd$id %in% blast_adult_wide$part_id),]
+rt_trial <- rbind(rt_trialAd, rt_trial)
+```
+
+
+```{r}
+library(dplyr)
+all_rt_hit_count <- 
+  rt_trial %>%
+  group_by(id, task) %>%
+  dplyr::summarise(hit_trial_number = sum(!is.na(reaction_time)))
+
+colnames(all_rt_hit_count)[colnames(all_rt_hit_count) == "id"] <- "part_id"
+
+rt_hit_count_adult <- all_rt_hit_count[which(str_detect(all_rt_hit_count$part_id, "blast_a_")),]
+
+rt_hit_count_child <- all_rt_hit_count[which(str_detect(all_rt_hit_count$part_id, "blast_c_|spoli_c")),]
+
+rt_hit_count_child <- rt_hit_count_child[which(rt_hit_count_child$part_id %in% allData$part_id),]
+
+adult_rt_outlier <- rt_hit_count_adult[which(rt_hit_count_adult$hit_trial_number < 6), 
+                   c("part_id", "task")]
+
+child_rt_outlier <- rt_hit_count_child[which(rt_hit_count_child$hit_trial_number < 6), 
+                   c("part_id", "task")]
+
+all_rt_outlier <- rbind(as.data.frame(child_rt_outlier), 
+                          as.data.frame(dp_outlier[,c("part_id", "task")]),
+                          as.data.frame(adult_rt_outlier))
+all_rt_outlier <- unique(all_rt_outlier)
+
+print(all_rt_outlier)
+```
+**Table above are all RT outliers**
+
+```{r, include = F}
+outlier_extract <-
+  function(DF, task, outputDF) {
+    part_id <- DF[which(DF$task == task),]$part_id
+    rt_col <- paste0(task, "_rt")
+    slope_col <- paste0(task, "_slope")
+    
+    if(length(part_id) != 0) {
+      outputDF[which(outputDF$part_id %in% part_id), 
+              c(rt_col, slope_col)] <- NA
+      }
+    return(outputDF)
+    }
+
+allData <- outlier_extract(all_rt_outlier, "ssl", allData)
+allData <- outlier_extract(all_rt_outlier, "tsl", allData)
+allData <- outlier_extract(all_rt_outlier, "vsl", allData)
+allData <- outlier_extract(all_rt_outlier, "lsl", allData)
+
+blast_adult_wide <- outlier_extract(all_rt_outlier, "ssl", blast_adult_wide)
+blast_adult_wide <- outlier_extract(all_rt_outlier, "tsl", blast_adult_wide)
+blast_adult_wide <- outlier_extract(all_rt_outlier, "vsl", blast_adult_wide)
+blast_adult_wide <- outlier_extract(all_rt_outlier, "lsl", blast_adult_wide)
+```
+
+
+
+## Count the number of completed participants for each task
+```{r,include = F}
+completeCount <- function(df, group) {
+  df <- sapply(df[which(df$group == group),
+                       c("vsl_acc",
+                         "lsl_acc",
+                         "tsl_acc",
+                         "ssl_acc")],
+               function(x) sum(!is.na(x)))
+  return(df)
+}
+
+taskcomp_td <- completeCount(allData, "TD")
+taskcomp_adult <- completeCount(blast_adult_wide, "adult")
+
+taskcomp_count<- rbind(taskcomp_td, taskcomp_adult)
+taskcomp_count <- data.frame(taskcomp_count)
+
+colnames(taskcomp_count) <- c("Image", "Letter", "Tone", "Syllable")
+```
+
+```{r}
+print(taskcomp_count)
+```
+
+
+# SL Descriptive Analysis (Group accuracy against chance level; RT slope against 0)
+
+## SL against chance for TD and ASD
+```{r}
+t_test_against_chance <- 
+  function(x){
+  test <- t.test(x, mu=0.5, alternative= "greater")
+  data.frame(p_value = test$p.value,
+             df = test$parameter,
+             t_stat = test$statistic)
+  }
+
+#TD
+sapply(colnames(allData)[str_detect(colnames(allData) ,"acc")], 
+       function(x) t_test_against_chance(allData[,x]))
+
+# Adult
+sapply(colnames(blast_adult_wide)[str_detect(colnames(blast_adult_wide) ,"acc")], 
+       function(x) t_test_against_chance(blast_adult_wide[,x]))
+
+t_test_against_zero <- 
+  function(x){
+  test <- t.test(x, mu=0, alternative= "less")
+  data.frame(p_value = test$p.value,
+             df = test$parameter,
+             t_stat = test$statistic)
+  }
+
+#TD
+sapply(colnames(allData)[str_detect(colnames(allData) ,"slope")], 
+       function(x) t_test_against_zero(allData[,x]))
+
+# Adult
+sapply(colnames(blast_adult_wide)[str_detect(colnames(blast_adult_wide) ,"slope")], 
+       function(x) t_test_against_zero(blast_adult_wide[,x]))
+```
+
+# Accuracy: Number of ASD < 1.5 SD TD 
+```{r}
+belowSD_acc <- function(slTask) {
+  sd1.5adult <- mean(blast_adult_wide[, slTask], na.rm = T) - 1.5*sd(blast_adult_wide[, slTask], na.rm = T)
+  td_below_sd1.5adult <- nrow(allData[which(allData[, slTask] < sd1.5adult),])
+  return(td_below_sd1.5adult)
+}
+
+belowSD_slope <- function(slTask) {
+  sd1.5adult <- mean(blast_adult_wide[,slTask], na.rm = T) + 1.5*sd(blast_adult_wide[,slTask], na.rm = T)
+  td_below_sd1.5adult <- nrow(allData[which(allData[, slTask] > sd1.5adult),])
+  return(td_below_sd1.5adult)
+}
+
+belowSD_acc("ssl_acc")
+belowSD_acc("lsl_acc")
+belowSD_slope("ssl_slope")
+belowSD_slope("lsl_slope")
+```
+
+
+# Data Prep for LMER
+
+# Add modality and domain category to long-format data
+```{r, include = F}
+library("stringr")
+add_dom_mod_func <- 
+function(df) {
+df[which(str_detect(df$task, "ssl")), "domain"] <- "ling"
+df[which(str_detect(df$task, "lsl")), "domain"] <- "ling"
+df[which(str_detect(df$task, "vsl")), "domain"] <- "nonling"
+df[which(str_detect(df$task, "tsl")), "domain"] <- "nonling"
+df[which(str_detect(df$task, "ssl")), "modality"] <- "auditory"
+df[which(str_detect(df$task, "tsl")), "modality"] <- "auditory"
+df[which(str_detect(df$task, "vsl")), "modality"] <- "visual"
+df[which(str_detect(df$task, "lsl")), "modality"] <- "visual"
+return (df)
+}
+```
+
+# Section 2: SL Group Comparison Reaction Time 
+
+
+```{r}
+outlier_extract_trial_rt <-
+  function(rtTrialDF, DF, taskName) {
+    part_id <- DF[which(DF$task == taskName),]$part_id
+    
+    if (length(which(rtTrialDF$id %in% part_id & rtTrialDF$task == taskName)) != 0) {
+      print(rtTrialDF[which(rtTrialDF$id %in% part_id & rtTrialDF$task == taskName),])
+      rtTrialDF <- rtTrialDF[-which(rtTrialDF$id %in% part_id & rtTrialDF$task == taskName), ]
+    }
+    return(rtTrialDF)
+  }
+
+rt_trial <- outlier_extract_trial_rt(rt_trial, all_rt_outlier, "ssl")
+rt_trial <- outlier_extract_trial_rt(rt_trial, all_rt_outlier, "tsl")
+rt_trial <- outlier_extract_trial_rt(rt_trial, all_rt_outlier, "vsl")
+rt_trial <- outlier_extract_trial_rt(rt_trial, all_rt_outlier, "lsl")
+
+rt_trialAd <- outlier_extract_trial_rt(rt_trialAd, all_rt_outlier, "ssl")
+rt_trialAd <- outlier_extract_trial_rt(rt_trialAd, all_rt_outlier, "tsl")
+rt_trialAd <- outlier_extract_trial_rt(rt_trialAd, all_rt_outlier, "vsl")
+rt_trialAd <- outlier_extract_trial_rt(rt_trialAd, all_rt_outlier, "lsl")
+
+# write.csv(rt_trial, "/Users/jojohu/Documents/Qlab/manuscript_jndd/rt_trial.csv", row.names = F)
+```
+
+## Number of participants in by trial RT analyses
+```{r}
+## Combine Adult and TD data
+taData <- 
+  rbind(blast_adult_wide[intersect(colnames(blast_adult_wide), colnames(allData))], 
+        allData[intersect(colnames(blast_adult_wide), colnames(allData))])
+
+
+rt_trial <-
+  merge(rt_trial,
+      taData[,c("part_id", "group", "gender", "age_at_web_month", "age_at_web_year")],
+      by.x = "id",
+      by.y = "part_id",
+      all.y = T)
+
+setdiff(unique(allData$part_id), unique(rt_trial$id))
+
+rt_trialAd <-
+  merge(rt_trialAd,
+      blast_adult_wide[,c("part_id", "group", "gender", "age_at_web_month", "age_at_web_year")],
+      by.x = "id",
+      by.y = "part_id",
+      all.y = T)
+
+
+setdiff(unique(rt_trialAd$id), unique(blast_adult_wide$part_id))
+
+# Count N for each task
+rt_trial %>%
+  group_by(group, task) %>%
+  filter(!is.na(reaction_time)) %>%
+  dplyr::summarise(n = length(unique(id))) %>%
+  slice(match(c("lsl", "ssl", "vsl", "tsl"), task))
+```
+
+
+## Number of hit trials across groups
+```{r}
+## Number of hit trials
+hit_trialN <- 
+  rt_trial %>%
+  group_by(group, id, task) %>%
+  dplyr::summarise(hit_count = sum(!is.na(reaction_time)),
+                   total_trial = n()) %>%
+  mutate(hit_trial_n = hit_count/total_trial) %>%
+  distinct(.)
+
+hit_trialW <- cast(hit_trialN, id ~ task, value = "hit_trial_n")
+
+# Count hits for each task
+hit_trial_mean <-
+  hit_trialN %>%
+  group_by(group, task) %>%
+  dplyr::summarise(
+    mean_hit_trial = mean(hit_trial_n),
+    sd = sd(hit_trial_n),
+    n = n()
+  ) %>%
+  mutate(
+    se = sd / sqrt(n),
+    lower_ci = mean_hit_trial - qt(1 - (0.05 / 2), n - 1) * se,
+    upper_ci = mean_hit_trial + qt(1 - (0.05 / 2), n - 1) * se
+  ) %>%
+  dplyr::select(group, task, mean_hit_trial, lower_ci, upper_ci) %>%
+  dplyr::slice(match(c("lsl", "ssl", "vsl", "tsl"), task)) %>%
+  mutate_if(is.numeric, round, 3)
+
+hit_trial_mean[,-c(1:2)] <- round(hit_trial_mean[,-c(1:2)], 2)
+print(hit_trial_mean)
+```
+
+## Compare number of hits in TD vs. Adult
+```{r}
+# Add domain and modality to hit trial data
+library(lmerTest)
+hit_trialNAd <- add_dom_mod_func(hit_trialN)
+
+m1_hit_trial <-
+lmer(hit_trial_n ~ group*domain*modality + (1+domain+modality|id), data = hit_trialNAd,
+       contrasts = list(group = c(-0.5,0.5),
+                        domain = c(-0.5,0.5),
+                        modality = c(-0.5,0.5)))
+summary(m1_hit_trial)
+
+hitsTD <- subset(hit_trialNAd, group == "TD")
+hitsA <- subset(hit_trialNAd, group == "adult")
+
+# Post-hoc t-tests for number of hits in each task
+t.test(hitsTD[which(hitsTD$task == "lsl"),]$hit_trial_n, hitsA[which(hitsA$task == "lsl"),]$hit_trial_n)
+t.test(hitsTD[which(hitsTD$task == "ssl"),]$hit_trial_n, hitsA[which(hitsA$task == "ssl"),]$hit_trial_n)
+t.test(hitsTD[which(hitsTD$task == "vsl"),]$hit_trial_n, hitsA[which(hitsA$task == "vsl"),]$hit_trial_n)
+t.test(hitsTD[which(hitsTD$task == "tsl"),]$hit_trial_n, hitsA[which(hitsA$task == "tsl"),]$hit_trial_n)
+```
+
+
+## Add number of hits and A-prime to the by trial RT data
+```{r}
+rt_trial_td_adult <- 
+  merge(rt_trial, hit_trialN[,c("id", "task", "hit_trial_n")], by.x = c("id", "task"), by.y = c("id", "task"), all.x = T)
+
+rt_trial_td_adult <- 
+  merge(rt_trial_td_adult, dp[,c("part_id", "task", "sl_aprime")], by.x = c("id", "task"), by.y = c("part_id", "task"), all.x = T)
+```
+
+
+## Normalize by trial raw RT for each participant and each task
+```{r}
+rt_trial <- add_dom_mod_func(rt_trial)
+rt_trial_td_adult <- add_dom_mod_func(rt_trial_td_adult)
+```
+
+
+## Change datasets for RT by trial analysis
+```{r}
+rt_trial_scaled <- rt_trial_td_adult
+```
+
+```{r}
+rt_trial_scaled <- rt_trial_scaled[!is.na(rt_trial_scaled$reaction_time),]
+
+for(id in unique(rt_trial_scaled$id)) {
+    # Extract each id's individual rt by trial (normalized results below are the same as the scaled RT in the RT slope analyses; checked)
+    rt_trial_scaled[which(rt_trial_scaled$id == id & rt_trial_scaled$task == "lsl"), "scaled_rt"] <- 
+      scale(rt_trial_scaled[which(rt_trial_scaled$id == id & rt_trial_scaled$task == "lsl"),"reaction_time"], center = T)
+    rt_trial_scaled[which(rt_trial_scaled$id == id & rt_trial_scaled$task == "vsl"), "scaled_rt"] <- 
+      scale(rt_trial_scaled[which(rt_trial_scaled$id == id & rt_trial_scaled$task == "vsl"),"reaction_time"], center = T)
+    rt_trial_scaled[which(rt_trial_scaled$id == id & rt_trial_scaled$task == "tsl"), "scaled_rt"] <- 
+      scale(rt_trial_scaled[which(rt_trial_scaled$id == id & rt_trial_scaled$task == "tsl"),"reaction_time"], center = T)
+    rt_trial_scaled[which(rt_trial_scaled$id == id & rt_trial_scaled$task == "ssl"), "scaled_rt"] <- 
+      scale(rt_trial_scaled[which(rt_trial_scaled$id == id & rt_trial_scaled$task == "ssl"),"reaction_time"], center = T)
+    
+    # Using the first 3 target trials as baseline do not seem to be a very good idea; looking at the raw data the variances seem to be great among the first three trials:
+    # firstThreeTrial <- sort(rt_trial_scaled[which(rt_trial_scaled$id == "blast_c_002" & rt_trial_scaled$task == "lsl"), "targ_index"])[1:3]
+    # rt_trial_scaled[which(rt_trial_scaled$id == "blast_c_213" & rt_trial_scaled$targ_index %in% firstThreeTrial & rt_trial_scaled$task == "lsl"), ] 
+}
+
+# Add mean RT to by trial RT data
+mean_rt <- rbind(blast_adult_wide[,c("part_id","lsl_rt", "vsl_rt", "tsl_rt", "ssl_rt")], allData[,c("part_id","lsl_rt", "vsl_rt", "tsl_rt", "ssl_rt")])
+mean_rt <- melt(mean_rt, id.vars = ("part_id"))
+colnames(mean_rt) <- c("part_id", "task", "mean_rt")
+mean_rt$task <- gsub("_rt", "", mean_rt$task)
+rt_trial_scaled <- merge(rt_trial_scaled, mean_rt, by.x = c("id", "task"), by.y = c("part_id", "task"), all.x = T)
+
+hist(rt_trial_scaled$reaction_time)
+hist(rt_trial_scaled$scaled_rt)
+```
+
+
+
+
+## Recalculate RT slope using raw reaction time; change RT Slope, ALL analyses of RT Slope below change
+```{r}
+library(dplyr)
+raw_slope <- 
+  rt_trial_scaled %>%
+  dplyr::arrange(id, task, targ_index) %>%
+  group_by(id, task) %>%
+  dplyr::summarise(rt_slope_raw = round(summary(lm(reaction_time ~ targ_index))$coefficient[2, 1], digits = 3),
+                   rt_intercept = round(summary(lm(reaction_time ~ targ_index))$coefficients[1, 1], digits = 3)) %>%
+  distinct(.)
+
+rt_trial_scaled <- merge(rt_trial_scaled, raw_slope, by = c("id", "task"), all.x = T)
+
+slope_wide <- cast(raw_slope, id ~ task, value = "rt_slope_raw")
+
+slope_wide <-
+  slope_wide %>%
+  arrange(id)
+
+slope_wideA <- slope_wide[which(str_detect(slope_wide$id, "blast_a")),]
+slope_wideTD <- slope_wide[which(str_detect(slope_wide$id, "blast_c")),]
+
+replace_slope <- 
+  function(df, df_slope) {
+    df <-
+      df %>%
+      arrange(part_id)
+    
+    df$lsl_slope <- df_slope$lsl
+    df$ssl_slope <- df_slope$ssl
+    df$vsl_slope <- df_slope$vsl
+    df$tsl_slope <- df_slope$tsl
+    
+    return(df)
+  }
+
+blast_adult_wide <- replace_slope(blast_adult_wide, slope_wideA)
+allData <- replace_slope(allData, slope_wideTD)
+
+taData <- 
+  rbind(blast_adult_wide[intersect(colnames(blast_adult_wide), colnames(allData))], 
+        allData[intersect(colnames(blast_adult_wide), colnames(allData))])
+
+# Merge hit trials
+hit_trialW <-
+  hit_trialW %>%
+  arrange(id)
+
+taData$lsl_hit <- hit_trialW$lsl
+taData$ssl_hit <- hit_trialW$ssl
+taData$vsl_hit <- hit_trialW$vsl
+taData$tsl_hit <- hit_trialW$tsl
+```
+
+
+
+## SL Group Comparison RT: By Trial RT LMER
+```{r}
+# Extract initial target trial RT
+initial_rt <- 
+  rt_trial_scaled %>%
+  arrange(id, group, task, trial, targ_index) %>%
+  group_by(id, task) %>%
+  filter(row_number()==c(1:4)) %>%
+  dplyr::summarise(initial_rt = mean(mean_rt, na.rm = T)) %>%
+  distinct(.)
+
+rt_trial_scaled <- merge(rt_trial_scaled, initial_rt, by = c("id", "task"), all.x = T)
+
+
+rt_trial_scaled$reaction_time <- as.numeric(as.character(rt_trial_scaled$reaction_time))
+rt_trial_scaled$id <- as.factor(rt_trial_scaled$id)
+rt_trial_scaled$task <- as.factor(rt_trial_scaled$task)
+rt_trial_scaled$targ_index <- as.numeric(as.character(rt_trial_scaled$targ_index))
+rt_trial_scaled$mean_rt <- as.numeric(as.character(rt_trial_scaled$mean_rt))
+
+rt_trial_scaled$group <- 
+  factor(rt_trial_scaled$group,
+         levels = c("adult", 
+                    "TD"))
+rt_trial_scaled <- rt_trial_scaled[order(rt_trial_scaled$group), ]
+
+rt_trial_scaled$domain <- 
+  factor(rt_trial_scaled$domain,
+         levels = c("nonling", 
+                    "ling"))
+rt_trial_scaled <- rt_trial_scaled[order(rt_trial_scaled$domain), ]
+
+rt_trial_scaled$modality <- 
+  factor(rt_trial_scaled$modality,
+         levels = c("auditory", 
+                    "visual"))
+rt_trial_scaled <- rt_trial_scaled[order(rt_trial_scaled$modality), ]
+
+head(rt_trial_scaled)
+```
+
+## By Trial RT Group Comparison
+```{r}
+# isSingular Warning:
+# No main effect of age on reaction time or scaled rt
+# hit trial N did not change group by target index by domain or group by target index by modality interactions
+lmer_slope_m1 <-
+  lmer(reaction_time ~ group*targ_index*domain*modality + hit_trial_n + sl_aprime + rt_intercept + (1+domain+modality|id),
+    # + (0 + (modality + domain) | id),
+    data = rt_trial_scaled,
+    contrasts = list(
+      group = c(-0.5, 0.5),
+      modality = c(-0.5, 0.5),
+      domain = c(-0.5, 0.5)
+    ),
+    control=lmerControl(optimizer = "bobyqa")
+  )
+summary(lmer_slope_m1)
+
+
+rt_trial_scaled_td <- rt_trial_scaled[which(rt_trial_scaled$group == "TD"),]
+rt_trial_scaled_td$age_scaled <- scale(rt_trial_scaled_td$age_at_web_year)
+
+lmer_slope_m2 <-
+  lmer(scaled_rt ~ age_scaled*targ_index*domain*modality + hit_trial_n + sl_aprime + (1+domain+modality|id),
+    # + (0 + (modality + domain) | id),
+    data = rt_trial_scaled_td,
+    contrasts = list(
+      group = c(-0.5, 0.5),
+      modality = c(-0.5, 0.5),
+      domain = c(-0.5, 0.5)
+    ),
+    control=lmerControl(optimizer = "bobyqa")
+  )
+summary(lmer_slope_m2)
+
+
+# rtTrialModel <- summary(lmer_slope_m1)
+# rtTrialModel$coefficients <- round(rtTrialModel$coefficients, 2)
+# write.csv(rt_trial_scaled,"/Users/jojohu/Documents/Qlab/manuscript_development/rt_target_trial_adult_td.csv")
+```
+
+
+### Follow-up on RT analysis
+### Assign Age Group
+```{r}
+tdAge <- allData[order(allData$age_at_web_month),]
+
+# Median split of age across all the participants
+tdAge[1:round(length(tdAge$age_at_web_month)/2),"age_group"] <- "Younger"
+tdAge[which(tdAge$group == "TD" & tdAge$age_group == "Younger"), "age_group"] <- "Younger TD"
+
+median <- round((length(tdAge$age_at_web_month)/2))+1
+tdAge[median:length(tdAge$age_at_web_month),"age_group"] <- "Older"
+tdAge[which(tdAge$group == "TD" & tdAge$age_group == "Older"), "age_group"] <- "Older TD"
+
+tdAge$ageSplit <- str_extract(tdAge$age_group, "Young|Old")
+
+colnames(rt_trial_scaled)[which(colnames(rt_trial_scaled) == "id")] <- "part_id"
+
+rt_trial_scaled <- 
+  merge(rt_trial_scaled, unique(tdAge[,c("part_id", "group", "age_group", "ageSplit")]), 
+        by = c("part_id", "group"), all.x = T)
+
+rt_trial_scaled[which(rt_trial_scaled$group == "adult"), "age_group"] <- "Adult"
+rt_trial_scaled[which(rt_trial_scaled$group == "adult"), "ageSplit"] <- "Adult"
+
+rt_trial_scaled$age_group <- factor(rt_trial_scaled$age_group, levels = c("Adult", "Older TD", "Younger TD"))
+rt_trial_scaled <- rt_trial_scaled[order(rt_trial_scaled$age_group),]
+
+three_helmert = matrix(c(2/3, -1/3, -1/3, 0, .5, -.5), ncol = 2)
+contrasts(rt_trial_scaled$age_group) = three_helmert
+
+rt_trial_scaled$domain <- factor(rt_trial_scaled$domain, levels = c("nonling", "ling"))
+rt_trial_scaled <- rt_trial_scaled[order(rt_trial_scaled$domain),]
+
+rt_trial_scaled$modality <- factor(rt_trial_scaled$modality, levels = c("auditory", "visual"))
+rt_trial_scaled <- rt_trial_scaled[order(rt_trial_scaled$modality),]
+
+taData <- 
+  merge(taData, unique(tdAge[,c("part_id", "group", "age_group", "ageSplit")]), 
+        by = c("part_id", "group"), all.x = T)
+
+taData[which(taData$group == "adult"), "age_group"] <- "Adult"
+taData[which(taData$group == "adult"), "ageSplit"] <- "Adult"
+```
+
+
+```{r}
+lmer_slope_m3 <-
+  lmer(scaled_rt ~ age_group*targ_index*domain*modality + hit_trial_n  + (1+domain+modality|part_id),
+    # + (0 + (modality + domain) | id),
+    data = rt_trial_scaled,
+    contrasts = list(
+      age_group = three_helmert,
+      modality = c(-0.5, 0.5),
+      domain = c(-0.5, 0.5)
+    ),
+    control=lmerControl(optimizer = "bobyqa")
+  )
+summary(lmer_slope_m3)
+
+taData %>%
+  group_by(age_group) %>%
+  dplyr::summarise(across(c("lsl_slope", "ssl_slope", "vsl_slope", "tsl_slope"), 
+                   list(mean = ~ mean(., na.rm = TRUE), SD = ~ sd(., na.rm = TRUE), N = ~ sum(!is.na(.)))))
+
+pairwise.t.test(taData$ssl_slope, taData$age_group)
+```
+
+
+
+## SL Group Comparison RT Slope: Post-hoc T-tests Adult vs. TD
+```{r}
+t_test_multi_pair_slope <- 
+  function(x,y){
+  test <- t.test(x, y, alternative = "less")
+
+  data.frame(p_value = test$p.value,
+             df = test$parameter,
+             t_stat = test$statistic)
+  }
+
+t_test_multi_pair_slope_greater <- 
+  function(x,y){
+  test <- t.test(x, y, alternative = "greater")
+
+  data.frame(p_value = test$p.value,
+             df = test$parameter,
+             t_stat = test$statistic)
+  }
+
+# RT slope assuming adult is faster than TD
+sapply(intersect(colnames(blast_adult_wide),colnames(allData))[str_detect(intersect(colnames(blast_adult_wide),colnames(allData)), "slope")],
+                 function(x) t_test_multi_pair_slope(blast_adult_wide[,x], allData[,x]))
+
+# RT slope assuming adult is slower than TD
+sapply(intersect(colnames(blast_adult_wide),colnames(allData))[str_detect(intersect(colnames(blast_adult_wide),colnames(allData)), "slope")],
+                 function(x) t_test_multi_pair_slope_greater(blast_adult_wide[,x], allData[,x]))
+```
+
+
+
+
+## SL Group Comparison Entropy LMER
+```{r, include = F}
+extractLongDF <- 
+  function(df, measureCol, measureName) {
+   dfWide <-  
+     df[c("part_id", "group", "gender", "age_at_web_month", "age_at_web_year",
+         colnames(df)[str_detect(colnames(df), measureCol)])]
+   
+   # Add scaling of each measure columns here:
+    
+    dfLong <- melt(dfWide, id.vars = c("part_id", "group", "gender", "age_at_web_month", "age_at_web_year"))
+    colnames(dfLong)[which(colnames(dfLong) == "value")] <- measureName
+    colnames(dfLong)[which(colnames(dfLong) == "variable")] <- "task"
+    dfLong<- add_dom_mod_func(dfLong)
+    
+    return(dfLong)
+  }
+
+entropyAd <- rbind(extractLongDF(blast_adult_wide, "sl_ent", "entropy"), 
+                   extractLongDF(allData, "sl_ent", "entropy"))
+                   
+entropyC <- extractLongDF(allData, "sl_ent", "entropy")
+
+# Add more leveling and formatting
+entropyAd$task <- as.factor(entropyAd$task)
+
+entropyAd$group <- 
+  factor(entropyAd$group,
+         levels = c("adult", 
+                    "TD"))
+entropyAd <- entropyAd[order(entropyAd$group), ]
+
+entropyAd$domain <- 
+  factor(entropyAd$domain,
+         levels = c("nonling", 
+                    "ling"))
+entropyAd <- entropyAd[order(entropyAd$domain), ]
+
+entropyAd$modality <- 
+  factor(entropyAd$modality,
+         levels = c("auditory", 
+                    "visual"))
+entropyAd <- entropyAd[order(entropyAd$modality), ]
+
+ent_m1 <-
+  lmer(entropy ~ group*domain*modality + (1+domain+modality|part_id),
+    # + (0 + (modality + domain) | id),
+    data = entropyAd,
+    contrasts = list(
+      group = c(-0.5, 0.5),
+      modality = c(-0.5, 0.5),
+      domain = c(-0.5, 0.5)
+    ),
+    control=lmerControl(optimizer = "bobyqa")
+  )
+
+summary(ent_m1)
+
+entropyAd %>%
+  group_by(group, task) %>%
+  dplyr::summarise(mean_ent = mean(entropy, na.rm = T))
+```
+
+## SL Group Comparison Mean RT LMER
+```{r, include = F}
+rtAd <- rbind(extractLongDF(blast_adult_wide, "sl_rt", "mean_rt"), 
+              extractLongDF(allData, "sl_rt", "mean_rt"))
+
+rtC <- extractLongDF(allData, "sl_rt", "mean_rt")
+```
+
+## Change dataset
+```{r}
+# rtAd <- rtC
+```
+
+```{r}
+# Add more leveling and formatting
+rtAd$task <- as.factor(rtAd$task)
+
+rtAd$group <- 
+  factor(rtAd$group,
+         levels = c("adult", 
+                    "TD"))
+rtAd <- rtAd[order(rtAd$group), ]
+
+rtAd$domain <- 
+  factor(rtAd$domain,
+         levels = c("nonling", 
+                    "ling"))
+rtAd <- rtAd[order(rtAd$domain), ]
+
+rtAd$modality <- 
+  factor(rtAd$modality,
+         levels = c("auditory", 
+                    "visual"))
+rtAd <- rtAd[order(rtAd$modality), ]
+
+rt_m1 <-
+  lmer(mean_rt ~ group*domain*modality + (1+domain+modality|part_id),
+    # + (0 + (modality + domain) | id),
+    data = rtAd,
+    contrasts = list(
+      group = c(-0.5, 0.5),
+      modality = c(-0.5, 0.5),
+      domain = c(-0.5, 0.5)
+    ),
+    control=lmerControl(optimizer = "bobyqa")
+  )
+
+summary(rt_m1)
+
+
+rtAd %>%
+  group_by(group, task) %>%
+  dplyr::summarise(mean_rt = mean(mean_rt, na.rm = T))
+```
+
+
+
+
+## SL Group Comparison By Trial Accuracy GLMER
+```{r, include = F}
+input_path3 <-
+  "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_child/breakdown/acc_by_trial/acc_by_trial"
+
+input_path4 <-
+  "/Users/jojohu/Documents/Qlab/blast_online_data/data_summaries/blast_online_adult/breakdown/acc_by_trial"
+
+acclist <-
+  list.files(path = input_path3,
+             pattern = "*by_trial.csv", full.names = T)
+
+acclistAdult <-
+  list.files(path = input_path4,
+             pattern = "*by_trial.csv", full.names = T)
+
+
+library("stringr")
+
+tname <- str_extract(basename(acclist), "(?<=blast_)\\S{3}")
+
+tnameAdult <- str_extract(basename(acclistAdult), "(?<=blast_)\\S{3}")
+
+acc_trial <- lapply(acclist, read.csv)
+
+acc_trial_adult <- lapply(acclistAdult, read.csv)
+
+for (i in 1:length(acc_trial)) {
+  acc_trial[[i]]$task <-tname[i]
+}
+
+acc_trial <- do.call(rbind, acc_trial)
+
+acc_trial <- acc_trial[,!names(acc_trial) %in% "X"]
+
+for (i in 1:length(acc_trial_adult)) {
+  acc_trial_adult[[i]]$task <-tnameAdult[i]
+}
+
+acc_trial_adult <- do.call(rbind, acc_trial_adult)
+
+acc_trial_adult <- acc_trial_adult[,!names(acc_trial_adult) %in% "X"]
+
+acc_trial <- rbind(acc_trial_adult, acc_trial)
+# write.csv(acc_trial, "/Users/jojohu/Documents/Qlab/manuscript_jndd/acc_trial.csv", row.names = F)
+```
+
+```{r}
+acc_trial <-
+  merge(acc_trial,
+        taData[,c("part_id", "group", "gender", "age_at_web_month", "age_at_web_year")],
+        by.x = "subj",
+        by.y = "part_id",
+        all.y = T)
+
+# Important Step, match the dataset to the current analysis
+acc_trial <- acc_trial[which(acc_trial$subj %in% taData$part_id),]
+
+acc_trial_adult <-
+  merge(acc_trial_adult,
+        blast_adult_wide[,c("part_id", "group", "gender", "age_at_web_month", "age_at_web_year")],
+        by.x = "subj",
+        by.y = "part_id",
+        all.y = T)
+
+acc_trial <- merge(acc_trial, hit_trialN, 
+                   by.x = c("subj", "group", "task"),
+                   by.y = c("id", "group", "task"), 
+                   all.x = T)
+
+setdiff(unique(allData$part_id), unique(acc_trial$subj))
+setdiff(unique(blast_adult_wide$part_id), unique(acc_trial_adult$subj))
+```
+
+## Change dataset
+```{r}
+# acc_trial <- acc_trial_adult
+```
+
+```{r}
+# GLMER results for accuracy group comparison
+acc_trial <- add_dom_mod_func(acc_trial)
+
+acc_trial$corr <- as.factor(acc_trial$corr)
+acc_trial$group <- as.factor(acc_trial$group)
+acc_trial$task <- as.factor(acc_trial$task)
+acc_trial$domain <- as.factor(acc_trial$domain)
+acc_trial$modality <- as.factor(acc_trial$modality)
+acc_trial$subj <- as.factor(acc_trial$subj)
+acc_trial$age_at_web_year <- as.numeric(as.character(acc_trial$age_at_web_year))
+
+acc_trial$group <- 
+  factor(acc_trial$group,
+         levels = c("adult", 
+                    "TD"))
+acc_trial <- acc_trial[order(acc_trial$group),]
+
+acc_trial$domain <- 
+  factor(acc_trial$domain,
+         levels = c("nonling", 
+                    "ling"))
+acc_trial <- acc_trial[order(acc_trial$domain),]
+
+acc_trial$modality <- 
+  factor(acc_trial$modality,
+         levels = c("auditory", 
+                    "visual"))
+acc_trial <- acc_trial[order(acc_trial$modality),]
+
+head(acc_trial)
+unique(acc_trial$subj)
+```
+
+
+```{r}
+logacc_dom <-
+  glmer(corr~group*domain*modality + (1+domain+modality|subj), data = acc_trial,
+    family = binomial,
+    contrasts = list(domain = c(-0.5, 0.5), modality = c(-0.5, 0.5), group = c(-0.5,0.5)),
+    control=glmerControl(optimizer = "bobyqa"))
+
+summary(logacc_dom)
+
+acc_trial_td <- acc_trial[which(acc_trial$group == "TD"),]
+
+acc_trial_td$age_scaled <- scale(acc_trial_td$age_at_web_year)
+
+logacc_dom_m2 <-
+  glmer(corr~age_at_web_year*domain*modality + (1+domain+modality|subj), data = acc_trial_td,
+    family = binomial,
+    contrasts = list(domain = c(-0.5, 0.5), modality = c(-0.5, 0.5)),
+    control=glmerControl(optimizer = "bobyqa"))
+
+summary(logacc_dom_m2)
+
+acc_trial$hit_scaled <- scale(acc_trial$hit_trial_n)
+
+logacc_dom_m3 <-
+  glmer(corr~group*domain*hit_trial_n*modality + (1|subj), data = acc_trial,
+    family = binomial,
+    contrasts = list(domain = c(-0.5, 0.5), group = c(-0.5,0.5), modality = c(-0.5, 0.5)),
+    control=glmerControl(optimizer = "bobyqa"))
+
+summary(logacc_dom_m3)
+```
+
+
+### Follow-up on by trial accuracy analysis 
+### Assign Hit Rate groups
+```{r}
+hit_trialNAd$domain <- as.factor(hit_trialNAd$domain)
+hit_trialNAd$task <- as.factor(hit_trialNAd$task)
+
+medianFunc <-
+function(groupName, taskName) {
+  temp <- 
+    hit_trialNAd %>%
+    group_by(id, group, task) %>% 
+    dplyr::summarise(mean_hit = mean(hit_count, na.rm = T)) %>%
+    filter(group == groupName) %>%
+    filter(task == taskName) %>%
+    group_by(task) %>% 
+    mutate(hit_group = c("higher_hit", "lower_hit")[1 + (mean_hit <= median(mean_hit))])
+  
+  return(temp)
+}
+
+adultLSLHit <- medianFunc("adult", "lsl")
+adultSSLHit <- medianFunc("adult", "ssl")
+adultVSLHit <- medianFunc("adult", "vsl")
+adultTSLHit <- medianFunc("adult", "tsl")
+
+tdLSLHit <- medianFunc("TD", "lsl")
+tdSSLHit <- medianFunc("TD", "ssl")
+tdVSLHit <- medianFunc("TD", "vsl")
+tdTSLHit <- medianFunc("TD", "tsl")
+
+hit_median <- unique(rbind(adultLSLHit, adultSSLHit, adultVSLHit, adultTSLHit, tdLSLHit, tdSSLHit, tdVSLHit, tdTSLHit))
+```
+
+
+### Follow-up LMER test on the effect of Hit Rate and Domain when split by Group
+```{r}
+acc_trial <- merge(acc_trial, hit_median, by.x = c("subj", "group", "task"), by.y = c("id", "group", "task"), all.x = T)
+
+# Adult VSL is at ceiling; 
+acc_trial_adult <- acc_trial[which(acc_trial$group == "adult" & 
+                                     (acc_trial$task == "ssl" | acc_trial$task == "tsl")),]
+
+acc_trial_adult <- acc_trial_adult[which(!is.na(acc_trial_adult$hit_group)),]
+
+acc_trial_td <- acc_trial[which(acc_trial$group == "TD"),]
+
+acc_trial_adult %>%
+  group_by(task, hit_group) %>%
+  dplyr::summarise(n = n())
+
+logacc_hit_adult <-
+  glmer(corr~domain*hit_trial_n + (1|subj), data = acc_trial_adult,
+    family = binomial,
+    contrasts = list(domain = c(-0.5, 0.5), modality = c(-0.5, 0.5), hit_group = c(-0.5, 0.5)),
+    control=glmerControl(optimizer = "bobyqa"))
+
+summary(logacc_hit_adult)
+
+logacc_hit_td <-
+  glmer(corr~domain*modality*hit_trial_n + (1|subj), data = acc_trial_td,
+    family = binomial,
+    contrasts = list(domain = c(-0.5, 0.5), modality = c(-0.5, 0.5), hit_group = c(-0.5, 0.5)),
+    control=glmerControl(optimizer = "bobyqa"))
+
+summary(logacc_hit_td)
+```
+
+
+### Posthoc t-test on the effect of Hit Rate and Domain when split by Group
+```{r}
+acc_hit_mean<-
+  acc_trial %>%
+  filter(!is.na(hit_group)) %>%
+  mutate(corr = as.numeric(as.character(corr))) %>%
+  group_by(subj, group, hit_group, domain) %>%
+  dplyr::summarise(mean = mean(corr, na.rm = T), 
+                   sd = sd(corr, na.rm = T), 
+                   n = length(!is.na(corr))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se)
+
+acc_hitAd <-
+  acc_trial %>%
+  filter(!is.na(hit_group)) %>%
+  filter(group == "adult") %>%
+  filter(task == "tsl" | task == "ssl") %>%
+  mutate(corr = as.numeric(as.character(corr))) %>%
+  group_by(subj, group, hit_group, task) %>%
+  dplyr::summarise(mean = mean(corr, na.rm = T), 
+                   sd = sd(corr, na.rm = T), 
+                   n = length(!is.na(corr))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se)
+
+
+# Do not mark these, no main effect of hit group or hit trial in TD model above
+t.test(acc_hitAd[which(acc_hitAd$task == "ssl" & acc_hitAd$hit_group == "higher_hit"),]$mean, 
+       acc_hitAd[which(acc_hitAd$task == "ssl" & acc_hitAd$hit_group == "lower_hit"),]$mean, "greater")
+
+t.test(acc_hitAd[which(acc_hitAd$task == "tsl" & acc_hitAd$hit_group == "higher_hit"),]$mean, 
+       acc_hitAd[which(acc_hitAd$task == "tsl" & acc_hitAd$hit_group == "lower_hit"),]$mean, "greater")
+
+acc_hitTD <-
+  acc_hit_mean %>%
+  filter(group == "TD")
+# Do not mark these, no main effect of hit group or hit trial in TD model above
+t.test(acc_hitTD[which(acc_hitTD$domain == "ling" & acc_hitTD$hit_group == "higher_hit"),]$mean, 
+       acc_hitTD[which(acc_hitTD$domain == "ling" & acc_hitTD$hit_group == "lower_hit"),]$mean, "greater")
+
+t.test(acc_hitTD[which(acc_hitTD$domain == "nonling" & acc_hitTD$hit_group == "higher_hit"),]$mean, 
+       acc_hitTD[which(acc_hitTD$domain == "nonling" & acc_hitTD$hit_group == "lower_hit"),]$mean, "greater")
+```
+
+
+### Assign age groups
+```{r}
+acc_trial <- 
+  merge(acc_trial, unique(tdAge[,c("part_id", "group", "age_group", "ageSplit")]), 
+        by.x = c("subj", "group"), by.y = c("part_id", "group"), all.x = T)
+
+acc_trial[which(acc_trial$group == "adult"), "age_group"] <- "Adult"
+acc_trial[which(acc_trial$group == "adult"), "ageSplit"] <- "Adult"
+```
+
+```{r}
+logacc_dom_m4 <-
+  glmer(corr~age_group*domain*modality + (1+domain+modality|subj), data = acc_trial,
+    family = binomial,
+    contrasts = list(domain = c(-0.5, 0.5), modality = c(-0.5, 0.5)),
+    control=glmerControl(optimizer = "bobyqa"))
+
+summary(logacc_dom_m4)
+```
+
+
+
+## SL Group Comparison Accuracy: Post-hoc T-test TD vs. ASD
+```{r}
+t_test_multi_pair <- 
+  function(x,y){
+  test <- t.test(x, y, alternative = "greater")
+
+  data.frame(p_value = test$p.value,
+             df = test$parameter,
+             t_stat = test$statistic)
+  }
+
+# Accuracy
+sapply(intersect(colnames(blast_adult_wide),colnames(allData))[str_detect(intersect(colnames(blast_adult_wide),colnames(allData)), "sl_acc")], 
+                 function(x) t_test_multi_pair(blast_adult_wide[,x], allData[,x]))
+```
+
+
+
+
+
+# Section 4: SL Group Comparison Composite Scores 
+
+## Preprocess and calculate composite scores
+## Change dataset
+```{r}
+compositeAge <- taData
+```
+
+```{r}
+# Scale RT slopes across participants for each task
+compositeAge[, c("lsl_slopeScaled", "ssl_slopeScaled","vsl_slopeScaled", "tsl_slopeScaled")] <-
+  lapply(compositeAge[, c("lsl_slope", "ssl_slope","vsl_slope", "tsl_slope")], 
+         function(x) {
+           scale(0 - x, center = T)
+           })
+# Scale percentage correct across participants for each task
+compositeAge[, c("lsl_accScaled", "ssl_accScaled","vsl_accScaled", "tsl_accScaled")] <-
+  lapply(compositeAge[, c("lsl_acc", "ssl_acc","vsl_acc", "tsl_acc")], 
+         function(x) {
+           scale(x, center = T)
+           })
+# Calculate composite scores
+sumComposite <- function(taskCol, nCol, column_list) {
+  # Step 1: Sum the relevant scaled RT slopes and scaled percentage correct columns
+  compositeAge[, taskCol] <-
+    rowSums(compositeAge[, column_list], na.rm = T)
+  # Step 2: Count the number of non-NA values out of the relevant scaled RT slopes and scaled percentage correct columns
+  compositeAge[, nCol] <-
+    apply(compositeAge[column_list], 1, function(x) {
+      sum(!is.na(x))
+    })
+  # Calcualte the mean composite scores (Step 1 / Step 2)
+  compositeAge[, taskCol] <-
+    compositeAge[, taskCol] / compositeAge[, nCol]
+  
+  return(compositeAge)
+}
+# Linguistic SL composite score
+compositeAge <-
+  sumComposite("composite_ling", "completeN_ling", 
+               c("lsl_accScaled", "ssl_accScaled", 
+                 "lsl_slopeScaled", "ssl_slopeScaled"))
+# Nonlinguistic SL composite score
+compositeAge <-
+  sumComposite("composite_nonling", "completeN_nonling", 
+               c("vsl_accScaled", "tsl_accScaled", 
+                 "vsl_slopeScaled", "tsl_slopeScaled"))
+# Letter SL composite score
+compositeAge <-
+  sumComposite("composite_lsl", "completeN_lsl", 
+               c("lsl_accScaled", "lsl_slopeScaled"))
+# Syllable SL composite score
+compositeAge <-
+  sumComposite("composite_ssl", "completeN_ssl", 
+               c("ssl_accScaled", "ssl_slopeScaled"))
+# Image SL composite score
+compositeAge <-
+  sumComposite("composite_vsl", "completeN_vsl", 
+               c("vsl_accScaled", "vsl_slopeScaled"))
+# Tone SL composite score
+compositeAge <-
+  sumComposite("composite_tsl", "completeN_tsl", 
+               c("tsl_accScaled", "tsl_slopeScaled"))
+```
+
+## Descriptive stats of accuracy and RT slopes (in all participants)
+```{r}
+getDescripStat <- function(group, col) {
+  compositeAge %>%
+      group_by(!!as.symbol(group)) %>%
+      dplyr::summarise(mean = mean((!!as.symbol(col)), na.rm = TRUE),
+                sd = sd((!!as.symbol(col)), na.rm = TRUE),
+                n = n()) %>%
+      mutate(se = sd / sqrt(n),
+             lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+             upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se) %>%
+      select(!!as.symbol(group), mean, lower_ci, upper_ci) %>%
+    slice(match(c("adult", "TD"), group))
+}
+
+getDescripStat("group", "lsl_acc")
+getDescripStat("group", "ssl_acc")
+getDescripStat("group", "vsl_acc")
+getDescripStat("group", "tsl_acc")
+
+getDescripStat("group", "lsl_slope")
+getDescripStat("group", "ssl_slope")
+getDescripStat("group", "vsl_slope")
+getDescripStat("group", "tsl_slope")
+
+getDescripStat("group", "composite_lsl")
+getDescripStat("group", "composite_ssl")
+getDescripStat("group", "composite_vsl")
+getDescripStat("group", "composite_tsl")
+
+# getDescripStat("age_group", "composite_ling")
+# getDescripStat("age_group", "composite_nonling")
+```
+
+## SL Group Comparison Composite: SL Composite Scores LMER
+```{r}
+compositeGroup <-
+  compositeAge[, c(
+    "part_id",
+    "group",
+    "gender",
+    "age_at_web_month",
+    "age_at_web_year",
+    "composite_lsl",
+    "composite_ssl",
+    "composite_vsl",
+    "composite_tsl")]
+
+compositeGroupL <-
+  melt(
+    compositeGroup,
+    id.vars = c(
+      "part_id",
+      "group",
+      "gender",
+      "age_at_web_month",
+      "age_at_web_year"))
+
+colnames(compositeGroupL)[colnames(compositeGroupL) %in% c("variable", "value")] <- c("task", "composite_score")
+compositeGroupL <- add_dom_mod_func(compositeGroupL)
+compositeGroupL$task <- as.factor(compositeGroupL$task)
+compositeGroupL$part_id <- as.factor(compositeGroupL$part_id)
+compositeGroupL$age_at_web_month <- as.numeric(as.character(compositeGroupL$age_at_web_month))
+compositeGroupL$composite_score <- as.numeric(as.character(compositeGroupL$composite_score))
+
+compositeGroupL$group <-
+  factor(compositeGroupL$group,
+         levels = c("adult",
+                    "TD"))
+compositeGroupL <- compositeGroupL[order(compositeGroupL$group),]
+
+compositeGroupL$domain <-
+  factor(compositeGroupL$domain,
+         levels = c("nonling",
+                    "ling"))
+compositeGroupL <- compositeGroupL[order(compositeGroupL$domain),]
+
+compositeGroupL$modality <-
+  factor(compositeGroupL$modality,
+         levels = c("auditory",
+                    "visual"))
+compositeGroupL <- compositeGroupL[order(compositeGroupL$modality),]
+
+head(compositeGroupL)
+unique(compositeGroupL$part_id)
+
+compositeGroupL$taskName <- gsub("composite_", "", compositeGroupL$task)
+
+compositeGroupL <- merge(compositeGroupL, hit_trialN,
+                         by.x = c("part_id", "group", "taskName"), 
+                         by.y = c("id", "group", "task"), all.x = T)
+```
+
+
+```{r}
+composite_m1 <-
+  lmer(composite_score ~ group*domain*modality + (1+domain+modality|part_id), data = compositeGroupL, 
+       contrasts = list(domain = c(-0.5, 0.5), modality = c(-0.5, 0.5), group = c(-0.5, 0.5)))
+
+summary(composite_m1)
+``` 
+
+
+### Follow-up on composite score analysis
+# Section 5: SL Cross-sectional Development Analyses
+
+## Preprocess: scale age
+```{r}
+# IMPORTANT: Scale age so that age is on the same scale as composite scores
+compositeAge$age_scaled <- scale(compositeAge$age_at_web_year, center = T)
+# Regenerate a long data frame with GJT and composite scores across domains
+compositeAgeL <-
+  melt(
+    compositeAge[, c(
+      "part_id",
+      "group",
+      "age_group",
+      "age_at_web_month",
+      "age_at_web_year",
+      "age_scaled",
+      "kbit_matrices_raw",
+      "kbit_matrices_std",
+      "composite_nonling",
+      "composite_ling"
+    )],
+    id.vars = c(
+      "part_id",
+      "group",
+      "age_group",
+      "age_at_web_month",
+      "age_at_web_year",
+      "age_scaled",
+      "kbit_matrices_raw",
+      "kbit_matrices_std"
+    )
+  )
+
+colnames(compositeAgeL)[which(colnames(compositeAgeL) == "variable")] <- "domain"
+colnames(compositeAgeL)[which(colnames(compositeAgeL) == "value")] <- "composite_score"
+```
+
+## SL Cross-sectional Development Analyses: Continous Age and Composite Scores LMER
+```{r, eval = F}
+compositeAgeL$domain <- as.factor(compositeAgeL$domain)
+compositeAgeL$group <- as.factor(compositeAgeL$group)
+compositeAgeL$age_scaled <- as.numeric(as.character((compositeAgeL$age_scaled)))
+
+nCount <-
+compositeAgeL %>%
+  group_by(part_id) %>%
+  dplyr::summarise(n = n())
+
+which(nCount$n == 1)
+# Every participant has a linguistic and a nonlinguistic composite score
+
+compositeAgeL$domain <-
+  factor(compositeAgeL$domain,
+         levels = c("composite_nonling", "composite_ling"))
+compositeAgeL <- compositeAgeL[order(compositeAgeL$domain), ]
+
+compositeAgeL$group <-
+  factor(compositeAgeL$group, levels = c("adult", "TD"))
+compositeAgeL <- compositeAgeL[order(compositeAgeL$group), ]
+
+hist(compositeAgeL$composite_score)
+```
+
+```{r}
+age_composite_m1 <- 
+  lmer(composite_score ~ domain*age_scaled + kbit_matrices_std + (1|part_id),  
+       data = compositeAgeL,
+      contrasts = list(domain = c(-0.5, 0.5),
+                       group = c(-0.5, 0.5))
+     )
+
+summary(age_composite_m1)
+```
+
+
+### Age Analysis
+```{r}
+age_composite_m2 <- 
+  lmer(composite_score ~ domain*age_group + kbit_matrices_std + (1|part_id),  
+       data = compositeAgeL,
+      contrasts = list(domain = c(-0.5, 0.5),
+                       age_group = three_helmert)
+     )
+
+summary(age_composite_m2)
+```
+
+
+# Section 6: Individual difference: Correlations between tasks, age, language
+
+## Caculate correlations between all measures
+```{r}
+# Correlation matrix between ASD Lingusitic rt slope, composite and SCQ, RBS-R, Age
+library("RcmdrMisc")
+
+compositeCorr <- function(df, group) {
+  rcorr.adjust(as.matrix(df[which(df$group == group), c(
+    "age_at_web_year",
+    "kbit_matrices_raw",
+    "kbit_matrices_std",
+    "lsl_slope",
+    "ssl_slope",
+    "vsl_slope",
+    "tsl_slope",
+    "lsl_acc",
+    "ssl_acc",
+    "vsl_acc",
+    "tsl_acc",
+    "composite_lsl",
+    "composite_ssl",
+    "composite_vsl",
+    "composite_tsl",
+    "composite_ling",
+    "composite_nonling"
+    # "nonword_raw",
+    # "nonword_std",
+    # "rsr_home_raw",
+    # "rsr_home_standard",
+    # "a_prime",
+    # "gjt_std"
+  )]),
+  use = c("pairwise.complete.obs"))
+}
+
+# Extract correlation matrix:
+adult_corr_posthoc <- compositeCorr(compositeAge, "adult")
+
+td_corr_posthoc <- compositeCorr(compositeAge, "TD")
+
+write.csv(as.data.frame(td_corr_posthoc$R[1]), "/Users/jojohu/Documents/Qlab/manuscript_development/td_corr_r.csv")
+write.csv(as.data.frame(adult_corr_posthoc$R[1]), "/Users/jojohu/Documents/Qlab/manuscript_development/adult_corr_r.csv")
+write.csv(as.data.frame(td_corr_posthoc$R[3]), "/Users/jojohu/Documents/Qlab/manuscript_development/td_corr_p.csv")
+write.csv(as.data.frame(adult_corr_posthoc$R[3]), "/Users/jojohu/Documents/Qlab/manuscript_development/adult_corr_p.csv")
+
+
+# tdOLD_corr_posthoc <-  compositeCorr(compositeAgeTDO, "TD")
+
+# tdYOUNG_corr_posthoc <-  compositeCorr(compositeAgeTDY, "TD")
+
+# Flatten correlation matrix for plotting:
+flattenCorrMatrix <- function(cormat, pmat, nmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  = (cormat)[ut],
+    p = pmat[ut],
+    n = nmat[ut]
+  )
+}
+
+# Correlations wihtin all TD
+adult_corr_posthoc <-
+  flattenCorrMatrix(data.frame(adult_corr_posthoc$R[1]),
+                  data.frame(adult_corr_posthoc$R[3]),
+                  data.frame(adult_corr_posthoc$R[2]))
+# Correlations wihtin all TD
+td_corr_posthoc <-
+  flattenCorrMatrix(data.frame(td_corr_posthoc$R[1]),
+                  data.frame(td_corr_posthoc$R[3]),
+                  data.frame(td_corr_posthoc$R[2]))
+
+td_corr_posthoc$p <- round(td_corr_posthoc$p, 3)
+
+adult_corr_posthoc$p <- round(adult_corr_posthoc$p, 3)
+# adult_corr_posthoc <- adult_corr_posthoc[which(adult_corr_posthoc$p < 0.05),]
+
+
+# # Correlations wihtin older TD
+# tdOLD_corr_posthoc <-
+#   flattenCorrMatrix(data.frame(tdOLD_corr_posthoc$R[1]),
+#                   data.frame(tdOLD_corr_posthoc$R[3]),
+#                   data.frame(tdOLD_corr_posthoc$R[2]))
+
+# # Correlations wihtin younger TD
+# tdYOUNG_corr_posthoc <-
+#   flattenCorrMatrix(data.frame(tdYOUNG_corr_posthoc$R[1]),
+#                   data.frame(tdYOUNG_corr_posthoc$R[3]),
+#                   data.frame(tdYOUNG_corr_posthoc$R[2]))
+```
+
+
+
+
+
+### Section ?: PCA Analysis
+```{r}
+library("factoextra")
+pca_test <- prcomp(~ ., allData[,c("lsl_acc", 
+                                   "ssl_acc", 
+                                   "vsl_acc", 
+                                   "tsl_acc"
+                                   )], center = TRUE,scale. = TRUE, na.action=na.omit)
+
+print(pca_test)
+
+pcare <- summary(pca_test)
+
+# Only works when there is no missing data in the dataframe.
+library(ggbiplot)
+ggbiplot(pca_test, labels=pcare$part_id, ellipse=TRUE,  groups=pcare$group)
+
+# Results for Variables
+res.var <- get_pca_var(pca_test)
+res.var$coord          # Coordinates
+res.var$contrib        # Contributions to the PCs
+res.var$cos2           # Quality of representation 
+# Results for individuals
+res.ind <- get_pca_ind(pca_test)
+res.ind$coord          # Coordinates
+res.ind$contrib        # Contributions to the PCs
+res.ind$cos2           # Quality of representation
+```
+
+
+# Section 8: Prep Plotting
+
+## Accuracy Line Plot (no outliers)
+## Preprocess: set up within subject standard error function
+```{r}
+summarySEwithin <- function(data=NULL, measurevar, betweenvars=NULL, withinvars=NULL,
+                            idvar=NULL, na.rm=FALSE, conf.interval=.95, .drop=TRUE) {
+
+  # Ensure that the betweenvars and withinvars are factors
+  factorvars <- vapply(data[, c(betweenvars, withinvars), drop=FALSE],
+    FUN=is.factor, FUN.VALUE=logical(1))
+
+  if (!all(factorvars)) {
+    nonfactorvars <- names(factorvars)[!factorvars]
+    message("Automatically converting the following non-factors to factors: ",
+            paste(nonfactorvars, collapse = ", "))
+    data[nonfactorvars] <- lapply(data[nonfactorvars], factor)
+  }
+
+  # Get the means from the un-normed data
+  datac <- summarySE(data, measurevar, groupvars=c(betweenvars, withinvars),
+                     na.rm=na.rm, conf.interval=conf.interval, .drop=.drop)
+
+  # Drop all the unused columns (these will be calculated with normed data)
+  datac$sd <- NULL
+  datac$se <- NULL
+  datac$ci <- NULL
+
+  # Norm each subject's data
+  ndata <- normDataWithin(data, idvar, measurevar, betweenvars, na.rm, .drop=.drop)
+
+  # This is the name of the new column
+  measurevar_n <- paste(measurevar, "_norm", sep="")
+
+  # Collapse the normed data - now we can treat between and within vars the same
+  ndatac <- summarySE(ndata, measurevar_n, groupvars=c(betweenvars, withinvars),
+                      na.rm=na.rm, conf.interval=conf.interval, .drop=.drop)
+
+  # Apply correction from Morey (2008) to the standard error and confidence interval
+  #  Get the product of the number of conditions of within-S variables
+  nWithinGroups    <- prod(vapply(ndatac[,withinvars, drop=FALSE], FUN=nlevels,
+                           FUN.VALUE=numeric(1)))
+  correctionFactor <- sqrt( nWithinGroups / (nWithinGroups-1) )
+
+  # Apply the correction factor
+  ndatac$sd <- ndatac$sd * correctionFactor
+  ndatac$se <- ndatac$se * correctionFactor
+  ndatac$ci <- ndatac$ci * correctionFactor
+
+  # Combine the un-normed means with the normed results
+  merge(datac, ndatac)
+}
+
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+    library(plyr)
+
+    # New version of length which can handle NA's: if na.rm==T, don't count them
+    length2 <- function (x, na.rm=FALSE) {
+        if (na.rm) sum(!is.na(x))
+        else       length(x)
+    }
+
+    # This does the summary. For each group's data frame, return a vector with
+    # N, mean, and sd
+    datac <- ddply(data, groupvars, .drop=.drop,
+      .fun = function(xx, col) {
+        c(N    = length2(xx[[col]], na.rm=na.rm),
+          mean = mean   (xx[[col]], na.rm=na.rm),
+          sd   = sd     (xx[[col]], na.rm=na.rm)
+        )
+      },
+      measurevar
+    )
+
+    # Rename the "mean" column    
+    datac <- rename(datac, c("mean" = measurevar))
+
+    datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+
+    # Confidence interval multiplier for standard error
+    # Calculate t-statistic for confidence interval: 
+    # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+    ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+    datac$ci <- datac$se * ciMult
+
+    return(datac)
+}
+
+normDataWithin <- function(data=NULL, idvar, measurevar, betweenvars=NULL,
+                           na.rm=FALSE, .drop=TRUE) {
+    library(plyr)
+
+    # Measure var on left, idvar + between vars on right of formula.
+    data.subjMean <- ddply(data, c(idvar, betweenvars), .drop=.drop,
+     .fun = function(xx, col, na.rm) {
+        c(subjMean = mean(xx[,col], na.rm=na.rm))
+      },
+      measurevar,
+      na.rm
+    )
+
+    # Put the subject means with original data
+    data <- merge(data, data.subjMean)
+
+    # Get the normalized data in a new column
+    measureNormedVar <- paste(measurevar, "_norm", sep="")
+    data[,measureNormedVar] <- data[,measurevar] - data[,"subjMean"] +
+                               mean(data[,measurevar], na.rm=na.rm)
+
+    # Remove this subject mean column
+    data$subjMean <- NULL
+
+    return(data)
+}
+```
+
+## Preprocess: calculate within subject standard error for accuracy
+## Change data
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(data.table)
+library(pastecs)
+
+bar_all <-  compositeAge[,c(which(str_detect(colnames(compositeAge), 
+                                          "part_id|group|age_group|ssl|lsl|vsl|tsl")))]
+```
+
+```{r}
+bar_all_long <- melt(bar_all, id.vars=c("part_id", "group", "age_group"))
+
+bar_acc <-
+  bar_all_long[which(str_detect(
+    bar_all_long$variable, "\\S{1}(?=sl_acc$)")),]
+
+library("data.table")
+
+bar_acc$variable <-
+revalue(bar_acc$variable, c("lsl_acc"="Letter",
+                                     "vsl_acc"="Image",
+                                   "tsl_acc"="Tone",
+                                     "ssl_acc"="Syllable"))
+
+bar_acc$variable <- 
+  factor(bar_acc$variable,levels = c("Image", 
+                                              "Letter", 
+                                              "Tone", 
+                                              "Syllable"))
+bar_acc <-
+  bar_acc[order(bar_acc$variable), ]
+
+bar_acc$value <- 
+  as.numeric(as.character(bar_acc$value))
+
+# detach(package:plyr)
+
+acc_within_stat <- summarySEwithin(bar_acc, measurevar="value", betweenvars = "group",
+                                   withinvars="variable", idvar="part_id", na.rm=T, conf.interval=.95)
+
+acc_within_stat_age <- summarySEwithin(bar_acc, measurevar="value", betweenvars = "age_group",
+                                   withinvars="variable", idvar="part_id", na.rm=T, conf.interval=.95)
+
+colnames(acc_within_stat)[colnames(acc_within_stat) == "group"] <- "Group"
+colnames(acc_within_stat_age)[colnames(acc_within_stat_age) == "age_group"] <- "Group"
+
+acc_within_stat$variable <-
+  factor(acc_within_stat$variable,
+         levels = c("Letter",
+                    "Syllable",
+                    "Image",
+                    "Tone"))
+
+acc_within_stat_age$variable <-
+  factor(acc_within_stat_age$variable,
+         levels = c("Letter",
+                    "Syllable",
+                    "Image",
+                    "Tone"))
+
+acc_within_stat$Group <-
+  factor(acc_within_stat$Group, levels = c("adult",
+                                             "TD"))
+
+acc_within_stat_age$Group <-
+  factor(acc_within_stat_age$Group, levels = c("Adult",
+                                               "Older TD",
+                                               "Younger TD"))
+```
+
+## Plot Accuracy Line Plot
+```{r}
+cbPalette <- c('#a6cee3','#1f78b4','#b2df8a', '#66c2a5','#fc8d62','#8da0cb', '#1b9e77','#d95f02','#7570b3')
+pd <- position_dodge(width = 0.2)
+
+acc_within_stat %>%
+  mutate(Group = factor(Group, levels=c("adult", "TD"))) %>%
+  mutate(Group = dplyr::recode(Group, "adult" = "Adult",  "TD" = "Children")) %>%
+  ggplot(aes(x = variable, y = value, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group),
+            position = pd,
+            size = 1.8) +
+  geom_errorbar(aes(ymin = value - se, ymax = value + se),
+                width = .1,
+                position = pd) +
+  geom_point(
+    aes(color = Group),
+    size = 4,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(title = "2AFC Accuracy",
+       x = "SL Task",  # Change x-axis label
+       y = "Mean Accuracy (%)") +
+  scale_color_manual(values = c("black", cbPalette[1])) +
+  scale_linetype_manual(values=c("dashed", "solid")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(
+    plot.title = element_text(size = 26, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 21, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+   ) +
+  geom_hline(yintercept = 0.5, size = 0.5, color = "black") +
+  # geom_segment(aes(x = 4.3, xend = 4.3, y = 0.48, yend = 0.5), 
+  #              arrow = arrow(length = unit(0.3, "cm"))) +
+  geom_text(aes(x = 3.95, y = 0.495, label = paste0("chance", "-level")), size = 4) +
+  geom_text(aes(x = 1, y = 0.83, label = paste0("**")), size = 10, color = "black") +
+  geom_text(aes(x = 2, y = 0.84, label = paste0("†")), size = 7, color = "black") +
+  geom_text(aes(x = 3, y = 0.83, label = paste0("***")), size = 10, color = "black") +
+  geom_text(aes(x = 4, y = 0.83, label = paste0("***")), size = 10, color = "black")
+
+ggsave("acc_across_group.png",
+       bg="transparent",width = 20, height = 20, units = "cm")
+```
+
+
+
+```{r}
+acc_within_stat_age %>%
+  ggplot(aes(x = variable, y = value, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group),
+            position = pd,
+            size = 1.8) +
+  geom_errorbar(aes(ymin = value - se, ymax = value + se),
+                width = .1,
+                position = pd) +
+  geom_point(
+    aes(color = Group),
+    size = 4,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(title = "2AFC Accuracy",
+       x = "SL Task",  # Change x-axis label
+       y = "Mean Accuracy (%)") +
+  scale_color_manual(values = c("black", cbPalette[1],  cbPalette[2])) +
+  scale_linetype_manual(values=c("dashed", "dotted", "twodash")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(
+    plot.title = element_text(size = 26, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 21, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+   ) 
+```
+
+
+
+
+## Preprocess: calculate within subject standard error for RT slope
+```{r}
+library(dplyr)
+library(ggplot2)
+
+bar_all_long <- melt(bar_all, id.vars=c("part_id", "group", "age_group"))
+
+bar_slope <-
+  bar_all_long[which(
+    str_detect(bar_all_long$variable, "\\S{3}(?=_slope$)")),]
+### Make a dataframe for plotting correlation between RT slope and hit trials
+slope_long <- bar_slope
+colnames(slope_long)[colnames(slope_long) == "variable"] <- "task"
+colnames(slope_long)[colnames(slope_long) == "value"] <- "rt_slope"
+slope_long$task <- gsub("_slope", "", slope_long$task)
+slope_long <- merge(slope_long, hit_trialN, by.x = c("part_id", "group", "task"), by.y = c("id", "group", "task"), all.x = T)
+
+
+bar_slope$variable <-
+revalue(bar_slope$variable, c("lsl_slope"="Letter",
+                                     "vsl_slope"="Image",
+                                     "tsl_slope"="Tone",
+                                     "ssl_slope"="Syllable"))
+
+bar_slope$variable <- 
+  factor(bar_slope$variable,levels = c("Image", 
+                                       "Letter", 
+                                       "Tone", 
+                                       "Syllable"))
+
+bar_slope <-
+  bar_slope[order(bar_slope$variable), ]
+
+bar_slope$value <- 
+  as.numeric(as.character(bar_slope$value))
+
+# detach(package:plyr)
+slope_within_stat <- summarySEwithin(bar_slope, measurevar="value", betweenvars = "group", withinvars="variable",
+                        idvar="part_id", na.rm=T, conf.interval=.95)
+slope_within_stat_age <- summarySEwithin(bar_slope, measurevar="value", betweenvars = "age_group", withinvars="variable",
+                        idvar="part_id", na.rm=T, conf.interval=.95)
+
+changeName <- function(df) {
+  colnames(df)[colnames(df) == "group"] <- "Group"
+  colnames(df)[colnames(df) == "age_group"] <- "Group"
+  colnames(df)[colnames(df) == "value"] <- "mean"
+  colnames(df)[colnames(df) == "se"] <- "std_error"
+  colnames(df)[colnames(df) == "variable"] <- "task"
+
+  df$task <-
+    factor(df$task, levels = c("Letter",
+                      "Syllable",
+                      "Image",
+                      "Tone"))
+  
+  return(df)
+}
+
+slope_within_stat <- changeName(slope_within_stat)
+slope_within_stat_age <- changeName(slope_within_stat_age)
+
+slope_within_stat$Group <-
+  factor(slope_within_stat$Group, levels = c("adult",
+                                             "TD"))
+slope_within_stat_age$Group <-
+  factor(slope_within_stat_age$Group, levels = c("Adult", 
+                                                     "Older TD",
+                                                     "Younger TD"))
+```
+
+## Plot RT Slope Line Plot (outliers removed)
+```{r}
+pd <- position_dodge(width = 0.2)
+
+slope_within_stat %>%
+  mutate(Group = factor(Group, levels=c("adult", "TD"))) %>%
+  mutate(Group = dplyr::recode(Group, "adult" = "Adult",  "TD" = "Children")) %>%
+  # filter(Group == "Adult") %>%
+  ggplot(aes(x = task, y = mean, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group),
+            position = pd,
+            size = 1.8) +
+  geom_errorbar(
+    aes(ymin = mean - std_error, ymax = mean + std_error),
+    width = .1,
+    position = pd
+  ) +
+  geom_point(
+    aes(color = Group),
+    size = 4,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(title = "SL Reaction Time Slope",
+       x = "SL Task",  # Change x-axis label
+       y = "Mean Reaction Time Slope (ms/trial)") +
+  scale_y_reverse() +
+  scale_color_manual(values = c("black", cbPalette[1])) +
+  scale_linetype_manual(values=c("dashed", "solid")) +
+  # scale_y_reverse() +
+  theme(plot.title = element_text(hjust = 0.35)) +
+  theme(
+    plot.title = element_text(size = 26, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 21, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )  +
+  # geom_hline(yintercept = 0, size = 0.5, color = "black") +
+  # geom_segment(aes(x = 4.3, xend = 4.3, y = 0.005, yend = 0.0005), 
+  #              arrow = arrow(length = unit(0.3, "cm"))) +
+  # geom_text(aes(x = 3.95, y = 0.0065, label = paste0("no", "-acceleration")), size = 4) +
+  geom_text(aes(x = 2, y = -7.5, label = paste0("***")), size = 10, color = "black") +
+  geom_text(aes(x = 3, y = -7.5, label = paste0("**")), size = 10, color = "black") +
+  geom_text(aes(x = 1, y = -8, label = paste0("†")), size = 6, color = "black")
+  
+
+ 
+ggsave(
+    "slope_across_group.png",
+     width = 20, height = 20, units = "cm"
+ )
+```
+
+
+```{r}
+slope_within_stat_age %>%
+  ggplot(aes(x = task, y = mean, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group),
+            position = pd,
+            size = 1.8) +
+  geom_errorbar(
+    aes(ymin = mean - std_error, ymax = mean + std_error),
+    width = .1,
+    position = pd
+  ) +
+  geom_point(
+    aes(color = Group),
+    size = 4,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(title = "SL Reaction Time Slope",
+       x = "SL Task",  # Change x-axis label
+       y = "Mean Reaction Time Slope (arbitrary unit/trial)") +
+  scale_y_reverse() +
+  scale_color_manual(values = c("black", cbPalette[1],  cbPalette[2])) +
+  scale_linetype_manual(values=c("dashed", "dotted", "twodash")) +
+  # scale_y_reverse() +
+  theme(plot.title = element_text(hjust = 0.35)) +
+  theme(
+    plot.title = element_text(size = 26, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )  +
+  geom_hline(yintercept = 0, color = "grey") 
+```
+
+
+
+### RT slopes and Hit trials correlation
+```{r}
+slope_long %>%
+  filter(task == "ssl" | task == "tsl") %>%
+  ggplot(aes(x = hit_trial_n, y = rt_slope)) +
+  geom_point(
+    aes(color = age_group),
+    size = 2,
+    position = pd,
+    alpha = 0.5
+  ) +
+  labs(  x = "Number of Hits",  # Change x-axis label
+       y = "Syllable SL RT Slope") +
+  facet_grid(~task)
+
+slope_long %>%
+  filter(task == "lsl" | task == "vsl") %>%
+  ggplot(aes(x = hit_trial_n, y = rt_slope)) +
+  geom_point(
+    aes(color = age_group),
+    size = 2,
+    position = pd,
+    alpha = 0.5
+  ) +
+  labs(  x = "Number of Hits",  # Change x-axis label
+       y = "Syllable SL RT Slope") +
+  facet_grid(~task)
+```
+
+
+```{r}
+slope_long %>%
+  filter(task == "ssl" | task == "tsl") %>%
+  ggplot(aes(x = age_group, y = hit_trial_n, fill = age_group)) +
+  geom_bar(stat = "summary",
+           fun = "mean",
+           position = position_dodge(),
+           width = 0.9) +
+  labs(  x = "Number of Hits",  # Change x-axis label
+       y = "Syllable SL RT Slope") +
+  facet_grid(~task)
+
+slope_long %>%
+  filter(task == "lsl" | task == "vsl") %>%
+  ggplot(aes(x = age_group, y = hit_trial_n, fill = age_group)) +
+  geom_bar(stat = "summary",
+           fun = "mean",
+           position = position_dodge(),
+           width = 0.9) +
+  labs(  x = "Number of Hits",  # Change x-axis label
+       y = "Syllable SL RT Slope") +
+  facet_grid(~task)
+```
+
+
+### RT Change across Hit Trials
+```{r}
+rt_trial_scaled %>%
+  filter(task == "ssl" | task == "tsl") %>%
+  # filter(group == "adult") %>%
+  ggplot(aes(x = targ_index, y = reaction_time)) +
+  # geom_point(
+  #   aes(color = age_group),
+  #   size = 2,
+  #   position = pd,
+  #   alpha = 0.5
+  # ) +
+  labs(  x = "Target Index",  # Change x-axis label
+       y = "Scaled Reaction Time to Target") +
+  facet_grid(~task) +
+  geom_smooth(aes(x = targ_index, y = reaction_time, group = part_id, color = age_group), method=lm, se=F, inherit.aes = F, size = 0.5)
+
+
+rt_trial_scaled %>%
+  filter(task == "lsl" | task == "vsl") %>%
+  # filter(group == "TD") %>%
+  ggplot(aes(x = targ_index, y = reaction_time)) +
+  # geom_point(
+  #   aes(color = age_group),
+  #   size = 2,
+  #   position = pd,
+  #   alpha = 0.5
+  # ) +
+  labs(x = "Target Index",  # Change x-axis label
+       y = "Scaled Reaction Time to Target") +
+  facet_grid(~task) +
+  geom_smooth(aes(x = targ_index, y = reaction_time, group = part_id, color = age_group), method=lm, se=F, inherit.aes = F, size = 0.5)
+```
+
+
+
+## Preprocess: calculate within subject standard error for Hit Rate
+```{r}
+library(dplyr)
+library(ggplot2)
+
+bar_all_long <- melt(bar_all, id.vars=c("part_id", "group", "age_group"))
+
+bar_hit <-
+  bar_all_long[which(
+    str_detect(bar_all_long$variable, "\\S{3}(?=_hit$)")),]
+### Make a dataframe for plotting correlation between RT slope and hit trials
+hit_long <- bar_hit
+colnames(hit_long)[colnames(hit_long) == "variable"] <- "task"
+colnames(hit_long)[colnames(hit_long) == "value"] <- "rt_slope"
+hit_long$task <- gsub("_slope", "", hit_long$task)
+hit_long <- merge(hit_long, hit_trialN, by.x = c("part_id", "group", "task"), by.y = c("id", "group", "task"), all.x = T)
+
+
+bar_hit$variable <-
+revalue(bar_hit$variable, c("lsl_hit"="Letter",
+                                     "vsl_hit"="Image",
+                                     "tsl_hit"="Tone",
+                                     "ssl_hit"="Syllable"))
+
+bar_hit$variable <- 
+  factor(bar_hit$variable,levels = c("Image", 
+                                       "Letter", 
+                                       "Tone", 
+                                       "Syllable"))
+
+bar_hit <-
+  bar_hit[order(bar_hit$variable), ]
+
+bar_hit$value <- 
+  as.numeric(as.character(bar_hit$value))
+
+# detach(package:plyr)
+hit_within_stat <- summarySEwithin(bar_hit, measurevar="value", betweenvars = "group", withinvars="variable",
+                        idvar="part_id", na.rm=T, conf.interval=.95)
+hit_within_stat_age <- summarySEwithin(bar_hit, measurevar="value", betweenvars = "age_group", withinvars="variable",
+                        idvar="part_id", na.rm=T, conf.interval=.95)
+
+changeName <- function(df) {
+  colnames(df)[colnames(df) == "group"] <- "Group"
+  colnames(df)[colnames(df) == "age_group"] <- "Group"
+  colnames(df)[colnames(df) == "value"] <- "mean"
+  colnames(df)[colnames(df) == "se"] <- "std_error"
+  colnames(df)[colnames(df) == "variable"] <- "task"
+
+  df$task <-
+    factor(df$task, levels = c("Letter",
+                      "Syllable",
+                      "Image",
+                      "Tone"))
+  
+  return(df)
+}
+
+hit_within_stat <- changeName(hit_within_stat)
+hit_within_stat_age <- changeName(hit_within_stat_age)
+
+hit_within_stat$Group <-
+  factor(hit_within_stat$Group, levels = c("adult",
+                                             "TD"))
+hit_within_stat_age$Group <-
+  factor(hit_within_stat_age$Group, levels = c("Adult", 
+                                                     "Older TD",
+                                                     "Younger TD"))
+```
+
+
+
+```{r}
+pd <- position_dodge(width = 0.2)
+
+hit_within_stat %>%
+  # filter(task != "Syllable") %>%
+  mutate(Group = factor(Group, levels=c("adult", "TD"))) %>%
+  mutate(Group = dplyr::recode(Group, "adult" = "Adult",  "TD" = "Children")) %>%
+  ggplot(aes(x = task, y = mean, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group),
+            position = pd,
+            size = 1.8) +
+  geom_errorbar(
+    aes(ymin = mean - std_error, ymax = mean + std_error),
+    width = .1,
+    position = pd
+  ) +
+  geom_point(
+    aes(color = Group),
+    size = 4,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(title = "SL Hit Rate",
+       x = "SL Task",  # Change x-axis label
+       y = "Mean Hit Rate") +
+  scale_color_manual(values = c("black", cbPalette[1])) +
+  scale_linetype_manual(values=c("dashed", "solid")) +
+  # scale_y_reverse() +
+  theme(plot.title = element_text(hjust = 0.35)) +
+  theme(
+    plot.title = element_text(size = 26, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 21, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) +
+  geom_text(aes(x = 1, y = 1.05, label = paste0("***")), size = 10, color = "black") +
+  geom_text(aes(x = 2, y = 1.05, label = paste0("***")), size = 10, color = "black") +
+  geom_text(aes(x = 3, y = 1.05, label = paste0("***")), size = 10, color = "black")
+
+
+
+ggsave("hit_across_task.png",
+        bg="transparent", width = 20, height = 20, units = "cm")
+
+# ggsave("hit_across_task_no_ssl.png",
+#         bg="transparent", width = 15, height = 15, units = "cm")
+```
+
+
+```{r}
+hit_within_stat_age %>%
+  # filter(task != "Syllable") %>%
+  ggplot(aes(x = task, y = mean, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group),
+            position = pd,
+            size = 1.8) +
+  geom_errorbar(
+    aes(ymin = mean - std_error, ymax = mean + std_error),
+    width = .1,
+    position = pd
+  ) +
+  geom_point(
+    aes(color = Group),
+    size = 4,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(title = "SL Hit Rate",
+       x = "SL Task",  # Change x-axis label
+       y = "Mean Hit Rate") +
+  scale_color_manual(values = c("black", cbPalette[1],  cbPalette[2])) +
+  scale_linetype_manual(values=c("dashed", "dotted", "twodash")) +
+  # scale_y_reverse() +
+  theme(plot.title = element_text(hjust = 0.35)) +
+  theme(
+    plot.title = element_text(size = 26, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) 
+```
+
+
+
+## Plot Accuracy by Domain and Hit Rate Line Plot
+```{r}
+library(ggpubr)
+
+acc_domain_mean <-
+  acc_trial %>%
+  filter(!is.na(hit_group)) %>%
+  # filter(task == "ssl" | task == "tsl") %>%
+  mutate(corr = as.numeric(as.character(corr))) %>%
+  group_by(subj, group, task) %>%
+  dplyr::summarise(mean_corr = mean(corr, na.rm = T)) %>%
+  # dplyr::select(part_id, task, sentence, mean, se, lower_ci, upper_ci, n) %>%
+  arrange(group, task)
+  
+
+acc_domain_mean <- 
+  merge(acc_domain_mean, hit_trialNAd, by.x = c("subj", "group", "task"), by.y = c("id", "group", "task"), all.x = T)
+
+acc_domain_mean <- 
+  acc_domain_mean %>%
+  mutate(task = factor(
+    # domain, levels=c("ling", "nonling")
+    task, levels=c("lsl", "ssl", "vsl", "tsl")
+    )) %>%
+  mutate(group = dplyr::recode(group, "adult" = "Adult",  "TD" = "Children"),
+        # domain = dplyr::recode(domain, "ling" = "Linguistic",  "nonling" = "Nonlinguistic"),
+        task = dplyr::recode(task, "lsl" = "Letter",  "ssl" = "Syllable", "vsl" = "Image", "tsl" = "Tone")
+        ) %>%
+   mutate(Task = task)
+```
+
+
+
+
+```{r}
+# Two TD children don't have Online RT Data
+acc_domain_mean %>%
+  # filter(task == "ssl" | task == "tsl") %>%
+  ggplot(aes(x = hit_trial_n, y = mean_corr, color = Task)) +
+  facet_wrap(~group + task) +
+  geom_point(aes(shape = type), size = 2, shape = 1, position = pd, stroke = 1, alpha = 0.7) +
+  # scale_fill_manual(values = c("white", "white")) +
+  # scale_color_manual(values = c("#1B9E77","#D95F02")) +
+  # guides(fill="none") +
+  # scale_pattern_spacing_discrete(range = c(0.025, 0.05)) + 
+  # scale_pattern_manual(values = c(Linguistic = "stripe", Nonlinguistic = "none")) +
+  labs(y = "Accuracy (%)") +  # Change x-axis label
+  labs(x = "Hit Rate (%)") + 
+  # theme(plot.title = element_text(hjust = 0.95)) +
+  theme(plot.title = element_text(size = 22, face = "bold"),
+        axis.title.x=element_text(size = 22, face = "bold"),
+        axis.title.y = element_text(size = 22, face = "bold"),
+        axis.text = element_text(size = 24, face = "bold"),
+        axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+        axis.line.y = element_line(colour = "black", size = 1),   # Add line to y axis
+        legend.text = element_text(size = 18, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        # legend.position = c(0.88, 0.88),
+        legend.background = element_rect(fill = "#ffffff00"),
+        # legend.key  = element_rect(fill = "black"),              # Set legend item backgrounds to white
+        panel.background = element_rect(fill = "white"),
+        # Change facet text size
+        strip.text = element_text(size = 24, face = "bold"),
+        # Change facet text
+        strip.background = element_rect(fill = "white", size = 1),
+        # Change facet color
+        panel.spacing = unit(.05, "lines"),
+        # Add panel border
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+        ) +
+  geom_smooth(data = acc_domain_mean[which(acc_domain_mean$group == "Children" & acc_domain_mean$Task == "Linguistic"),],
+              aes(x = hit_trial_n, y = mean_corr), size = 1.7,
+              method=lm, se=F, inherit.aes = F, color = "#66C2A5") +
+  geom_smooth(data = acc_domain_mean[which(acc_domain_mean$group == "Children" & acc_domain_mean$Task == "Nonlinguistic"),],
+              aes(x = hit_trial_n, y = mean_corr), size = 1.7,
+              method=lm, se=F, inherit.aes = F, color = "#D95F02") +
+  geom_smooth(data = acc_domain_mean[which(acc_domain_mean$group == "Adult" & acc_domain_mean$Task == "Linguistic"),],
+              aes(x = hit_trial_n, y = mean_corr), size = 1.7,
+              method=lm, se=F, inherit.aes = F, color = "#66C2A5") +
+  geom_smooth(data = acc_domain_mean[which(acc_domain_mean$group == "Adult" & acc_domain_mean$Task == "Nonlinguistic"),],
+              aes(x = hit_trial_n, y = mean_corr), size = 1.7,
+              method=lm, se=F, inherit.aes = F, color = "#D95F02") 
+              
+
+ggsave("acc_hit_line_plot.png",
+        bg="transparent", width = 30, height = 15, units = "cm")
+
+```
+
+
+```{r}
+cor.test(acc_domain_mean[which(acc_domain_mean$group == "Children" & acc_domain_mean$Domain == "Linguistic"),]$mean_hit_rate,
+    acc_domain_mean[which(acc_domain_mean$group == "Children" & acc_domain_mean$Domain == "Linguistic"),]$mean_corr)
+
+cor.test(acc_domain_mean[which(acc_domain_mean$group == "Children" & acc_domain_mean$Domain == "Nonlinguistic"),]$mean_hit_rate,
+    acc_domain_mean[which(acc_domain_mean$group == "Children" & acc_domain_mean$Domain == "Nonlinguistic"),]$mean_corr)
+
+cor.test(acc_domain_mean[which(acc_domain_mean$group == "Adult" & acc_domain_mean$Domain == "Nonlinguistic"),]$mean_hit_rate,
+    acc_domain_mean[which(acc_domain_mean$group == "Adult" & acc_domain_mean$Domain == "Nonlinguistic"),]$mean_corr)
+
+cor.test(acc_domain_mean[which(acc_domain_mean$group == "Adult" & acc_domain_mean$Domain == "Linguistic"),]$mean_hit_rate,
+    acc_domain_mean[which(acc_domain_mean$group == "Adult" & acc_domain_mean$Domain == "Linguistic"),]$mean_corr)
+```
+
+
+## Plot Accuracy by Domain and Hit Rate Bar Plot
+```{r}
+library(ggpubr)
+library(ggpattern)
+
+# Two TD children don't have Online RT Data and thus no hit rate grouping
+acc_trial %>%
+  filter(!is.na(hit_group)) %>%
+  mutate(corr = as.numeric(as.character(corr))) %>%
+  mutate(hit_group = as.factor(as.character(hit_group))) %>%
+  group_by(group, hit_group, task) %>%
+  dplyr::summarise(mean = mean(corr, na.rm = T), 
+                   sd = sd(corr, na.rm = T), 
+                   n = length(!is.na(corr))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se) %>%
+  # dplyr::select(part_id, task, sentence, mean, se, lower_ci, upper_ci, n) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  arrange(group, hit_group, task) %>%
+  # mutate(domain = factor(domain, levels=c("ling", "nonling"))) %>%
+  mutate(task = factor(task, levels=c("lsl", "ssl", "vsl", "tsl"))) %>%
+  
+  mutate(group = dplyr::recode(group, "adult" = "Adult",  "TD" = "Children"),
+        # domain = dplyr::recode(domain, "ling" = "Linguistic",  "nonling" = "Nonlinguistic"),
+        task = dplyr::recode(task, "lsl" = "Letter",  "ssl" = "Syllable", "vsl" = "Image", "tsl" = "Tone"),
+         hit_group = dplyr::recode(hit_group, "lower_hit" = "Lower Hit",  "higher_hit" = "Higher Hit")) %>%
+  ggplot(aes(x = task, y = mean,
+             ymin = mean - se, 
+             ymax = mean + se,
+             pattern = hit_group,
+             fill = group)) +
+  facet_wrap(~group) +
+  # scale_fill_manual(values = c("white", "white")) +
+  scale_fill_manual(values = c("dark grey", cbPalette[1])) +
+  guides(fill="none") +
+  geom_col_pattern(width = 0.9,
+    position = position_dodge(),
+    pattern_density = 0.1,
+    pattern_spacing = 0.025,
+    pattern_key_scale_factor = 0.6,
+    color = "#000000",
+    pattern_colour = "black",
+    pattern_fill = "black") +
+  scale_pattern_manual(values = c("none", "stripe")) +
+  # scale_pattern_spacing_discrete(range = c(0.025, 0.05)) + 
+  guides(pattern = guide_legend(title="Hit Rate Group", color = "black", override.aes = list(fill = c("white", "white")))) +
+  geom_errorbar(width = .1, position = position_dodge(width = 0.9)) +
+  # scale_pattern_manual(values = c(Linguistic = "stripe", Nonlinguistic = "none")) +
+  labs(y = "Accuracy (%)") +  # Change x-axis label
+  # theme(plot.title = element_text(hjust = 0.95)) +
+  theme(plot.title = element_text(size = 22, face = "bold"),
+        axis.title.x=element_blank(),
+        axis.title.y = element_text(size = 22, face = "bold"),
+        axis.text = element_text(size = 24, face = "bold"),
+        axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+        axis.line.y = element_line(colour = "black", size = 1),   # Add line to y axis
+        legend.text = element_text(size = 18, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        # legend.position = c(0.88, 0.88),
+        legend.background = element_rect(fill = "#ffffff00"),
+        legend.key  = element_rect(fill = "black"),              # Set legend item backgrounds to white
+        panel.background = element_rect(fill = "white"),
+        # Change facet text size
+        strip.text = element_text(size = 24, face = "bold"),
+        # Change facet text
+        strip.background = element_rect(fill = "white", size = 1),
+        # Change facet color
+        panel.spacing = unit(.05, "lines"),
+        # Add panel border
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+        ) 
+
+
+ggsave("acc_hit_task.png",
+        bg="transparent", width = 35, height = 15, units = "cm")
+```
+
+
+
+
+```{r}
+library(ggpubr)
+library(ggpattern)
+
+# Two TD children don't have Online RT Data and thus no hit rate grouping
+acc_trial[-which(acc_trial$group == "adult" & (acc_trial$task == "vsl" | acc_trial$task == "lsl")),] %>%
+  filter(!is.na(hit_group)) %>%
+  mutate(corr = as.numeric(as.character(corr))) %>%
+  mutate(hit_group = as.factor(as.character(hit_group))) %>%
+  group_by(group, hit_group, domain) %>%
+  dplyr::summarise(mean = mean(corr, na.rm = T), 
+                   sd = sd(corr, na.rm = T), 
+                   n = length(!is.na(corr))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se) %>%
+  # dplyr::select(part_id, task, sentence, mean, se, lower_ci, upper_ci, n) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  arrange(group, hit_group, domain) %>%
+  mutate(domain = factor(domain, levels=c("ling", "nonling"))) %>%
+  # mutate(task = factor(task, levels=c("lsl", "ssl", "vsl", "tsl"))) %>%
+  
+  mutate(group = dplyr::recode(group, "adult" = "Adult",  "TD" = "Children"),
+        domain = dplyr::recode(domain, "ling" = "Linguistic",  "nonling" = "Nonlinguistic"),
+        # task = dplyr::recode(task, "lsl" = "Letter",  "ssl" = "Syllable", "vsl" = "Image", "tsl" = "Tone"),
+         hit_group = dplyr::recode(hit_group, "lower_hit" = "Lower Hit",  "higher_hit" = "Higher Hit")) %>%
+  ggplot(aes(x = domain, y = mean,
+             ymin = mean - se, 
+             ymax = mean + se,
+             pattern = hit_group,
+             fill = group)) +
+  facet_wrap(~group) +
+  # scale_fill_manual(values = c("white", "white")) +
+  scale_fill_manual(values = c("dark grey", cbPalette[1])) +
+  guides(fill="none") +
+  geom_col_pattern(width = 0.9,
+    position = position_dodge(),
+    pattern_density = 0.1,
+    pattern_spacing = 0.025,
+    pattern_key_scale_factor = 0.6,
+    color = "#000000",
+    pattern_colour = "black",
+    pattern_fill = "black") +
+  scale_pattern_manual(values = c("none", "stripe")) +
+  # scale_pattern_spacing_discrete(range = c(0.025, 0.05)) + 
+  guides(pattern = guide_legend(title="Hit Rate Group", color = "black", override.aes = list(fill = c("white", "white")))) +
+  geom_errorbar(width = .1, position = position_dodge(width = 0.9)) +
+  # scale_pattern_manual(values = c(Linguistic = "stripe", Nonlinguistic = "none")) +
+  labs(y = "Accuracy (%)") +  # Change x-axis label
+  # theme(plot.title = element_text(hjust = 0.95)) +
+  theme(plot.title = element_text(size = 22, face = "bold"),
+        axis.title.x=element_blank(),
+        axis.title.y = element_text(size = 22, face = "bold"),
+        axis.text = element_text(size = 24, face = "bold"),
+        axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+        axis.line.y = element_line(colour = "black", size = 1),   # Add line to y axis
+        legend.text = element_text(size = 18, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        # legend.position = c(0.88, 0.88),
+        legend.background = element_rect(fill = "#ffffff00"),
+        legend.key  = element_rect(fill = "black"),              # Set legend item backgrounds to white
+        panel.background = element_rect(fill = "white"),
+        # Change facet text size
+        strip.text = element_text(size = 24, face = "bold"),
+        # Change facet text
+        strip.background = element_rect(fill = "white", size = 1),
+        # Change facet color
+        panel.spacing = unit(.05, "lines"),
+        # Add panel border
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+        ) 
+
+
+ggsave("acc_hit_domain.png",
+        bg="transparent", width = 35, height = 15, units = "cm")
+```
+
+
+
+
+```{r}
+acc_trial %>%
+  filter(!is.na(hit_group)) %>%
+  mutate(corr = as.numeric(as.character(corr))) %>%
+  mutate(hit_group = as.factor(as.character(hit_group))) %>%
+  group_by(age_group, hit_group, domain) %>%
+  dplyr::summarise(mean = mean(corr, na.rm = T), 
+                   sd = sd(corr, na.rm = T), 
+                   n = length(!is.na(corr))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se) %>%
+  # dplyr::select(part_id, task, sentence, mean, se, lower_ci, upper_ci, n) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  arrange(age_group, hit_group, domain) %>%
+  mutate(domain = factor(domain, levels=c("ling", "nonling"))) %>%
+  mutate(age_group = dplyr::recode(age_group, "adult" = "Adult"),
+        domain = dplyr::recode(domain, "ling" = "Linguistic",  "nonling" = "Nonlinguistic"),
+         hit_group = dplyr::recode(hit_group, "lower_hit" = "Lower Hit",  "higher_hit" = "Higher Hit")) %>%
+  ggplot(aes(x = domain, y = mean,
+             ymin = mean - se, 
+             ymax = mean + se,
+             pattern = hit_group,
+             fill = age_group)) +
+  facet_wrap(~age_group) +
+  # scale_fill_manual(values = c("white", "white")) +
+  scale_fill_manual(values = c("dark grey", cbPalette[1],  cbPalette[2])) +
+  guides(fill="none") +
+  geom_col_pattern(width = 0.9,
+    position = position_dodge(),
+    pattern_density = 0.1,
+    pattern_spacing = 0.025,
+    pattern_key_scale_factor = 0.6,
+    color = "#000000",
+    pattern_colour = "black",
+    pattern_fill = "black") +
+  scale_pattern_manual(values = c("none", "stripe", "dotted")) +
+  # scale_pattern_spacing_discrete(range = c(0.025, 0.05)) + 
+  guides(pattern = guide_legend(title="Hit Rate Group", color = "black", override.aes = list(fill = c("white", "white")))) +
+  geom_errorbar(width = .1, position = position_dodge(width = 0.9)) +
+  # scale_pattern_manual(values = c(Linguistic = "stripe", Nonlinguistic = "none")) +
+  labs(y = "Accuracy (%)") +  # Change x-axis label
+  # theme(plot.title = element_text(hjust = 0.95)) +
+  theme(plot.title = element_text(size = 22, face = "bold"),
+        axis.title.x=element_blank(),
+        axis.title.y = element_text(size = 22, face = "bold"),
+        axis.text = element_text(size = 24, face = "bold"),
+        axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+        axis.line.y = element_line(colour = "black", size = 1),   # Add line to y axis
+        legend.text = element_text(size = 18, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        # legend.position = c(0.88, 0.88),
+        legend.background = element_rect(fill = "#ffffff00"),
+        legend.key  = element_rect(fill = "black"),              # Set legend item backgrounds to white
+        panel.background = element_rect(fill = "white"),
+        # Change facet text size
+        strip.text = element_text(size = 24, face = "bold"),
+        # Change facet text
+        strip.background = element_rect(fill = "white", size = 1),
+        # Change facet color
+        panel.spacing = unit(.05, "lines"),
+        # Add panel border
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+        ) 
+ # + geom_text(aes(x = 1.5, y = 0.8, label = paste0("*")),
+ #            size = 14, 
+ #            color = "black",
+ #            data = data.frame(
+ #              group = "Adult",
+ #              mean = 0.8,
+ #             se = 0,
+ #            domain = 0,
+ #             hit_group = 0
+ #              )) 
+
+ggsave("acc_hit_age_group.png",
+        bg="transparent", width = 26, height = 15, units = "cm")
+```
+
+
+
+
+
+
+
+
+
+## Preprocess: calculate within subject standard error for composite scores
+```{r}
+composite_within_stat <-
+  summarySEwithin(
+    compositeGroupL,
+    measurevar = "composite_score",
+    betweenvars = "group",
+    withinvars = "task",
+    idvar = "part_id",
+    na.rm = T,
+    conf.interval = .95
+  )
+colnames(composite_within_stat)[colnames(composite_within_stat) == "group"] <-
+  "Group"
+composite_within_stat$task <-
+  revalue(
+    composite_within_stat$task,
+    c(
+      "composite_lsl" = "Letter",
+      "composite_tsl" = "Tone",
+      "composite_ssl" = "Syllable",
+      "composite_vsl" = "Image"
+    )
+  )
+composite_within_stat$task <-
+  factor(composite_within_stat$task,
+         levels = c("Letter",
+                    "Syllable",
+                    "Image",
+                    "Tone"))
+composite_within_stat$Group <-
+  factor(composite_within_stat$Group, levels = c("adult", "TD"))
+
+compositeGroupL <- 
+  merge(compositeGroupL, unique(tdAge[,c("part_id", "group", "age_group", "ageSplit")]), 
+        by = c("part_id", "group"), all.x = T)
+
+compositeGroupL[which(compositeGroupL$group == "adult"), "age_group"] <- "Adult"
+compositeGroupL[which(compositeGroupL$group == "adult"), "ageSplit"] <- "Adult"
+
+composite_within_stat_age <-
+  summarySEwithin(
+    compositeGroupL,
+    measurevar = "composite_score",
+    betweenvars = "age_group",
+    withinvars = "task",
+    idvar = "part_id",
+    na.rm = T,
+    conf.interval = .95
+  )
+
+colnames(composite_within_stat_age)[colnames(composite_within_stat_age) == "group"] <-
+  "Group"
+composite_within_stat_age$task <-
+  revalue(
+    composite_within_stat_age$task,
+    c(
+      "composite_lsl" = "Letter",
+      "composite_tsl" = "Tone",
+      "composite_ssl" = "Syllable",
+      "composite_vsl" = "Image"
+    )
+  )
+composite_within_stat_age$task <-
+  factor(composite_within_stat_age$task,
+         levels = c("Letter",
+                    "Syllable",
+                    "Image",
+                    "Tone"))
+composite_within_stat_age$age_group <-
+  factor(composite_within_stat_age$age_group, levels = c("Adult", 
+                                                     "Older TD",
+                                                     "Younger TD"))
+```
+
+## Plot Composite Score Line Plot
+```{r}
+composite_within_stat %>%
+  ggplot(aes(x = task, y = composite_score, group = Group)) +
+  geom_line(aes(linetype = Group, color = Group),
+            position = pd,
+            size = 1.8) +
+  geom_errorbar(
+    aes(ymin = composite_score - se, ymax = composite_score + se),
+    width = .1,
+    position = pd
+  ) +
+  geom_point(
+    aes(color = Group),
+    size = 4,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(title = "SL Composite Scores",
+       x = "SL Task",  # Change x-axis label
+       y = "Composite Score") +
+  scale_color_manual(values = c("black", cbPalette[1])) +
+  scale_linetype_manual(values=c("dashed", "solid")) +
+  theme(plot.title = element_text(hjust = 0.4)) +
+  theme(
+    plot.title = element_text(size = 26, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+
+# ggsave(
+#   "behavioral_composite_across_group.png",
+#   bg = "transparent",
+#   width = 15,
+#   height = 15,
+#   units = "cm"
+# )
+```
+
+
+```{r}
+composite_within_stat_age %>%
+  ggplot(aes(x = task, y = composite_score, group = age_group)) +
+  geom_line(aes(linetype = age_group, color = age_group),
+            position = pd,
+            size = 1.8) +
+  geom_errorbar(
+    aes(ymin = composite_score - se, ymax = composite_score + se),
+    width = .1,
+    position = pd
+  ) +
+  geom_point(
+    aes(color = age_group),
+    size = 4,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(title = "SL Composite Scores",
+       x = "SL Task",  # Change x-axis label
+       y = "Composite Score") +
+  scale_color_manual(values = c("black", cbPalette[1],  cbPalette[2])) +
+  scale_linetype_manual(values=c("dashed", "dotted", "twodash")) +
+  theme(plot.title = element_text(hjust = 0.4)) +
+  theme(
+    plot.title = element_text(size = 26, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+```
+
+
+
+```{r, eval = F, include = F}
+corrPlotDF <- compositeAge
+corrPlotDF$Group <- corrPlotDF$group
+
+corrPlotDF %>%
+  filter(group == "ASD") %>%
+  ggplot(aes(x = composite_ssl, y = nonword_raw, group = Group)) +
+  geom_point(
+    color = cbPalette[1],
+    size = 6,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(
+       y = "Nonword Repetition Raw Scores",  # Change x-axis label
+       x = "Syllable SL Composite Scores") +
+  geom_smooth(method='lm', formula= y~x, se=F, color = "black") +
+  # scale_color_manual(values = c(cbPalette[8])) +
+  theme(plot.title = element_text(hjust = 0.4)) +
+  theme(
+    plot.title = element_text(size = 10, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+
+# ggsave("/Users/jojohu/Downloads/nonword_ssl_beh_corr.png",
+#        bg = "transparent",
+#   width = 15,
+#   height = 15,
+#   units = "cm")
+```
+
+
+```{r, eval = F, include = F}
+corrPlotDF %>%
+  filter(group == "ASD") %>%
+  ggplot(aes(x = composite_lsl, y = rsr_home_raw, group = Group)) +
+  geom_point(
+    color = cbPalette[1],
+    size = 6,
+    position = pd,
+    show.legend = FALSE
+  ) +
+  geom_point(size = 3,
+             color = "white",
+             position = pd) +
+  labs(
+       y = "Sentence Repetition Raw Scores",  # Change x-axis label
+       x = "Letter SL Composite Scores") +
+  geom_smooth(method='lm', formula= y~x, se=F, color = "black") +
+  # scale_color_manual(values = c(cbPalette[8])) +
+  theme(plot.title = element_text(hjust = 0.4)) +
+  theme(
+    plot.title = element_text(size = 10, face = "bold"),
+    axis.title.x = element_text(size = 21, face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 16, face = "bold")
+  ) +
+  theme(
+    legend.text = element_text(size = 22, face = "bold"),
+    legend.title = element_text(size = 22, face = "bold")
+  ) +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    # Set plot background to white
+    legend.key  = element_rect(fill = "white"),
+    # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),
+    # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  )
+
+# ggsave("/Users/jojohu/Downloads/rsr_lsl_beh_corr.png",
+#        bg = "transparent",
+#   width = 15,
+#   height = 15,
+#   units = "cm")
+
+```
+
+
+
+
+
+```{r}
+blast_adult_wide %>%
+  #filter(!(abs(age_at_web_year - mean(age_at_web_year)) > 2*sd(age_at_web_year))) %>%
+  ggplot(aes(x = age_at_web_year, y = lsl_acc)) +
+  geom_point()
+   
+```
+
+
+```{r}
+ssl_struc <- read.csv("/Users/jojohu/Downloads/ssl_structured_lang_loc_parcels_TD.csv")
+ssl_random <- read.csv("/Users/jojohu/Downloads/ssl_random_lang_loc_parcels_TD.csv")
+
+ssl_struc <- ssl_struc[,c(intersect(colnames(ssl_struc), colnames(ssl_random)))]
+ssl_random <- ssl_random[,c(intersect(colnames(ssl_struc), colnames(ssl_random)))]
+
+ssl_struc$condition <- "Structure"
+ssl_random$condition <- "Random"
+
+ssl_fmri <- rbind(ssl_struc, ssl_random)
+
+library(reshape)
+library(stringr)
+
+
+ssl_fmriL <- melt(ssl_fmri, id.vars= c("Row", "condition"))
+ssl_fmriL$variable <- str_extract(ssl_fmriL$variable, "(?<=resampled_)\\S+")
+
+ssl_fmriL <- ssl_fmriL[-which(str_detect(ssl_fmriL$variable, "Right\\S+")),]
+
+colnames(ssl_fmriL) <- c("part_id", "Condition", "ROI", "Beta")
+
+library(dplyr)
+fmriPlot <- 
+ssl_fmriL %>%
+  group_by(Condition, ROI) %>%
+  dplyr::summarise(
+    mean = mean(Beta),
+    sd = sd(Beta),
+    n = n()
+  ) %>%
+  mutate(
+    se = sd / sqrt(n),
+    lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+    upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se
+  )
+
+# write.csv(fmriPlot, "/Users/jojohu/Downloads/fmri_descip.csv")
+  # dplyr::select(group, mean, se) %>%
+  # mutate(across(3:5, round, 3))
+library(ggplot2)
+fmriPlot %>%
+ggplot(aes(x = ROI, y = mean, fill = Condition)) +
+  geom_bar(
+    color = 'black', width=.9,
+    position = position_dodge(),
+    stat = "identity"
+  ) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                width = .5,
+                position =  position_dodge(width = 0.9)) +
+    scale_fill_brewer(type = 'seq',palette = 'Purples') +
+ labs(x = "Brain Region (Parcels)",  # Change x-axis label
+         y = "Mean Activation (Beta)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(
+        plot.title = element_text(size=16, face="bold"),
+        axis.title.x = element_text(size=12, face="bold"),
+        axis.title.y = element_text(size=14, face="bold"),
+        axis.text=element_text(size=8, face = "bold"),
+        axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5)
+        ) +
+  # theme(aspect.ratio = 2/1, legend.title = element_blank(),axis.ticks.x = element_blank(), axis.text.x = element_blank()) + 
+  theme(legend.text=element_text(size=14, face="bold"),
+        legend.title=element_text(size=15, face="bold")) +
+   theme(
+    panel.background = element_rect(fill = "white"),         # Set plot background to white
+    legend.key  = element_rect(fill = "white"),              # Set legend item backgrounds to white
+    axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+    axis.line.y = element_line(colour = "black", size = 1)   # Add line to y axis
+  ) 
+
+
+# ggsave("/Users/jojohu/Downloads/fMRI_td.png")
+
+
+colnames(ssl_struc) <- paste0(colnames(ssl_struc), "_struc")
+colnames(ssl_random) <- paste0(colnames(ssl_random), "_random")
+morePart <- setdiff(ssl_struc$Row_struc, ssl_random$Row_random)
+ssl_struc <- ssl_struc[-which(ssl_struc$Row_struc %in% morePart),]
+sslWide <- cbind(ssl_struc, ssl_random)
+
+t.test(sslWide$resampled_LeftAngG_struc, sslWide$resampled_LeftAngG_random, paired = T, alternative = "greater")
+t.test(sslWide$resampled_LeftAntTemp_struc, sslWide$resampled_LeftAntTemp_random, paired = T, alternative = "greater")
+t.test(sslWide$resampled_LeftIFG_struc, sslWide$resampled_LeftIFG_random, paired = T, alternative = "greater")
+t.test(sslWide$resampled_LeftIFGorb_struc, sslWide$resampled_LeftIFGorb_random, paired = T, alternative = "greater")
+t.test(sslWide$resampled_LeftMFG_struc, sslWide$resampled_LeftMFG_random, paired = T, alternative = "greater")
+t.test(sslWide$resampled_LeftMidAntTemp_struc, sslWide$resampled_LeftMidAntTemp_random, paired = T, alternative = "greater")
+t.test(sslWide$resampled_LeftMidPostTemp_struc, sslWide$resampled_LeftMidPostTemp_random, paired = T, alternative = "greater")
+t.test(sslWide$resampled_LeftPostTemp_struc, sslWide$resampled_LeftPostTemp_random, paired = T, alternative = "greater")
+t.test(sslWide$resampled_LeftSFG_struc, sslWide$resampled_LeftSFG_random, paired = T, alternative = "greater")
+
+
+
+ssl_fmriL <- ssl_fmriL[-which(ssl_fmriL$part_id %in% morePart),]
+library(ez)
+ezANOVA(ssl_fmriL, dv=Beta, wid=part_id, within=c(Condition,ROI))
+
+# write.csv(ssl_fmriL, "/Users/jojohu/Downloads/fMRI_data.csv")
+```

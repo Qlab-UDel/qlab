@@ -1,0 +1,122 @@
+---
+title: "blast_fmri_clean_file"
+author: "Jojo Hu"
+date: "9/23/2022"
+output: html_document
+---
+
+# Clean and move adult files
+```{r}
+library(stringr)
+
+aliceFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
+           pattern = "level-run_name-runlevel_sub-blasta\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii", 
+           full.names = T, recursive = T)
+
+aliceFile <- as.data.frame(aliceFile)
+
+aliceFile$aliceFile <- as.character(aliceFile$aliceFile)
+
+aliceFile$basename <- basename(as.character(aliceFile$aliceFile))
+
+aliceFile$part_id <- str_extract(aliceFile$basename, "sub-blasta[[:digit:]]+")
+
+aliceFile$bare_id <- str_extract(aliceFile$basename, "(?<=sub-blasta)[[:digit:]]+")
+
+aliceFile$run <- str_extract(aliceFile$basename, "(?<=run-)[[:digit:]]")
+
+aliceFile$bare_run <- paste0(aliceFile$bare_id, "_", aliceFile$run)
+
+aliceFile <- 
+  aliceFile %>%
+  arrange(aliceFile)
+
+aliceFile$rename_id <- paste0(seq(1:nrow(aliceFile)), "_stat-z_statmap.nii.gz")
+
+aliceFile$rename_number <- seq(1:nrow(aliceFile))
+
+aliceFile$new_path <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/adult/",
+                             aliceFile$basename)
+
+aliceFile$new_name <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/adult/",
+                             aliceFile$rename_id)
+
+
+file.copy(as.character(aliceFile$aliceFile), aliceFile$new_path, overwrite = T)
+
+file.rename(aliceFile$new_path, aliceFile$new_name)
+
+write.csv(aliceFile, 
+          "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/renamed_id_adult.csv", row.names = F)
+
+my_output <- capture.output(write.table(aliceFile[, "bare_run"], sep = " ", col.names = F, row.names = F, quote = F, eol = "\n"))
+writeBin(paste(my_output, collapse = "\n"),  "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/langloc_adult.txt")
+```
+
+
+# Clean and move children files
+```{r}
+library(stringr)
+
+aliceFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
+           pattern = "level-run_name-runlevel_sub-blastc\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii", 
+           full.names = T, recursive = T)
+
+aliceFile <- as.data.frame(aliceFile)
+
+aliceFile$aliceFile <- as.character(aliceFile$aliceFile)
+
+aliceFile$basename <- basename(as.character(aliceFile$aliceFile))
+
+aliceFile$part_id <- str_extract(aliceFile$basename, "sub-blastc[[:digit:]]+")
+
+aliceFile$bare_id <- str_extract(aliceFile$basename, "(?<=sub-blastc)[[:digit:]]+")
+
+aliceFile$run <- str_extract(aliceFile$basename, "(?<=run-)[[:digit:]]")
+
+aliceFile$bare_run <- paste0(aliceFile$bare_id, "_", aliceFile$run)
+
+aliceFile <- 
+  aliceFile %>%
+  arrange(aliceFile)
+
+aliceFile$rename_id <- paste0(seq(1:nrow(aliceFile)), "_stat-z_statmap.nii.gz")
+
+aliceFile$rename_number <- seq(1:nrow(aliceFile))
+
+aliceFile$new_path <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/child/td/",
+                             aliceFile$basename)
+
+aliceFile$new_name <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/child/td/",
+                             aliceFile$rename_id)
+
+
+file.copy(as.character(aliceFile$aliceFile), aliceFile$new_path, overwrite = T)
+
+file.rename(aliceFile$new_path, aliceFile$new_name)
+
+write.csv(aliceFile, 
+          "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/renamed_id_child.csv", row.names = F)
+
+my_output <- capture.output(write.table(aliceFile[, "bare_run"], sep = " ", col.names = F, row.names = F, quote = F, eol = "\n"))
+writeBin(paste(my_output, collapse = "\n"),  "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/langloc_child.txt")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

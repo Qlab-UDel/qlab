@@ -1,0 +1,224 @@
+---
+title: "Alice Localizer Event Generator"
+author: "Jojo Hu"
+date: "9/21/2022"
+output: html_document
+---
+
+
+# Compile the templates for Alice Localizer Event files
+```{r}
+order1 <- 
+  list.files("/Volumes/data/projects/blast/data/derivatives/event_files/scripts/alice_localizer/Order1_EV_template", full.names = T, recursive = T)
+
+order2 <- 
+  list.files("/Volumes/data/projects/blast/data/derivatives/event_files/scripts/alice_localizer/Order2_EV_template", full.names = T, recursive = T)
+
+read_txt <-
+function(file) {
+  file_name <- basename(file)
+  file_name <- str_extract(file_name, "\\S+(?=.txt?)")
+  
+  file <- read.csv(file,  sep ="\t", stringsAsFactors = F, header = F)
+  file[, "name"] <- file_name
+  
+  return(file)
+}
+
+order1 <- lapply(order1, read_txt)
+order1 <- do.call(bind_rows, order1)
+
+order2 <- lapply(order2, read_txt)
+order2 <- do.call(bind_rows, order2)
+
+library("dplyr")
+
+colnames(order1) <- c("onset", "duration", "order", "trial_type")
+colnames(order2) <- c("onset", "duration", "order", "trial_type")
+
+order1 <- as.data.frame(order1)
+order2 <- as.data.frame(order2)
+
+order1 <-
+  order1 %>%
+  dplyr::arrange(onset) %>%
+  dplyr::select(onset, duration, trial_type)
+
+order2 <-
+  order2 %>%
+  dplyr::arrange(onset)  %>%
+  dplyr::select(onset, duration, trial_type)
+```
+
+
+# Compile individuals' Alice event files
+```{r}
+adultEV <- 
+  list.files("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/sl_raw_data/adult/alice_localizer",
+             pattern = "run\\d+.csv$", full.names = T)
+childEV <- 
+  list.files("/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/sl_raw_data/child/alice_localizer",
+             pattern = "run\\d+.csv$", full.names = T)
+
+adultEV <- lapply(adultEV, read.csv)
+adultEV <- do.call(bind_rows, adultEV)
+
+childEV <- lapply(childEV, read.csv)
+childEV <- do.call(bind_rows, childEV)
+
+# childEV[which(childEV$subjectID == "blast_c_0228"), "subjectID"] <- "blast_c_228"
+
+ev <- bind_rows(adultEV, childEV)
+
+# Extract order and run assigned for each participant
+ev <- 
+  ev %>%
+  dplyr::select("subjectID", "randSeed", "list", "order", "run") %>%
+  distinct(.) %>%
+  filter(str_detect(subjectID, "blast")) %>%
+  mutate(subjectID = as.character(subjectID))
+
+ev$partID <- paste0("sub-", str_remove_all(ev$subjectID, "_"))
+
+# Check whether participants assigned with the same order always have the same conditions
+cond <-
+  bind_rows(adultEV, childEV) %>%
+  filter(str_detect(subjectID, "blast")) %>%
+  dplyr::select("subjectID", "randSeed", "list", "order", "run", "trialNum", "condition", "onset") %>%
+  distinct(.) %>%
+  group_by("subjectID", "randSeed", "list", "order", "run") %>%
+  arrange(onset)
+
+
+cond_sum <-
+  cond %>%
+  dplyr::select("subjectID", "randSeed", "list", "order", "run", "condition", "trialNum") %>%
+  group_by(subjectID, randSeed, list, order, run) %>%
+  summarise(condition_sum = toString(condition)) %>%
+  ungroup()
+
+# Order 1 and Order 2 should have the same condition-order across runs and lists
+cond %>%
+  dplyr::select("subjectID", "randSeed", "list", "order", "run", "condition", "trialNum") %>%
+  group_by(subjectID, randSeed, list, order, run) %>%
+  summarise(condition_sum = toString(condition)) %>%
+  ungroup() %>%
+  dplyr::select("order", "condition_sum") %>%
+  distinct(.)
+
+# Calculate duration of trials
+allEV <- 
+  bind_rows(adultEV, childEV) %>%
+  filter(str_detect(subjectID, "blast")) %>%
+  mutate(onset = as.numeric(as.character(onset))) %>%
+  mutate(duration = onset - lag(onset)) %>%
+  filter(!is.na(onset))
+
+allEV$duration <- append(allEV$duration[-1], NA)
+
+# Last Fix block duration not available. 12 is the number by design.
+allEV[which(allEV$duration < 0 & allEV$trialNum == 16), "duration"] <- as.numeric(12)
+allEV[which(is.na(allEV$duration) & allEV$trialNum == 16), "duration"] <- as.numeric(12)
+
+allEV[nrow(allEV), "duration"] <- as.numeric(12)
+
+allEV %>%
+  filter(is.na(duration))
+
+allEV <-
+  allEV %>%
+  mutate(partID = paste0("sub-", str_remove_all(subjectID, "_"))) %>%
+  mutate(trial_type = condition)
+  
+
+for (i in unique(allEV$partID)) {
+  run1 <-
+    allEV %>%
+    filter(partID %in% i) %>%
+    filter(run == 1) %>%
+    dplyr::select(onset, duration, trial_type, trialNum)
+  
+  write.table(run1, paste0("/Volumes/data/projects/blast/data/derivatives/event_files/alice_localizer/", 
+                           i, "_task-langloc_run-01_events.tsv"), 
+              sep='\t', row.names = F)
+}
+
+for (i in unique(allEV$partID)) {
+  run2 <-
+    allEV %>%
+    filter(partID %in% i) %>%
+    filter(run == 2) %>%
+    dplyr::select(onset, duration, trial_type, trialNum)
+  
+  write.table(run2, paste0("/Volumes/data/projects/blast/data/derivatives/event_files/alice_localizer/", 
+                           i, "_task-langloc_run-02_events.tsv"), 
+              sep='\t', row.names = F)
+}
+```
+
+
+```{r, eval = F, include = F}
+# No longer using because run and order can be extracted through in scanner behavioral data (see code above)
+# Extract the demo and run orders for participants
+checklist <- read.csv("/Volumes/data/projects/blast/data/derivatives/event_files/alice_localizer/qlab_participant_checklist - blast_in_lab.csv", stringsAsFactors = F)
+
+colnames(checklist) <- checklist[1,]
+
+checklist <- checklist[-1,]
+
+checklist <- 
+  checklist %>%
+  dplyr::select(`Participant ID`, Group, Gender, Age, `date of birth`, date_mri_collection, Seed, List, Order)
+
+alice_manual_order <- 
+  checklist %>%
+  dplyr::select(`Participant ID`, Order) %>%
+  mutate(order = as.numeric(as.character(Order)),
+         part_id = str_extract(`Participant ID`, "blast_(a|c)_[[:digit:]]+")) %>%
+  filter(!is.na(part_id)) %>%
+  mutate(partID = paste0("sub-", str_remove_all(`Participant ID`, "_")))
+```
+
+
+
+# Create event files for each individual and move into their bids/func folder
+```{r}
+alice_from <- 
+  list.files("/Volumes/data/projects/blast/data/bids", 
+              pattern = "sub-blast(a|c)\\d+_task-langloc_run-\\d+_events.tsv$", full.names = T, recursive = T)
+
+bk <- alice_from
+```
+
+```{r}
+cleanEV <- 
+  list.files("/Volumes/data/projects/blast/data/derivatives/event_files/alice_localizer",
+             pattern = "*.tsv$", full.names = T)
+
+cleanEV <- as.data.frame(cleanEV)
+
+cleanEV$partID <- str_extract(cleanEV$cleanEV, "sub-blast(a|c)\\d+")
+cleanEV$run <- str_extract(cleanEV$cleanEV, "(?<=run-0)\\d+")
+
+alice_from <- as.data.frame(alice_from)
+
+alice_from[,"partID"] <- str_extract(alice_from$alice_from, "sub-blast(a|c)\\d+")
+alice_from[,"run"] <- str_extract(alice_from$alice_from, "(?<=run-0)\\d+")
+
+
+alice_move <- merge(alice_from, cleanEV, by = c("partID", "run"), all.x = T)
+
+alice_move <-
+  alice_move %>%
+  distinct(.)
+
+file.copy(file.path(alice_move$cleanEV), file.path(alice_move$alice_from), 
+          overwrite = T,
+          copy.mode = TRUE, 
+          copy.date = TRUE)
+
+file.copy("/Volumes/data/projects/blast/data/bids/task-langloc_bold.json", "/Volumes/data/projects/blast/data/derivatives/fmriprep/", 
+          overwrite = F,
+          copy.mode = TRUE, 
+          copy.date = TRUE)
+```

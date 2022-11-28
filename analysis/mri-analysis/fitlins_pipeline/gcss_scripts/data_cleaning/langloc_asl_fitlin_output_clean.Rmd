@@ -1,0 +1,375 @@
+---
+title: "blast_fmri_clean_file"
+author: "Jojo Hu"
+date: "9/23/2022"
+output: html_document
+---
+
+# Clean and move Adult Langloc files for extracting minimal of top 10% activation for each individual
+```{r}
+library(stringr)
+
+aliceFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
+           pattern = "level-run_name-runlevel_sub-blasta\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii", 
+           full.names = T, recursive = T)
+
+aliceFile <- as.data.frame(aliceFile)
+
+aliceFile$aliceFile <- as.character(aliceFile$aliceFile)
+
+aliceFile$basename <- basename(as.character(aliceFile$aliceFile))
+
+aliceFile$part_id <- str_extract(aliceFile$basename, "sub-blasta[[:digit:]]+")
+
+aliceFile$bare_id <- str_extract(aliceFile$basename, "(?<=sub-blasta)[[:digit:]]+")
+
+aliceFile$run <- str_extract(aliceFile$basename, "(?<=run-)[[:digit:]]")
+
+aliceFile$bare_run <- paste0(aliceFile$bare_id, "_", aliceFile$run)
+
+aliceFile <- 
+  aliceFile %>%
+  arrange(aliceFile)
+
+aliceFile$rename_id <- paste0(seq(1:nrow(aliceFile)), "_stat-z_statmap.nii.gz")
+
+aliceFile$rename_number <- seq(1:nrow(aliceFile))
+
+aliceFile$new_path <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/adult/",
+                             aliceFile$basename)
+
+aliceFile$new_name <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/adult/",
+                             aliceFile$rename_id)
+
+
+file.copy(as.character(aliceFile$aliceFile), aliceFile$new_path, overwrite = T)
+
+file.rename(aliceFile$new_path, aliceFile$new_name)
+
+write.csv(aliceFile, 
+          "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/renamed_id_adult.csv", row.names = F)
+
+my_output <- capture.output(write.table(aliceFile[, "bare_run"], sep = " ", col.names = F, row.names = F, quote = F, eol = "\n"))
+writeBin(paste(my_output, collapse = "\n"),  "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/langloc_adult.txt")
+```
+
+
+# Clean and move Children Langloc files for extracting minimal of top 10% activation for each individual
+```{r}
+library(stringr)
+
+aliceFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
+           pattern = "level-run_name-runlevel_sub-blastc\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii", 
+           full.names = T, recursive = T)
+
+aliceFile <- as.data.frame(aliceFile)
+
+aliceFile$aliceFile <- as.character(aliceFile$aliceFile)
+
+aliceFile$basename <- basename(as.character(aliceFile$aliceFile))
+
+aliceFile$part_id <- str_extract(aliceFile$basename, "sub-blastc[[:digit:]]+")
+
+aliceFile$bare_id <- str_extract(aliceFile$basename, "(?<=sub-blastc)[[:digit:]]+")
+
+aliceFile$run <- str_extract(aliceFile$basename, "(?<=run-)[[:digit:]]")
+
+aliceFile$bare_run <- paste0(aliceFile$bare_id, "_", aliceFile$run)
+
+aliceFile <- 
+  aliceFile %>%
+  arrange(aliceFile)
+
+aliceFile$rename_id <- paste0(seq(1:nrow(aliceFile)), "_stat-z_statmap.nii.gz")
+
+aliceFile$rename_number <- seq(1:nrow(aliceFile))
+
+aliceFile$new_path <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/child/td/",
+                             aliceFile$basename)
+
+aliceFile$new_name <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/child/td/",
+                             aliceFile$rename_id)
+
+
+file.copy(as.character(aliceFile$aliceFile), aliceFile$new_path, overwrite = T)
+
+file.rename(aliceFile$new_path, aliceFile$new_name)
+
+write.csv(aliceFile, 
+          "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/renamed_id_child.csv", row.names = F)
+
+my_output <- capture.output(write.table(aliceFile[, "bare_run"], sep = " ", col.names = F, row.names = F, quote = F, eol = "\n"))
+writeBin(paste(my_output, collapse = "\n"),  "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/langloc_child.txt")
+```
+
+
+# Move and Rename ASL All adult contrasts to individual folders and rename them for Subject-specific ASL/ LangLoc analyses
+```{r}
+library(stringr)
+library(dplyr)
+
+output_path <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/adult/"
+
+sl_path <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins"
+
+slFile <-
+  list.files(sl_path,
+           pattern = "level-run_name-run_sub-blasta\\d+_run-\\d+_contrast-[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = T)
+
+bk <- slFile
+
+slFile <- as.data.frame(slFile)
+
+slFile$basename <- basename(as.character(slFile$slFile))
+
+slFile$part_id <- str_extract(slFile$basename, "sub-blasta[[:digit:]]+")
+
+slFile$bare_id <- str_extract(slFile$basename, "(?<=sub-blasta)[[:digit:]]+")
+
+slFile$run <- str_extract(slFile$basename, "(?<=run-)[[:digit:]]")
+
+slFile$stimuli <- str_extract(slFile$basename, "(Speech|Tone)")
+
+slFile$condition <- str_extract(slFile$basename, "(rand|str)")
+
+slFile12 <- 
+  slFile %>%
+  filter(run == "1" | run == "2") %>%
+  filter((stimuli == "Speech" & condition == "str") | (stimuli == "Tone" & condition == "rand"))
+
+slFile34 <- 
+  slFile %>%
+  filter(run == "3" | run == "4") %>%
+  filter((stimuli == "Speech" & condition == "rand") | (stimuli == "Tone" & condition == "str"))
+
+slRest <- rbind(slFile12, slFile34)
+
+slRest <-
+  slRest %>%
+  arrange(slRest) 
+
+slRest$stimuli <- tolower(slRest$stimuli)
+
+slRest$subj_cond <- paste0(slRest$bare_id, "_", "run_", slRest$run, "_", slRest$stimuli, "_", slRest$condition)
+
+for (i in 1:length(unique(slRest$bare_id))) {
+  dir.create(paste0(output_path, unique(slRest$bare_id)[i]))
+}
+
+slRest$rename_path <- paste0(output_path, slRest$bare_id, "/", slRest$subj_cond, ".nii.gz")
+
+file.copy(as.character(slRest$slFile), slRest$rename_path, overwrite = F)
+
+for (i in unique(slRest$bare_id)) {
+  temp <- slRest[which(slRest$bare_id %in% i), "subj_cond"]
+  
+  my_output <- capture.output(write.table(temp, sep = " ", col.names = F, row.names = F, quote = F, eol = "\n"))
+  writeBin(paste(my_output, collapse = "\n"),  paste0(output_path, i, "/", i, ".txt"))
+}
+```
+
+
+
+# Move and Rename ASL All child contrasts to individual folders and rename them for Subject-specific ASL/ LangLoc analyses
+```{r}
+library(stringr)
+library(dplyr)
+
+output_path <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/child/"
+
+sl_path <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins"
+
+slFile <-
+  list.files(sl_path,
+           pattern = "level-run_name-run_sub-blastc\\d+_run-\\d+_contrast-[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = T)
+
+bk <- slFile
+
+slFile <- as.data.frame(slFile)
+
+slFile$basename <- basename(as.character(slFile$slFile))
+
+slFile$part_id <- str_extract(slFile$basename, "sub-blastc[[:digit:]]+")
+
+slFile$bare_id <- str_extract(slFile$basename, "(?<=sub-blastc)[[:digit:]]+")
+
+slFile$run <- str_extract(slFile$basename, "(?<=run-)[[:digit:]]")
+
+slFile$stimuli <- str_extract(slFile$basename, "(Speech|Tone)")
+
+slFile$condition <- str_extract(slFile$basename, "(rand|str)")
+
+slFile12 <- 
+  slFile %>%
+  filter(run == "1" | run == "2") %>%
+  filter((stimuli == "Speech" & condition == "str") | (stimuli == "Tone" & condition == "rand"))
+
+slFile34 <- 
+  slFile %>%
+  filter(run == "3" | run == "4") %>%
+  filter((stimuli == "Speech" & condition == "rand") | (stimuli == "Tone" & condition == "str"))
+
+slRest <- rbind(slFile12, slFile34)
+
+slRest <-
+  slRest %>%
+  arrange(slRest) 
+
+slRest$stimuli <- tolower(slRest$stimuli)
+
+slRest$subj_cond <- paste0(slRest$bare_id, "_", "run_", slRest$run, "_", slRest$stimuli, "_", slRest$condition)
+
+for (i in 1:length(unique(slRest$bare_id))) {
+  dir.create(paste0(output_path, unique(slRest$bare_id)[i]))
+}
+
+slRest$rename_path <- paste0(output_path, slRest$bare_id, "/", slRest$subj_cond, ".nii.gz")
+
+file.copy(as.character(slRest$slFile), slRest$rename_path, overwrite = F)
+
+for (i in unique(slRest$bare_id)) {
+  temp <- slRest[which(slRest$bare_id %in% i), "subj_cond"]
+  
+  my_output <- capture.output(write.table(temp, sep = " ", col.names = F, row.names = F, quote = F, eol = "\n"))
+  writeBin(paste(my_output, collapse = "\n"),  paste0(output_path, i, "/", i, ".txt"))
+}
+```
+
+
+
+# Clean and Move ASL Random vs. Rest output for adults for extracting minimal of top 10% activation for each individual
+```{r}
+library(stringr)
+
+aslRandFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins", 
+           pattern = "level-run_name-run_sub-blasta\\d+_run-\\d+_contrast-rand[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = T)
+
+aslRandFile <- as.data.frame(aslRandFile)
+
+aslRandFile$aslRandFile <- as.character(aslRandFile$aslRandFile)
+
+aslRandFile$basename <- basename(as.character(aslRandFile$aslRandFile))
+
+aslRandFile$part_id <- str_extract(aslRandFile$basename, "sub-blasta[[:digit:]]+")
+
+aslRandFile$bare_id <- str_extract(aslRandFile$basename, "(?<=sub-blasta)[[:digit:]]+")
+
+aslRandFile$run <- str_extract(aslRandFile$basename, "(?<=run-)[[:digit:]]")
+
+aslRandFile$bare_run <- paste0(aslRandFile$bare_id, "_", aslRandFile$run, "_", tolower(str_extract(aslRandFile$basename, "(Speech|Tone)")))
+
+aslRandFile$stimuli <- str_extract(aslRandFile$basename, "(Speech|Tone)")
+
+aslRandFile$condition <- str_extract(aslRandFile$basename, "(str|rand)")
+
+aslRandFile12 <- 
+  aslRandFile %>%
+  filter(run == "1" | run == "2") %>%
+  filter((stimuli == "Speech" & condition == "str") | (stimuli == "Tone" & condition == "rand"))
+
+aslRandFile34 <- 
+  aslRandFile %>%
+  filter(run == "3" | run == "4") %>%
+  filter((stimuli == "Speech" & condition == "rand") | (stimuli == "Tone" & condition == "str"))
+
+aslRandFile <- rbind(aslRandFile12, aslRandFile34)
+
+aslRandFile <- 
+  aslRandFile %>%
+  arrange(aslRandFile)
+
+aslRandFile$rename_id <- paste0(seq(1:nrow(aslRandFile)), "_stat-z_statmap.nii.gz")
+
+aslRandFile$rename_number <- seq(1:nrow(aslRandFile))
+
+aslRandFile$new_path <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/adult/",
+                             aslRandFile$basename)
+
+aslRandFile$new_name <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/adult/",
+                             aslRandFile$rename_id)
+
+
+file.copy(as.character(aslRandFile$aslRandFile), aslRandFile$new_path, overwrite = F)
+
+file.rename(aslRandFile$new_path, aslRandFile$new_name)
+
+write.csv(aslRandFile, 
+          "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/renamed_id_adult.csv", row.names = F)
+
+my_output <- capture.output(write.table(aslRandFile[, "bare_run"], sep = " ", col.names = F, row.names = F, quote = F, eol = "\n"))
+writeBin(paste(my_output, collapse = "\n"),  "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/langloc_adult.txt")
+```
+
+
+# Clean and Move ASL Random vs. Rest output for children for extracting minimal of top 10% activation for each individual
+```{r}
+library(stringr)
+
+aslRandFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins", 
+           pattern = "level-run_name-run_sub-blastc\\d+_run-\\d+_contrast-rand[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = T)
+
+aslRandFile <- as.data.frame(aslRandFile)
+
+aslRandFile$aslRandFile <- as.character(aslRandFile$aslRandFile)
+
+aslRandFile$basename <- basename(as.character(aslRandFile$aslRandFile))
+
+aslRandFile$part_id <- str_extract(aslRandFile$basename, "sub-blastc[[:digit:]]+")
+
+aslRandFile$bare_id <- str_extract(aslRandFile$basename, "(?<=sub-blastc)[[:digit:]]+")
+
+aslRandFile$run <- str_extract(aslRandFile$basename, "(?<=run-)[[:digit:]]")
+
+aslRandFile$bare_run <- paste0(aslRandFile$bare_id, "_", aslRandFile$run, "_", tolower(str_extract(aslRandFile$basename, "(Speech|Tone)")))
+
+aslRandFile$stimuli <- str_extract(aslRandFile$basename, "(Speech|Tone)")
+
+aslRandFile$condition <- str_extract(aslRandFile$basename, "(str|rand)")
+
+aslRandFile12 <- 
+  aslRandFile %>%
+  filter(run == "1" | run == "2") %>%
+  filter((stimuli == "Speech" & condition == "str") | (stimuli == "Tone" & condition == "rand"))
+
+aslRandFile34 <- 
+  aslRandFile %>%
+  filter(run == "3" | run == "4") %>%
+  filter((stimuli == "Speech" & condition == "rand") | (stimuli == "Tone" & condition == "str"))
+
+aslRandFile <- rbind(aslRandFile12, aslRandFile34)
+
+aslRandFile <- 
+  aslRandFile %>%
+  arrange(aslRandFile)
+
+aslRandFile$rename_id <- paste0(seq(1:nrow(aslRandFile)), "_stat-z_statmap.nii.gz")
+
+aslRandFile$rename_number <- seq(1:nrow(aslRandFile))
+
+aslRandFile$new_path <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/child/",
+                             aslRandFile$basename)
+
+aslRandFile$new_name <- paste0("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/child/",
+                             aslRandFile$rename_id)
+
+
+file.copy(as.character(aslRandFile$aslRandFile), aslRandFile$new_path, overwrite = F)
+
+file.rename(aslRandFile$new_path, aslRandFile$new_name)
+
+write.csv(aslRandFile, 
+          "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/renamed_id_child.csv", row.names = F)
+
+my_output <- capture.output(write.table(aslRandFile[, "bare_run"], sep = " ", col.names = F, row.names = F, quote = F, eol = "\n"))
+writeBin(paste(my_output, collapse = "\n"),  "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/langloc_child.txt")
+```
+
+

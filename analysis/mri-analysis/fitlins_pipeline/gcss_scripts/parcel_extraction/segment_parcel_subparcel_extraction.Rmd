@@ -1,0 +1,615 @@
+---
+title: "segment_parcel"
+author: "Jojo Hu"
+date: "9/28/2022"
+output: html_document
+---
+
+# All commands below must be run in an R environment inside of terminal (system() commands below evoke FSL and AFNI commands in terminal) 
+# Segmenting parcels for adults
+# FSL must be installed for the following to work
+```{r}
+path <- "/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/adult/6vox/"
+
+dir.create(paste0(path, "seg_parcels"))
+
+parcel <-
+  read.csv(paste0(path, "LangLoc_adult_run_level_0001_6voxSpacing_parcel_report.csv"), stringsAsFactors = F)
+
+mask_name <- paste0(path, "LangLoc_adult_run_level_0001_6voxSpacing_probability_map_thresh2subjs_smoothed_parcels_sig.nii.gz")
+
+sig_parcel <- parcel[which(parcel$is_significant == 1), "parcel_numbers"]
+
+length(sig_parcel)
+
+for (i in sig_parcel) {
+  parcel_seg <- paste0(path, "seg_parcels/langloc_gcp", i, ".nii.gz")
+  
+  fsl_command <- as.character(paste("fslmaths", mask_name, " -uthr", i, "-thr", i, parcel_seg))
+ 
+  system(fsl_command)
+}
+```
+
+
+# Segmenting parcels for children
+```{r}
+path <- "/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/child/6vox/"
+
+dir.create(paste0(path, "seg_parcels"))
+
+parcel <-
+  read.csv(paste0(path, "LangLoc_child_run_level_0001_6voxSpacing_parcel_report.csv"), stringsAsFactors = F)
+
+mask_name <- paste0(path, "LangLoc_child_run_level_0001_6voxSpacing_probability_map_thresh2subjs_smoothed_parcels_sig.nii.gz")
+
+sig_parcel <- parcel[which(parcel$is_significant == 1), "parcel_numbers"]
+
+length(sig_parcel)
+
+for (i in sig_parcel) {
+  parcel_seg <- paste0(path, "seg_parcels/langloc_gcp", i, ".nii.gz")
+  
+  fsl_command <- as.character(paste("fslmaths", mask_name, " -uthr", i, "-thr", i, parcel_seg))
+ 
+  system(fsl_command)
+}
+```
+
+
+
+
+# Extract individualized sub-voxels based on a parcel mask for children
+# AFNI and FSL must be installed for the following to work
+```{r}
+library(stringr)
+library(dplyr)
+library(reshape2)
+
+output_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/unresampled_mask/child/"
+
+# Read in minimal of top 10% activation value
+childMin <- 
+  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/child_minimum_top_10_lang_loc_data_9_28.csv", stringsAsFactors = F)
+# List langloc individual intact > degraded z-maps 
+aliceFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
+           pattern = "level-run_name-runlevel_sub-blastc\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = T)
+
+aliceFile <- as.data.frame(aliceFile)
+
+aliceFile$aliceFile <- as.character(aliceFile$aliceFile)
+
+aliceFile$basename <- basename(as.character(aliceFile$aliceFile))
+
+aliceFile$part_id <- str_extract(aliceFile$basename, "sub-blastc[[:digit:]]+")
+
+aliceFile$bare_id <- str_extract(aliceFile$basename, "(?<=sub-blastc)[[:digit:]]+")
+
+aliceFile$run <- str_extract(aliceFile$basename, "(?<=run-)[[:digit:]]")
+
+aliceFile$bare_run <- paste0(aliceFile$bare_id, "_", aliceFile$run)
+
+aliceFile <- 
+  aliceFile %>%
+  arrange(aliceFile)
+# List all parcels in langloc group-constrained mask
+langloc_parcels <- 
+  list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/child/6vox/seg_parcels",
+            pattern = "langloc_gcp\\d+.nii.gz", full.names = T)
+
+# Repeat each individual's row so that each individual will have the number of rows that matches the total number of parcels in the group-constrained mask
+file_rep <- rep(aliceFile$aliceFile, length(unique(langloc_parcels)))
+
+file_rep <- as.data.frame(file_rep)
+
+file_rep$part_id <- str_extract(file_rep$file_rep, "sub-blastc[[:digit:]]+")
+file_rep$run <- str_extract(file_rep$file_rep, "(?<=run-)[[:digit:]]")
+
+file_rep <-
+  file_rep %>%
+  arrange(file_rep)
+ 
+# Repeat each parcel row so that each parcel will have the number of rows that matches the total number of individuals (N)
+parcel_rep <- rep(langloc_parcels, times = c(nrow(file_rep)/length(langloc_parcels)))
+
+length(parcel_rep) == nrow(file_rep)
+
+file_rep <- cbind(file_rep, parcel_rep)
+
+file_rep <- merge(file_rep, aliceFile, all.x = T)
+
+file_rep$parcel <- str_extract(file_rep$parcel_rep, "(?<=seg_parcels/)\\S+(?=.nii.gz)")
+
+# Check that merging did not create additional unwanted rows
+length(parcel_rep) == nrow(file_rep)
+# Check that each individual only has the set number of parcels
+file_rep %>%
+  arrange(file_rep) %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n != length(unique(langloc_parcels)))
+
+library(reshape2)
+childMin <- melt(childMin, id.vars = c("Row"))
+
+colnames(childMin)[which(names(childMin) == "Row")] <- "bare_run"
+colnames(childMin)[which(names(childMin) == "variable")] <- "parcel"
+
+# Merge minimal of top 10% activation value
+file_rep <- merge(file_rep, childMin, all.x = T)
+
+# Check that merging did not create additional unwanted rows
+length(parcel_rep) == nrow(file_rep)
+# Check that each individual only has the set number of parcels
+file_rep %>%
+  arrange(file_rep) %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n != length(unique(langloc_parcels)))
+
+colnames(file_rep)[which(names(file_rep) == "parcel_rep")] <- "parcel_path"
+
+# Set file name for individuals' output sub-parcels
+file_rep$output_file <- paste0(output_dir, file_rep$part_id, "_", "run-", file_rep$run, "_", file_rep$parcel, ".nii.gz") 
+
+# Generate individual masks based on lang loc parcels
+for (i in 1:nrow(file_rep)) {
+
+  fsl_command <- as.character(paste("fslmaths", file_rep[i, c("aliceFile")], "-thr", file_rep[i, c("value")], "-mas", file_rep[i, c("parcel_path")], file_rep[i, c("output_file")]))
+
+  system(fsl_command)
+}
+
+
+
+# Resample individual masks
+resampled_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/resampled_mask/child/"
+
+# Create subject sub-folders for resampled masks
+subdir <- paste0(resampled_dir, file_rep$bare_id)
+subdir <- unique(subdir)
+
+for (i in 1:length(subdir)) {
+  dir.create(subdir[i])
+}
+
+# List resampled individual masks output
+file_rep$resampled_output <- paste0(resampled_dir, file_rep$bare_id, "/resampled_", basename(file_rep$output_file)) 
+
+resampled_ref <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins/sub-blastc019/level-run_name-run_sub-blastc019_run-1_contrast-randSpeechVRest_stat-z_statmap.nii.gz"
+
+for (i in 1:nrow(file_rep)) {
+
+  resample_command <- as.character(paste("3dresample", "-input", file_rep[i, c("output_file")], "-master", resampled_ref, "-prefix", file_rep[i, c("resampled_output")]))
+
+  # print(resample_command)
+  system(resample_command)
+}
+
+
+# Binarize all the resampled mask
+bin_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/bin_resampled_mask/child/"
+
+# Create subject sub-folders for resampled masks
+subdir <- paste0(bin_dir, file_rep$bare_id)
+subdir <- unique(subdir)
+
+for (i in 1:length(subdir)) {
+  dir.create(subdir[i])
+}
+# To DO: Fix Scott script to take actual ID input and thus get rid of str_extract here!
+file_rep$bin_output <- paste0(bin_dir, file_rep$bare_id, "/bin_resampled_", str_extract(file_rep$output_file, "run-[[:digit:]]_langloc_gcp[[:digit:]]+.nii.gz")) 
+
+# Binarize all the resampled mask
+for (i in 1:nrow(file_rep)) {
+
+  bin_command <- as.character(paste("fslmaths", file_rep[i, c("resampled_output")], "-bin",  file_rep[i, c("bin_output")]))
+
+  system(bin_command)
+}
+```
+
+
+
+
+# Extract individualized sub-voxels based on a parcel mask for adults
+# AFNI and FSL must be installed for the following to work
+```{r}
+library(stringr)
+library(dplyr)
+library(reshape2)
+
+output_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/unresampled_mask/adult/"
+
+# Read in minimal of top 10% activation value
+childMin <- 
+  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/adult_minimum_top_10_lang_loc_data_9_29.csv", stringsAsFactors = F)
+# List langloc individual intact > degraded z-maps 
+aliceFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
+           pattern = "level-run_name-runlevel_sub-blasta\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = T)
+
+aliceFile <- as.data.frame(aliceFile)
+
+aliceFile$aliceFile <- as.character(aliceFile$aliceFile)
+
+aliceFile$basename <- basename(as.character(aliceFile$aliceFile))
+
+aliceFile$part_id <- str_extract(aliceFile$basename, "sub-blasta[[:digit:]]+")
+
+aliceFile$bare_id <- str_extract(aliceFile$basename, "(?<=sub-blasta)[[:digit:]]+")
+
+aliceFile$run <- str_extract(aliceFile$basename, "(?<=run-)[[:digit:]]")
+
+aliceFile$bare_run <- paste0(aliceFile$bare_id, "_", aliceFile$run)
+
+aliceFile <- 
+  aliceFile %>%
+  arrange(aliceFile)
+# List all parcels in langloc group-constrained mask
+langloc_parcels <- 
+  list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/adult/6vox/seg_parcels",
+            pattern = "langloc_gcp\\d+.nii.gz", full.names = T)
+
+# Repeat each individual's row so that each individual will have the number of rows that matches the total number of parcels in the group-constrained mask
+file_rep <- rep(aliceFile$aliceFile, length(unique(langloc_parcels)))
+
+file_rep <- as.data.frame(file_rep)
+
+file_rep$part_id <- str_extract(file_rep$file_rep, "sub-blasta[[:digit:]]+")
+file_rep$run <- str_extract(file_rep$file_rep, "(?<=run-)[[:digit:]]")
+
+file_rep <-
+  file_rep %>%
+  arrange(file_rep)
+ 
+# Repeat each parcel row so that each parcel will have the number of rows that matches the total number of individuals (N)
+parcel_rep <- rep(langloc_parcels, times = c(nrow(file_rep)/length(langloc_parcels)))
+
+length(parcel_rep) == nrow(file_rep)
+
+file_rep <- cbind(file_rep, parcel_rep)
+
+file_rep <- merge(file_rep, aliceFile, all.x = T)
+
+file_rep$parcel <- str_extract(file_rep$parcel_rep, "(?<=seg_parcels/)\\S+(?=.nii.gz)")
+
+# Check that merging did not create additional unwanted rows
+length(parcel_rep) == nrow(file_rep)
+# Check that each individual only has the set number of parcels
+file_rep %>%
+  arrange(file_rep) %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n != length(unique(langloc_parcels)))
+
+library(reshape2)
+childMin <- melt(childMin, id.vars = c("Row"))
+
+colnames(childMin)[which(names(childMin) == "Row")] <- "bare_run"
+colnames(childMin)[which(names(childMin) == "variable")] <- "parcel"
+
+# Merge minimal of top 10% activation value
+file_rep <- merge(file_rep, childMin, all.x = T)
+
+# Check that merging did not create additional unwanted rows
+length(parcel_rep) == nrow(file_rep)
+# Check that each individual only has the set number of parcels
+file_rep %>%
+  arrange(file_rep) %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n != length(unique(langloc_parcels)))
+
+colnames(file_rep)[which(names(file_rep) == "parcel_rep")] <- "parcel_path"
+
+# Set file name for individuals' output sub-parcels
+file_rep$output_file <- paste0(output_dir, file_rep$part_id, "_", "run-", file_rep$run, "_", file_rep$parcel, ".nii.gz") 
+
+# Generate individual masks based on lang loc parcels
+for (i in 1:nrow(file_rep)) {
+
+  fsl_command <- as.character(paste("fslmaths", file_rep[i, c("aliceFile")], "-thr", file_rep[i, c("value")], "-mas", file_rep[i, c("parcel_path")], file_rep[i, c("output_file")]))
+
+  system(fsl_command)
+}
+
+
+
+# Resample individual masks
+resampled_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/resampled_mask/adult/"
+
+# Create subject sub-folders for resampled masks
+subdir <- paste0(resampled_dir, file_rep$bare_id)
+subdir <- unique(subdir)
+
+for (i in 1:length(subdir)) {
+  dir.create(subdir[i])
+}
+
+# List resampled individual masks output
+file_rep$resampled_output <- paste0(resampled_dir, file_rep$bare_id, "/resampled_", basename(file_rep$output_file)) 
+
+resampled_ref <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins/sub-blasta010/level-run_name-run_sub-blasta010_run-1_contrast-randSpeechVRest_stat-z_statmap.nii.gz"
+
+for (i in 1:nrow(file_rep)) {
+
+  resample_command <- as.character(paste("3dresample", "-input", file_rep[i, c("output_file")], "-master", resampled_ref, "-prefix", file_rep[i, c("resampled_output")]))
+
+  # print(resample_command)
+  system(resample_command)
+}
+
+
+# Binarize all the resampled mask
+bin_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/bin_resampled_mask/adult/"
+
+# Create subject sub-folders for resampled masks
+subdir <- paste0(bin_dir, file_rep$bare_id)
+subdir <- unique(subdir)
+
+for (i in 1:length(subdir)) {
+  dir.create(subdir[i])
+}
+
+file_rep$bin_output <- paste0(bin_dir, file_rep$bare_id, "/bin_resampled_", str_extract(file_rep$output_file, "run-[[:digit:]]_langloc_gcp[[:digit:]]+.nii.gz")) 
+
+# Binarize all the resampled mask
+for (i in 1:nrow(file_rep)) {
+
+  bin_command <- as.character(paste("fslmaths", file_rep[i, c("resampled_output")], "-bin",  file_rep[i, c("bin_output")]))
+
+  system(bin_command)
+}
+```
+
+
+
+
+# Extract individualized sub-voxels based on a parcel mask for children for Attentional Network based on Random vs. Rest ASL contrasts
+# AFNI and FSL must be installed for the following to work
+```{r}
+library(stringr)
+library(dplyr)
+library(reshape2)
+
+output_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/indiv_att_ouput/resampled_mask/child/"
+
+# Read in minimal of top 10% activation value
+childMin <- 
+  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/child_dan_minimum_top_10_data_10_3.csv", 
+           stringsAsFactors = F)
+# List ASL individual random > rest z-maps 
+aslRandFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins", 
+           pattern = "level-run_name-run_sub-blastc\\d+_run-\\d+_contrast-rand[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = T)
+
+aslRandFile <- as.data.frame(aslRandFile)
+
+aslRandFile$aslRandFile <- as.character(aslRandFile$aslRandFile)
+
+aslRandFile$basename <- basename(as.character(aslRandFile$aslRandFile))
+
+aslRandFile$part_id <- str_extract(aslRandFile$basename, "sub-blastc[[:digit:]]+")
+
+aslRandFile$bare_id <- str_extract(aslRandFile$basename, "(?<=sub-blastc)[[:digit:]]+")
+
+aslRandFile$run <- str_extract(aslRandFile$basename, "(?<=run-)[[:digit:]]")
+
+aslRandFile$bare_run <- paste0(aslRandFile$bare_id, "_", aslRandFile$run, "_", tolower(str_extract(aslRandFile$basename, "(Speech|Tone)")))
+
+aslRandFile$stimuli <- str_extract(aslRandFile$basename, "(Speech|Tone)")
+
+aslRandFile$condition <- str_extract(aslRandFile$basename, "(str|rand)")
+
+aslRandFile12 <- 
+  aslRandFile %>%
+  filter(run == "1" | run == "2") %>%
+  filter((stimuli == "Speech" & condition == "str") | (stimuli == "Tone" & condition == "rand"))
+
+aslRandFile34 <- 
+  aslRandFile %>%
+  filter(run == "3" | run == "4") %>%
+  filter((stimuli == "Speech" & condition == "rand") | (stimuli == "Tone" & condition == "str"))
+
+aslRandFile <- rbind(aslRandFile12, aslRandFile34)
+
+aslRandFile <- 
+  aslRandFile %>%
+  arrange(aslRandFile)
+
+# List all parcels in langloc group-constrained mask
+dan_parcels <- 
+  list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/dorsal_attention_parcel/conn_resampled_parcel",
+            pattern = "resampled_conn_dan.nii.gz", full.names = T)
+
+aslRandFile$parcel <- str_extract(aslRandFile$parcel, "resampled_conn_dan")
+
+# Add parcel to aslRandFile
+file_rep <- aslRandFile
+file_rep$parcel_path <- dan_parcels
+# Check that each individual only has the set number of parcels
+file_rep %>%
+  arrange(file_rep) %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n != length(unique(dan_parcels)))
+
+library(reshape2)
+childMin <- melt(childMin, id.vars = c("Row"))
+
+colnames(childMin)[which(names(childMin) == "Row")] <- "bare_run"
+colnames(childMin)[which(names(childMin) == "variable")] <- "parcel"
+
+# Merge minimal of top 10% activation value
+file_rep <- merge(file_rep, childMin, all.x = T)
+
+# Check that each individual only has the set number of parcels
+file_rep %>%
+  arrange(file_rep) %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n != length(unique(dan_parcels)))
+
+# Set file name for individuals' output sub-parcels
+file_rep$output_file <- paste0(output_dir, file_rep$part_id, "_", "run-", file_rep$run, "_", file_rep$parcel, ".nii.gz") 
+
+# Generate individual masks based on lang loc parcels
+for (i in 1:nrow(file_rep)) {
+
+  fsl_command <- as.character(paste("fslmaths", file_rep[i, c("aslRandFile")], "-thr", file_rep[i, c("value")], "-mas", file_rep[i, c("parcel_path")], file_rep[i, c("output_file")]))
+
+  system(fsl_command)
+}
+
+
+# Binarize all the resampled mask
+bin_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/indiv_att_ouput/bin_resampled_mask/child/"
+
+# Create subject sub-folders for resampled masks
+subdir <- paste0(bin_dir, file_rep$bare_id)
+subdir <- unique(subdir)
+
+for (i in 1:length(subdir)) {
+  dir.create(subdir[i])
+}
+# To DO: Fix Scott script to take actual ID input and thus get rid of str_extract here!
+file_rep$bin_output <- paste0(bin_dir, file_rep$bare_id, "/bin_resampled_", str_extract(file_rep$output_file, "run-[[:digit:]]_"), tolower(file_rep$stimuli), "_", tolower(file_rep$condition), "_dan.nii.gz")
+
+# Binarize all the resampled mask
+for (i in 1:nrow(file_rep)) {
+
+  bin_command <- as.character(paste("fslmaths", file_rep[i, c("output_file")], "-bin",  file_rep[i, c("bin_output")]))
+
+  system(bin_command)
+}
+```
+
+
+# Extract individualized sub-voxels based on a parcel mask for adults for Attentional Network based on Random vs. Rest ASL contrasts
+# AFNI and FSL must be installed for the following to work
+```{r}
+library(stringr)
+library(dplyr)
+library(reshape2)
+
+output_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/indiv_att_ouput/resampled_mask/adult/"
+
+# Read in minimal of top 10% activation value
+childMin <- 
+  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/adult_dan_minimum_top_10_data_10_3.csv", 
+           stringsAsFactors = F)
+# List ASL individual random > rest z-maps 
+aslRandFile <-
+  list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins", 
+           pattern = "level-run_name-run_sub-blasta\\d+_run-\\d+_contrast-rand[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = T)
+
+aslRandFile <- as.data.frame(aslRandFile)
+
+aslRandFile$aslRandFile <- as.character(aslRandFile$aslRandFile)
+
+aslRandFile$basename <- basename(as.character(aslRandFile$aslRandFile))
+
+aslRandFile$part_id <- str_extract(aslRandFile$basename, "sub-blasta[[:digit:]]+")
+
+aslRandFile$bare_id <- str_extract(aslRandFile$basename, "(?<=sub-blasta)[[:digit:]]+")
+
+aslRandFile$run <- str_extract(aslRandFile$basename, "(?<=run-)[[:digit:]]")
+
+aslRandFile$bare_run <- paste0(aslRandFile$bare_id, "_", aslRandFile$run, "_", tolower(str_extract(aslRandFile$basename, "(Speech|Tone)")))
+
+aslRandFile$stimuli <- str_extract(aslRandFile$basename, "(Speech|Tone)")
+
+aslRandFile$condition <- str_extract(aslRandFile$basename, "(str|rand)")
+
+aslRandFile12 <- 
+  aslRandFile %>%
+  filter(run == "1" | run == "2") %>%
+  filter((stimuli == "Speech" & condition == "str") | (stimuli == "Tone" & condition == "rand"))
+
+aslRandFile34 <- 
+  aslRandFile %>%
+  filter(run == "3" | run == "4") %>%
+  filter((stimuli == "Speech" & condition == "rand") | (stimuli == "Tone" & condition == "str"))
+
+aslRandFile <- rbind(aslRandFile12, aslRandFile34)
+
+aslRandFile <- 
+  aslRandFile %>%
+  arrange(aslRandFile)
+
+# List all parcels in langloc group-constrained mask
+dan_parcels <- 
+  list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/dorsal_attention_parcel/conn_resampled_parcel",
+            pattern = "resampled_conn_dan.nii.gz", full.names = T)
+
+aslRandFile$parcel <- str_extract(aslRandFile$parcel, "resampled_conn_dan")
+
+# Add parcel to aslRandFile
+file_rep <- aslRandFile
+file_rep$parcel_path <- dan_parcels
+# Check that each individual only has the set number of parcels
+file_rep %>%
+  arrange(file_rep) %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n != length(unique(dan_parcels)))
+
+library(reshape2)
+childMin <- melt(childMin, id.vars = c("Row"))
+
+colnames(childMin)[which(names(childMin) == "Row")] <- "bare_run"
+colnames(childMin)[which(names(childMin) == "variable")] <- "parcel"
+
+# Merge minimal of top 10% activation value
+file_rep <- merge(file_rep, childMin, all.x = T)
+
+# Check that each individual only has the set number of parcels
+file_rep %>%
+  arrange(file_rep) %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(n != length(unique(dan_parcels)))
+
+# Set file name for individuals' output sub-parcels
+file_rep$output_file <- paste0(output_dir, file_rep$part_id, "_", "run-", file_rep$run, "_", file_rep$parcel, ".nii.gz") 
+
+# Generate individual masks based on lang loc parcels
+for (i in 1:nrow(file_rep)) {
+
+  fsl_command <- as.character(paste("fslmaths", file_rep[i, c("aslRandFile")], "-thr", file_rep[i, c("value")], "-mas", file_rep[i, c("parcel_path")], file_rep[i, c("output_file")]))
+
+  system(fsl_command)
+}
+
+
+# Binarize all the resampled mask
+bin_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/indiv_att_ouput/bin_resampled_mask/adult/"
+
+# Create subject sub-folders for resampled masks
+subdir <- paste0(bin_dir, file_rep$bare_id)
+subdir <- unique(subdir)
+
+for (i in 1:length(subdir)) {
+  dir.create(subdir[i])
+}
+# To DO: Fix Scott script to take actual ID input and thus get rid of str_extract here!
+file_rep$bin_output <- paste0(bin_dir, file_rep$bare_id, "/bin_resampled_", str_extract(file_rep$output_file, "run-[[:digit:]]_"), tolower(file_rep$stimuli), "_", tolower(file_rep$condition), "_dan.nii.gz")
+
+# Binarize all the resampled mask
+for (i in 1:nrow(file_rep)) {
+
+  bin_command <- as.character(paste("fslmaths", file_rep[i, c("output_file")], "-bin",  file_rep[i, c("bin_output")]))
+
+  system(bin_command)
+}
+```
+
+
+
+

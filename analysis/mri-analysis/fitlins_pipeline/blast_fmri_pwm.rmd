@@ -1,0 +1,561 @@
+---
+title: "blast_fmri_nwr"
+author: "Jojo Hu"
+date: "6/23/2022"
+output: html_document
+---
+
+
+# Compile data
+```{r}
+# Change the parcel to sig
+library(stringr)
+
+ssl_pwm <-
+  list.files(path = "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/sl_analysis_results/ssl/pwm",
+             pattern = ".csv", full.names = T)
+tsl_pwm <-
+  list.files(path = "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/sl_analysis_results/tsl/pwm",
+             pattern = ".csv", full.names = T)
+
+
+pwm <- rbind(ssl_pwm, tsl_pwm)
+
+read_z_score <-
+  function(x) {
+    temp <- read.csv(x)
+    temp[,c("file_name")] <- basename(x)
+    
+    return(temp)
+  }
+
+zList <- list()
+
+for(i in 1:length(pwm)) {
+  zList[[i]] <- read_z_score(pwm[i])
+}
+
+pwm <- do.call(rbind, zList)
+```
+
+
+```{r}
+library(reshape)
+
+id_pwm <- as.data.frame(do.call(rbind, str_split(pwm$Row, "_")))
+colnames(id_pwm) <- c("part_id", "run")
+pwm <- cbind(id_pwm, pwm)
+
+cond_pwm <- as.data.frame(do.call(rbind, str_split(pwm$file_name, "_")))
+colnames(cond_pwm) <- c("group", "task", "condition")
+cond_pwm$condition <- str_extract(cond_pwm$condition, "\\S+(?=.csv)")
+pwm <- cbind(pwm, cond_pwm)
+
+pwmL <- 
+  melt(pwm, id.vars = c("part_id", "group", "run", "task", "condition", "Row", "file_name"))
+
+colnames(pwmL)[colnames(pwmL) == "variable"] <- "parcel_map"
+colnames(pwmL)[colnames(pwmL) == "value"] <- "zscore"
+```
+
+
+## Change parcel name to ROI name
+```{r}
+library(dplyr)
+
+roiFile <- read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/pwm_parcels/original_parcel/Nonword_Rep_parcel_report.csv")
+
+roi <- 
+  roiFile %>%
+  filter(parcel_numbers < 6 & is_significant == 1) %>%
+  mutate(roi = dplyr::recode(max_intersect_labels, 
+                             Left_Superior_Temporal_Gyrus_posterior_division = "LSTG",
+                             Right_Superior_Temporal_Gyrus_posterior_division = "RSTG",
+                             Left_Parietal_Operculum_Cortex = "LPT",
+                             Left_Precentral_Gyrus = "LPreCG",
+                             Right_VI = "RCereb"),
+         parcel_map = dplyr::recode(parcel_numbers, 
+                               "1" = "resampled_pwm_thresh_1",
+                               "2" = "resampled_pwm_thresh_2",
+                               "3" = "resampled_pwm_thresh_3",
+                               "4" = "resampled_pwm_thresh_4",
+                               "5" = "resampled_pwm_thresh_5"))
+
+pwmL <- merge(pwmL, roi[,c("roi", "parcel_map")], by = c("parcel_map"), all.x = T)
+
+parcel_map <- colnames(pwm)
+col_num <- 1:length(colnames(pwm))
+colPWM <- data.frame(parcel_map, col_num)
+
+renamedCol <-
+  merge(colPWM,  roi[,c("roi", "parcel_map")], by = c("parcel_map"), all.x = T) %>%
+  filter(!is.na(roi))
+
+colnames(pwm)[c(renamedCol$col_num)] <- as.character(renamedCol$roi)
+
+colnames(pwm)[which(names(pwm) == "resampled_pwm")] <- "zscore"
+```
+
+
+
+
+
+# Normalize z-scores Phonological Working Memory Network
+```{r}
+library(reshape)
+
+pwmW <- cast(pwm, part_id+run+group+task~condition, value = "zscore")
+
+pwmW_mean <-
+  pwmW %>%
+  group_by(part_id, group, task) %>%
+  dplyr::summarise(structure = mean(structure, na.rm = T), 
+                   random = mean(random, na.rm = T)) %>%
+  mutate(normed_z = (structure-random)/random)
+
+pwmW_mean13 <-
+  pwmW %>%
+  filter(run == 1 | run == 3) %>%
+  group_by(part_id, group, task) %>%
+  dplyr::summarise(structure = mean(structure, na.rm = T), 
+                   random = mean(random, na.rm = T)) %>%
+  mutate(normed_z = (structure-random)/random)
+```
+
+
+# LMER Model Phonological Working Memory Network
+```{r}
+library(lme4)
+
+pwm_m1 <-
+  lmer(zscore ~ task*condition + (1+task+condition|part_id),
+       data = pwm,
+       contrasts = list(task = c(-0.5,0.5),
+                        condition = c(-0.5,0.5))
+      )
+
+summary(pwm_m1)
+
+pwm13_m1 <-
+  lmer(zscore ~ task*condition + (1+task+condition|part_id),
+       data = pwm[which(pwm$run == 1 | pwm$run == 3),],
+       contrasts = list(task = c(-0.5,0.5),
+                        condition = c(-0.5,0.5))
+      )
+
+summary(pwm13_m1)
+
+pwmLROI <- pwmL[-which(is.na(pwmL$roi)),]
+  
+pwm_m2 <-
+  lmer(zscore ~ task*condition + (1+task+condition|part_id) + (1|roi),
+       data = pwmLROI,
+       contrasts = list(task = c(-0.5,0.5),
+                        condition = c(-0.5,0.5))
+      )
+
+summary(pwm_m2)
+
+pwm13_m2 <-
+  lmer(zscore ~ task*condition + (1+task+condition|part_id) + (1|roi),
+       data = pwmLROI[which(pwmLROI$run == 1 | pwmLROI$run == 3),],
+       contrasts = list(task = c(-0.5,0.5),
+                        condition = c(-0.5,0.5))
+      )
+
+summary(pwm13_m2)
+
+# LMER and Effect Size Structure vs. Randpm only in Linguistic tasks in all runs, or run 1 and 3
+
+# T-test across tasks
+t.test(pwmW_mean[which(pwmW_mean$task == "ssl"), "normed_z"], 
+       pwmW_mean[which(pwmW_mean$task == "tsl"), "normed_z"])
+
+t.test(pwmW_mean13[which(pwmW_mean13$task == "ssl"), "normed_z"], 
+       pwmW_mean13[which(pwmW_mean13$task == "tsl"), "normed_z"])
+
+# Cohen'D against zero in Linguistic SL, or run 1 and 3
+# T-test across conditions within tasks
+pwmW_meanSSL <- 
+  pwmW_mean %>%
+  filter(!is.na(structure) & !is.na(random)) %>%
+  filter(task == "ssl")
+
+pwmW_meanSSL13 <- 
+  pwmW_mean13 %>%
+  filter(!is.na(structure) & !is.na(random)) %>%
+  filter(task == "ssl")
+
+pwmW_meanTSL <- 
+  pwmW_mean %>%
+  filter(!is.na(structure) & !is.na(random)) %>%
+  filter(task == "tsl")
+
+t.test(pwmW_meanSSL$structure, pwmW_meanSSL$random, paired = T)
+t.test(pwmW_meanSSL13$structure, pwmW_meanSSL13$random, paired = T)
+t.test(pwmW_meanTSL$structure, pwmW_meanTSL$random, paired = T)
+
+library(effsize)
+cohen.d(pwmW_meanSSL$structure, pwmW_meanSSL$random, paired = TRUE, pooled = FALSE, na.rm = T, data = pwmW_meanSSL)
+cohen.d(pwmW_meanSSL13$structure, pwmW_meanSSL13$random, paired = TRUE, pooled = FALSE, na.rm = T, data = pwmW_meanSSL13)
+cohen.d(pwmW_meanTSL$structure, pwmW_meanTSL$random, paired = TRUE, pooled = FALSE, na.rm = T, data = pwmW_meanSSL)
+
+getDescrip <- 
+  function(condition) {
+  temp  <-
+  pwmW_mean %>%
+  filter(!is.na(structure) & !is.na(random)) %>%
+  group_by(group, task) %>%
+  dplyr::summarise(mean = mean(!!sym(condition), na.rm = T), 
+                   sd = sd(!!sym(condition), na.rm = T), 
+                   n = length(!is.na(!!sym(condition)))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se)
+  
+  return(temp)
+  }
+
+getDescrip("structure")
+getDescrip("random")
+```
+
+
+
+```{r}
+pwmLROImean <-
+  pwmLROI %>%
+  group_by(part_id, group, task, condition, roi) %>%
+  dplyr::summarise(zscore = mean(zscore, na.rm = T))
+
+pwmLROImean$tempCol <- paste(pwmLROImean$roi, pwmLROImean$condition, sep = "_")
+
+pwmLROImeanW <- cast(pwmLROImean, part_id + group + task ~ tempCol, value = "zscore")
+
+pwmLROImeanW %>%
+  group_by(part_id, task) %>%
+  dplyr::summarise(across(starts_with("L") | starts_with("R"), .fns = mean))
+
+pwm_roi <- unique(pwmLROI$roi)
+
+n = 0
+tempList <- list()
+
+t_test_fed <- 
+  function(df, groupName, taskName, ROI) { 
+    for (i in ROI) {
+      df <-
+        df %>%
+        filter(group == groupName & task == taskName)
+      
+      current_comp <- df[,which(str_detect(colnames(df), paste0(i, "_")))]
+      relCol <- colnames(df)[which(str_detect(colnames(df), i))]
+      current_comp <- cbind(df$part_id, current_comp)
+      test <- t.test(current_comp[,paste0(i, "_structure")], 
+                     current_comp[,paste0(i, "_random")], paired = T)
+      normed_z <- (current_comp[,paste0(i, "_structure")] - current_comp[,paste0(i, "_random")])/(current_comp[,paste0(i, "_random")])
+      
+      n = n + 1
+      
+      tempList[[n]] <- 
+        data.frame(i,
+                   # relCol,
+                   groupName,
+                   taskName,
+                   p_value = test$p.value,
+                   df = test$parameter,
+                   t_stat = test$statistic)
+    }
+    return(tempList)
+}
+
+
+t_test_pwmTD_ssl <- do.call(rbind, t_test_fed(pwmLROImeanW, "TD", "ssl", pwm_roi))
+t_test_pwmTD_tsl <- do.call(rbind, t_test_fed(pwmLROImeanW, "TD", "tsl", pwm_roi))
+
+ttestTD_pwm_ssl_sig <-
+  t_test_pwmTD_ssl %>%
+  filter(p_value < (0.1/5))
+```
+
+
+
+
+
+
+# Prep Plotting
+# Plot Raw Z-score in Structure vs. Random PWM
+```{r}
+cbPalette <- c('#a6cee3','#1f78b4','#b2df8a', '#66c2a5','#fc8d62','#8da0cb', '#1b9e77','#d95f02','#7570b3')
+
+library(ggpubr)
+library(ggpattern)
+library(dplyr)
+
+# Two TD children don't have Online RT Data and thus no hit rate grouping
+pwmLROI %>%
+  filter(task == "ssl") %>%
+  filter(roi %in% ttestTD_pwm_ssl_sig$i) %>%
+  group_by(group, task, condition, roi) %>%
+  dplyr::summarise(mean = mean(zscore, na.rm = T), 
+                   sd = sd(zscore, na.rm = T), 
+                   n = length(!is.na(zscore))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se) %>%
+  # dplyr::select(part_id, task, sentence, mean, se, lower_ci, upper_ci, n) %>%
+  # mutate_if(is.numeric, round, 1) %>%
+  arrange(group, task, condition) %>%
+  mutate(task = factor(task, levels=c("tsl", "ssl")),
+         roi = factor(roi, levels=c("LPreCG", "LPT", "LSTG", "RCereb", "RSTG")),
+         condition = factor(condition, levels=c("random", "structure"))) %>%
+  mutate(group = dplyr::recode(group, TD = "Children"),
+         domain = dplyr::recode(task, ssl = "Linguistic",  tsl = "Nonlinguistic"),
+         seq_type = dplyr::recode(condition, structure = "Structure", random = "Random")) %>%
+  ggplot(aes(x = roi, y = mean,
+             ymin = mean - se, 
+             ymax = mean + se,
+             fill = seq_type)) +
+  # scale_fill_manual(values = c("white", "white")) +
+  # scale_fill_manual(values = c(cbPalette[1])) +
+  scale_fill_brewer(type = "seq_type",palette = "Oranges") +
+  geom_bar(position = position_dodge(),
+           color = "black",
+           stat = "identity", 
+           width=.7) +
+  geom_errorbar(width = 0.2, position = position_dodge(.735)) +
+  # scale_pattern_spacing_discrete(range = c(0.025, 0.05)) + 
+  # scale_pattern_manual(values = c(Linguistic = "stripe", Nonlinguistic = "none")) +
+  labs(y = "Mean Activation (Arbitrary Unit)",
+       x = "Brain Regions (Parcels)") +  # Change x-axis label
+  # theme(plot.title = element_text(hjust = 0.95)) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 22, face = "bold"),
+        # axis.title.x=element_blank(),
+        axis.title.x = element_text(size = 22, face = "bold"),
+        axis.title.y = element_text(size = 22, face = "bold"),
+        axis.text = element_text(size = 24, face = "bold"),
+        axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+        axis.line.y = element_line(colour = "black", size = 1),   # Add line to y axis
+        legend.text = element_text(size = 18, face = "bold"),
+        # legend.title = element_text(size = 18, face = "bold"),
+        legend.position = c(0.1, 0.95),
+        legend.background = element_rect(fill = "#ffffff00"),
+        legend.title=element_blank(),
+        legend.spacing.y = unit(0.2, 'cm'),
+        legend.key  = element_rect(fill = "black"),              # Set legend item backgrounds to white
+        panel.background = element_rect(fill = "white"),
+        # Change facet text size
+        strip.text = element_text(size = 24, face = "bold"),
+        # Change facet text
+        strip.background = element_rect(fill = "white", size = 1),
+        # Change facet color
+        panel.spacing = unit(.05, "lines"),
+        # Add panel border
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+        ) +
+  # scale_y_continuous(n.breaks = c(7.5)) +
+  coord_cartesian(ylim=c(1.5, 3)) +
+  guides(fill = guide_legend(byrow = TRUE))
+
+ggsave("/Users/jojohu/Documents/Qlab/fmri/blast_td/results/pwm_td_ssl.png",
+        bg="transparent", width = 24, height = 20, units = "cm")
+```
+
+
+# Plot Normed Z PWM
+```{r}
+# Two TD children don't have Online RT Data and thus no hit rate grouping
+pwmW_mean %>%
+  group_by(group, task) %>%
+  dplyr::summarise(mean = mean(normed_z, na.rm = T), 
+                   sd = sd(normed_z, na.rm = T), 
+                   n = length(!is.na(normed_z))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se) %>%
+  # dplyr::select(part_id, task, sentence, mean, se, lower_ci, upper_ci, n) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  arrange(group, task) %>%
+  mutate(task = factor(task, levels=c("ssl", "tsl"))) %>%
+  mutate(group = dplyr::recode(group, TD = "Children"),
+         domain = dplyr::recode(task, ssl = "Linguistic",  tsl = "Nonlinguistic")) %>%
+  ggplot(aes(x = domain, y = mean*100,
+             ymin = (mean - se)*100, 
+             ymax = (mean + se)*100,
+             pattern = domain,
+             fill = group)) +
+  # scale_fill_manual(values = c("white", "white")) +
+  scale_fill_manual(values = c(cbPalette[1])) +
+  guides(fill="none") +
+  geom_col_pattern(width = 0.9,
+    position = position_dodge(),
+    pattern_density = 0.15,
+    color = "black",
+    pattern_colour = "black",
+    pattern_fill = "white") +
+  scale_pattern_manual(values = c("stripe", "none")) +
+  # scale_pattern_spacing_discrete(range = c(0.025, 0.05)) + 
+  guides(pattern = guide_legend(title="Sequence Type", color = "black", override.aes = list(fill = c("white", "white")))) +
+  geom_errorbar(width = .1, position = position_dodge(width = 0.9)) +
+  # scale_pattern_manual(values = c(Linguistic = "stripe", Nonlinguistic = "none")) +
+  labs(y = "Percent Change from Structured to Random (%)") +  # Change x-axis label
+  # theme(plot.title = element_text(hjust = 0.95)) +
+  theme(plot.title = element_text(size = 22, face = "bold"),
+        axis.title.x=element_blank(),
+        axis.title.y = element_text(size = 22, face = "bold"),
+        axis.text = element_text(size = 24, face = "bold"),
+        axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+        axis.line.y = element_line(colour = "black", size = 1),   # Add line to y axis
+        legend.text = element_text(size = 18, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        # legend.position = c(0.88, 0.88),
+        legend.background = element_rect(fill = "#ffffff00"),
+        legend.key  = element_rect(fill = "black"),              # Set legend item backgrounds to white
+        panel.background = element_rect(fill = "white"),
+        # Change facet text size
+        strip.text = element_text(size = 24, face = "bold"),
+        # Change facet text
+        strip.background = element_rect(fill = "white", size = 1),
+        # Change facet color
+        panel.spacing = unit(.05, "lines"),
+        # Add panel border
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+        )
+```
+
+
+
+
+# PWM By run
+```{r}
+# Two TD children don't have Online RT Data and thus no hit rate grouping
+pwm %>%
+  filter(run == 1 | run == 3) %>%
+  group_by(group, task, condition) %>%
+  dplyr::summarise(mean = mean(zscore, na.rm = T), 
+                   sd = sd(zscore, na.rm = T), 
+                   n = length(!is.na(zscore))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se) %>%
+  # dplyr::select(part_id, task, sentence, mean, se, lower_ci, upper_ci, n) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  arrange(group, task, condition) %>%
+  mutate(task = factor(task, levels=c("ssl", "tsl")),
+         condition = factor(condition, levels=c("structure", "random"))) %>%
+  mutate(group = dplyr::recode(group, TD = "Children"),
+         domain = dplyr::recode(task, ssl = "Linguistic",  tsl = "Nonlinguistic"),
+         seq_type = dplyr::recode(condition, structure = "Structured", random = "Random")) %>%
+  ggplot(aes(x = domain, y = mean,
+             ymin = mean - se, 
+             ymax = mean + se,
+             pattern = seq_type,
+             fill = group)) +
+  # scale_fill_manual(values = c("white", "white")) +
+  scale_fill_manual(values = c(cbPalette[1])) +
+  guides(fill="none") +
+  geom_col_pattern(width = 0.9,
+    position = position_dodge(),
+    pattern_density = 0.15,
+    color = "black",
+    pattern_colour = "black",
+    pattern_fill = "white") +
+  scale_pattern_manual(values = c("circle", "none")) +
+  # scale_pattern_spacing_discrete(range = c(0.025, 0.05)) + 
+  guides(pattern = guide_legend(title="Sequence Type", color = "black", override.aes = list(fill = c("white", "white")))) +
+  geom_errorbar(width = .1, position = position_dodge(width = 0.9)) +
+  # scale_pattern_manual(values = c(Linguistic = "stripe", Nonlinguistic = "none")) +
+  labs(y = "Mean Activation Level (Arbitrary Unit)") +  # Change x-axis label
+  # theme(plot.title = element_text(hjust = 0.95)) +
+  theme(plot.title = element_text(size = 22, face = "bold"),
+        axis.title.x=element_blank(),
+        axis.title.y = element_text(size = 22, face = "bold"),
+        axis.text = element_text(size = 24, face = "bold"),
+        axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+        axis.line.y = element_line(colour = "black", size = 1),   # Add line to y axis
+        legend.text = element_text(size = 18, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        # legend.position = c(0.88, 0.88),
+        legend.background = element_rect(fill = "#ffffff00"),
+        legend.key  = element_rect(fill = "black"),              # Set legend item backgrounds to white
+        panel.background = element_rect(fill = "white"),
+        # Change facet text size
+        strip.text = element_text(size = 24, face = "bold"),
+        # Change facet text
+        strip.background = element_rect(fill = "white", size = 1),
+        # Change facet color
+        panel.spacing = unit(.05, "lines"),
+        # Add panel border
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+        ) 
+
+# Two TD children don't have Online RT Data and thus no hit rate grouping
+pwm %>%
+  filter(run == 2 | run == 4) %>%
+  group_by(group, task, condition) %>%
+  dplyr::summarise(mean = mean(zscore, na.rm = T), 
+                   sd = sd(zscore, na.rm = T), 
+                   n = length(!is.na(zscore))) %>%
+  mutate(se = sd / sqrt(n),
+         lower_ci = mean - qt(1 - (0.05 / 2), n - 1) * se,
+         upper_ci = mean + qt(1 - (0.05 / 2), n - 1) * se) %>%
+  # dplyr::select(part_id, task, sentence, mean, se, lower_ci, upper_ci, n) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  arrange(group, task, condition) %>%
+  mutate(task = factor(task, levels=c("ssl", "tsl")),
+         condition = factor(condition, levels=c("structure", "random"))) %>%
+  mutate(group = dplyr::recode(group, TD = "Children"),
+         domain = dplyr::recode(task, ssl = "Linguistic",  tsl = "Nonlinguistic"),
+         seq_type = dplyr::recode(condition, structure = "Structured", random = "Random")) %>%
+  ggplot(aes(x = domain, y = mean,
+             ymin = mean - se, 
+             ymax = mean + se,
+             pattern = seq_type,
+             fill = group)) +
+  # scale_fill_manual(values = c("white", "white")) +
+  scale_fill_manual(values = c(cbPalette[1])) +
+  guides(fill="none") +
+  geom_col_pattern(width = 0.9,
+    position = position_dodge(),
+    pattern_density = 0.15,
+    color = "black",
+    pattern_colour = "black",
+    pattern_fill = "white") +
+  scale_pattern_manual(values = c("circle", "none")) +
+  # scale_pattern_spacing_discrete(range = c(0.025, 0.05)) + 
+  guides(pattern = guide_legend(title="Sequence Type", color = "black", override.aes = list(fill = c("white", "white")))) +
+  geom_errorbar(width = .1, position = position_dodge(width = 0.9)) +
+  # scale_pattern_manual(values = c(Linguistic = "stripe", Nonlinguistic = "none")) +
+  labs(y = "Mean Activation Level (Arbitrary Unit)") +  # Change x-axis label
+  # theme(plot.title = element_text(hjust = 0.95)) +
+  theme(plot.title = element_text(size = 22, face = "bold"),
+        axis.title.x=element_blank(),
+        axis.title.y = element_text(size = 22, face = "bold"),
+        axis.text = element_text(size = 24, face = "bold"),
+        axis.line.x = element_line(colour = "black", size = 1),  # Add line to x axis
+        axis.line.y = element_line(colour = "black", size = 1),   # Add line to y axis
+        legend.text = element_text(size = 18, face = "bold"),
+        legend.title = element_text(size = 18, face = "bold"),
+        # legend.position = c(0.88, 0.88),
+        legend.background = element_rect(fill = "#ffffff00"),
+        legend.key  = element_rect(fill = "black"),              # Set legend item backgrounds to white
+        panel.background = element_rect(fill = "white"),
+        # Change facet text size
+        strip.text = element_text(size = 24, face = "bold"),
+        # Change facet text
+        strip.background = element_rect(fill = "white", size = 1),
+        # Change facet color
+        panel.spacing = unit(.05, "lines"),
+        # Add panel border
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+        ) 
+```
+
+
+
+
+
+
+
+

@@ -1,0 +1,200 @@
+{
+  "Name":"BLAST_child_mri_processing",
+  "BIDSModelVersion":"1.0",
+  "Description":"this current version is our first fitlins model set up specifically to test our pipeline on first level processing of ASL data. It will be expanded to VSL data and other levels of analysis once set",
+  "Input":{
+    "Run": [1],
+    "task": "asl",
+    "Subject":["blasta044"]
+  },
+  "Nodes":[
+    {
+      "Level": "Run",
+      "Name": "run",
+      "GroupBy":["run", "subject"],
+      "Transformations":{
+        "Transformer":"pybids-transforms-v1",
+        "Instructions":[
+          {
+            "Name": "Factor",
+            "Input":[
+                    "stimuli",
+                    "condition"
+                 ]
+          },
+          {
+            "Name": "And",
+            "Input":[
+              "stimuli.syllable",
+              "condition.R"
+            ],
+            "Output":[
+              "rand_speech"
+            ]
+          },
+          {
+            "Name": "And",
+            "Input":[
+              "stimuli.syllable",
+              "condition.S"
+            ],
+            "Output":[
+              "str_speech"
+            ]
+          },
+          {
+            "Name": "And",
+            "Input":[
+              "stimuli.tone",
+              "condition.R"
+            ],
+            "Output":[
+              "rand_tone"
+            ]
+          },
+          {
+            "Name": "And",
+            "Input":[
+              "stimuli.tone",
+              "condition.S"
+            ],
+            "Output":[
+              "str_tone"
+            ]
+          },
+          {
+            "Name": "Copy",
+            "Input":[
+              "stimuli.rest"
+            ],
+            "Output":[
+              "rest"
+            ]
+          },
+          {
+            "Name": "Convolve",
+            "Input":[
+              "rand_speech",
+              "str_speech",
+              "rand_tone",
+              "str_tone",
+              "rest"
+            ],
+            "Model":"spm"
+          }
+        ]
+      },
+      "Model":{
+        "Type": "glm",
+        "X":[
+          "rand_speech",
+          "str_speech",
+          "rand_tone",
+          "str_tone",
+          "rest",
+          "framewise_displacement",
+          "trans_x",
+          "trans_y",
+          "trans_z",
+          "rot_x",
+          "rot_y",
+          "rot_z",
+          "a_comp_cor_00",
+          "a_comp_cor_01",
+          "a_comp_cor_02",
+          "a_comp_cor_03",
+          "a_comp_cor_04",
+          "a_comp_cor_05",
+          1
+        ]
+      },
+      "Contrasts":[
+        {
+          "Name": "rand_speech_v_rest",
+          "ConditionList":[
+            "rand_speech",
+            "rest"
+          ],
+          "Weights":[
+            1,
+            -1
+          ],
+	  "Test":"t"
+        },
+        {
+          "Name": "str_speech_v_rest",
+          "ConditionList":[
+            "str_speech",
+            "rest"
+          ],
+          "Weights":[
+            1,
+            -1
+          ],
+	  "Test":"t"
+        },
+        {
+          "Name": "rand_tone_v_rest",
+          "ConditionList":[
+            "rand_tone",
+            "rest"
+          ],
+          "Weights":[
+            1,
+            -1
+          ],
+	  "Test":"t"
+        },
+        {
+          "Name": "str_tone_v_rest",
+          "ConditionList":[
+            "str_tone",
+            "rest"
+          ],
+          "Weights":[
+            1,
+            -1
+          ],
+	  "Test":"t"
+        }
+      ]
+    },
+    {
+      "Level": "Subject",
+      "Name": "subject",
+      "GroupBy": ["subject", "contrast"],
+      "Transformations":{
+        "Transformer":"pybids-transforms-v1",
+        "Instructions":[
+          {
+            "Name": "Split",
+            "Input":[
+                     "rand_speech_v_rest",
+                     "str_speech_v_rest",
+		     "rand_tone_v_rest",
+                     "str_tone_v_rest",
+
+                 ],
+	    "By": "run"
+          }
+        ]
+      },
+      "Model": {
+        "Type": "Meta",
+        "X": [1]
+      },
+      "DummyContrasts": {
+        "Test": "t"
+      }
+    }
+  ],
+  "Edges":[
+      {
+         "Source":"run",
+         "Destination":"subject",
+	 "Filter": {
+	   "participant_id": ["sub-blasta044"]
+	}
+      }
+   ]
+}

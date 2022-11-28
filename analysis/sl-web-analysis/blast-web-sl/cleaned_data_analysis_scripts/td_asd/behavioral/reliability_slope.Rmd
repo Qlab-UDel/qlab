@@ -1,0 +1,315 @@
+---
+title: "reliability_slope.rmd"
+author: "Jojo Hu"
+date: "5/20/2022"
+output: html_document
+---
+
+```{r}
+#### RT reliabilities ####
+# This script starts with the data in long format, a row for every trial, every
+# part_idect. Needs columns for part_id, reaction_time (accuracy-filtered RT), targ_index
+# (1-24, which presentation of the target), and IsHit & IsFalseAlarm 
+# (logical variables for checking hit-rates), TargetPosition (is the target in
+# the initial or final position of the triplet)
+
+# part_id, Trial,  TargetPosition, targ_index, reaction_time, IsHit,  IsFalseAlarm
+# 0001  1       Final           NA              NA      NA      NA
+# 0001  2       Final           NA              NA      NA      NA
+# 0001  3       Final           1               650     1       0
+# 0001  4       Final           NA         5     450     0       1
+# ...
+# 0001  288     Final           24              400     1       0
+# 0002  1       Initial         NA              NA      NA      NA
+# 0002  2       Initial         NA              NA      NA      NA
+# 0002  3       Initial         NA              300     0       1
+# 0002  4       Initial         1               700     1       0
+# ...
+# and so on...
+```
+
+
+
+# Read in by-trial RT data
+```{r}
+library(dplyr)
+library(stringr)
+
+dpA <- read.csv("/Users/jojohu/Documents/Qlab/manuscript_development/d_prime_all_trial_adult_td.csv", stringsAsFactors = F)
+
+dpA <- dpA[-which(str_detect(dpA$part_id, "spoli")),]
+
+dpC <- read.csv("/Users/jojohu/Documents/Qlab/manuscript_development/d_prime_all_trial_td_asd.csv", stringsAsFactors = F)
+
+dp <- rbind(dpA, dpC)
+
+dp <-
+  dp %>%
+  select(-one_of("X")) %>%
+  filter(!is.na(part_id)) %>%
+  distinct(.)
+
+dp[which(dp$targ %in% c("do", "ku", "pi", "tu")), "task"] <- "ssl"
+dp[which(dp$targ %in% c("3A", "2A")), "task"] <- "tsl"
+dp[which(dp$target %in% c("H", "A", "C", "E")), "task"] <- "lsl"
+dp[which(dp$target %in% c("alien13", "alien24", "alien20", "alien17")), "task"] <- "vsl"
+
+# Check total trial numbers, output should be Null
+dp %>%
+  group_by(part_id, task) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(task == "ssl" | task == "tsl") %>%
+  filter(n != 575 & n != 576)
+
+dp %>%
+  group_by(part_id, task) %>%
+  dplyr::summarise(n = n()) %>%
+  filter(task == "vsl" | task == "lsl") %>%
+  filter(n != 288)
+
+dp %>%
+  filter(is.na(part_id))
+```
+
+
+# Gather Hit, False Alarm, Target Trial Number, Trial Number
+```{r}
+## Rename hit and false alarm columns
+dp[,c("IsHit")] <-  coalesce(dp$hit_before, dp$hit_during, dp$hit_after)
+dp[,c("IsFalseAlarm")] <- dp$false_alarm
+
+# dp[which(!is.na(dp$IsHit)), "IsHit"] <- 1
+# dp[which(!is.na(dp$IsFalseAlarm)), "IsFalseAlarm"] <- 1
+
+# df$IsHit <- as.numeric(as.character(df$IsHit))
+# df$IsFalseAlarm <- as.numeric(as.character(df$IsFalseAlarm))
+
+## Add target trial numbering
+dp$target_trial <- 0
+
+dp[which(dp$stim_disp == dp$target | dp$stimulus == dp$target | dp$stimulus == dp$targ), "target_trial"] <- 1
+  
+dp_target <-
+  dp %>%
+  filter(target_trial == 1) %>%
+  arrange(part_id, task, time, trial_index) %>%
+  group_by(part_id, task) %>%
+  mutate(targ_index = 1:n())
+  
+
+dpT <- merge(dp, dp_target, all.x = T)
+
+## Add ALL trial numbering
+dpT <- 
+  dpT %>%
+  arrange(part_id, task, time, trial_index) %>%
+  group_by(part_id, task) %>%
+  mutate(Trial = 1:n())
+
+## Check number of target trials, output should be Null
+dpT %>%
+  filter(target_trial == 1) %>%
+  arrange(part_id, task, time, trial_index) %>%
+  group_by(part_id, task) %>%
+  dplyr::summarise(n= n()) %>%
+  filter(n != 24 & n !=48 & n != 47)
+```
+
+
+### The above is actually unnecassry at all; but helpful for compiling all trial data in the future
+
+### Read in data for calculating reliability
+```{r}
+dRTC <- read.csv("/Users/jojohu/Documents/Qlab/manuscript_development/rt_target_trial_td_asd.csv")
+dRTA <- read.csv("/Users/jojohu/Documents/Qlab/manuscript_development/rt_target_trial_adult_td.csv")
+
+commonCol <- intersect(colnames(dRTC), colnames(dRTA))
+
+dRT <- rbind(dRTC[,commonCol], dRTA[,commonCol])
+
+dRT <- dRT[,c("id", "group", "task", "targ_index", "reaction_time", "scaled_rt", "mean_rt")]
+
+dRT <- unique(dRT)
+
+dRT$part_id <- dRT$id
+
+dRT <-
+  dRT %>%
+  arrange(part_id, task, targ_index)
+```
+
+
+### This is also unnecassry at all; but helpful for compiling all trial data with reaction time in the future
+```{r}
+dpT_rt <- merge(dpT, unique(dRT), by.x = c("part_id", "task", "targ_index"), by.y = c("id", "task", "targ_index"), all.x = T)
+nrow(dpT) == nrow(dpT_rt)
+
+dpT_rt <-
+  dpT_rt %>%
+  arrange(part_id, task, time, trial_index)
+```
+
+
+# Change Data (Whether to use all target trial, or only those with hits) and Subset Data (all analyses below change)
+```{r}
+# All target trials
+# dpT <- dpT_rt
+
+# Only target trials with hits
+dpT <- dRT
+
+# Subset Data All Analyses below change
+subsample <- read.csv("/Users/jojohu/Documents/Qlab/manuscript_jndd/allSLData.csv")
+dpT <- dpT[which(dpT$id %in% subsample$part_id),]
+
+length(unique(dpT$id))
+```
+
+
+
+# Calculate and Plot Split-half reliability
+```{r}
+library(lme4)
+library(RcmdrMisc)
+#### Calculate the regressions (slope & intercept) for each part_idect ####
+# Evens vs. odds (this is normally how I'd look at a single split-half, if not
+# randomly resampling 1000 times or something)
+calRel <- 
+  function(taskName, halfTargIndex) {
+    df <- dpT[which(dpT$task == taskName),]
+    
+    RTmodel_evens <- lmList(reaction_time ~ targ_index|part_id, df[which(df$targ_index %% 2==0),])
+    RTmodel_odds <- lmList(reaction_time ~ targ_index|part_id, df[which(df$targ_index %% 2==1),])
+    
+    
+    
+    # First half vs. last half (this will generally be lower, but it's useful to 
+    # diagnose whether there are changes in the slope over time, e.g., is the slope
+    # steeper at first and then gets shallower
+    
+    RTmodel_firsts <- lmList(reaction_time ~ targ_index|part_id, df[which(df$targ_index <=halfTargIndex),])
+    RTmodel_lasts <- lmList(reaction_time ~ targ_index|part_id, df[which(df$targ_index >halfTargIndex),])
+    
+    
+    
+    
+    #### Compile the part_idect-level RT statistics ####
+    # Compile the part_idect-level response data for the RTs, hits, false alarms
+    # The resulting data frame "vsl_reliability" will have a row for each part_idect. 
+    # It does NOT yet have the slope/intercept/mean data... we'll add that below.
+    
+    # Why take the mean for hit and false alarm? Why not take into account misses and correct rejection? How to set 0s in hit and false alarms? Doesn't seem like HitRate and FA rate was used further at all. Will put it here.
+    vsl_reliability <-
+      df %>%
+      group_by(part_id, group) %>%
+      dplyr::summarise(RT_Mean = mean(reaction_time, na.rm = T))
+    
+    ## Copy the coefficients into the part_idect-level dataframe
+    
+    for(s in unique(df$part_id)) {
+      
+      # Even numbered trials
+      if (!is.null(RTmodel_evens[[s]]$coefficients[2])) {
+        vsl_reliability$RT_Intercept_even[vsl_reliability$part_id==s] <- RTmodel_evens[[s]]$coefficients[1]
+        vsl_reliability$RT_Slope_even[vsl_reliability$part_id==s] <- RTmodel_evens[[s]]$coefficients[2]
+        vsl_reliability$RT_Mean_even[vsl_reliability$part_id==s] <- mean(df$reaction_time[which(df$part_id==s & 
+                                                                                           df$targ_index %% 2 == 0)],na.rm=T)
+      }
+      
+      # Odd numbered trials
+      if (!is.null(RTmodel_odds[[s]]$coefficients[2])) {
+        vsl_reliability$RT_Intercept_odd[vsl_reliability$part_id==s] <- RTmodel_odds[[s]]$coefficients[1]
+        vsl_reliability$RT_Slope_odd[vsl_reliability$part_id==s] <- RTmodel_odds[[s]]$coefficients[2]
+        vsl_reliability$RT_Mean_odd[vsl_reliability$part_id==s] <- mean(df$reaction_time[which(df$part_id==s & 
+                                                                                            df$targ_index %% 2 == 1)],na.rm=T)
+      }
+      
+      # First half of trials
+      if (!is.null(RTmodel_firsts[[s]]$coefficients[2])) {
+        vsl_reliability$RT_Intercept_first[vsl_reliability$part_id==s] <- RTmodel_firsts[[s]]$coefficients[1]
+        vsl_reliability$RT_Slope_first[vsl_reliability$part_id==s] <- RTmodel_firsts[[s]]$coefficients[2]
+        vsl_reliability$RT_Mean_first[vsl_reliability$part_id==s] <- mean(df$reaction_time[df$part_id==s & 
+                                                                                             df$targ_index<=halfTargIndex],na.rm=T)
+      }
+      
+      # Last half of trials
+      if (!is.null(RTmodel_lasts[[s]]$coefficients[2])) {
+        vsl_reliability$RT_Intercept_last[vsl_reliability$part_id==s] <- RTmodel_lasts[[s]]$coefficients[1]
+        vsl_reliability$RT_Slope_last[vsl_reliability$part_id==s] <- RTmodel_lasts[[s]]$coefficients[2]
+        vsl_reliability$RT_Mean_last[vsl_reliability$part_id==s] <- mean(df$reaction_time[df$part_id==s & 
+                                                                                            df$targ_index>halfTargIndex],na.rm=T)
+      }
+    }
+
+    
+    #### Compute the split halves reliabilities ####
+    ## Evens vs. odds
+    # RT Slope
+    
+    print(cor.test(vsl_reliability$RT_Slope_even,vsl_reliability$RT_Slope_odd))
+   # plot(vsl_reliability$RT_Slope_even,vsl_reliability$RT_Slope_odd)
+    
+    
+    # RT Mean
+    
+    print(cor.test(vsl_reliability$RT_Mean_even,vsl_reliability$RT_Mean_odd))
+   # plot(vsl_reliability$RT_Mean_even,vsl_reliability$RT_Mean_odd)
+    
+    
+    # RT Intercept
+    
+    print(cor.test(vsl_reliability$RT_Intercept_even,vsl_reliability$RT_Intercept_odd))
+  #  plot(vsl_reliability$RT_Intercept_even,vsl_reliability$RT_Intercept_odd)
+    
+    
+    ## First vs. last half
+    # RT Slope
+    
+    print(cor.test(vsl_reliability$RT_Slope_first,vsl_reliability$RT_Slope_last))
+   # plot(vsl_reliability$RT_Slope_first,vsl_reliability$RT_Slope_last)
+    
+    
+    # RT Mean
+    
+    print(cor.test(vsl_reliability$RT_Mean_first,vsl_reliability$RT_Mean_last))
+   # plot(vsl_reliability$RT_Mean_first,vsl_reliability$RT_Mean_last)
+    
+    
+    # RT Intercept
+    
+    print(cor.test(vsl_reliability$RT_Intercept_first,vsl_reliability$RT_Intercept_last))
+   # plot(vsl_reliability$RT_Intercept_first,vsl_reliability$RT_Intercept_last)
+    
+    
+    ## Does the Mean RT change from the first half to the last half 
+    # (are kids overall speeding up?)
+    
+    t.test(vsl_reliability$RT_Mean_first,vsl_reliability$RT_Mean_last,paired=TRUE)
+    t.test(vsl_reliability$RT_Mean_first,vsl_reliability$RT_Mean_last,paired=TRUE)
+    
+      # Caculate correltions across all measures, only the corresponding measures are reliability values
+    
+    corr <- function(df, group) {
+      rcorr.adjust(as.matrix(df[which(df$group == group),
+                                c(-which(names(df) %in% c("part_id", "group"))
+      )]),
+      use = c("pairwise.complete.obs"))
+    }
+    # Extract correlation matrix:
+    # print(corr(vsl_reliability, "adult")$R[1])
+    rel_td <- as.data.frame(corr(vsl_reliability, "TD")$R[1])
+    rel_asd <- as.data.frame(corr(vsl_reliability, "ASD")$R[1])
+    
+    print(paste("TD Slope reliability:", round(rel_td["RT_Slope_even", "r.RT_Slope_odd"], 2)))
+    print(paste("ASD Slope reliability:", round(rel_asd["RT_Slope_even", "r.RT_Slope_odd"], 2)))
+  }
+```
+
+
+```{r}
+calRel("lsl", 12)
+calRel("ssl", 24)
+calRel("vsl", 12)
+calRel("tsl", 24)
+
+```

@@ -1,0 +1,434 @@
+---
+title: "trim_event_file"
+author: "Jojo Hu"
+date: "2/11/2022"
+output: html_document
+---
+
+# Clean by trial event files for fMRI block analysis
+```{r}
+# Change paths to NAS (input path need to be created on NAS: change /Users/jojohu/Documents/Qlab/fmri/data/child/gen_eve_from_log_child.py script output to NAS )
+input_path <- "/Volumes/data/projects/blast/data/derivatives/event_files/adults_new"
+output_path <- "/Volumes/data/projects/blast/data/derivatives/event_files/adults_new/"
+
+library(stringr)
+
+longeve <- list.files(path = input_path,
+                       pattern = "*\\.txt$", full.names = T)
+
+# Function to clean the raw event files
+clean_event_file <- function(df) {
+  
+  file_name <- basename(df)
+  file_name <- str_extract(file_name, "\\S+(?=.txt?)")
+  
+  df <- read.csv(df,  sep ="\t", stringsAsFactors = F, header = T)
+  
+  # If the raw event file is not empty:
+  if(nrow(df) > 0) {
+    df[, "name"] <- file_name
+  
+    # If the condition in the current trial does not = the condition in the previous trial, then this current trial is the first trial of the block
+    df[, "prev_cond"] <- append("place_holder", df$condition[1:(length(df$condition)-1)]) 
+    # If the condition in the current trial does not = the condition in the next trial, then this current trial is the last trial of the block
+    df[, "next_cond"] <- append(df$condition[2:length(df$condition)], "place_holder") 
+    
+    # Add mini block numbers
+    df[which(df$condition != df$prev_cond), "mini_block"] <-
+      seq(1:nrow(df[which(df$condition != df$prev_cond),]))
+    
+    library(dplyr)
+    library(tidyr)
+    df <-
+      df %>% 
+      tidyr::fill(mini_block, .direction = "down")
+    
+    # Add stimuli type (tone, syllable, rest, image, letter rest)
+    if("soundFile" %in% colnames(df)) {
+      # If the event file is ASL, find tone, syllable, rest
+      df$soundFile <- str_trim(df$soundFile) 
+      df[which(str_detect(df$soundFile, "[:digit:][:upper:]")), "stimuli"] <- "tone"
+      df[which(str_detect(df$soundFile, "[:lower:][:lower:]$")), "stimuli"] <- "syllable"
+      df[which(str_detect(df$soundFile, "silence")), "stimuli"] <- "rest"
+    } else if ("image" %in% colnames(df)) {
+       # If the event file is VSL, find image, letter, rest
+      df$image <- str_trim(df$image) 
+      df[which(str_detect(df$image, "[:alpha:]+[:digit:]+")), "stimuli"] <- "image"
+      df[which(str_detect(df$image, "[:upper:]$")), "stimuli"] <- "letter"
+      df[which(str_detect(df$image, "blank")), "stimuli"] <- "rest"
+    }
+    
+    # If the condition in the current trial does not = the condition in the previous trial, then this current trial is the first trial of the block
+    first_trials <- df[which(df$condition != df$prev_cond), c("onset", "name", "condition", "mini_block", "stimuli")]
+    # If the condition in the current trial does not = the condition in the next trial, then this current trial is the last trial of the block
+    last_trials <- df[which(df$condition != df$next_cond), c("onset", "name", "condition", "mini_block", "stimuli")]
+    
+    # Get the duration of each block
+    colnames(last_trials)[which(colnames(last_trials) == "onset")] <- "onset_last"
+    
+    short_eve <- merge(first_trials, last_trials, by = c("condition", "name", "mini_block", "stimuli"))
+    
+    short_eve <- 
+      short_eve %>%
+      arrange(onset)
+    
+    short_eve$duration <- short_eve$onset_last - short_eve$onset
+    
+    this_file_name <- unique(short_eve$name)
+    this_file_name <-
+      paste0(str_extract(this_file_name, "sub-blasta[:digit:]+"), "_task-", str_extract(this_file_name, "[:alpha:]sl_run"), "-0",
+             str_extract(this_file_name,"(?<=run_)[:digit:]"), "_events.tsv")
+  
+    short_eve <- short_eve[,c("onset", "duration", "stimuli", "condition")]
+    
+    # Get rid of trailing white space and only keep the random 
+    short_eve$condition <- gsub(" ", "", short_eve$condition)
+    
+    short_eve$stimcond <- paste0(short_eve$stimuli, short_eve$condition)
+    
+    short_eve[which(short_eve$stimcond == "restB"), "stimcond"] <- "rest"
+    
+    if(nrow(df[complete.cases(short_eve),]) != nrow(df)) {
+      print(paste(this_file_name, "this file has NA"))
+      print(short_eve)
+    }
+    write.table(short_eve, paste0(output_path, this_file_name), sep='\t', row.names = F)
+  }
+}
+
+# Run the functino to clean the raw event files; No need to save the output of the function as files are saved in the function; place_holder just to prevent printing of lapply
+place_holder <- lapply(longeve, clean_event_file)
+```
+
+
+
+
+# Change imaging file names to make sure fMRI data runs match with behavioral data runs
+## Compile Runs for all Participants
+```{r}
+input_path2 <- "/Volumes/data/projects/blast/data/mri/in_scanner_behavioral/sl_raw_data/adult/sl_raw_data"
+
+csvFile <- list.files(path = input_path2,
+                       pattern = "*blast_a_\\S+_(auditory|visual)\\S+.csv$", full.names = T)
+
+validFile <- list()
+
+for (i in 1:length(csvFile)) {
+  
+  file_name <- basename(csvFile[i])
+  orig_file <- read.csv(csvFile[i], stringsAsFactors = F)
+  
+  if (nrow(orig_file) == 0) {
+    invalidFile <- orig_file 
+    } else if (nrow(orig_file) > 0) {
+      orig_file[,c("file_name")] <- file_name
+      orig_file[,c("repetition")] <- as.character(orig_file[,c("repetition")])
+      orig_file[,c("frameRate")] <- as.character(orig_file[,c("frameRate")])
+      orig_file[,c("PartID")] <- as.character(orig_file[,c("PartID")])
+      
+      if(length(which(colnames(orig_file) %in% "ltarget")) > 0) {
+        orig_file[,c("ltarget")] <- as.character(orig_file[,c("ltarget")])
+      }
+      
+      edit_file <- orig_file
+      validFile[[i]] <- edit_file
+    }
+}
+
+validFile <- do.call(dplyr::bind_rows, validFile)
+
+dateRun <- validFile[,c("PartID", "date", "Run", "file_name")]
+
+dateRun$task <- str_extract(dateRun$file_name, "(auditory|visual)")
+
+dateRun$year_month_date <- str_extract(dateRun$date, "\\S+_\\S+_\\S+(?=_)")
+
+dateRun$date_formatted <- as.Date(dateRun$year_month_date, "%Y_%b_%d")
+
+dateRun$time <- sub('.*_', '', dateRun$date)
+
+# Correct wrong naming in the raw data file
+# dateRun[which(dateRun$PartID == "blast_c_0612"),]$PartID <- "blast_c_061"
+```
+
+
+## Manually Check the participants that have duplicated runs or irregular run orders
+```{r}
+# https://stackoverflow.com/questions/15933958/collapse-concatenate-aggregate-a-column-to-a-single-comma-separated-string-w
+
+checkOrder <-
+  dateRun %>%
+  select(PartID, task, date_formatted, time, Run) %>%
+  dplyr::distinct(.) %>%
+  mutate(date_formatted = as.Date(date_formatted),
+         Run = as.factor(Run)) %>%
+  arrange(PartID, task, date_formatted, time) %>%
+  distinct(PartID, task, Run, .keep_all = TRUE) %>%
+  group_by(PartID, task) %>%
+  dplyr::filter(n() == 4) %>%
+  summarise(run = toString(Run)) %>%
+  ungroup() %>%
+  filter(run != "1, 2, 3, 4" & run!= "3, 4, 1, 2")  %>%
+  mutate(notes = "This is a subject with irregularly-ordered runs. Please check their runsheet to see if the runs were indeed ordered this way and leave notes on this spreadsheet.")
+  
+duplicatedRun <-
+  dateRun %>%
+  select(PartID, task, date_formatted, time, Run) %>%
+  dplyr::distinct(.) %>%
+  mutate(date_formatted = as.Date(date_formatted),
+         Run = as.factor(Run)) %>%
+  arrange(PartID, task, date_formatted, time) %>%
+  group_by(PartID, task, Run) %>%
+  filter(n() > 1) %>%
+  distinct(PartID, .keep_all = F) %>%
+  dplyr::rename(run = Run) %>%
+  mutate(notes = "This is the duplicated run in the in_scanner_behavioral data folder. Please remove the corresponding incomplete run from the behavioral and imaging data (bids and fmriprep).")
+
+checkRun <- rbind(as.data.frame(duplicatedRun), as.data.frame(checkOrder))
+
+write.csv(checkRun, "/Users/jojohu/Documents/Qlab/fmri/data/adult/manual_check_run.csv")
+```
+
+## Check what bids data exsit
+```{r}
+bidsEvent <-
+  list.files(path = "/Volumes/data/projects/blast/data/bids",
+           pattern = "*\\_bold.nii.gz$", recursive = T, full.names = T)
+
+bidsBold <- as.data.frame(bidsEvent)
+
+bidsEvent <- as.data.frame(bidsEvent)
+bidsEvent$PartID <- str_extract(bidsEvent$bidsEvent, "(?<=func/sub-blast(c|a))\\S+(?=_task)")
+
+if(length(which(str_detect(bidsEvent$bidsEvent, "blastc"))) > 0) {
+  bidsEvent[which(str_detect(bidsEvent$bidsEvent, "blastc")), "PartID"] <-
+  paste0("blast_c_", bidsEvent[which(str_detect(bidsEvent$bidsEvent, "blastc")), "PartID"])
+}
+
+if(length(which(str_detect(bidsEvent$bidsEvent, "blasta"))) > 0) {
+  bidsEvent[which(str_detect(bidsEvent$bidsEvent, "blasta")), "PartID"] <-
+  paste0("blast_a_", bidsEvent[which(str_detect(bidsEvent$bidsEvent, "blasta")), "PartID"])
+}
+
+bidsEvent$task <- str_extract(bidsEvent$bidsEvent, "(?<=task-)\\S+(?=_run)")
+bidsEvent$task <- gsub("asl", "auditory", bidsEvent$task)
+bidsEvent$task <- gsub("vsl", "visual", bidsEvent$task)
+
+bidsEvent$Run <- str_extract(bidsEvent$bidsEvent, "(?<=_run-0)\\S+(?=_bold)")
+
+if (length(-which(str_detect(bidsEvent$bidsEvent, "incomplete"))) > 0) {
+  bidsEvent <- bidsEvent[-which(str_detect(bidsEvent$bidsEvent, "incomplete")),]
+}
+
+bidsEvent <-
+  bidsEvent %>%
+  arrange(PartID, task, Run) %>%
+  filter(task == "auditory" | task == "visual") %>%
+  group_by(PartID, task) %>%
+  summarise(bids_run = toString(Run)) %>%
+  ungroup()
+```
+
+
+## Check the run orders that do not match between preprocessed data and in-scanner-behavioral data
+```{r}
+runOnly <-
+  dateRun %>%
+  select(PartID, task, date_formatted, time, Run) %>%
+  dplyr::distinct(.) %>%
+  mutate(date_formatted = as.Date(date_formatted)) %>%
+  arrange(PartID, task, date_formatted, time) %>%
+  select(PartID, task, Run) %>%
+  dplyr::distinct(.) %>%
+  group_by(PartID, task) %>%
+  summarise(run_order = toString(Run)) %>%
+  ungroup()
+
+runOnly <- merge(runOnly, unique(bidsEvent), by = c("PartID", "task"), all.x = T)
+
+runOnly$event_count <- str_count(runOnly$run_order, "[0-9]")
+runOnly$bids_count <- str_count(runOnly$bids_run, "[0-9]")
+
+missingEvent <- runOnly[which(runOnly$event_count < runOnly$bids_count),]
+
+
+missingPreprocessed <-
+runOnly %>%
+  filter(!is.na(run_order)) %>%
+  filter(bids_count < event_count | is.na(bids_run))
+  
+
+mismatchRun <-
+  runOnly[which(!runOnly$run_order %in% runOnly$bids_run),] %>%
+  # filter(!is.na(bids_run)) %>%
+  filter(event_count != bids_count)
+
+
+write.csv(missingEvent, "/Users/jojohu/Documents/Qlab/fmri/data/adult/missing_event_file.csv")
+write.csv(missingPreprocessed, "/Users/jojohu/Documents/Qlab/fmri/data/adult/missing_preprocessed.csv")
+```
+
+## Change event file names to match with actual imaging data sequence names; All adults have run 1, 2, 3, 4
+```{r, eval = F}
+# Only change event file names for those who have correct number of runs preprocessed
+changeRun <-
+  runOnly %>%
+  filter(run_order != "1, 2, 3, 4") %>%
+  filter(run_order != bids_run) %>%
+  filter(event_count == bids_count)
+
+changeRun <- merge(changeRun,  
+                   unique(dateRun[,c("PartID", "task", "Run", "file_name", "date_formatted", "time")]),
+                   all.x = T)
+
+changeRun <-
+  changeRun %>%
+  arrange(PartID, task, date_formatted, time)
+
+
+## Read in original event files
+eventFile <- list.files(path = input_path,
+                        pattern = "*\\.tsv$", full.names = T)
+
+eventFile <- as.data.frame(eventFile)
+eventFile$PartID <- str_extract(eventFile$eventFile, "(?<=-blast(c|a))\\S+(?=_task)")
+
+if(length(which(str_detect(eventFile$eventFile, "blastc"))) > 0) {
+  eventFile[which(str_detect(eventFile$eventFile, "blastc")), "PartID"] <-
+  paste0("blast_c_", eventFile[which(str_detect(eventFile$eventFile, "blastc")), "PartID"])
+}
+
+if(length(which(str_detect(eventFile$eventFile, "blasta"))) > 0) {
+  eventFile[which(str_detect(eventFile$eventFile, "blasta")), "PartID"] <-
+  paste0("blast_a_", eventFile[which(str_detect(eventFile$eventFile, "blasta")), "PartID"])
+}
+
+eventFile$task <- str_extract(eventFile$eventFile, "(?<=task-)\\S+(?=_run)")
+eventFile$task <- ifelse(eventFile$task == "asl", "auditory", "visual")
+
+eventFile$Run <- str_extract(eventFile$eventFile, "(?<=_run-0)\\S+(?=_events)")
+
+changeRun <- merge(changeRun, eventFile, by = c("PartID", "task", "Run"), all.x = T)
+
+                      
+# dir.create(file.path("/Volumes/data/projects/blast/data/derivatives/event_files/children_new/", "original_event_files"))
+changeRun$basename <- basename(as.character(changeRun$eventFile))
+changeRun$eventFile <- as.character(changeRun$eventFile)
+changeRun$archive <- paste0("/Volumes/data/projects/blast/data/derivatives/event_files/children_new/original_event_files/", changeRun$basename)
+
+file.rename(as.character(changeRun$eventFile), changeRun$archive)
+
+splitOrder <- as.data.frame(do.call(rbind, str_split(changeRun$run_order, ", ")))
+
+colnames(splitOrder) <- c("run1_name", "run2_name", "run3_name", "run4_name")
+
+changeRun <- cbind(changeRun, splitOrder)
+
+changeRun[which(changeRun$Run == 1), "correctRun"] <- as.character(changeRun[which(changeRun$Run == 1),]$run1_name)
+changeRun[which(changeRun$Run == 2), "correctRun"] <- as.character(changeRun[which(changeRun$Run == 2),]$run2_name)
+changeRun[which(changeRun$Run == 3), "correctRun"] <- as.character(changeRun[which(changeRun$Run == 3),]$run3_name)
+changeRun[which(changeRun$Run == 4), "correctRun"] <- as.character(changeRun[which(changeRun$Run == 4),]$run4_name)
+
+changeRun$renameFile <- str_replace(changeRun$archive, "(?<=run-0)\\S{1}", changeRun$correctRun)
+
+changeRun$renameFile <- str_remove(changeRun$renameFile, "/original_event_files")
+
+file.rename(changeRun$archive, changeRun$renameFile)
+```
+
+
+
+
+# Put imaging files and event files into individual subject folders
+```{r}
+library(stringr)
+# file.copy("/Users/jojohu/Documents/Qlab/fmri/data/child/clean_event/", 
+#           "/Volumes/data/projects/blast/data/derivatives/event_files/children_new/", 
+#           overwrite = F,
+#           copy.mode = TRUE, 
+#           copy.date = TRUE)
+
+event_from <- 
+  list.files("/Volumes/data/projects/blast/data/derivatives/event_files/adults_new", 
+              pattern = "sub-\\S+(vsl|asl)_run-\\S+_events.tsv$", full.names = T)
+
+event_from <- as.data.frame(event_from)
+
+event_from[,"event_from_short"] <- basename(as.character(event_from$event_from))
+
+event_to <- bidsBold
+
+event_to[,"event_to_short"] <- str_extract(event_to$bidsEvent,
+                                           "(?<=/func/)sub-\\S+(vsl|asl)_run-\\S+_bold.nii.gz$")
+
+event_to$event_to_short <- str_replace(event_to$event_to_short, "_bold.nii.gz", "_events.tsv")
+
+event_to <- merge(event_to, event_from, by.x = "event_to_short", by.y = "event_from_short", all.x = T)
+
+event_to$event_to_path <- str_remove(event_to$bidsEvent,
+                                           "(?<=/func)/sub-\\S+(vsl|asl)_run-\\S+_bold.nii.gz$")
+
+event_to <- event_to[which(!is.na(event_to$event_from)),]
+
+event_to$event_from <- as.character(event_to$event_from)
+
+# event_to <- event_to[-which(str_detect(event_to$bidsEvent, "incomplete")),]
+
+file.copy(event_to$event_from, file.path(event_to$event_to_path, basename(event_to$event_from)), 
+          overwrite = T,
+          copy.mode = TRUE, 
+          copy.date = TRUE)
+
+file.copy("/Volumes/data/projects/blast/data/bids/task-asl_bold.json", "/Volumes/data/projects/blast/data/derivatives/fmriprep/", 
+          overwrite = F,
+          copy.mode = TRUE, 
+          copy.date = TRUE)
+
+file.copy("/Volumes/data/projects/blast/data/bids/task-vsl_bold.json", "/Volumes/data/projects/blast/data/derivatives/fmriprep/", 
+          overwrite = F,
+          copy.mode = TRUE, 
+          copy.date = TRUE)
+```
+
+
+
+
+# Modify participant.tsv file for first-level analysis in fitlins with those subjects that have at least one event file and have matched preprocessed bids run and behavioral event file runs
+```{r}
+part_tsv <-
+  read.csv("/Volumes/data/projects/blast/data/bids/participants.tsv",  sep ="\t", stringsAsFactors = F, header = T)
+
+part_id <- unique(str_extract(event_to$event_to_short, "sub-\\S+(?=_run)"))
+
+part_id <- as.data.frame(part_id)
+
+part_id[,"asl"] <- str_extract(part_id$part_id, "asl")
+part_id$part_id_only <- str_extract(part_id$part_id, "sub-\\S+(?=_task)")
+part_id_asl <- part_id[which(part_id$asl == "asl"),]
+
+part_id[,"vsl"] <- str_extract(part_id$part_id, "vsl")
+part_id$part_id_only <- str_extract(part_id$part_id, "sub-\\S+(?=_task)")
+part_id_vsl <- part_id[which(part_id$vsl == "vsl"),]
+
+part_tsv <- merge(part_tsv, part_id_asl[,c("part_id_only", "asl")], by.x = "participant_id", by.y = "part_id_only", all.x = T)
+part_tsv <- merge(part_tsv, part_id_vsl[,c("part_id_only", "vsl")], by.x = "participant_id", by.y = "part_id_only", all.x = T)
+
+mismatchRun$participant_id <- paste0("sub-",gsub("_", "", mismatchRun$PartID))
+
+part_tsv <- part_tsv[-which(part_tsv$participant_id %in% unique(mismatchRun$participant_id)),]
+
+# part_tsv[,c("bug")] <- "no"
+# part_tsv[which(part_tsv$participant_id == "sub-blastc224"), c("bug")] <- "yes"
+
+part_tsv_with_event <-
+  part_tsv %>%
+  filter(!is.na(asl) | !is.na(vsl)) 
+
+# %>%
+#   subset(bug == "no")
+# 
+# filterSubj <- paste(part_tsv_with_event$participant_id, collapse = "\",\"")
+
+
+write.csv(part_tsv_with_event, "/Volumes/data/projects/blast/data/derivatives/fitlins/participants_fitlins_adult.csv")
+```
