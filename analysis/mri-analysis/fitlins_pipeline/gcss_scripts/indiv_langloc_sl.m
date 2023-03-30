@@ -2,11 +2,18 @@ function indiv_langloc_sl(opts, group, prefix, part_id)
 
 %% Measure response magnitudes in frois
 opts.CURRENT_ID = [prefix part_id];
-opts.PROJECT_DIR = '/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/';
+%% To troubleshoot, uncomment the line below:
+%% opts.CURRENT_ID = 'blast_a_044';
+opts.PROJECT_DIR = '/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/';
 opts.PARCEL_DIR = [opts.PROJECT_DIR 'data/indiv_langloc_output/bin_resampled_mask/' group '/' part_id '/'];
-% opts.SUBJ_NAME_LIST = [opts.PROJECT_DIR 'data/asl/sslrandorder_TD.txt'];
+%% To troubleshoot, uncomment the line below:
+%% opts.PARCEL_DIR = [opts.PROJECT_DIR 'data/indiv_langloc_output/bin_resampled_mask/adult/044/'];
 opts.SUBJ_DEFINE_DATA_DIR = [opts.PROJECT_DIR 'data/indiv_langloc_output/asl/' group '/' part_id '/'];
+%% To troubleshoot, uncomment the line below:
+%% opts.SUBJ_DEFINE_DATA_DIR = [opts.PROJECT_DIR 'data/indiv_langloc_output/asl/adult/044/'];
 opts.RESULTS_DIR = [opts.PROJECT_DIR 'data/indiv_langloc_output/asl/' group '/results/'];
+%% To troubleshoot, uncomment the line below:
+%% opts.RESULTS_DIR = [opts.PROJECT_DIR 'data/indiv_langloc_output/asl/adult/results/'];
 disp(opts)
 
 if ~exist(opts.RESULTS_DIR,'dir')

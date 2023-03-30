@@ -11,8 +11,13 @@ library(stringr)
 
 aliceFile <-
   list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
-           pattern = "level-run_name-runlevel_sub-blasta\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii", 
-           full.names = T, recursive = T)
+           pattern = "sub-blasta", 
+           full.names = T, recursive = F)
+
+aliceFile <-
+  list.files(paste0(aliceFile), 
+           pattern = "level-run_name-runlevel_sub-blasta\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii.gz", 
+           full.names = T, recursive = F)
 
 aliceFile <- as.data.frame(aliceFile)
 
@@ -116,8 +121,13 @@ sl_path <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitli
 
 slFile <-
   list.files(sl_path,
+           pattern = "sub-blasta", 
+           full.names = T, recursive = F)
+
+slFile <-
+  list.files(slFile,
            pattern = "level-run_name-run_sub-blasta\\d+_run-\\d+_contrast-[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
-           full.names = T, recursive = T)
+           full.names = T, recursive = F)
 
 bk <- slFile
 
@@ -184,8 +194,13 @@ sl_path <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitli
 
 slFile <-
   list.files(sl_path,
+           pattern = "sub-blastc", 
+           full.names = T, recursive = F)
+
+slFile <-
+  list.files(slFile,
            pattern = "level-run_name-run_sub-blastc\\d+_run-\\d+_contrast-[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
-           full.names = T, recursive = T)
+           full.names = T, recursive = F)
 
 bk <- slFile
 
@@ -241,14 +256,20 @@ for (i in unique(slRest$bare_id)) {
 
 
 
+# Dorsal Attention Network Cleaning
 # Clean and Move ASL Random vs. Rest output for adults for extracting minimal of top 10% activation for each individual
 ```{r}
 library(stringr)
 
 aslRandFile <-
   list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins", 
+           pattern = "sub-blasta", 
+           full.names = T, recursive = F)
+
+aslRandFile <-
+  list.files(aslRandFile, 
            pattern = "level-run_name-run_sub-blasta\\d+_run-\\d+_contrast-rand[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
-           full.names = T, recursive = T)
+           full.names = T, recursive = F)
 
 aslRandFile <- as.data.frame(aslRandFile)
 
@@ -313,8 +334,13 @@ library(stringr)
 
 aslRandFile <-
   list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins", 
+           pattern = "sub-blastc", 
+           full.names = T, recursive = F)
+
+aslRandFile <-
+  list.files(aslRandFile, 
            pattern = "level-run_name-run_sub-blastc\\d+_run-\\d+_contrast-rand[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
-           full.names = T, recursive = T)
+           full.names = T, recursive = F)
 
 aslRandFile <- as.data.frame(aslRandFile)
 
@@ -361,7 +387,7 @@ aslRandFile$new_name <- paste0("/Volumes/data/projects/blast/data/mri/imaging/sc
                              aslRandFile$rename_id)
 
 
-file.copy(as.character(aslRandFile$aslRandFile), aslRandFile$new_path, overwrite = F)
+file.copy(as.character(aslRandFile$aslRandFile), aslRandFile$new_path, overwrite = T)
 
 file.rename(aslRandFile$new_path, aslRandFile$new_name)
 

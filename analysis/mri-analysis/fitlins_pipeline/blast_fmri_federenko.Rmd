@@ -1,5 +1,11 @@
 
 # Read in ASL, Langloc, and Dorsal Attention Network Results
+
+#TO DO: Remove these children's ASL data due to weird event file timing:
+sub-blastc168_task-asl_run-02_events.tsv				
+sub-blastc224_task-asl_run-01_events.tsv				
+sub-blastc520_task-asl_run-03_events.tsv
+
 ```{r}
 library(dplyr)
 library(tidyr)
@@ -113,6 +119,20 @@ langASL <-
 danASL <-
   danASL %>%
   mutate(group = ifelse(danASL$group == "_a", "adult", "child")) 
+
+langlocID <- 
+  langASL_long %>%
+  dplyr::select("part_id") %>%
+  distinct(.)
+
+danID <-
+  danASL %>%
+  dplyr::select("part_id") %>%
+  distinct(.)
+
+id <- unique(rbind(langlocID, danID))
+
+write.csv(id, "/Users/jojohu/Downloads/cns_id.csv")
 ```
 
 
@@ -145,9 +165,9 @@ langASL_long <-
     TRUE ~ "Left Hemisphere"
   ))
 
-write.csv(langASL_long, "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/asl_gcss_z_results_long.csv", row.names = F)
+# write.csv(langASL_long, "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/asl_gcss_z_results_long.csv", row.names = F)
 
-write.csv(danASL_long, "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/indiv_att_ouput/dan_gcss_z_results_long.csv", row.names = F)
+# write.csv(danASL_long, "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/indiv_att_ouput/dan_gcss_z_results_long.csv", row.names = F)
 ```
 
 # Outlier removal for langloc
@@ -266,7 +286,6 @@ ggsave("/Users/jojohu/Downloads/asl_activation_adult_rh.png", height = 20, width
 plotASL("Right Hemisphere", "child", parcelRTD, "#A6CEE3")
 ggsave("/Users/jojohu/Downloads/asl_activation_child_rh.png", height = 20, width = 30, unit= "cm")
 ```
-
 
 
 
@@ -485,11 +504,38 @@ asl_m3A <-
 
 summary(asl_m3A)
 
+
+# Group by condition comparison
+asl_m4 <-
+  lmer(value ~ group*condition + (1+hemi|part_id),  
+       data = langASL_long[which(langASL_long$stimuli == "speech"),],
+      contrasts = list(group = c(-0.5, 0.5),
+                       condition = c(-0.5, 0.5)))
+
+summary(asl_m4)
+
+asl_m4LH <-
+  lmer(value ~ group*condition + (1|part_id),  
+       data = langASL_long[which(langASL_long$stimuli == "speech" & langASL_long$hemi == "Left Hemisphere"),],
+      contrasts = list(group = c(-0.5, 0.5),
+                       condition = c(-0.5, 0.5)))
+
+summary(asl_m4LH)
+
+asl_m4RH <-
+  lmer(value ~ group*condition + (1|part_id),  
+       data = langASL_long[which(langASL_long$stimuli == "speech" & langASL_long$hemi == "Right Hemisphere"),],
+      contrasts = list(group = c(-0.5, 0.5),
+                       condition = c(-0.5, 0.5)))
+
+summary(asl_m4RH)
 ```
 
 
 # Post-hoc tests for ASL mean activation in group x stim x condition x hemisphere
 ```{r}
+library(tidyr)
+
 mean_aslAd <-
   langASL_long %>%
   filter(group == "adult") %>%
@@ -510,10 +556,10 @@ cleanT <-
   temp <-
     df %>%
     filter(hemi == hemiName & stimuli == stimName) %>%
-    spread(condition, mean) %>%
+    tidyr::spread(condition, mean) %>%
     filter(!is.na(str)) %>%
     filter(!is.na(rand)) %>%
-    gather(condition, mean, -part_id, -group, -stimuli, -hemi, -parcel)
+    tidyr::gather(condition, mean, -part_id, -group, -stimuli, -hemi, -parcel)
   
   return(temp)
   }
@@ -608,9 +654,9 @@ tAll_marked <-
          parcel_text = parcel,
          parcel = as.factor(str_remove(parcel, "langloc_gcp"))) %>%
   mutate(stars = coalesce(three_star, two_star, one_star, marginal)) %>%
-  select(-one_of("three_star", "two_star", "one_star", "marginal"))
+  dplyr::select(-one_of("three_star", "two_star", "one_star", "marginal"))
   
-write.csv(tAll_marked, "/Users/jojohu/Downloads/asl_t_test_str_rand.csv")
+# write.csv(tAll_marked, "/Users/jojohu/Downloads/asl_t_test_str_rand.csv")
 ```
 
 
@@ -639,7 +685,7 @@ tAll_marked %>%
 
 
 
-ggsave("/Users/jojohu/Downloads/adult_cohen_d.png", width = 22, height = 22, units = "cm")  
+# ggsave("/Users/jojohu/Downloads/adult_cohen_d.png", width = 22, height = 22, units = "cm")  
 ```
 
 
@@ -659,25 +705,25 @@ mean_aslAllS <-
 mean_aslAllT <- 
   mean_aslAll %>%
   filter(stimuli == "tone") %>%
-  spread(condition, mean) 
+  tidyr::spread(condition, mean) 
 
 # Stim * Condition
 mean_aslAdStim <- 
   mean_aslAll %>%
   filter(group == "adult") %>%
-  spread(condition, mean) 
+  tidyr::spread(condition, mean) 
 
 mean_aslTDStim <- 
   mean_aslAll %>%
   filter(group == "child") %>%
-  spread(condition, mean) 
+  tidyr::spread(condition, mean) 
 
  
-t_test_pair(mean_aslAllS$str, mean_aslAllS$rand)
-t_test_pair(mean_aslAllT$str, mean_aslAllT$rand)
+t.test(mean_aslAllS$str, mean_aslAllS$rand, paired = T)
+t.test(mean_aslAllT$str, mean_aslAllT$rand, paired = T)
 
-t_test_pair(mean_aslAdStim$str, mean_aslAdStim$rand)
-t_test_pair(mean_aslTDStim$str, mean_aslTDStim$rand)
+t.test(mean_aslAdStim$str, mean_aslAdStim$rand, paired = T)
+t.test(mean_aslTDStim$str, mean_aslTDStim$rand,paired = T)
 ```
 
 
@@ -690,7 +736,7 @@ langASL_long %>%
   dplyr::summarise(mean = mean(value, na.rm = T)) %>%
   dcast(part_id+group+hemi+stimuli ~ condition, fun.aggregate = mean) %>%
   mutate(percent_change = ((str-rand)/rand)) %>%
-  mutate(percent_change = percent_change*100) %>%
+  mutate(percent_change = percent_change) %>%
   # filter(!(abs(percent_change - mean(percent_change, na.rm = T)) > 3*sd(percent_change, na.rm = T))) %>%
   group_by(group, stimuli, hemi) %>%
   dplyr::summarise(mean = mean(percent_change, na.rm = T),
@@ -772,6 +818,32 @@ pasl_m3 <-
                        stimuli = c(-0.5, 0.5)))
 
 summary(pasl_m3)
+
+pasl_speech_m1 <-
+  lmer(percent_change ~ group + (1|part_id),  
+       data = percentASL[which(percentASL$stimuli == "speech"),],
+      contrasts = list(group = c(-0.5, 0.5)))
+
+summary(pasl_speech_m1)
+```
+
+# Post-hoc t-tests on percentage change from (structured - random)/random
+```{r}
+percentASL %>%
+  group_by(group, parcel) %>%
+  dplyr::summarise(mean = mean(percent_change, na.rm = T)) %>%
+  filter(mean > 0)
+
+t.test(percentASL[which(percentASL$stimuli == "speech" & percentASL$group == "adult" & percentASL$parcel %in% c("langloc_gcp4", "langloc_gcp9")),]$percent_change, 
+       percentASL[which(percentASL$stimuli == "speech" & percentASL$group == "child" & percentASL$parcel %in% c("langloc_gcp1", "langloc_gcp12", "langloc_gcp2", "langloc_gcp3", "langloc_gcp5", "langloc_gcp6", "langloc_gcp7", "langloc_gcp8", "langloc_gcp9")),]$percent_change )
+
+t.test(percentASL[which(percentASL$stimuli == "speech" & percentASL$group == "adult" & percentASL$hemi == "Left Hemisphere"),]$percent_change, 
+       percentASL[which(percentASL$stimuli == "speech" & percentASL$group == "child" & percentASL$hemi == "Left Hemisphere"),]$percent_change)
+
+t.test(percentASL[which(percentASL$stimuli == "speech" & percentASL$group == "adult" & percentASL$hemi == "Right Hemisphere"),]$percent_change, 
+       percentASL[which(percentASL$stimuli == "speech" & percentASL$group == "child" & percentASL$hemi == "Right Hemisphere"),]$percent_change)
+
+
 ```
 
 

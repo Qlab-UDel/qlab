@@ -34,7 +34,7 @@ for (i in sig_parcel) {
 
 # Segmenting parcels for children
 ```{r}
-path <- "/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/child/6vox/"
+path <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/child/6vox/"
 
 dir.create(paste0(path, "seg_parcels"))
 
@@ -70,12 +70,17 @@ output_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/dat
 
 # Read in minimal of top 10% activation value
 childMin <- 
-  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/child_minimum_top_10_lang_loc_data_9_28.csv", stringsAsFactors = F)
+  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/child_langloc_minimum_top_10_data_03_17.csv", stringsAsFactors = F)
 # List langloc individual intact > degraded z-maps 
 aliceFile <-
   list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
+           pattern = "sub-blastc", 
+           full.names = T, recursive = F)
+
+aliceFile <-
+  list.files(aliceFile, 
            pattern = "level-run_name-runlevel_sub-blastc\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii.gz", 
-           full.names = T, recursive = T)
+           full.names = T, recursive = F)
 
 aliceFile <- as.data.frame(aliceFile)
 
@@ -96,8 +101,8 @@ aliceFile <-
   arrange(aliceFile)
 # List all parcels in langloc group-constrained mask
 langloc_parcels <- 
-  list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/child/6vox/seg_parcels",
-            pattern = "langloc_gcp\\d+.nii.gz", full.names = T)
+  list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/combined/td_adult/006_00001_final/seg_parcels",
+            pattern = "\\S+.nii.gz", full.names = T)
 
 # Repeat each individual's row so that each individual will have the number of rows that matches the total number of parcels in the group-constrained mask
 file_rep <- rep(aliceFile$aliceFile, length(unique(langloc_parcels)))
@@ -154,17 +159,27 @@ colnames(file_rep)[which(names(file_rep) == "parcel_rep")] <- "parcel_path"
 # Set file name for individuals' output sub-parcels
 file_rep$output_file <- paste0(output_dir, file_rep$part_id, "_", "run-", file_rep$run, "_", file_rep$parcel, ".nii.gz") 
 
+file_rep %>%
+  group_by(part_id, run) %>%
+  dplyr::summarise(n = n()) %>%
+  distinct(.)
+```
+
 # Generate individual masks based on lang loc parcels
+```{r}
 for (i in 1:nrow(file_rep)) {
 
   fsl_command <- as.character(paste("fslmaths", file_rep[i, c("aliceFile")], "-thr", file_rep[i, c("value")], "-mas", file_rep[i, c("parcel_path")], file_rep[i, c("output_file")]))
 
   system(fsl_command)
 }
+```
+
 
 
 
 # Resample individual masks
+```{r}
 resampled_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/resampled_mask/child/"
 
 # Create subject sub-folders for resampled masks
@@ -178,7 +193,7 @@ for (i in 1:length(subdir)) {
 # List resampled individual masks output
 file_rep$resampled_output <- paste0(resampled_dir, file_rep$bare_id, "/resampled_", basename(file_rep$output_file)) 
 
-resampled_ref <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins/sub-blastc019/level-run_name-run_sub-blastc019_run-1_contrast-randSpeechVRest_stat-z_statmap.nii.gz"
+resampled_ref <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins/sub-blasta044/level-run_name-run_sub-blasta044_run-1_contrast-strSpeechVRest_stat-z_statmap.nii.gz"
 
 for (i in 1:nrow(file_rep)) {
 
@@ -187,9 +202,13 @@ for (i in 1:nrow(file_rep)) {
   # print(resample_command)
   system(resample_command)
 }
+```
+
+
 
 
 # Binarize all the resampled mask
+```{r}
 bin_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/bin_resampled_mask/child/"
 
 # Create subject sub-folders for resampled masks
@@ -225,12 +244,19 @@ output_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/dat
 
 # Read in minimal of top 10% activation value
 childMin <- 
-  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/adult_minimum_top_10_lang_loc_data_9_29.csv", stringsAsFactors = F)
+  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/child_langloc_minimum_top_10_data_03_17.csv", stringsAsFactors = F)
+
 # List langloc individual intact > degraded z-maps 
 aliceFile <-
   list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins_alice", 
+           pattern = "sub-blasta", 
+           full.names = T, recursive = F)
+
+aliceFile <-
+  list.files(aliceFile, 
            pattern = "level-run_name-runlevel_sub-blasta\\d+_run-\\d+_contrast-intactGtDegraded_stat-z_statmap.nii.gz", 
-           full.names = T, recursive = T)
+           full.names = T, recursive = F)
+
 
 aliceFile <- as.data.frame(aliceFile)
 
@@ -251,8 +277,8 @@ aliceFile <-
   arrange(aliceFile)
 # List all parcels in langloc group-constrained mask
 langloc_parcels <- 
-  list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/adult/6vox/seg_parcels",
-            pattern = "langloc_gcp\\d+.nii.gz", full.names = T)
+  list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/langloc_fitlins/group_constrained_mask/combined/td_adult/006_00001_final/seg_parcels",
+            pattern = "\\S+.nii.gz", full.names = T)
 
 # Repeat each individual's row so that each individual will have the number of rows that matches the total number of parcels in the group-constrained mask
 file_rep <- rep(aliceFile$aliceFile, length(unique(langloc_parcels)))
@@ -308,18 +334,22 @@ colnames(file_rep)[which(names(file_rep) == "parcel_rep")] <- "parcel_path"
 
 # Set file name for individuals' output sub-parcels
 file_rep$output_file <- paste0(output_dir, file_rep$part_id, "_", "run-", file_rep$run, "_", file_rep$parcel, ".nii.gz") 
+```
+
 
 # Generate individual masks based on lang loc parcels
+```{r}
 for (i in 1:nrow(file_rep)) {
 
   fsl_command <- as.character(paste("fslmaths", file_rep[i, c("aliceFile")], "-thr", file_rep[i, c("value")], "-mas", file_rep[i, c("parcel_path")], file_rep[i, c("output_file")]))
 
   system(fsl_command)
 }
-
+```
 
 
 # Resample individual masks
+```{r}
 resampled_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/resampled_mask/adult/"
 
 # Create subject sub-folders for resampled masks
@@ -333,7 +363,7 @@ for (i in 1:length(subdir)) {
 # List resampled individual masks output
 file_rep$resampled_output <- paste0(resampled_dir, file_rep$bare_id, "/resampled_", basename(file_rep$output_file)) 
 
-resampled_ref <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins/sub-blasta010/level-run_name-run_sub-blasta010_run-1_contrast-randSpeechVRest_stat-z_statmap.nii.gz"
+resampled_ref <- "/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins/sub-blasta044/level-run_name-run_sub-blasta044_run-1_contrast-strSpeechVRest_stat-z_statmap.nii.gz"
 
 for (i in 1:nrow(file_rep)) {
 
@@ -342,9 +372,12 @@ for (i in 1:nrow(file_rep)) {
   # print(resample_command)
   system(resample_command)
 }
+```
+
 
 
 # Binarize all the resampled mask
+```{r}
 bin_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/bin_resampled_mask/adult/"
 
 # Create subject sub-folders for resampled masks
@@ -380,13 +413,18 @@ output_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/dat
 
 # Read in minimal of top 10% activation value
 childMin <- 
-  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/child_dan_minimum_top_10_data_10_3.csv", 
+  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/child_dan_minimum_top_10_data_03_17.csv", 
            stringsAsFactors = F)
 # List ASL individual random > rest z-maps 
 aslRandFile <-
   list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins", 
+           pattern = "sub-blastc", 
+           full.names = T, recursive = F)
+
+aslRandFile <-
+  list.files(aslRandFile, 
            pattern = "level-run_name-run_sub-blastc\\d+_run-\\d+_contrast-rand[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
-           full.names = T, recursive = T)
+           full.names = T, recursive = F)
 
 aslRandFile <- as.data.frame(aslRandFile)
 
@@ -427,7 +465,7 @@ dan_parcels <-
   list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/dorsal_attention_parcel/conn_resampled_parcel",
             pattern = "resampled_conn_dan.nii.gz", full.names = T)
 
-aslRandFile$parcel <- str_extract(aslRandFile$parcel, "resampled_conn_dan")
+# aslRandFile$parcel <- str_extract(aslRandFile$parcel, "resampled_conn_dan")
 
 # Add parcel to aslRandFile
 file_rep <- aslRandFile
@@ -501,13 +539,18 @@ output_dir <- "/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/dat
 
 # Read in minimal of top 10% activation value
 childMin <- 
-  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/adult_dan_minimum_top_10_data_10_3.csv", 
+  read.csv("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/asl_attention/adult_dan_minimum_top_10_data_03_17.csv", 
            stringsAsFactors = F)
 # List ASL individual random > rest z-maps 
 aslRandFile <-
   list.files("/Volumes/data/projects/blast/data/derivatives/fitlins/analyzed/fitlins", 
+           pattern = "sub-blasta", 
+           full.names = T, recursive = F)
+
+aslRandFile <-
+  list.files(aslRandFile, 
            pattern = "level-run_name-run_sub-blasta\\d+_run-\\d+_contrast-rand[[:alpha:]]+VRest_stat-z_statmap.nii.gz", 
-           full.names = T, recursive = T)
+           full.names = T, recursive = F)
 
 aslRandFile <- as.data.frame(aslRandFile)
 
@@ -546,9 +589,9 @@ aslRandFile <-
 # List all parcels in langloc group-constrained mask
 dan_parcels <- 
   list.files("/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/dorsal_attention_parcel/conn_resampled_parcel",
-            pattern = "resampled_conn_dan.nii.gz", full.names = T)
+            pattern = "\\S+.nii.gz", full.names = T)
 
-aslRandFile$parcel <- str_extract(aslRandFile$parcel, "resampled_conn_dan")
+# aslRandFile$parcel <- str_extract(aslRandFile$parcel, "resampled_conn_dan")
 
 # Add parcel to aslRandFile
 file_rep <- aslRandFile
