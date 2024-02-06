@@ -2,9 +2,8 @@ function indiv_langloc_sl(opts, group, prefix, part_id)
 
 %% Measure response magnitudes in frois
 opts.CURRENT_ID = [prefix part_id];
-opts.PROJECT_DIR = '/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/';
+opts.PROJECT_DIR = '/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/';
 opts.PARCEL_DIR = [opts.PROJECT_DIR 'data/asl_attention/indiv_att_ouput/bin_resampled_mask/' group '/' part_id '/'];
-% opts.SUBJ_NAME_LIST = [opts.PROJECT_DIR 'data/asl/sslrandorder_TD.txt'];
 opts.SUBJ_DEFINE_DATA_DIR = [opts.PROJECT_DIR 'data/indiv_langloc_output/asl/' group '/' part_id '/'];
 opts.RESULTS_DIR = [opts.PROJECT_DIR 'data/asl_attention/indiv_att_ouput/bin_resampled_mask/' group '/results/'];
 disp(opts)

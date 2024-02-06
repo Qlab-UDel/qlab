@@ -1,7 +1,7 @@
 % Adult ASL Activation Extraction based on Individualized LangLoc Masks (GCSS Method)
 % 022 and 029 and 040 have ASL, but do not have langloc
 % Please refer to indiv_langloc_sl.m for specific information
-DIR_LIST = dir ('/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/adult/');
+DIR_LIST = dir ('/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/adult/');
 
 for i = 1:length(DIR_LIST)
 
@@ -19,7 +19,7 @@ indiv_langloc_sl(opts, 'adult', 'blast_a_', '044')
 
 % Child ASL Activation Extraction based on Individualized LangLoc Masks (GCSS Method)
 
-DIR_LIST = dir ('/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/child/');
+DIR_LIST = dir ('/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/child/');
 
 for i = 1:length(DIR_LIST)
 

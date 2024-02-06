@@ -2,7 +2,7 @@
 % Network (GCSS Method)
 % 022 and 029 and 040 do not have ASL, but have langloc
 % Please refer to indiv_att_sl.m for specific information
-DIR_LIST = dir ('/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/adult/');
+DIR_LIST = dir ('/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/adult/');
 
 for i = 1:length(DIR_LIST)
 
@@ -19,7 +19,7 @@ end
 % Child ASL Activation Extraction based on Individualized Dorsal Attention
 % Network (GCSS Method)
 
-DIR_LIST = dir ('/Volumes/data-1/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/child/');
+DIR_LIST = dir ('/Volumes/data/projects/blast/data/mri/imaging/scott_gcss_lpsa/data/indiv_langloc_output/asl/child/');
 
 for i = 1:length(DIR_LIST)
 
